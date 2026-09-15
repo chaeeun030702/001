@@ -7,6 +7,14 @@
         "OPENAI_API_KEY": "${OPENAI_API_KEY}",
         "OPENAI_BASE_URL": "${OPENAI_BASE_URL:-https://api.openai.com/v1}"
       }
+    },
+    "naver": {
+      "command": "uv",
+      "args": ["run", "naver_server.py"],
+      "env": {
+        "NAVER_CLIENT_ID": "${NAVER_CLIENT_ID}",
+        "NAVER_CLIENT_SECRET": "${NAVER_CLIENT_SECRET}"
+      }
     }
   }
 }
