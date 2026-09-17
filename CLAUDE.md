@@ -17,6 +17,22 @@
 | `hwpx-jkf` | [jkf87/hwpx-skill](https://github.com/jkf87/hwpx-skill) | `.claude/skills/hwpx-jkf` |
 | `hwpx-kist` | [kist-aix/hwpx](https://github.com/kist-aix/hwpx) | `.claude/skills/hwpx-kist` |
 
+## 모바일 앱/웹 UI 디자인 시 스킬 자동 선택 (필수)
+
+**"모바일웹을 만들어줘"** 와 유사한 요청 — "모바일 앱", "모바일 UI", "앱 화면 디자인",
+"모바일 화면", "mobile app/web", "앱 UI", "Sleek" 등 모바일 앱·웹 UI를 **디자인/구현**하는
+요청을 받으면 → **`design-mobile-apps`** 스킬을 사용한다.
+
+- 출력물: Sleek(sleek.design) 기반 모바일 앱/UI 디자인 및 코드(HTML, React Native, SwiftUI).
+- 이 스킬은 `SLEEK_API_KEY` 환경변수와 `https://sleek.design` 네트워크 접근이 필요하다.
+  키가 없으면 사용자에게 안내한다.
+- 사용자가 특정 스킬을 명시하면 그 지정을 우선한다.
+
+### 스킬 정보
+| 스킬 이름 | 출처 | 디렉터리 |
+| --- | --- | --- |
+| `design-mobile-apps` | [designed-by-ai/skills](https://github.com/designed-by-ai/skills) | `.claude/skills/design-mobile-apps` |
+
 ## 프레젠테이션(PPT/PPTX/HTML) 생성 시 스킬 자동 선택 (필수)
 
 프레젠테이션·슬라이드·PPT·PPTX·발표자료·HTML 덱을 **생성/편집/보정**하는 요청을 받으면
