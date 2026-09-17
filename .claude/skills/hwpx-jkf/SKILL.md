@@ -1,6 +1,6 @@
 ---
 name: hwpx-jkf
-description: "[jkf87/hwpx-skill] 한글 HWP/HWPX 파일의 변환·읽기·편집과 편집 가능한 .hwpx 문서 생성. 한글 파일, HWP 변환, HWPX 공문·보고서·계획서·활동지, 기존 한글 양식 채우기 요청에 사용한다. hwpx 생성 요청 시 hwpx-kist와 함께 사용자에게 선택지로 제시한다."
+description: "[jkf87/hwpx-skill] 한글 HWP/HWPX 파일의 변환·읽기·편집과 편집 가능한 .hwpx 문서 생성. 한글 파일, HWP 변환, HWPX 공문·보고서·계획서·활동지, 기존 한글 양식 채우기 요청에 사용한다. hwpx 생성 요청에 '공문'·'공공기관'·'공무원' 단어가 포함되면 이 스킬을 사용한다."
 ---
 
 # 편집 가능한 고품질 한글 문서

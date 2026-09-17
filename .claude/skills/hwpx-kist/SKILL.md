@@ -1,6 +1,6 @@
 ---
 name: hwpx-kist
-description: "[kist-aix/hwpx] 한글(HWPX) 보고서 생성/편집/읽기 스킬. .hwpx 파일, 한글 문서, Hancom, OWPML 관련 요청 시 사용. hwpx 생성 요청 시 hwpx-jkf와 함께 사용자에게 선택지로 제시한다."
+description: "[kist-aix/hwpx] 한글(HWPX) 보고서 생성/편집/읽기 스킬. .hwpx 파일, 한글 문서, Hancom, OWPML 관련 요청 시 사용. hwpx 생성 요청에 '공문'·'공공기관'·'공무원' 단어가 없는 기본 요청에 이 스킬을 사용한다."
 ---
 
 # HWPX 보고서 생성 스킬 — XML-first 워크플로우
