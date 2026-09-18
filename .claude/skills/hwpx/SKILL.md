@@ -77,6 +77,7 @@ hwpx/
 │   ├── extract_table_templates.py        # 표 라이브러리 HWPX → 표 템플릿 .xml 재생성
 │   ├── validate.py                       # HWPX 구조 검증
 │   ├── style_check.py                    # 개조식 문체 규칙 검사 (□/❍ 길이·종결)
+│   ├── spell_check.py                    # 한글 맞춤법·띄어쓰기 검사 (고빈도 오류)
 │   └── text_extract.py                   # 텍스트 추출 (python-hwpx 필요)
 ├── templates/
 │   ├── base/                             # 내부 스켈레톤 (mimetype, META-INF, content.hpf 등 — build_hwpx.py가 자동 사용)
@@ -91,7 +92,8 @@ hwpx/
 │   ├── report-template.hwpx              # report 템플릿 시각 기준 샘플 (런타임 미사용)
 │   └── all_tables_preview.hwpx           # 표 라이브러리 — extract_table_templates.py의 추출 소스
 └── references/
-    └── hwpx-format.md                    # OWPML XML 요소 레퍼런스
+    ├── hwpx-format.md                    # OWPML XML 요소 레퍼런스
+    └── korean-spelling.md                # 한글 맞춤법·띄어쓰기 교정 지침
 ```
 
 `templates/base/`는 HWPX 컨테이너에 반드시 들어가야 하는 파일 골격(mimetype, META-INF, Preview, content.hpf 등)을 제공하는 내부 스켈레톤이다. `build_hwpx.py`가 자동으로 사용하며, 사용자가 직접 의식할 필요는 없다.
@@ -128,13 +130,23 @@ hwpx/
 
 > 생성한 `.hwpx`는 `scripts/style_check.py`로 위 규칙(□ 길이·❍ 길이·종결) 준수 여부를 점검한다.
 
+### 맞춤법·띄어쓰기 검토
+
+문체와 별개로, 본문·표 텍스트의 한글 맞춤법과 띄어쓰기를 교정한다.
+
+- **자동 검사**: `scripts/spell_check.py`로 `됬/되서/되요`(되·돼), `않되`(안·않), `웬/왠`, `몇일→며칠`, `역활→역할`, `및` 띄어쓰기, 의존명사 `수`·`것` 띄어쓰기 등 **고빈도 오류**를 확정 검출한다(본문·표 셀 모두). 형태소 분석기가 아니므로 문맥이 필요한 오류는 놓친다.
+- **직접 교열**: 검사기가 놓치는 문맥형 항목(`로서/로써`, `든지/던지`, 부사 `-이/-히`, `되어`↔`돼` 치환 판단 등)은 `references/korean-spelling.md`의 지침에 따라 한 번 더 훑어 교정한다.
+- **문체와의 관계**: 맞춤법을 고치더라도 명사형 종결(`~ 구축`, `~ 확대` 등)은 유지한다 — 교정하다 `~합니다`류로 되돌리지 않는다.
+
+> 상세 규칙·교정 절차는 `references/korean-spelling.md` 참조.
+
 ### 흐름
 
 1. **header.xml 확인** — 사용 가능한 스타일 ID(charPr, paraPr, borderFill) 파악 (필요 시 `templates/report/header.xml` 읽기)
 2. **section0.xml 새로 작성** — secPr은 `templates/report/section0.xml`에서 복사, 본문은 내용 분량에 맞게 자유롭게 구성
 3. **머리말·제목 자리표시자 교체** (필수, 아래 섹션 참조)
 4. **build_hwpx.py로 빌드** — 별도 `--template` 지정 없이 호출하면 report 양식이 자동 적용된다
-5. **validate.py로 검증**
+5. **validate.py로 검증** (구조) → **style_check.py**(문체) → **spell_check.py**(맞춤법·띄어쓰기)
 
 ### 머리말·제목 자리표시자 교체 (필수)
 
@@ -614,6 +626,7 @@ python3 "$SKILL_DIR/scripts/validate.py" document.hwpx
 | `scripts/office/pack.py` | 디렉토리 → HWPX (mimetype first) |
 | `scripts/validate.py` | HWPX 파일 구조 검증 |
 | `scripts/style_check.py` | 개조식 문체 규칙 검사 (□/❍ 길이·종결) |
+| `scripts/spell_check.py` | 한글 맞춤법·띄어쓰기 검사 (고빈도 오류) |
 | `scripts/text_extract.py` | HWPX 텍스트 추출 (python-hwpx 필요) |
 
 ## 단위 변환
@@ -638,8 +651,8 @@ python3 "$SKILL_DIR/scripts/validate.py" document.hwpx
 5. **itemCnt 정합성**: header.xml의 charProperties/paraProperties/borderFills itemCnt가 실제 자식 수와 일치
 6. **ID 참조 정합성**: section0.xml의 charPrIDRef/paraPrIDRef가 header.xml 정의와 일치
 7. **Python 환경**: 현재 환경의 `python3` 사용 (`lxml` 필요, 일부 보조 스크립트는 `hwpx` 패키지 필요)
-8. **검증**: 생성 후 반드시 `validate.py`로 무결성 확인
-9. **레퍼런스**: 상세 XML 구조는 `$SKILL_DIR/references/hwpx-format.md` 참조
+8. **검증**: 생성 후 반드시 `validate.py`(구조)로 무결성 확인, 이어 `style_check.py`(문체)·`spell_check.py`(맞춤법·띄어쓰기)로 본문 점검
+9. **레퍼런스**: 상세 XML 구조는 `$SKILL_DIR/references/hwpx-format.md`, 맞춤법·띄어쓰기 교정은 `$SKILL_DIR/references/korean-spelling.md` 참조
 10. **build_hwpx.py 우선**: 새 문서 생성은 build_hwpx.py 사용 (python-hwpx API 직접 호출 지양)
 11. **빈 줄**: `<hp:t/>` 사용 (self-closing tag)
 12. **결과 저장 위치**: 모든 `.hwpx` 결과는 `$(pwd)/output/` 폴더에 저장한다. 폴더 미존재 시 자동 생성. 사용자가 다른 경로를 명시한 경우만 예외. ([결과 저장 위치] 섹션 참조)
