@@ -7,7 +7,11 @@ Each zip contains a single skill folder with a `SKILL.md` whose frontmatter
 has been cleaned to the fields the uploader accepts (`name`, `description`,
 `license`). One zip = one skill; upload them one at a time.
 
-## Skills (15)
+## Skills (16)
+
+**Writing & Proofreading**
+- `korean-proofreader.zip` — 한국어 맞춤법·띄어쓰기·문법 교정 (맞춤법 검사/교정/첨삭)
+
 
 **HR & Careers**
 - `resume-tailor.zip` — 이력서(resume) 작성/최적화

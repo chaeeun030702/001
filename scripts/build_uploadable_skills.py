@@ -19,6 +19,7 @@ SKILLS = [
     "applicant-screening", "deep-research", "web-search", "academic-search",
     "competitive-analysis", "news-monitor", "image-generation",
     "diagram-creator", "chart-designer", "infographic", "ppt-visual",
+    "korean-proofreader",
 ]
 
 
