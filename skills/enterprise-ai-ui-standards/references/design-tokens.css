@@ -1,0 +1,116 @@
+:root {
+  --font-sans: "Pretendard Variable", "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", "Segoe UI", Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* ── 타이포 스케일: size + 짝 line-height (2단계 상향 대응) ──────────────
+     큰 글자일수록 줄간격을 좁힌다. line-height 를 크기 계열마다 반드시 지정해
+     본문값(1.7)을 큰 제목이 상속하지 않도록 한다. 크기 토큰과 lh 토큰은 짝으로 쓴다. */
+  --fs-display-1: 80px; --fs-display-2: 72px; --fs-display-3: 56px; --fs-display-4: 44px;
+  --fs-title-1: 40px;   --fs-title-2: 36px;   --fs-title-3: 32px;
+  --fs-heading-1: 28px; --fs-heading-2: 24px; --fs-heading-3: 22px;
+  --fs-body-1: 20px;    --fs-body-2: 18px;    --fs-body-3: 16px;
+  --fs-label-1: 15px;   --fs-label-2: 14px;
+  --fs-caption-1: 14px; --fs-caption-2: 13px; --fs-caption-3: 12px;
+
+  --lh-display: 1.1;   /* Display1~4 (44~80px) */
+  --lh-title: 1.2;     /* Title1~3 (32~40px) */
+  --lh-heading: 1.3;   /* Heading1~3 (22~28px) */
+  --lh-lede: 1.55;     /* 강조 리드 문장(18~20px) */
+  --lh-body: 1.7;      /* 본문 Body1~3 (16~20px) */
+  --lh-dense: 1.4;     /* 라벨·표 셀·버튼 등 단일/짧은 행 */
+  --lh-caption: 1.5;   /* Caption (12~14px) */
+  --tracking-display: -0.02em; /* 큰 제목 자간 살짝 좁힘 */
+  --tracking-title: -0.01em;
+
+  /* ── 간격 스케일(4px 베이스): 폰트를 키운 만큼 여백도 이 토큰으로 함께 키운다 ── */
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
+  --space-5: 20px; --space-6: 24px; --space-7: 32px; --space-8: 40px; --space-9: 48px;
+
+  /* ── 컨트롤·행 최소 높이: 고정 height 대신 min-height 로 써서 큰 글자가 잘리지 않게 ── */
+  --control-h: 44px;      /* 버튼·인풋 최소 높이 */
+  --row-h: 56px;          /* 테이블 행 최소 높이 */
+  --nav-row-h: 52px;      /* 사이드내비 depth1 */
+  --nav-row-h-sub: 44px;  /* 사이드내비 depth2 */
+
+  --color-bg-page: #ffffff;
+  --color-bg-content: #eef1f5;
+  --color-bg-surface: #ffffff;
+  --color-bg-surface-alt-1: #f2f3f6;
+  --color-bg-surface-alt-2: #e2e4e9;
+  --color-bg-inverse: #1d1f24;
+  --color-text-strong: #000000;
+  --color-text-primary: #1c1c1c;
+  --color-text-secondary: #303030;
+  --color-text-muted: #737373;
+  --color-text-hint: #b0b0b0;
+  --color-text-disabled: #c4c4c4;
+  --color-text-inverse: #ebeced;
+  --color-action-primary: #0f6fff;
+  --color-action-primary-hover: #0e65e8;
+  --color-action-primary-active: #0b4fb5;
+  --color-action-secondary: #1d1f24;
+  --color-action-secondary-hover: #282b33;
+  --color-action-secondary-active: #333741;
+  --color-border-default: #e2e4e9;
+  --color-border-strong: #ccd0d6;
+  --color-divider-default: #e9ebef;
+  --color-status-success: #15b874;
+  --color-status-warning: #ffa833;
+  --color-status-danger: #e63b3b;
+  --color-accent-orange: #fe6f3f;
+  --color-accent-purple: #b357ff;
+  --color-accent-pink: #f553da;
+  --color-accent-skyblue: #00bdde;
+  --color-overlay-scrim: rgba(29, 31, 36, 0.5);
+
+  /* 차트 계열색: 순서대로 사용 */
+  --chart-1: var(--color-action-primary);
+  --chart-2: var(--color-accent-skyblue);
+  --chart-3: var(--color-accent-purple);
+  --chart-4: var(--color-accent-orange);
+  --chart-5: var(--color-accent-pink);
+  --chart-grid: var(--color-divider-default);
+  --chart-axis: var(--color-text-muted);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 9999px;
+  --shadow-level-0: none;
+  --shadow-level-1: 0px 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-level-2: 0px 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-level-3: 0px 4px 12px rgba(0, 0, 0, 0.12);
+  --shadow-level-4: 0px 8px 24px rgba(0, 0, 0, 0.16);
+}
+
+[data-theme="dark"] {
+  --color-bg-page: #1d1f24;
+  --color-bg-content: #15171c;
+  --color-bg-surface: #1d1f24;
+  --color-bg-surface-alt-1: #282b33;
+  --color-bg-surface-alt-2: #333741;
+  --color-bg-inverse: #ffffff;
+  --color-text-strong: #ffffff;
+  --color-text-primary: #ebeced;
+  --color-text-secondary: #c4c4c4;
+  --color-text-muted: #8a8a8a;
+  --color-text-hint: #737373;
+  --color-text-disabled: #5c5c5c;
+  --color-text-inverse: #000000;
+  --color-action-primary: #3f8cff;
+  --color-action-primary-hover: #0f6fff;
+  --color-action-primary-active: #0e65e8;
+  --color-action-secondary: #e9ebef;
+  --color-action-secondary-hover: #ccd0d6;
+  --color-action-secondary-active: #adb4bd;
+  --color-border-default: #333741;
+  --color-border-strong: #4a505f;
+  --color-divider-default: #282b33;
+  --color-status-success: #44c690;
+  --color-status-warning: #ffb95c;
+  --color-status-danger: #eb5e5e;
+  --color-accent-orange: #fe8c65;
+  --color-accent-purple: #c279ff;
+  --color-accent-pink: #f775e1;
+  --color-accent-skyblue: #33cae5;
+}
