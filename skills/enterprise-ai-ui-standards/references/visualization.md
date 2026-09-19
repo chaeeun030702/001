@@ -112,9 +112,9 @@
 ```
 
 ```css
-.stack { display: flex; height: 40px; border-radius: var(--radius-sm); overflow: hidden; }
-.stack span { display: flex; align-items: center; justify-content: center;
-  font-size: 14px; font-weight: 600; color: #fff; }
+.stack { display: flex; min-height: 2.8em; border-radius: var(--radius-sm); overflow: hidden; }
+.stack span { display: flex; align-items: center; justify-content: center; padding: 0.4em 0.6em;
+  font-size: 14px; line-height: var(--lh-dense); font-weight: 600; color: #fff; }
 ```
 
 ## 7. 계층·체계도 (법령 체계, 조직 위계)
@@ -131,14 +131,15 @@
 
 ```css
 .tier { display: grid; justify-items: center; gap: 0; }
-.tier-row { display: flex; align-items: center; gap: 12px; width: 100%; max-width: 560px;
-  padding: 16px 20px; border-radius: var(--radius-md);
-  border: 1px solid var(--color-border-default); background: var(--color-bg-surface); font-size: 18px; }
+.tier-row { display: flex; align-items: center; gap: 0.7em; width: 100%; max-width: 560px;
+  padding: var(--pad-box); border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-default); background: var(--color-bg-surface);
+  font-size: 18px; line-height: var(--lh-heading); }
 .tier-row.lv1 { border-left: 4px solid var(--chart-1); }
 .tier-row.lv2 { border-left: 4px solid var(--chart-2); }
 .tier-row.lv3 { border-left: 4px solid var(--chart-3); }
-.tier-tag { font-size: 14px; font-weight: 600; padding: 3px 10px; border-radius: var(--radius-pill);
-  background: var(--color-bg-surface-alt-1); color: var(--color-text-muted); }
+.tier-tag { font-size: 14px; line-height: var(--lh-dense); font-weight: 600; padding: var(--pad-chip);
+  border-radius: var(--radius-pill); background: var(--color-bg-surface-alt-1); color: var(--color-text-muted); }
 .tier-name { line-height: var(--lh-heading); font-weight: 700; }
 .tier-arrow { width: 2px; height: 20px; background: var(--color-border-strong); }
 ```
@@ -157,8 +158,9 @@
 .flow li { display: grid; grid-template-columns: 40px 1fr; gap: 16px; padding: 0 0 24px;
   border-left: 2px solid var(--color-border-default); margin-left: 19px; padding-left: 24px; position: relative; }
 .flow li:last-child { border-left-color: transparent; padding-bottom: 0; }
-.flow-no { position: absolute; left: -20px; top: 0; width: 38px; height: 38px; border-radius: var(--radius-pill);
-  display: inline-flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700;
+.flow-no { position: absolute; left: calc(var(--circle-size) / -2 + 1px); top: 0;
+  width: var(--circle-size); height: var(--circle-size); min-width: var(--circle-size); border-radius: var(--radius-pill);
+  display: inline-flex; align-items: center; justify-content: center; font-size: 16px; line-height: 1; font-weight: 700;
   color: #fff; background: var(--chart-1); }
 .flow-t { margin: 6px 0 2px; font-size: 18px; line-height: var(--lh-heading); font-weight: 700; }
 .flow-d { margin: 0; font-size: 15px; line-height: var(--lh-dense); color: var(--color-text-muted); }

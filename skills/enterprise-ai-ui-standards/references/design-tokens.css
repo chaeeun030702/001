@@ -32,6 +32,14 @@
   --nav-row-h: 52px;      /* 사이드내비 depth1 */
   --nav-row-h-sub: 44px;  /* 사이드내비 depth2 */
 
+  /* ── 박스·도형 내부 여백(em 기반): 글자 크기에 비례해 컨테이너가 함께 커진다 ──────
+     px 가 아니라 em 으로 두면 내부 font-size 를 키울 때 여백·박스 크기가 자동으로 따라 커진다. */
+  --pad-chip: 0.25em 0.7em;   /* 칩·배지·태그 */
+  --pad-btn: 0.55em 1.1em;    /* 버튼(min-height 와 병용) */
+  --pad-box: 1em 1.15em;      /* 콜아웃·스탯 박스 등 텍스트 컨테이너 */
+  --pad-card: 1.25em;         /* 카드 */
+  --circle-size: 2.2em;       /* 숫자 원형(스텝·뱃지): 지름 = 글자 2.2배 */
+
   --color-bg-page: #ffffff;
   --color-bg-content: #eef1f5;
   --color-bg-surface: #ffffff;

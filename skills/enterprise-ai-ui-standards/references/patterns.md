@@ -5,8 +5,9 @@
 3. 헤더 락업
 4. 버튼·카드·테이블
 5. 보고서 본문 구성
-6. 인쇄
-7. 자주 하는 실수
+6. 박스·도형 (글자 크기 연동)
+7. 인쇄
+8. 자주 하는 실수
 
 ## 1. 공통 문서 셀업
 
@@ -110,7 +111,7 @@ p { margin: 0 0 var(--space-4); max-width: 840px; }        /* 본문 줄길이 7
 ## 4. 버튼·카드·테이블
 
 ```css
-.btn { min-height: var(--control-h); padding: 6px 18px; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+.btn { min-height: var(--control-h); padding: var(--pad-btn); display: inline-flex; align-items: center; justify-content: center; gap: 0.4em;
   font: inherit; font-size: var(--fs-body-3); line-height: var(--lh-dense); font-weight: 600;
   border-radius: var(--radius-sm); cursor: pointer;
   border: 1px solid var(--color-border-default); background: var(--color-bg-surface); color: var(--color-text-secondary); }
@@ -135,7 +136,7 @@ th { text-align: left; font-size: var(--fs-label-1); line-height: var(--lh-dense
 th, td { padding: var(--space-4) var(--space-3); font-size: var(--fs-body-3); line-height: var(--lh-dense);
   border-bottom: 1px solid var(--color-divider-default); vertical-align: middle; }
 tbody tr { min-height: var(--row-h); }   /* 고정 height 금지 — 줄바꿈된 셀이 잘리지 않게 */
-.badge { display: inline-flex; align-items: center; padding: 4px 12px; font-size: var(--fs-label-2);
+.badge { display: inline-flex; align-items: center; padding: var(--pad-chip); font-size: var(--fs-label-2);
   line-height: var(--lh-dense); font-weight: 600;
   border-radius: var(--radius-pill); background: var(--color-bg-surface-alt-1); color: var(--color-text-muted); }
 ```
@@ -171,7 +172,53 @@ tbody tr { min-height: var(--row-h); }   /* 고정 height 금지 — 줄바꿈�
 @media (max-width: 720px) { .grid-2 { grid-template-columns: 1fr; } }
 ```
 
-## 6. 인쇄
+## 6. 박스·도형 (글자 크기 연동)
+
+원칙: **텍스트가 든 박스·도형은 고정 크기를 주지 않는다.** 내부 여백을 `em`(또는 `--pad-*` 토큰)으로 두고
+`min-height`만 지정하면, 글자 크기를 키울 때 박스도 비례해 커지고 줄간격도 함께 조화된다.
+내부 텍스트도 본문과 동일하게 `--fs-*` 크기·계열별 `--lh-*` 줄간격 토큰을 쓴다.
+
+```css
+/* 콜아웃·스탯 박스: em 여백 → 글자 커지면 박스도 함께 커짐 */
+.box { display: flex; flex-direction: column; gap: 0.5em;
+  padding: var(--pad-box); border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md); background: var(--color-bg-surface); }
+.box-title { font-size: var(--fs-heading-3); line-height: var(--lh-heading); font-weight: 700; margin: 0; }
+.box-body  { font-size: var(--fs-body-3);   line-height: var(--lh-body);   margin: 0; }
+
+/* 칩·태그: 지름/높이 대신 em 여백으로만 크기 결정 */
+.chip { display: inline-flex; align-items: center; gap: 0.35em;
+  padding: var(--pad-chip); font-size: var(--fs-label-2); line-height: var(--lh-dense);
+  border-radius: var(--radius-pill); background: var(--color-bg-surface-alt-1); color: var(--color-text-secondary); }
+
+/* 숫자 원형(스텝·카운트): 지름을 em 으로 → 글자와 함께 스케일, 텍스트는 line-height:1 로 수직 중앙 */
+.num-circle { display: inline-flex; align-items: center; justify-content: center;
+  width: var(--circle-size); height: var(--circle-size); min-width: var(--circle-size);
+  border-radius: var(--radius-pill); font-weight: 700; line-height: 1;
+  background: var(--color-action-primary); color: #fff; }
+
+/* 한 줄/그리드의 박스들은 stretch 로 높이 통일 → 들쭉날쭉 방지 */
+.box-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-4); align-items: stretch; }
+```
+
+`[Must]` 규칙:
+- 박스·칩·배지·버튼·원형은 고정 `width`/`height` 대신 `em` 여백(`--pad-*`, `--circle-size`) + `min-height`로 크기를 낸다.
+- 박스 내부 글자도 승인 타이포 토큰(`--fs-*`)과 계열별 `--lh-*`를 그대로 쓴다. 박스 안이라고 임의 크기·줄간격 금지.
+- 원형·정사각 뱃지의 텍스트는 `line-height: 1` + 중앙 정렬로 수직 균형을 맞춘다.
+- 한 줄에 놓인 박스들은 `align-items: stretch`로 높이를 통일한다.
+
+### SVG 도형 안의 텍스트
+
+SVG `<text>`는 자동 줄바꿈·리플로우가 없어 글자를 키우면 도형 밖으로 넘친다.
+
+- **텍스트가 든 박스·노드는 HTML+CSS로 그린다**(위 `.box`/`.num-circle`). 이것이 기본.
+- 순수 차트(막대·라인 등)의 축·값 라벨만 SVG `<text>`로 둔다. 최소 14px, `font-family: var(--font-sans)`.
+- 부득이 SVG 도형에 텍스트를 넣어야 하면: 도형 크기를 글자 기준으로 잡고, `<text>`에
+  `text-anchor="middle"` + `dominant-baseline="central"`로 중앙 정렬한다. 줄바꿈이 필요하면
+  `<foreignObject>`에 HTML 박스를 넣어 CSS 규칙을 그대로 적용한다.
+
+## 7. 인쇄
 
 ```css
 @page { size: A4 portrait; margin: 14mm; }
@@ -183,13 +230,15 @@ tbody tr { min-height: var(--row-h); }   /* 고정 height 금지 — 줄바꿈�
 }
 ```
 
-## 7. 자주 하는 실수
+## 8. 자주 하는 실수
 
 - 시스템 폰트(맑은 고딕·Arial) 방치 → Pretendard 스택으로 교체
 - pt 단위·임의 폰트 크기 → 승인 px 스케일만 사용(본문 18px 기준)
 - 작은 웹 기본값(13~14px) 본문 → 2단계 상향된 스케일 적용
 - 큰 제목·수치에 본문 줄간격(1.7) 상속 → 줄간격 벌어짐·배치 붕괴. 계열별 `--lh-*` 지정
 - 버튼·인풋·행에 고정 `height` → 큰 글자/줄바꿈 잘림. `min-height`(`--control-h`·`--row-h`) 사용
+- 박스·칩·원형에 고정 px 크기 → 글자 키우면 넘침/찌그러짐. `em` 여백(`--pad-*`·`--circle-size`)으로 연동
+- 텍스트를 SVG `<text>`로 도형에 박음 → 리플로우 안 됨. 텍스트 박스는 HTML+CSS로 그린다
 - 베이지·움그레이 팔레트, 임의 hex → 시맨틱 토큰 변수
 - 이모지·외부 아이콘 라이브러리 혼용 → inline SVG 단일 패밀리
 - 그라데이션 배경·컬러 그림자 → 보더·여백으로 위계 표현
