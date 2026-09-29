@@ -856,6 +856,34 @@ td.src{white-space:nowrap}
 .empty{color:var(--caption);font-size:13px;padding:8px 0}
 .note{font-size:12px;color:var(--caption);margin:0}
 [hidden]{display:none!important}
+/* 채용 달력: 주 단위 7열 그리드, 좁은 화면에서는 공고 있는 날짜만 목록으로 */
+.cal-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:12px}
+.cal-head h2{margin:0} .cal-head .range{font-size:12px;color:var(--caption);font-variant-numeric:tabular-nums}
+.cal-legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--caption);margin-bottom:8px}
+.cal-legend span::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;vertical-align:0;background:var(--border-strong)}
+.cal-legend .la::before{background:var(--error)} .cal-legend .lb::before{background:var(--primary)} .cal-legend .lp::before{background:var(--purple)}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-top:1px solid var(--border);border-left:1px solid var(--border)}
+.cal .wd{font-size:12px;font-weight:600;color:var(--caption);padding:6px 8px;background:var(--alt1);border-right:1px solid var(--border);border-bottom:1px solid var(--border)}
+.cal .wd.sun{color:var(--error)}
+.day{min-height:96px;padding:6px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);display:grid;align-content:start;gap:3px;min-width:0}
+.day .dn{font-size:12px;font-weight:600;color:var(--text-sub);font-variant-numeric:tabular-nums;display:flex;justify-content:space-between;gap:4px}
+.day .dn .mo{color:var(--primary)} .day .dn .cnt{color:var(--caption);font-weight:600}
+.day.out{background:var(--alt1)} .day.out .dn{color:var(--caption);opacity:.6}
+.day.today{box-shadow:inset 0 0 0 2px var(--primary)} .day.soon .dn{color:var(--error)}
+.day.sun .dn{color:var(--error)}
+.ev{display:flex;align-items:center;gap:4px;font-size:12px;line-height:1.35;color:var(--text);text-decoration:none;min-width:0;border-radius:4px;padding:1px 2px}
+.ev:hover{background:var(--alt1);color:var(--primary)} .ev:focus-visible{outline:2px solid var(--primary);outline-offset:1px}
+.ev::before{content:"";flex:none;width:6px;height:6px;border-radius:50%;background:var(--border-strong)}
+.ev.hA::before{background:var(--error)} .ev.hB::before{background:var(--primary)} .ev.pp::before{background:var(--purple)}
+.ev span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.day details summary{font-size:12px;color:var(--primary);cursor:pointer;list-style:none} .day details summary::-webkit-details-marker{display:none}
+.day details[open] summary{margin-bottom:2px}
+td.corp a.co{color:var(--text-strong);text-decoration:none} td.corp a.co:hover{color:var(--primary);text-decoration:underline}
+@media (max-width:719px){
+  .cal{display:block;border:0}.cal .wd,.day.empty,.day.out{display:none}
+  .day{min-height:0;border:1px solid var(--border);border-radius:var(--r-sm);margin-bottom:8px;padding:10px}
+  .day .dn .wdn{display:inline} .day .dn .mo{display:none}}
+@media (min-width:720px){.day .dn .wdn,.day .dn .mo2{display:none}}
 @media (max-width:1023px){.shell{grid-template-columns:1fr}.side{display:none}.chipnav{display:flex}}
 @media (max-width:480px){main{padding:16px}.kpi .v{font-size:28px}}
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
@@ -890,6 +918,60 @@ HTML_JS = """
 def parse_stat(v):
     """'목록 35, 채택 34, 경력직 1' → {'목록': 35, ...}"""
     return {k.strip(): int(n) for k, n in re.findall(r"([^,\d]+?)\s(\d+)(?=,|$)", v or "")}
+
+
+def render_calendar(postings, today, months=2, show=3):
+    """접수기한 달력: 오늘부터 2개월, 주 단위. 업체명을 누르면 공고로 이동."""
+    e = html.escape
+    end_m, end_y = today.month + months, today.year
+    while end_m > 12:
+        end_m, end_y = end_m - 12, end_y + 1
+    end = safe_date(end_y, end_m, min(today.day, 28)) or today + dt.timedelta(days=61)
+    by_day = collections.defaultdict(list)
+    for p in postings:
+        if p.deadline_date:
+            d = dt.date.fromisoformat(p.deadline_date)
+            if today <= d <= end:
+                by_day[d].append(p)
+    start = today - dt.timedelta(days=(today.weekday() + 1) % 7)  # 일요일 시작
+    last = end + dt.timedelta(days=(5 - end.weekday()) % 7)        # 토요일 끝
+    wd = "".join(f'<div class="wd{" sun" if i == 0 else ""}">{w}</div>' for i, w in enumerate("일월화수목금토"))
+    cells = []
+    d = start
+    while d <= last:
+        items = sorted(by_day.get(d, []), key=lambda p: ({"A": 0, "B": 1}.get(p.hilite, 2 if not p.prefs else 1.5), p.company))
+        cls = ["day"]
+        if d < today or d > end:
+            cls.append("out")
+        if not items:
+            cls.append("empty")
+        if d == today:
+            cls.append("today")
+        if items and (d - today).days <= 3:
+            cls.append("soon")
+        if d.weekday() == 6:
+            cls.append("sun")
+
+        def ev(p):
+            c = f"ev h{p.hilite}" + (" pp" if p.prefs and not p.hilite else "")
+            tip = f"{p.company} · {p.title} · {p.deadline}"
+            return (f'<a class="{c}" href="{e(p.url)}" target="_blank" rel="noopener" title="{e(tip)}">'
+                    f'<span>{e(p.company or p.title)}</span></a>')
+        body = "".join(ev(p) for p in items[:show])
+        if len(items) > show:
+            body += f'<details><summary>+{len(items) - show}건 더 보기</summary>{"".join(ev(p) for p in items[show:])}</details>'
+        mo = f'<span class="mo">{d.month}월</span> ' if d.day == 1 or d == start else ""
+        wdn = f' <span class="wdn">({"월화수목금토일"[d.weekday()]})</span>'
+        cnt = f'<span class="cnt">{len(items)}건</span>' if items else ""
+        mo2 = f'<span class="mo2">{d.month}월 </span>'
+        cells.append(f'<div class="{" ".join(cls)}"><div class="dn"><span>{mo}{mo2}{d.day}일{wdn}</span>{cnt}</div>{body}</div>')
+        d += dt.timedelta(days=1)
+    n = sum(len(v) for v in by_day.values())
+    return (f'<section class="card" id="calendar"><div class="cal-head"><h2>채용 달력<span class="n">{n}건</span></h2>'
+            f'<span class="range">{today:%Y-%m-%d} ~ {end:%Y-%m-%d} 접수 마감 기준</span></div>'
+            '<div class="cal-legend"><span class="la">데이터센터·하이테크·삼성·하이닉스</span><span class="lb">대기업·외국계</span>'
+            '<span class="lp">외국어·NEBOSH·IOSH·CSP 우대</span><span>기타</span></div>'
+            f'<div class="cal">{wd}{"".join(cells)}</div></section>')
 
 
 def rank_pill(p):
@@ -993,7 +1075,7 @@ def render_html(postings, failures, now, stats):
         nav.append((i, tag, len(rows)))
         trs = "".join(
             f'<tr class="h{p.hilite}" data-ind="{e(p.industry)}" data-cert="{1 if p.certs else 0}" data-pref="{1 if p.prefs else 0}"><td class="lv">{e(p.level)}<small>{e(p.industry)}</small></td>'
-            f'<td class="corp"><strong>{e(p.company or "-")}</strong>{pill[p.hilite]}{rank_pill(p)}</td>'
+            f'<td class="corp"><strong><a class="co" href="{e(p.url)}" target="_blank" rel="noopener">{e(p.company or "-")}</a></strong>{pill[p.hilite]}{rank_pill(p)}</td>'
             f"<td class=\"ttl\">{e(p.title)}{pref_pills(p)}</td><td>{cert_pills(p)}{e(p.qualification or '-')}</td><td>{e(p.preferred or '-')}</td>"
             f'<td class="dl{" soon" if id(p) in soon else ""}">{e(p.deadline)}</td>'
             f'<td class="src"><a href="{e(p.url)}" target="_blank" rel="noopener">{e(p.source)}</a>'
@@ -1024,10 +1106,10 @@ def render_html(postings, failures, now, stats):
     status = ('<div class="scroll"><table style="min-width:760px"><thead><tr><th>사이트 (우선순위 순)</th><th>상태</th><th>목록</th>'
               f'<th>채택</th><th>제외 사유</th><th>오류</th></tr></thead><tbody>{"".join(srows)}</tbody></table></div>')
 
-    side = ('<div class="sec">요약</div><a href="#summary">지표·차트</a><a href="#flow">수집 흐름</a>'
+    side = ('<div class="sec">요약</div><a href="#summary">지표·차트</a><a href="#calendar">채용 달력</a><a href="#flow">수집 흐름</a>'
             '<div class="sec">공고</div>' + "".join(f'<a href="#{i}">{e(t)} <b>{c}</b></a>' for i, t, c in nav)
             + '<div class="sec">수집</div><a href="#status">사이트 현황</a>')
-    chipnav = "".join(f'<a href="#{i}">{e(t)} {c}</a>' for i, t, c in nav)
+    chipnav = '<a href="#calendar">채용 달력</a>' + "".join(f'<a href="#{i}">{e(t)} {c}</a>' for i, t, c in nav)
 
     return f"""<title>안전관리자 채용 브리핑</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1042,6 +1124,7 @@ def render_html(postings, failures, now, stats):
 <main>
 <nav class="chipnav" aria-label="섹션">{chipnav}<a href="#status">사이트 현황</a></nav>
 <div class="kpis" id="summary">{kpis}</div>
+{render_calendar(postings, today)}
 <div class="charts">{charts}</div>
 <div class="card" id="flow"><h2>수집에서 채택까지</h2><div class="flow">{flow}</div></div>
 <div class="card tools" role="search">
