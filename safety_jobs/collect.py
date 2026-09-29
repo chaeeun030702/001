@@ -810,7 +810,18 @@ def senior_rank(p: Posting) -> bool:
     if SENIOR_RANK_RE.search(title) and not JUNIOR_RANK_RE.search(title):
         return True
     body = f"{p.title} {p.listing_text} {p.detail_text or ''}"
-    if PE_RE.search(body):
+    for m in PE_RE.finditer(body):
+        # '기술사 또는 산업안전기사 우대'처럼 기사 자격도 함께 인정하면 살린다
+        clause = body[max(0, m.start() - 40):m.end() + 40]
+        cut = m.start() - max(0, m.start() - 40)
+        heads = list(re.finditer(rf"{QUAL_HEAD}|{PREF_HEAD}|[.•·■▶\n]", clause[:cut]))
+        if heads:
+            clause = clause[heads[-1].end():]
+            cut -= heads[-1].end()
+        tail = re.search(rf"{QUAL_HEAD}|{PREF_HEAD}|[.•■▶\n]", clause[cut + 3:])
+        clause = clause[:cut + 3 + tail.start()] if tail else clause
+        if re.search(r"안전(?:산업)?기사", clause):
+            continue
         p.extra["pe"] = True
         return True
     for m in BODY_SENIOR_RE.finditer(p.detail_text or ""):
