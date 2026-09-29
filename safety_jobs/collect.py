@@ -648,6 +648,7 @@ def analyze(p: Posting, today):
     p.deadline = disp or p.deadline or "확인 필요"
     p.deadline_date = d.isoformat() if d else ""
     p.hilite = classify_company(p, text)
+    p.extra["listed"] = listed_market(p)
     p.certs = sorted({f"{m.group(1)}안전기사" for m in CERT_KEY_RE.finditer(f"{p.title} {p.listing_text} {text}")})
     blob = f"{p.title} {p.listing_text} {text}"
     p.prefs = [lab for lab, rx in (("외국어·영어", LANG_RE), ("NEBOSH", NEBOSH_RE), ("IOSH", IOSH_RE), ("CSP", CSP_RE)) if rx.search(blob)]
@@ -735,7 +736,7 @@ def is_dup(p, kept):
 BADGE = {"A": "🔴 ", "B": "🔵 ", "F": "🌐 ", "": ""}
 GROUPS = [("정규직", "[정규직]"), ("계약직", "[계약직]"), ("인턴", "[인턴]"), ("기타/미표기", "[고용형태 미표기]")]
 LEGEND = ("🔴 데이터센터·하이테크·삼성·하이닉스 관련 · 🔵 대기업 계열사 · 🌐 외국계 회사 (여럿 해당하면 🔴 > 🔵 > 🌐, 업체명 옆에 [대기업 계열]/[외국계] 표기) · "
-          "🟣 외국어·영어 능통 / NEBOSH / IOSH / CSP 우대 (🔴·🔵와 함께 표시될 수 있음)")
+          "🟣 외국어·영어 능통 / NEBOSH / IOSH / CSP 우대 (🔴·🔵와 함께 표시될 수 있음) · [코스피]/[코스닥] 상장사")
 
 
 def md_cell(s):
@@ -775,6 +776,7 @@ def render_md(postings, failures, now, stats):
         for p in rows:
             corp = BADGE[p.hilite] + (f"**{md_cell(p.company)}**" if p.hilite else md_cell(p.company))
             corp += "".join(f" [{g}]" for g in p.extra.get("groups", []))
+            corp += f" [{p.extra['listed']}]" if p.extra.get("listed") else ""
             if p.industry == "건설" and p.extra.get("top100"):
                 corp += f" (시평 {p.extra['top100']}위)"
             cert = f"**[{'·'.join(p.certs)} 명시]** " if p.certs else ""
@@ -823,6 +825,12 @@ body{background:var(--canvas);color:var(--text);font:400 14px/1.55 var(--font);m
 .top h1{font-size:18px;font-weight:700;margin:0;color:var(--text-strong)}
 .top .when{font-size:12px;color:var(--caption);font-variant-numeric:tabular-nums}
 .top .chip{margin-left:auto}
+.edit-bar{display:flex;align-items:center;gap:6px}
+.edit-bar button{height:32px;padding:0 12px;border:1px solid var(--border-strong);border-radius:var(--r-sm);background:var(--surface);color:var(--text-sub);font:600 13px var(--font);cursor:pointer}
+.edit-bar button:hover{background:var(--alt1)} .edit-bar button[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:#FFFFFF}
+.edit-bar #edit-msg{font-size:12px;color:var(--caption)}
+body.editing main [contenteditable="true"]{outline:1px dashed var(--border-strong);outline-offset:2px;cursor:text}
+body.editing main [contenteditable="true"]:focus{outline:2px solid var(--primary)}
 .shell{display:grid;grid-template-columns:220px minmax(0,1fr);min-height:100%}
 .side{background:var(--bg-page);border-right:1px solid var(--border);padding:12px 0;position:sticky;top:57px;align-self:start;height:calc(100vh - 57px);overflow:auto}
 .side .sec{font-size:12px;font-weight:600;color:var(--caption);padding:12px 20px 4px;letter-spacing:.02em}
@@ -876,7 +884,7 @@ tr.hB{background:color-mix(in srgb,var(--primary) 7%,var(--surface))}
 tr.hF{background:color-mix(in srgb,var(--sky) 9%,var(--surface))}
 .pill{display:inline-flex;align-items:center;gap:4px;margin-top:4px;font-size:11px;font-weight:600;padding:1px 8px;border-radius:var(--r-pill);border:1px solid var(--border-strong);color:var(--text-sub)}
 .pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
-.pill.pa::before{background:var(--error)} .pill.pb::before{background:var(--primary)} .pill.pf::before{background:var(--sky)} .pill.pc{margin:0 0 4px}.pill.pc::before{background:var(--success)}
+.pill.pa::before{background:var(--error)} .pill.pb::before{background:var(--primary)} .pill.pf::before{background:var(--sky)} .pill.pk{border-color:var(--text-sub);color:var(--text-strong)} .pill.pk::before{background:var(--text-strong);border-radius:2px} .pill.pc{margin:0 0 4px}.pill.pc::before{background:var(--success)}
 .pill.pp{margin:4px 4px 0 0;border-color:var(--purple);background:color-mix(in srgb,var(--purple) 12%,transparent);color:var(--text-strong)}.pill.pp::before{background:var(--purple)}
 td.ttl .prefs{display:flex;flex-wrap:wrap}
 .pill.ok::before{background:var(--success)} .pill.bad::before{background:var(--error)} .pill.keep::before{background:var(--warning)}
@@ -891,6 +899,9 @@ td.src{white-space:nowrap}
 .cal-head h2{margin:0} .cal-head .range{font-size:12px;color:var(--caption);font-variant-numeric:tabular-nums}
 .cal-legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--caption);margin-bottom:8px}
 .cal-legend span::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;vertical-align:0;background:var(--border-strong)}
+.cal-legend .tgl{font-style:normal;display:inline-flex;align-items:center;gap:4px}
+.cal-legend .tgl .tg{font-style:normal;font-size:10px;font-weight:600;padding:0 4px;border-radius:4px;border:1px solid currentColor}
+.cal-legend .tgl .tg.b{color:var(--primary)} .cal-legend .tgl .tg.f{color:var(--sky)} .cal-legend .tgl .tg.k{color:var(--text-sub)}
 .cal-legend .la::before{background:var(--error)} .cal-legend .lb::before{background:var(--primary)} .cal-legend .lf::before{background:var(--sky)} .cal-legend .lp::before{background:var(--purple)}
 .cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-top:1px solid var(--border);border-left:1px solid var(--border)}
 .cal .wd{font-size:12px;font-weight:600;color:var(--caption);padding:6px 8px;background:var(--alt1);border-right:1px solid var(--border);border-bottom:1px solid var(--border)}
@@ -905,7 +916,9 @@ td.src{white-space:nowrap}
 .ev:hover{background:var(--alt1);color:var(--primary)} .ev:focus-visible{outline:2px solid var(--primary);outline-offset:1px}
 .ev::before{content:"";flex:none;width:6px;height:6px;border-radius:50%;background:var(--border-strong)}
 .ev.hA::before{background:var(--error)} .ev.hB::before{background:var(--primary)} .ev.hF::before{background:var(--sky)} .ev.pp::before{background:var(--purple)}
-.ev span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.ev .tg{flex:none;font-style:normal;font-size:10px;font-weight:600;line-height:1.4;padding:0 4px;border-radius:4px;border:1px solid currentColor}
+.ev .tg.b{color:var(--primary)} .ev .tg.f{color:var(--sky)} .ev .tg.k{color:var(--text-sub)}
 .day details summary{font-size:12px;color:var(--primary);cursor:pointer;list-style:none} .day details summary::-webkit-details-marker{display:none}
 .day details[open] summary{margin-bottom:2px}
 td.corp a.co{color:var(--text-strong);text-decoration:none} td.corp a.co:hover{color:var(--primary);text-decoration:underline}
@@ -921,6 +934,31 @@ td.corp a.co{color:var(--text-strong);text-decoration:none} td.corp a.co:hover{c
 
 HTML_JS = """
 (function(){
+  /* 편집: 표·제목·메모 텍스트를 직접 고치고, 이 브라우저에 저장 (같은 날 브리핑에만 적용) */
+  var bar=document.querySelector('.edit-bar'); if(!bar) return;
+  var key=bar.dataset.key, main=document.querySelector('main');
+  var tgl=document.getElementById('edit-toggle'), sv=document.getElementById('edit-save'),
+      rs=document.getElementById('edit-reset'), msg=document.getElementById('edit-msg');
+  var SEL='main h2, main td, main .note, main .kpi .l, main .kpi .s, main .step .l';
+  function store(){try{return window.localStorage}catch(e){return null}}
+  function say(t){msg.textContent=t; if(t) setTimeout(function(){msg.textContent=''},2500)}
+  try{var st=store(), saved=st&&st.getItem(key); if(saved){main.innerHTML=saved; rs.hidden=false; say('저장된 편집본을 불러왔습니다')}}catch(e){}
+  function setEdit(on){
+    document.body.classList.toggle('editing',on); tgl.setAttribute('aria-pressed',String(on));
+    tgl.textContent=on?'편집 끝내기':'편집'; sv.hidden=!on;
+    document.querySelectorAll(SEL).forEach(function(el){ if(on) el.setAttribute('contenteditable','true'); else el.removeAttribute('contenteditable'); });
+  }
+  tgl.addEventListener('click',function(){setEdit(tgl.getAttribute('aria-pressed')!=='true')});
+  main.addEventListener('click',function(ev){ if(document.body.classList.contains('editing')&&ev.target.closest('a')) ev.preventDefault(); });
+  sv.addEventListener('click',function(){
+    setEdit(false); var st=store();
+    try{ st.setItem(key,main.innerHTML); rs.hidden=false; say('이 브라우저에 저장했습니다'); }
+    catch(e){ say('이 환경에서는 저장할 수 없습니다. 파일 편집본(latest_edit.html)을 사용하세요'); }
+    setEdit(true);
+  });
+  rs.addEventListener('click',function(){ try{store().removeItem(key)}catch(e){} location.reload(); });
+})();
+(function(){
   var q=document.getElementById('q'), mode='all';
   var btns=document.querySelectorAll('.seg button');
   function apply(){
@@ -929,7 +967,7 @@ HTML_JS = """
       var n=0;
       sec.querySelectorAll('tbody tr').forEach(function(tr){
         var ok=(!t||tr.textContent.toLowerCase().indexOf(t)>=0)&&
-          (mode==='all'||(mode==='A'&&tr.classList.contains('hA'))||(mode==='B'&&tr.dataset.grp.indexOf('대기업')>=0)||(mode==='F'&&tr.dataset.grp.indexOf('외국계')>=0)||
+          (mode==='all'||(mode==='A'&&tr.classList.contains('hA'))||(mode==='B'&&tr.dataset.grp.indexOf('대기업')>=0)||(mode==='F'&&tr.dataset.grp.indexOf('외국계')>=0)||(mode==='K'&&tr.dataset.listed!=='')||
            (mode==='soon'&&tr.querySelector('td.dl.soon'))||(mode==='gen'&&tr.dataset.ind==='일반 산업')||
            (mode==='cert'&&tr.dataset.cert==='1')||(mode==='pref'&&tr.dataset.pref==='1'));
         tr.hidden=!ok; if(ok)n++;
@@ -950,7 +988,7 @@ def parse_stat(v):
     return {k.strip(): int(n) for k, n in re.findall(r"([^,\d]+?)\s(\d+)(?=,|$)", v or "")}
 
 
-def render_calendar(postings, today, months=2, show=3):
+def render_calendar(postings, today, months=2, show=5):
     """접수기한 달력: 오늘부터 2개월, 주 단위. 업체명을 누르면 공고로 이동."""
     e = html.escape
     end_m, end_y = today.month + months, today.year
@@ -985,8 +1023,14 @@ def render_calendar(postings, today, months=2, show=3):
         def ev(p):
             c = f"ev h{p.hilite}" + (" pp" if p.prefs and not p.hilite else "")
             tip = f"{p.company} · {p.title} · {p.deadline}"
+            grp = p.extra.get("groups", [])
+            tags = ('<i class="tg b" title="대기업 계열">대</i>' if "대기업 계열" in grp else "") + \
+                   ('<i class="tg f" title="외국계">외</i>' if "외국계" in grp else "")
+            if p.extra.get("listed"):
+                ab = {"코스피": "KS", "코스닥": "KQ"}.get(p.extra["listed"], p.extra["listed"])
+                tags += f'<i class="tg k" title="{e(p.extra["listed"])} 상장">{ab}</i>'
             return (f'<a class="{c}" href="{e(p.url)}" target="_blank" rel="noopener" title="{e(tip)}">'
-                    f'<span>{e(p.company or p.title)}</span></a>')
+                    f'<span>{e(p.company or p.title)}</span>{tags}</a>')
         body = "".join(ev(p) for p in items[:show])
         if len(items) > show:
             body += f'<details><summary>+{len(items) - show}건 더 보기</summary>{"".join(ev(p) for p in items[show:])}</details>'
@@ -1000,13 +1044,18 @@ def render_calendar(postings, today, months=2, show=3):
     return (f'<section class="card" id="calendar"><div class="cal-head"><h2>채용 달력<span class="n">{n}건</span></h2>'
             f'<span class="range">{today:%Y-%m-%d} ~ {end:%Y-%m-%d} 접수 마감 기준</span></div>'
             '<div class="cal-legend"><span class="la">데이터센터·하이테크·삼성·하이닉스</span><span class="lb">대기업 계열</span><span class="lf">외국계</span>'
-            '<span class="lp">외국어·NEBOSH·IOSH·CSP 우대</span><span>기타</span></div>'
+            '<span class="lp">외국어·NEBOSH·IOSH·CSP 우대</span><span>기타</span>'
+            '<em class="tgl"><i class="tg b">대</i> 대기업 계열 <i class="tg f">외</i> 외국계 '
+            '<i class="tg k">KS</i> 코스피 <i class="tg k">KQ</i> 코스닥</em></div>'
             f'<div class="cal">{wd}{"".join(cells)}</div></section>')
 
 
 def group_pills(p):
     cls = {"대기업 계열": "pb", "외국계": "pf"}
-    return "".join(f'<span class="pill {cls[g]}">{g}</span>' for g in p.extra.get("groups", []))
+    out = "".join(f'<span class="pill {cls[g]}">{g}</span>' for g in p.extra.get("groups", []))
+    if p.extra.get("listed"):
+        out += f'<span class="pill pk">{p.extra["listed"]} 상장</span>'
+    return out
 
 
 def rank_pill(p):
@@ -1038,6 +1087,8 @@ def render_html(postings, failures, now, stats):
     n_a = sum(p.hilite == "A" for p in postings)
     n_b = sum("대기업 계열" in p.extra.get("groups", []) for p in postings)
     n_f = sum("외국계" in p.extra.get("groups", []) for p in postings)
+    n_ks = sum(p.extra.get("listed") == "코스피" for p in postings)
+    n_kq = sum(p.extra.get("listed") == "코스닥" for p in postings)
     failed = {n for n, _ in failures}
     ok_sites = len(SOURCES) - len(failed)
 
@@ -1057,6 +1108,7 @@ def render_html(postings, failures, now, stats):
         kpi("데이터센터·하이테크·삼성·하이닉스", n_a, "집중 관심", "--error"),
         kpi("대기업 계열", n_b, "그룹 계열사", "--primary"),
         kpi("외국계", n_f, "외국계 기업", "--sky"),
+        kpi("코스피·코스닥 상장", n_ks + n_kq, f"코스피 {n_ks} · 코스닥 {n_kq}", "--text-strong"),
     ])
 
     # 막대 차트(단일 계열, primary 한 색)
@@ -1111,7 +1163,7 @@ def render_html(postings, failures, now, stats):
         i = sid.get(key, "other")
         nav.append((i, tag, len(rows)))
         trs = "".join(
-            f'<tr class="h{p.hilite}" data-ind="{e(p.industry)}" data-cert="{1 if p.certs else 0}" data-pref="{1 if p.prefs else 0}" data-grp="{e(" ".join(p.extra.get("groups", [])))}"><td class="lv">{e(p.level)}<small>{e(p.industry)}</small></td>'
+            f'<tr class="h{p.hilite}" data-ind="{e(p.industry)}" data-cert="{1 if p.certs else 0}" data-pref="{1 if p.prefs else 0}" data-grp="{e(" ".join(p.extra.get("groups", [])))}" data-listed="{e(p.extra.get("listed", ""))}"><td class="lv">{e(p.level)}<small>{e(p.industry)}</small></td>'
             f'<td class="corp"><strong><a class="co" href="{e(p.url)}" target="_blank" rel="noopener">{e(p.company or "-")}</a></strong>{pill[p.hilite]}{group_pills(p)}{rank_pill(p)}</td>'
             f"<td class=\"ttl\">{e(p.title)}{pref_pills(p)}</td><td>{cert_pills(p)}{e(p.qualification or '-')}</td><td>{e(p.preferred or '-')}</td>"
             f'<td class="dl{" soon" if id(p) in soon else ""}">{e(p.deadline)}</td>'
@@ -1155,7 +1207,13 @@ def render_html(postings, failures, now, stats):
 <style>{HTML_CSS}</style>
 <header class="top"><h1>안전관리자 채용 브리핑</h1>
   <span class="when">{now:%Y-%m-%d %H:%M} KST 수집</span>
-  <span class="pill {'ok' if not failed else 'keep'} chip">{ok_sites}/{len(SOURCES)} 사이트 수집</span></header>
+  <span class="pill {'ok' if not failed else 'keep'} chip">{ok_sites}/{len(SOURCES)} 사이트 수집</span>
+  <div class="edit-bar" data-key="brief-{now:%Y%m%d%H%M}">
+    <button type="button" id="edit-toggle" aria-pressed="false">편집</button>
+    <button type="button" id="edit-save" hidden>저장</button>
+    <button type="button" id="edit-reset" hidden>원래대로</button>
+    <span id="edit-msg" role="status"></span>
+  </div></header>
 <div class="shell">
 <nav class="side" aria-label="섹션">{side}</nav>
 <main>
@@ -1172,6 +1230,7 @@ def render_html(postings, failures, now, stats):
     <button type="button" data-mode="A" aria-pressed="false">데이터센터·하이테크·삼성·하이닉스</button>
     <button type="button" data-mode="B" aria-pressed="false">대기업 계열</button>
     <button type="button" data-mode="F" aria-pressed="false">외국계</button>
+    <button type="button" data-mode="K" aria-pressed="false">코스피·코스닥 상장</button>
     <button type="button" data-mode="gen" aria-pressed="false">일반 산업체</button>
     <button type="button" data-mode="cert" aria-pressed="false">산업·건설안전기사 명시</button>
     <button type="button" data-mode="pref" aria-pressed="false">외국어·NEBOSH·IOSH·CSP 우대</button>
@@ -1219,11 +1278,57 @@ def carry_over(prev_path, failed, kept, stats, today):
             continue
         p.extra["carried"] = p.extra.get("carried") or prev_day
         p.hilite = classify_company(p, p.detail_text)  # 지금 기준으로 강조 다시 판정
+        p.extra["listed"] = listed_market(p)
         kept.append(p)
         added[p.source] += 1
     for name, n in added.items():
         note = f"직전 브리핑에서 접수 중 공고 {n}건 유지"
         stats[name] = f"수집 실패 → {note}" if name in failed else f"{stats.get(name, '')}, {note}".lstrip(", ")
+
+
+# ---------------------------------------------------------------- 상장사 (KRX)
+KRX_MARKETS = [("코스피", "stockMkt"), ("코스닥", "kosdaqMkt")]
+LISTED: dict = {}  # 정규화 업체명 → '코스피' / '코스닥'
+
+
+def load_listed(f: Fetcher, cache: Path):
+    """한국거래소 KIND 상장법인 목록을 받아 LISTED를 채운다. 실패하면 직전 캐시를 쓴다."""
+    table, errors = {}, []
+    for market, code in KRX_MARKETS:
+        url = f"https://kind.krx.co.kr/corpgeneral/corpList.do?method=download&searchType=13&marketType={code}"
+        try:
+            s = BeautifulSoup(f.get(url, encoding="cp949"), "html.parser")
+            rows = s.find_all("tr")
+            head = [text_of(x) for x in rows[0].find_all(["th", "td"])] if rows else []
+            col = head.index("회사명") if "회사명" in head else 0
+            n = 0
+            for tr in rows[1:]:
+                tds = tr.find_all("td")
+                if len(tds) > col and text_of(tds[col]):
+                    table[norm_corp(text_of(tds[col]))] = market
+                    n += 1
+            if n < 100:
+                raise RuntimeError(f"{market} 목록이 {n}건뿐")
+        except Exception as e:
+            errors.append(f"{market}: {type(e).__name__}")
+    if table and not errors:
+        cache.parent.mkdir(parents=True, exist_ok=True)
+        cache.write_text(json.dumps(table, ensure_ascii=False), encoding="utf-8")
+    elif cache.exists():
+        table = {**json.loads(cache.read_text(encoding="utf-8")), **table}
+    LISTED.clear()
+    LISTED.update(table)
+    return errors
+
+
+def listed_market(p: Posting):
+    n = norm_corp(p.company)
+    if n in LISTED:
+        return LISTED[n]
+    m = re.search(r"기업구분[^()]{0,20}\((코스피|코스닥|유가증권|KOSPI|KOSDAQ)", p.detail_text or "")
+    if m:
+        return {"유가증권": "코스피", "KOSPI": "코스피", "KOSDAQ": "코스닥"}.get(m.group(1), m.group(1))
+    return ""
 
 
 # ---------------------------------------------------------------- main
@@ -1236,6 +1341,9 @@ def main():
     now = dt.datetime.now(KST)
     today = now.date()
     f = Fetcher()
+    krx_err = load_listed(f, Path(args.out) / "krx_listed.json")
+    if krx_err:
+        print(f"[krx] {krx_err} (캐시 {len(LISTED)}개사 사용)", file=sys.stderr)
     raw, failures, stats = [], [], {}
     for name, fn, _ in SOURCES:
         for attempt in (1, 2):
@@ -1300,7 +1408,13 @@ def main():
     md = render_md(kept, failures, now, stats)
     (out / f"{today:%Y-%m-%d}.md").write_text(md, encoding="utf-8")
     (out / "latest.md").write_text(md, encoding="utf-8")
-    (out / "latest.html").write_text(render_html(kept, failures, now, stats), encoding="utf-8")
+    page = render_html(kept, failures, now, stats)
+    (out / "latest.html").write_text(page, encoding="utf-8")
+    # 내려받아 편집기·브라우저에서 고칠 수 있는 완전한 HTML 문서
+    (out / "latest_edit.html").write_text(
+        '<!doctype html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n'
+        '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
+        + page.replace("</style>", "</style>\n</head>\n<body>", 1) + "\n</body>\n</html>\n", encoding="utf-8")
     for p in kept:
         p.detail_text = p.detail_text[:1500]
     (out / "latest.json").write_text(json.dumps(
