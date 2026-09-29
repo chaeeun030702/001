@@ -115,7 +115,7 @@ class Fetcher:
     def __init__(self):
         self.c = httpx.Client(headers=HEADERS, follow_redirects=True, timeout=40)
 
-    def get(self, url, encoding=None, tries=2):
+    def get(self, url, encoding=None, tries=3):
         last = None
         for i in range(tries):
             try:
@@ -124,9 +124,13 @@ class Fetcher:
                 if encoding:
                     return r.content.decode(encoding, errors="ignore")
                 return r.text
-            except Exception as e:  # 네트워크 일시 오류는 한 번 재시도
+            except httpx.HTTPStatusError as e:
+                if e.response.status_code < 500:  # 404 등은 재시도해도 같다
+                    raise
                 last = e
-                time.sleep(2 + i * 3)
+            except Exception as e:  # 타임아웃 등 일시 오류는 재시도
+                last = e
+            time.sleep(3 + i * 5)
         raise last
 
 
@@ -618,7 +622,7 @@ def render_md(postings, failures, now, stats):
         for p in rows:
             corp = BADGE[p.hilite] + (f"**{md_cell(p.company)}**" if p.hilite else md_cell(p.company))
             L.append(f"| {md_cell(p.level)} | {corp} | {md_cell(p.title)} | {md_cell(p.qualification)} "
-                     f"| {md_cell(p.preferred)} | {md_cell(p.deadline)} | [{p.source}]({p.url}) |")
+                     f"| {md_cell(p.preferred)} | {md_cell(p.deadline)} | [{p.source}]({p.url}){' (이전 수집)' if p.extra.get('carried') else ''} |")
         L.append("")
     L += ["---", "", "**사이트별 수집 현황**", ""]
     for name, st in stats.items():
@@ -647,7 +651,8 @@ def render_html(postings, failures, now, stats):
             f'<td class="corp"><strong>{e(p.company or "-")}</strong>{tag_label[p.hilite]}</td>'
             f"<td>{e(p.title)}</td><td>{e(p.qualification or '-')}</td><td>{e(p.preferred or '-')}</td>"
             f'<td class="dl{" soon" if p.url in soon else ""}">{e(p.deadline)}</td>'
-            f'<td><a href="{e(p.url)}" target="_blank" rel="noopener">{e(p.source)}</a></td></tr>'
+            f'<td><a href="{e(p.url)}" target="_blank" rel="noopener">{e(p.source)}</a>'
+            f'{"<br><small>이전 수집</small>" if p.extra.get("carried") else ""}</td></tr>'
             for p in rows)
         sections.append(
             f'<section id="{sid}"><h2>{e(tag)} <span class="n">{len(rows)}건</span></h2>'
@@ -726,6 +731,32 @@ a{{color:var(--accent)}}
 """
 
 
+def carry_over(prev_path, failed, kept, stats, today):
+    """수집에 실패한 사이트는 직전 브리핑의 아직 마감 안 된 공고를 유지한다."""
+    try:
+        prev = json.loads(prev_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return
+    for name in failed:
+        n = 0
+        for d in prev.get("postings", []):
+            if d.get("source") != name:
+                continue
+            p = Posting(**d)
+            if p.deadline_date and p.deadline_date < today.isoformat():
+                continue
+            first = p.extra.get("carried") or prev.get("generated_at", "")[:10]
+            if first and (today - dt.date.fromisoformat(first)).days > 3:  # 3일 넘게 못 가져오면 버린다
+                continue
+            if is_dup(p, kept):
+                continue
+            p.extra["carried"] = first
+            kept.append(p)
+            n += 1
+        if n:
+            stats[name] = f"수집 실패 → 직전 브리핑({prev.get('generated_at', '')[:10]})의 공고 {n}건 유지"
+
+
 # ---------------------------------------------------------------- main
 def main():
     ap = argparse.ArgumentParser()
@@ -738,12 +769,18 @@ def main():
     f = Fetcher()
     raw, failures, stats = [], [], {}
     for name, fn, _ in SOURCES:
-        try:
-            found = fn(f)
-            raw.append((name, found))
-        except Exception as e:  # 사이트 하나가 실패해도 나머지는 계속
-            failures.append((name, f"{type(e).__name__}: {e}"[:160]))
-            stats[name] = "수집 실패"
+        for attempt in (1, 2):
+            try:
+                raw.append((name, fn(f)))
+                break
+            except Exception as e:  # 사이트 하나가 실패해도 나머지는 계속
+                client_err = isinstance(e, httpx.HTTPStatusError) and e.response.status_code < 500
+                if attempt == 1 and not client_err:
+                    time.sleep(30)  # 사이트 단위로 한 번 더
+                    continue
+                failures.append((name, f"{type(e).__name__}: {e}".splitlines()[0][:160]))
+                stats[name] = "수집 실패"
+                break
 
     kept, n_detail = [], 0
     for name, found in raw:
@@ -786,6 +823,7 @@ def main():
 
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
+    carry_over(out / "latest.json", [n for n, _ in failures], kept, stats, today)
     md = render_md(kept, failures, now, stats)
     (out / f"{today:%Y-%m-%d}.md").write_text(md, encoding="utf-8")
     (out / "latest.md").write_text(md, encoding="utf-8")
