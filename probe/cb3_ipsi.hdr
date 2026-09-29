@@ -1,0 +1,10 @@
+HTTP/1.1 200 200
+Date: Tue, 29 Sep 2026 06:30:05 GMT
+Server: Apache
+Set-Cookie: JSESSIONID=99A4034A57B7FF33E12E9B86C7CA49B7; Path=/; Secure; HttpOnly
+Accept-Ranges: bytes
+ETag: W/"6146-1790130465267"
+Last-Modified: Wed, 23 Sep 2026 02:27:45 GMT
+Content-Length: 6146
+Content-Type: text/html;charset=utf-8
+
