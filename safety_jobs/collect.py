@@ -825,6 +825,12 @@ body{background:var(--canvas);color:var(--text);font:400 14px/1.55 var(--font);m
 .top h1{font-size:18px;font-weight:700;margin:0;color:var(--text-strong)}
 .top .when{font-size:12px;color:var(--caption);font-variant-numeric:tabular-nums}
 .top .chip{margin-left:auto}
+.edit-bar{display:flex;align-items:center;gap:6px}
+.edit-bar button{height:32px;padding:0 12px;border:1px solid var(--border-strong);border-radius:var(--r-sm);background:var(--surface);color:var(--text-sub);font:600 13px var(--font);cursor:pointer}
+.edit-bar button:hover{background:var(--alt1)} .edit-bar button[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:#FFFFFF}
+.edit-bar #edit-msg{font-size:12px;color:var(--caption)}
+body.editing main [contenteditable="true"]{outline:1px dashed var(--border-strong);outline-offset:2px;cursor:text}
+body.editing main [contenteditable="true"]:focus{outline:2px solid var(--primary)}
 .shell{display:grid;grid-template-columns:220px minmax(0,1fr);min-height:100%}
 .side{background:var(--bg-page);border-right:1px solid var(--border);padding:12px 0;position:sticky;top:57px;align-self:start;height:calc(100vh - 57px);overflow:auto}
 .side .sec{font-size:12px;font-weight:600;color:var(--caption);padding:12px 20px 4px;letter-spacing:.02em}
@@ -927,6 +933,31 @@ td.corp a.co{color:var(--text-strong);text-decoration:none} td.corp a.co:hover{c
 """
 
 HTML_JS = """
+(function(){
+  /* 편집: 표·제목·메모 텍스트를 직접 고치고, 이 브라우저에 저장 (같은 날 브리핑에만 적용) */
+  var bar=document.querySelector('.edit-bar'); if(!bar) return;
+  var key=bar.dataset.key, main=document.querySelector('main');
+  var tgl=document.getElementById('edit-toggle'), sv=document.getElementById('edit-save'),
+      rs=document.getElementById('edit-reset'), msg=document.getElementById('edit-msg');
+  var SEL='main h2, main td, main .note, main .kpi .l, main .kpi .s, main .step .l';
+  function store(){try{return window.localStorage}catch(e){return null}}
+  function say(t){msg.textContent=t; if(t) setTimeout(function(){msg.textContent=''},2500)}
+  try{var st=store(), saved=st&&st.getItem(key); if(saved){main.innerHTML=saved; rs.hidden=false; say('저장된 편집본을 불러왔습니다')}}catch(e){}
+  function setEdit(on){
+    document.body.classList.toggle('editing',on); tgl.setAttribute('aria-pressed',String(on));
+    tgl.textContent=on?'편집 끝내기':'편집'; sv.hidden=!on;
+    document.querySelectorAll(SEL).forEach(function(el){ if(on) el.setAttribute('contenteditable','true'); else el.removeAttribute('contenteditable'); });
+  }
+  tgl.addEventListener('click',function(){setEdit(tgl.getAttribute('aria-pressed')!=='true')});
+  main.addEventListener('click',function(ev){ if(document.body.classList.contains('editing')&&ev.target.closest('a')) ev.preventDefault(); });
+  sv.addEventListener('click',function(){
+    setEdit(false); var st=store();
+    try{ st.setItem(key,main.innerHTML); rs.hidden=false; say('이 브라우저에 저장했습니다'); }
+    catch(e){ say('이 환경에서는 저장할 수 없습니다. 파일 편집본(latest_edit.html)을 사용하세요'); }
+    setEdit(true);
+  });
+  rs.addEventListener('click',function(){ try{store().removeItem(key)}catch(e){} location.reload(); });
+})();
 (function(){
   var q=document.getElementById('q'), mode='all';
   var btns=document.querySelectorAll('.seg button');
@@ -1176,7 +1207,13 @@ def render_html(postings, failures, now, stats):
 <style>{HTML_CSS}</style>
 <header class="top"><h1>안전관리자 채용 브리핑</h1>
   <span class="when">{now:%Y-%m-%d %H:%M} KST 수집</span>
-  <span class="pill {'ok' if not failed else 'keep'} chip">{ok_sites}/{len(SOURCES)} 사이트 수집</span></header>
+  <span class="pill {'ok' if not failed else 'keep'} chip">{ok_sites}/{len(SOURCES)} 사이트 수집</span>
+  <div class="edit-bar" data-key="brief-{now:%Y%m%d%H%M}">
+    <button type="button" id="edit-toggle" aria-pressed="false">편집</button>
+    <button type="button" id="edit-save" hidden>저장</button>
+    <button type="button" id="edit-reset" hidden>원래대로</button>
+    <span id="edit-msg" role="status"></span>
+  </div></header>
 <div class="shell">
 <nav class="side" aria-label="섹션">{side}</nav>
 <main>
@@ -1371,7 +1408,13 @@ def main():
     md = render_md(kept, failures, now, stats)
     (out / f"{today:%Y-%m-%d}.md").write_text(md, encoding="utf-8")
     (out / "latest.md").write_text(md, encoding="utf-8")
-    (out / "latest.html").write_text(render_html(kept, failures, now, stats), encoding="utf-8")
+    page = render_html(kept, failures, now, stats)
+    (out / "latest.html").write_text(page, encoding="utf-8")
+    # 내려받아 편집기·브라우저에서 고칠 수 있는 완전한 HTML 문서
+    (out / "latest_edit.html").write_text(
+        '<!doctype html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n'
+        '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
+        + page.replace("</style>", "</style>\n</head>\n<body>", 1) + "\n</body>\n</html>\n", encoding="utf-8")
     for p in kept:
         p.detail_text = p.detail_text[:1500]
     (out / "latest.json").write_text(json.dumps(
