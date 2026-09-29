@@ -1,0 +1,23 @@
+# 임시: 신규 채용 사이트 응답 구조 확인 (확인 후 삭제)
+name: probe-sites
+on:
+  push:
+    branches: [claude/safety-manager-job-openings-ab59yi]
+    paths: [probe/probe2.py, .github/workflows/probe.yml]
+permissions:
+  contents: write
+concurrency:
+  group: probe-${{ github.ref }}
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv run --with httpx python probe/probe2.py
+      - run: |
+          git config user.name github-actions
+          git config user.email github-actions@users.noreply.github.com
+          git add probe
+          git commit -q -m "probe: new sites snapshots"
+          for i in 1 2 3; do git pull -q --rebase -X theirs && git push -q && break; sleep 5; done

@@ -1056,7 +1056,7 @@ def calendar_eligible(p):
     return bool(SEMI_DC_RE.search(f"{p.company} {p.title} {p.listing_text} {p.extra.get('sector', '')} {(p.detail_text or '')[:4000]}"))
 
 
-CONTRACT_TOP_RANK = 20  # 계약직 건설사는 시공능력평가(도급순위) 20위 이내도 인정
+CONTRACT_TOP_RANK = 15  # 계약직 건설사는 시공능력평가(도급순위) 15위 이내도 인정
 
 
 def contract_ok(p):
