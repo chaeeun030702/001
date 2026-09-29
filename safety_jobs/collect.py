@@ -35,7 +35,7 @@ from bs4 import BeautifulSoup
 KST = dt.timezone(dt.timedelta(hours=9))
 Q = quote("안전관리자")
 # 검색어: 안전관리자 + 업종 무관 HSE/EHS 직무 + 자격증 명시 공고
-KEYWORDS = ["안전관리자", "HSE", "EHS", "안전보건", "산업안전기사", "건설안전기사", "NEBOSH", "IOSH"]
+KEYWORDS = ["안전관리자", "HSE", "EHS", "안전보건", "산업안전기사", "건설안전기사", "NEBOSH", "IOSH", "ISO45001", "안전공학"]
 # 우대 강조(보라색): 외국어·영어 능통 / NEBOSH / IOSH / CSP
 LANG_RE = re.compile(r"(?:영어|외국어|어학|English|중국어|일본어|베트남어|스페인어)\s*(?:회화\s*)?(?:능통|능숙|우수|가능|원활|비즈니스|원어민|fluent|business)"
                      r"|(?:TOEIC|토익|OPIc|오픽|TEPS|텝스|TOEIC\s*Speaking|토익\s*스피킹)\s*[:：]?\s*(?:\d{2,3}|IM|IH|AL|Lv|Level)"
@@ -46,6 +46,9 @@ HSE_ROLE_RE = re.compile(r"(?<![A-Za-z])(?:HSE|EHS|EH&S|SHE|HSEQ|QHSE)(?![A-Za-z
                          r"Engineer|Specialist|Manager|Analyst|Officer|Coordinator|Supervisor|Leader|Assistant|Staff)", re.I)
 CSP_RE = re.compile(r"(?<![A-Za-z])CSP(?![A-Za-z])|Certified\s+Safety\s+Professional", re.I)
 CERT_KEY_RE = re.compile(r"(산업|건설)안전(?:산업)?기사")
+ISO45001_RE = re.compile(r"ISO\s*[-_]?\s*45001|KOSHA[-\s]*MS", re.I)
+# 공고 본문에 이 중 하나라도 있으면 안전 직무 공고로 싣는다
+INCLUDE_RE = re.compile(r"산업안전(?:산업)?기사|안전\s*관리|ISO\s*[-_]?\s*45001|안전\s*공학", re.I)
 HSE_RE = re.compile(r"(?<![A-Za-z])(?:HSE|EHS|SHE|HSEQ|QHSE)(?![A-Za-z])|환경\s*안전|안전\s*환경|안전\s*보건|안전\s*관리")
 # 업체명으로 건설사 여부 판단 (제목의 '현장' 등은 공장 현장과 헷갈리므로 쓰지 않음)
 CONSTR_NAME_RE = re.compile(r"건설|건축|토건|토목|이앤씨|이엔씨|E&C|ENC|씨엠|(?<![A-Za-z])CM(?![A-Za-z])|종합개발|주택|건영|중공업\s*건설부문|건설부문")
@@ -650,6 +653,8 @@ def analyze(p: Posting, today):
     p.hilite = classify_company(p, text)
     p.extra["listed"] = listed_market(p)
     p.certs = sorted({f"{m.group(1)}안전기사" for m in CERT_KEY_RE.finditer(f"{p.title} {p.listing_text} {text}")})
+    if ISO45001_RE.search(f"{p.title} {text}"):
+        p.certs.append("ISO 45001")
     blob = f"{p.title} {p.listing_text} {text}"
     p.prefs = [lab for lab, rx in (("외국어·영어", LANG_RE), ("NEBOSH", NEBOSH_RE), ("IOSH", IOSH_RE), ("CSP", CSP_RE)) if rx.search(blob)]
     rank = top100_rank(p.company)
@@ -673,7 +678,7 @@ def relevant(p: Posting):
         return True
     if re.search(r"공채|공개\s*채용|신입\s*(사원|직원)", p.title) and SAFETY_RE.search(tags):
         return True
-    if p.extra.get("query") in ("HSE", "EHS", "안전보건", "산업안전기사", "건설안전기사", "NEBOSH", "IOSH"):
+    if p.extra.get("query"):  # 검색어로 걸렸지만 제목만으로는 모를 때 → 상세 본문 확인
         return None
     return False
 
@@ -683,7 +688,7 @@ def relevant_after_detail(p: Posting) -> bool:
     if r is not None:
         return r
     t = p.detail_text[:12000]
-    if CERT_KEY_RE.search(t) or NEBOSH_RE.search(t) or IOSH_RE.search(t):
+    if CERT_KEY_RE.search(t) or NEBOSH_RE.search(t) or IOSH_RE.search(t) or INCLUDE_RE.search(t):
         return True
     # HSE/EHS는 직무·팀 이름으로 쓰였을 때만 (단순 'EHS 규정 준수' 같은 언급은 제외)
     return bool(HSE_ROLE_RE.search(t))
@@ -762,7 +767,7 @@ def render_md(postings, failures, now, stats):
     n_cert = sum(bool(p.certs) for p in postings)
     n_pref = sum(bool(p.prefs) for p in postings)
     L.append(f"신입·경력무관·인턴 공고 **{len(postings)}건** (경력직·마감 제외, 중복은 상위 사이트 우선) · "
-             f"일반 산업체 {n_gen}건 · 건설 {len(postings) - n_gen}건 · 산업/건설안전기사 명시 {n_cert}건 · "
+             f"일반 산업체 {n_gen}건 · 건설 {len(postings) - n_gen}건 · 산업/건설안전기사·ISO 45001 명시 {n_cert}건 · "
              f"🟣 외국어·NEBOSH·IOSH·CSP 우대 {n_pref}건")
     L += ["", "건설사는 2026년 시공능력평가 상위 100개사(토목건축)만 싣습니다."]
     L += ["", f"범례: {LEGEND}", ""]
@@ -1102,7 +1107,7 @@ def render_html(postings, failures, now, stats):
         kpi("정규직", by.get("정규직", 0), f"{by.get('정규직', 0) * 100 // max(len(postings), 1)}%"),
         kpi("계약직", by.get("계약직", 0), f"{by.get('계약직', 0) * 100 // max(len(postings), 1)}%"),
         kpi("일반 산업체", sum(p.industry == "일반 산업" for p in postings), "건설 외 제조·서비스 등"),
-        kpi("산업·건설안전기사 명시", sum(bool(p.certs) for p in postings), "공고에 자격증 기재"),
+        kpi("산업·건설안전기사·ISO 45001 명시", sum(bool(p.certs) for p in postings), "공고에 자격·인증 기재"),
         kpi("외국어·NEBOSH·IOSH·CSP 우대", sum(bool(p.prefs) for p in postings), "우대 조건 기재", "--purple"),
         kpi("3일 내 마감", len(soon), "접수 서두름", "--error"),
         kpi("데이터센터·하이테크·삼성·하이닉스", n_a, "집중 관심", "--error"),
@@ -1129,7 +1134,8 @@ def render_html(postings, failures, now, stats):
     ind_items = [("일반 산업", sum(p.industry == "일반 산업" for p in postings)),
                  ("건설", sum(p.industry == "건설" for p in postings)),
                  ("산업안전기사 명시", sum("산업안전기사" in p.certs for p in postings)),
-                 ("건설안전기사 명시", sum("건설안전기사" in p.certs for p in postings))]
+                 ("건설안전기사 명시", sum("건설안전기사" in p.certs for p in postings)),
+                 ("ISO 45001 명시", sum("ISO 45001" in p.certs for p in postings))]
     charts = (
         f'<div class="card"><h2>사이트별 채택 공고</h2>{bars(src_items)}</div>'
         f'<div class="card"><h2>접수기한까지 남은 기간</h2>'
@@ -1232,7 +1238,7 @@ def render_html(postings, failures, now, stats):
     <button type="button" data-mode="F" aria-pressed="false">외국계</button>
     <button type="button" data-mode="K" aria-pressed="false">코스피·코스닥 상장</button>
     <button type="button" data-mode="gen" aria-pressed="false">일반 산업체</button>
-    <button type="button" data-mode="cert" aria-pressed="false">산업·건설안전기사 명시</button>
+    <button type="button" data-mode="cert" aria-pressed="false">산업·건설안전기사·ISO 45001 명시</button>
     <button type="button" data-mode="pref" aria-pressed="false">외국어·NEBOSH·IOSH·CSP 우대</button>
     <button type="button" data-mode="soon" aria-pressed="false">3일 내 마감</button>
   </div></div>
