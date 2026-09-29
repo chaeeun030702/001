@@ -49,7 +49,7 @@ HILITE_A_RE = re.compile(r"데이터\s*센터|IDC|하이테크|삼성|하이닉�
 BIG_GROUPS = (
     "삼성 SK 현대 HD현대 LG 롯데 포스코 POSCO 한화 GS 신세계 이마트 CJ 한진 대한항공 KT 두산 LS "
     "DL 대림 HDC 효성 코오롱 OCI KCC 한국타이어 고려아연 영풍 아모레 카카오 네이버 NAVER 쿠팡 "
-    "대우건설 삼우 금호 태영 호반 부영 중흥 하림 HMM 셀트리온 미래에셋 농협 NH 한국전력 한전 "
+    "대우건설 금호 태영 호반 부영 중흥 하림 HMM 셀트리온 미래에셋 농협 NH 한국전력 한전 "
     "한국수력원자력 한수원 한국가스공사 에코프로 SGC 동국제강 세아 한솔 대상 오리온 농심 "
     "KCC 현대건설 현대엔지니어링 GS건설 DL이앤씨 롯데건설 SK에코플랜트 포스코이앤씨 삼성물산"
 ).split()
@@ -631,42 +631,99 @@ def render_md(postings, failures, now, stats):
 
 def render_html(postings, failures, now, stats):
     e = html.escape
-    parts = []
+    today = now.date()
+    soon = {p.url for p in postings if p.deadline_date and (dt.date.fromisoformat(p.deadline_date) - today).days <= 3}
+    tag_label = {"A": '<span class="pill pa">데이터센터·하이테크·삼성·하이닉스</span>',
+                 "B": '<span class="pill pb">대기업·외국계</span>', "": ""}
+    sections, nav = [], []
     for key, tag in GROUPS:
         rows = sorted([p for p in postings if p.employment == key], key=sort_key)
         if not rows:
             continue
+        sid = {"정규직": "regular", "계약직": "contract", "인턴": "intern"}.get(key, "other")
+        nav.append(f'<a href="#{sid}">{e(tag)} <b>{len(rows)}</b></a>')
         trs = "".join(
-            f'<tr class="h{p.hilite}"><td>{e(p.level)}</td><td class="corp">{BADGE[p.hilite]}{e(p.company or "-")}</td>'
+            f'<tr class="h{p.hilite}"><td class="lv">{e(p.level)}</td>'
+            f'<td class="corp"><strong>{e(p.company or "-")}</strong>{tag_label[p.hilite]}</td>'
             f"<td>{e(p.title)}</td><td>{e(p.qualification or '-')}</td><td>{e(p.preferred or '-')}</td>"
-            f'<td class="dl">{e(p.deadline)}</td><td><a href="{e(p.url)}" target="_blank" rel="noopener">{e(p.source)}</a></td></tr>'
+            f'<td class="dl{" soon" if p.url in soon else ""}">{e(p.deadline)}</td>'
+            f'<td><a href="{e(p.url)}" target="_blank" rel="noopener">{e(p.source)}</a></td></tr>'
             for p in rows)
-        parts.append(f"<h2>{e(tag)} <span>{len(rows)}건</span></h2><div class=\"wrap\"><table><thead><tr>"
-                     "<th>구분</th><th>업체명</th><th>공고명</th><th>지원 자격</th><th>우대 사항</th><th>접수기한</th><th>출처</th>"
-                     f"</tr></thead><tbody>{trs}</tbody></table></div>")
-    st = "".join(f"<li>{e(n)}: {e(s)}</li>" for n, s in stats.items())
-    fl = "".join(f"<li>{e(n)}: {e(x)}</li>" for n, x in failures)
-    return f"""<!doctype html><html lang="ko"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1"><title>안전관리자 채용 브리핑</title>
+        sections.append(
+            f'<section id="{sid}"><h2>{e(tag)} <span class="n">{len(rows)}건</span></h2>'
+            '<div class="scroll"><table><thead><tr><th>구분</th><th>업체명</th><th>공고명</th>'
+            "<th>지원 자격 (학과·자격·영어·학력)</th><th>우대 사항</th><th>접수기한</th><th>출처</th></tr></thead>"
+            f"<tbody>{trs}</tbody></table></div></section>")
+    n_a = sum(p.hilite == "A" for p in postings)
+    n_b = sum(p.hilite == "B" for p in postings)
+    st = "".join(f"<li><b>{e(n)}</b> {e(v)}</li>" for n, v in stats.items())
+    fl = "".join(f"<li><b>{e(n)}</b> {e(x.splitlines()[0])}</li>" for n, x in failures)
+    return f"""<title>안전관리자 채용 브리핑</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap">
 <style>
-:root{{--bg:#fff;--ink:#1c2530;--muted:#66707a;--line:#e3e6ea;--a:#fde8e8;--a-ink:#b42318;--b:#e6f0fd;--b-ink:#1d4ed8}}
-@media (prefers-color-scheme:dark){{:root{{--bg:#14181d;--ink:#e6e9ec;--muted:#9aa4ae;--line:#2a3139;--a:#3a1d1d;--a-ink:#ff8a80;--b:#172a44;--b-ink:#8ab4ff}}}}
-body{{margin:0;padding:16px;background:var(--bg);color:var(--ink);font:14px/1.5 system-ui,-apple-system,"Noto Sans KR",sans-serif}}
-h1{{font-size:20px;margin:0 0 4px}} h2{{font-size:16px;margin:24px 0 8px}} h2 span{{color:var(--muted);font-weight:500}}
-.legend span{{display:inline-block;padding:2px 8px;border-radius:4px;margin-right:6px}}
-.wrap{{overflow-x:auto}} table{{border-collapse:collapse;width:100%;min-width:900px}}
-th,td{{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}}
-th{{font-size:12px;color:var(--muted)}} tr.hA{{background:var(--a)}} tr.hA .corp{{color:var(--a-ink);font-weight:700}}
-tr.hB{{background:var(--b)}} tr.hB .corp{{color:var(--b-ink);font-weight:700}} .dl{{white-space:nowrap}}
-a{{color:var(--b-ink)}} .note{{color:var(--muted);font-size:12px}}
-</style></head><body>
-<h1>안전관리자 채용 브리핑 — {now:%Y-%m-%d %H:%M} KST</h1>
-<p>신입·경력무관·인턴 공고 <b>{len(postings)}건</b> (경력직·마감 제외, 중복은 상위 사이트 우선)</p>
-<p class="legend"><span style="background:var(--a);color:var(--a-ink)">🔴 데이터센터·하이테크·삼성·하이닉스</span><span style="background:var(--b);color:var(--b-ink)">🔵 대기업군·외국계</span></p>
-{''.join(parts)}
-<h2>사이트별 수집 현황</h2><ul>{st}</ul>{f'<h2>수집 실패</h2><ul>{fl}</ul>' if fl else ''}
-<p class="note">지원 자격·우대 사항은 상세 페이지에서 자동 추출한 요약입니다. 지원 전 원문을 확인하세요.</p>
-</body></html>"""
+/* 레이아웃: 상단 요약 스트립 → 고용형태별 표. 행 배경색으로 강조 두 종류를 구분 */
+:root{{
+  --bg:#f6f7f5; --surface:#ffffff; --fg:#1d2521; --muted:#5f6b65; --line:#dfe4e0;
+  --accent:#1f6f54;            /* 안전 녹색: 링크·요약 수치 */
+  --a-bg:#fdeceb; --a-fg:#a3261c; --b-bg:#e8effc; --b-fg:#1f4fa8; --warn:#b3541e;
+  --sans:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}}
+@media (prefers-color-scheme: dark){{:root:not([data-theme="light"]){{
+  --bg:#121614; --surface:#1a201d; --fg:#e4e9e6; --muted:#9aa6a0; --line:#2c3531;
+  --accent:#5cc49a; --a-bg:#3a1f1c; --a-fg:#ff9c90; --b-bg:#1b2a44; --b-fg:#9dbdff; --warn:#f0a070; color-scheme:dark}}}}
+:root[data-theme="dark"]{{
+  --bg:#121614; --surface:#1a201d; --fg:#e4e9e6; --muted:#9aa6a0; --line:#2c3531;
+  --accent:#5cc49a; --a-bg:#3a1f1c; --a-fg:#ff9c90; --b-bg:#1b2a44; --b-fg:#9dbdff; --warn:#f0a070; color-scheme:dark}}
+body{{background:var(--bg);color:var(--fg);font:14px/1.55 var(--sans);padding:24px 16px 48px}}
+main{{max-width:1280px;margin:0 auto;display:grid;gap:20px}}
+header{{display:grid;gap:6px}}
+.eyebrow{{font-size:12px;letter-spacing:.08em;color:var(--muted);font-family:var(--mono)}}
+h1{{font-size:clamp(22px,4vw,30px);line-height:1.2;margin:0;text-wrap:balance}}
+.lede{{margin:0;color:var(--muted);max-width:65ch}}
+.strip{{display:flex;flex-wrap:wrap;gap:8px}}
+.strip a,.strip span{{display:inline-flex;gap:6px;align-items:center;padding:6px 10px;border:1px solid var(--line);
+  border-radius:6px;background:var(--surface);color:var(--fg);text-decoration:none;font-size:13px}}
+.strip b{{font-variant-numeric:tabular-nums;color:var(--accent)}}
+.strip .ka{{background:var(--a-bg);color:var(--a-fg);border-color:transparent}}
+.strip .kb{{background:var(--b-bg);color:var(--b-fg);border-color:transparent}}
+.strip a:focus-visible{{outline:2px solid var(--accent);outline-offset:2px}}
+section{{display:grid;gap:8px;min-width:0}}
+h2{{font-size:17px;margin:8px 0 0}} h2 .n{{color:var(--muted);font-weight:500;font-size:14px}}
+.scroll{{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:6px}}
+table{{border-collapse:collapse;width:100%;min-width:980px}}
+th,td{{padding:8px 10px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}}
+th{{font-size:12px;font-weight:500;color:var(--muted);white-space:nowrap;position:sticky;top:0;background:var(--surface)}}
+tbody tr:last-child td{{border-bottom:0}}
+td.lv{{white-space:nowrap;color:var(--muted)}} td.corp{{min-width:140px}} td.corp strong{{display:block}}
+td.dl{{white-space:nowrap;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13px}}
+td.dl.soon{{color:var(--warn);font-weight:500}}
+tr.hA{{background:var(--a-bg)}} tr.hA td.corp strong{{color:var(--a-fg)}}
+tr.hB{{background:var(--b-bg)}} tr.hB td.corp strong{{color:var(--b-fg)}}
+.pill{{display:inline-block;margin-top:4px;font-size:11px;padding:1px 6px;border-radius:4px;border:1px solid currentColor}}
+.pa{{color:var(--a-fg)}} .pb{{color:var(--b-fg)}}
+a{{color:var(--accent)}}
+.meta{{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));font-size:13px}}
+.meta ul{{margin:4px 0 0;padding-left:18px;color:var(--muted)}} .meta h3{{font-size:13px;margin:0}}
+.note{{color:var(--muted);font-size:12px;margin:0}}
+</style>
+<main>
+<header>
+  <div class="eyebrow">{now:%Y-%m-%d %H:%M} KST · 8개 사이트 수집</div>
+  <h1>안전관리자 채용 브리핑</h1>
+  <p class="lede">신입·경력무관·인턴 공고 {len(postings)}건입니다. 경력직 전용과 마감된 공고는 뺐고, 같은 공고는 우선순위가 높은 사이트 것만 남겼습니다. 접수기한 3일 이내는 주황색으로 표시합니다.</p>
+</header>
+<nav class="strip" aria-label="요약">{''.join(nav)}
+  <span class="ka">데이터센터·하이테크·삼성·하이닉스 <b>{n_a}</b></span>
+  <span class="kb">대기업·외국계 <b>{n_b}</b></span></nav>
+{''.join(sections)}
+<div class="meta"><div><h3>사이트별 수집 현황</h3><ul>{st}</ul></div>
+{f'<div><h3>수집 실패</h3><ul>{fl}</ul></div>' if fl else ''}</div>
+<p class="note">지원 자격·우대 사항은 상세 페이지에서 자동으로 뽑은 요약입니다. 지원 전에 원문을 확인하세요.</p>
+</main>
+"""
 
 
 # ---------------------------------------------------------------- main
