@@ -52,6 +52,8 @@ INCLUDE_RE = re.compile(r"산업안전(?:산업)?기사|ISO\s*[-_]?\s*45001|안�
 # '안전관리'는 흔한 말이라 직무로 쓰였거나 자격·우대·담당업무 항목에 있을 때만
 SAFETY_DUTY_RE = re.compile(r"안전\s*관리\s*(?:자|업무|담당|선임|병행|직|팀|계획|체계)|안전\s*관리\s*(?:및|/|·)")
 DUTY_HEAD = r"담당\s*업무|주요\s*업무|업무\s*내용|직무\s*내용|모집\s*분야"
+PREF_IN_TITLE_RE = re.compile(r"[\(\[【][^\)\]】]*우대[^\)\]】]*[\)\]】]|[^\s/,]*\s*우대")
+SALES_RE = re.compile(r"영업|세일즈|(?<![A-Za-z])Sales(?![A-Za-z])|판매\s*(?:사원|직|원)|텔레\s*마케|TM\s*상담", re.I)
 HSE_RE = re.compile(r"(?<![A-Za-z])(?:HSE|EHS|SHE|HSEQ|QHSE)(?![A-Za-z])|환경\s*안전|안전\s*환경|안전\s*보건|안전\s*관리")
 # 업체명으로 건설사 여부 판단 (제목의 '현장' 등은 공장 현장과 헷갈리므로 쓰지 않음)
 CONSTR_NAME_RE = re.compile(r"건설|건축|토건|토목|이앤씨|이엔씨|E&C|ENC|씨엠|(?<![A-Za-z])CM(?![A-Za-z])|종합개발|주택|건영|중공업\s*건설부문|건설부문")
@@ -683,9 +685,10 @@ def relevant(p: Posting):
     - HSE·EHS·자격증 검색어로 걸린 공고는 상세 본문에서 자격증/HSE 언급을 확인(None)
     """
     tags = p.extra.get("sector", "") if p.source == "사람인" else p.listing_text
-    if SAFETY_RE.search(p.title) or CERT_KEY_RE.search(f"{p.title} {tags}"):
+    title = PREF_IN_TITLE_RE.sub(" ", p.title)  # '(안전관리 경험 우대)' 같은 우대 표기는 직무가 아님
+    if SAFETY_RE.search(title) or CERT_KEY_RE.search(f"{p.title} {tags}"):
         return True
-    if re.search(r"공채|공개\s*채용|신입\s*(사원|직원)", p.title) and SAFETY_RE.search(tags):
+    if re.search(r"공채|공개\s*채용|신입\s*(사원|직원)", title) and SAFETY_RE.search(tags):
         return True
     if p.extra.get("query"):  # 검색어로 걸렸지만 제목만으로는 모를 때 → 상세 본문 확인
         return None
@@ -699,8 +702,12 @@ def relevant_after_detail(p: Posting) -> bool:
     t = p.detail_text[:12000]
     if CERT_KEY_RE.search(t) or NEBOSH_RE.search(t) or IOSH_RE.search(t) or INCLUDE_RE.search(t):
         return True
-    secs = " ".join(section(t, h, 400) for h in (QUAL_HEAD, PREF_HEAD, DUTY_HEAD))
-    if SAFETY_DUTY_RE.search(t) or re.search(r"안전\s*관리", secs):
+    # '안전관리'는 우대 항목에만 있으면 안전 직무로 보지 않는다
+    pref = section(t, PREF_HEAD, 400)
+    body = t.replace(pref, " ") if pref else t
+    body = re.sub(r"[^.\n]{0,40}안전\s*관리[^.\n]{0,30}우대", " ", body)
+    secs = " ".join(section(body, h, 400) for h in (QUAL_HEAD, DUTY_HEAD))
+    if SAFETY_DUTY_RE.search(body) or re.search(r"안전\s*관리", secs):
         return True
     # HSE/EHS는 직무·팀 이름으로 쓰였을 때만 (단순 'EHS 규정 준수' 같은 언급은 제외)
     return bool(HSE_ROLE_RE.search(t))
@@ -720,6 +727,8 @@ def keep(p: Posting, today) -> tuple[bool, str]:
             return False, "안전 직무 아님"
     elif not relevant_after_detail(p):
         return False, "안전 직무 아님"
+    if SALES_RE.search(p.title):
+        return False, "영업직"
     if p.industry == "건설" and not p.extra.get("top100"):
         return False, "건설사(시평 100위 밖)"
     if p.level == "경력":
@@ -1302,6 +1311,8 @@ def carry_over(prev_path, failed, kept, stats, today):
             if not first or (today - dt.date.fromisoformat(first)).days > UNDATED_KEEP_DAYS:
                 continue
         if p.industry == "건설" and not p.extra.get("top100"):
+            continue
+        if SALES_RE.search(p.title):  # 영업직 제외 규칙 재적용
             continue
         if any(q.url == p.url for q in kept) or is_dup(p, kept):
             continue
