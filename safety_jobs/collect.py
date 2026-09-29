@@ -726,7 +726,10 @@ def relevant_after_detail(p: Posting) -> bool:
     secs = " ".join(section(body, h, 400) for h in (QUAL_HEAD, DUTY_HEAD))
     if SAFETY_DUTY_RE.search(body) or re.search(r"안전\s*관리", secs):
         return True
-    # HSE/EHS는 직무·팀 이름으로 쓰였을 때만 (단순 'EHS 규정 준수' 같은 언급은 제외)
+    # HSE/EHS는 직무·팀 이름으로 쓰였을 때만 (단순 'EHS 규정 준수' 같은 언급은 제외).
+    # 타공종 모집 공고에서 회사 EHS팀이 언급된 것만으로는 살리지 않는다
+    if other_trade(p):
+        return False
     return bool(HSE_ROLE_RE.search(t))
 
 
