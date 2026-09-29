@@ -1218,6 +1218,7 @@ def carry_over(prev_path, failed, kept, stats, today):
         if any(q.url == p.url for q in kept) or is_dup(p, kept):
             continue
         p.extra["carried"] = p.extra.get("carried") or prev_day
+        p.hilite = classify_company(p, p.detail_text)  # 지금 기준으로 강조 다시 판정
         kept.append(p)
         added[p.source] += 1
     for name, n in added.items():
