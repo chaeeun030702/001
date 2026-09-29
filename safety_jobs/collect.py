@@ -41,6 +41,8 @@ LANG_RE = re.compile(r"(?:영어|외국어|어학|English|중국어|일본어|�
                      r"|(?:TOEIC|토익|OPIc|오픽|TEPS|텝스|TOEIC\s*Speaking|토익\s*스피킹)\s*[:：]?\s*(?:\d{2,3}|IM|IH|AL|Lv|Level)"
                      r"|(?:어학|영어)\s*(?:성적|점수)\s*(?:우대|보유|필수)", re.I)
 NEBOSH_RE = re.compile(r"NEBOSH", re.I)
+HSE_ROLE_RE = re.compile(r"(?<![A-Za-z])(?:HSE|EHS|EH&S|SHE|HSEQ|QHSE)(?![A-Za-z])\s*(?:팀|파트|그룹|부문|담당|직무|업무|관리|엔지니어|매니저|"
+                         r"Engineer|Specialist|Manager|Analyst|Officer|Coordinator|Supervisor|Leader|Assistant|Staff)", re.I)
 CSP_RE = re.compile(r"(?<![A-Za-z])CSP(?![A-Za-z])|Certified\s+Safety\s+Professional", re.I)
 CERT_KEY_RE = re.compile(r"(산업|건설)안전(?:산업)?기사")
 HSE_RE = re.compile(r"(?<![A-Za-z])(?:HSE|EHS|SHE|HSEQ|QHSE)(?![A-Za-z])|환경\s*안전|안전\s*환경|안전\s*보건|안전\s*관리")
@@ -52,7 +54,7 @@ HEADERS = {
     "Accept-Language": "ko-KR,ko;q=0.9",
 }
 
-SAFETY_RE = re.compile(r"안전|보건관리|(?<![A-Za-z])(?:HSE|EHS|SHE|HSEQ|QHSE)(?![A-Za-z])|산업위생|소방|방재")
+SAFETY_RE = re.compile(r"안전|보건관리|(?<![A-Za-z])(?:HSE|EHS|EH&S|SHE|HSEQ|QHSE)(?![A-Za-z])|산업위생|소방|방재")
 CAREER_ONLY_RE = re.compile(r"경력\s*\d+\s*년\s*(이상|↑)?|경력직|경력\s*사원|경력\s*채용|^경력$")
 NEWBIE_RE = re.compile(r"신입|인턴|경력\s*무관|졸업\s*예정|전체|무관")
 
@@ -596,7 +598,10 @@ def relevant_after_detail(p: Posting) -> bool:
     if r is not None:
         return r
     t = p.detail_text[:12000]
-    return bool(CERT_KEY_RE.search(t) or NEBOSH_RE.search(t) or re.search(r"(?<![A-Za-z])(?:HSE|EHS|SHE)(?![A-Za-z])", t))
+    if CERT_KEY_RE.search(t) or NEBOSH_RE.search(t):
+        return True
+    # HSE/EHS는 직무·팀 이름으로 쓰였을 때만 (단순 'EHS 규정 준수' 같은 언급은 제외)
+    return bool(HSE_ROLE_RE.search(t))
 
 
 def keep(p: Posting, today) -> tuple[bool, str]:
