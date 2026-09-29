@@ -1,9 +1,11 @@
 # 안전관리자 채용 일일 브리핑 — 8개 사이트 수집 후 briefings/ 에 커밋
-# 매일 17:30 KST 실행 → 18:00 KST Routine이 briefings/latest.* 를 읽어 브리핑 전달
+# 18:00 KST Routine이 briefings/latest.* 를 읽어 브리핑 전달.
+# GitHub 예약 실행은 지연·누락될 수 있어 17:07 / 17:27 KST 두 번 잡아 둔다(늦게 끝난 쪽이 최신).
 name: safety-jobs-briefing
 on:
   schedule:
-    - cron: "30 8 * * *" # 08:30 UTC = 17:30 KST (기본 브랜치에 있을 때만 동작)
+    - cron: "7 8 * * *"  # 17:07 KST
+    - cron: "27 8 * * *" # 17:27 KST
   workflow_dispatch:
   push:
     branches: [claude/safety-manager-job-openings-ab59yi]
@@ -11,12 +13,12 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: safety-jobs-briefing
+  group: safety-jobs-briefing-${{ github.ref }}
   cancel-in-progress: false
 jobs:
   collect:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
@@ -28,5 +30,11 @@ jobs:
           git config user.email github-actions@users.noreply.github.com
           git add briefings
           if git diff --cached --quiet; then echo "no changes"; exit 0; fi
-          git commit -m "briefing: $(TZ=Asia/Seoul date +%F)"
-          for i in 1 2 3; do git pull --rebase -q && git push && break; sleep 5; done
+          git commit -q -m "briefing: $(TZ=Asia/Seoul date +%F)"
+          # 다른 실행이 먼저 브리핑을 올렸으면 이번 수집 결과(최신)를 우선해 합친다
+          for i in 1 2 3 4; do
+            if git pull -q --rebase -X theirs && git push -q; then echo "pushed"; exit 0; fi
+            git rebase --abort 2>/dev/null || true
+            sleep $((i * 5))
+          done
+          echo "::error::briefing push failed"; exit 1
