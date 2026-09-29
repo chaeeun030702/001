@@ -677,6 +677,16 @@ def analyze(p: Posting, today):
                             or re.search(r"건설·건축|건설업|건축|토목|공사업", sector)) else "일반 산업"
 
 
+OTHER_TRADE_RE = re.compile(r"공무|시공|공사\s*관리|현장\s*소장|현장\s*대리인|품질|설계|전기|기계|설비|토목|건축|조경|감리|생산|용접|정비|"
+                            r"배관|도장|측량|구매|총무|사무|회계|인사|물류|운전|시설\s*관리|CAD", re.I)
+
+
+def other_trade(p: Posting) -> bool:
+    """안전이 아닌 공종·직무를 모집하는 공고인가 (제목 기준, 우대 표기는 제외하고 판단)."""
+    title = PREF_IN_TITLE_RE.sub(" ", p.title)
+    return bool(OTHER_TRADE_RE.search(title)) and not re.search(r"안전\s*(?:관리|보건|담당|팀|환경)|보건\s*관리|HSE|EHS|SHE", title, re.I)
+
+
 def relevant(p: Posting):
     """안전 직무 공고인가. True / False / None(상세 본문을 봐야 앎).
 
@@ -685,7 +695,12 @@ def relevant(p: Posting):
     - HSE·EHS·자격증 검색어로 걸린 공고는 상세 본문에서 자격증/HSE 언급을 확인(None)
     """
     tags = p.extra.get("sector", "") if p.source == "사람인" else p.listing_text
-    title = PREF_IN_TITLE_RE.sub(" ", p.title)  # '(안전관리 경험 우대)' 같은 우대 표기는 직무가 아님
+    # 제목의 '(안전관리 우대)' 같은 표기는 안전관리 우대가 명시된 것으로 보고 살린다
+    if any(re.search(r"안전\s*관리", m.group(0)) for m in PREF_IN_TITLE_RE.finditer(p.title)):
+        return True
+    title = PREF_IN_TITLE_RE.sub(" ", p.title)
+    if other_trade(p) and not re.search(r"안전|보건|HSE|EHS|EH&S|SHE", title, re.I):
+        return None if p.extra.get("query") else False  # 타공종 모집 → 본문의 우대 명시 여부로 판단
     if SAFETY_RE.search(title) or CERT_KEY_RE.search(f"{p.title} {tags}"):
         return True
     if re.search(r"공채|공개\s*채용|신입\s*(사원|직원)", title) and SAFETY_RE.search(tags):
@@ -702,10 +717,12 @@ def relevant_after_detail(p: Posting) -> bool:
     t = p.detail_text[:12000]
     if CERT_KEY_RE.search(t) or NEBOSH_RE.search(t) or IOSH_RE.search(t) or INCLUDE_RE.search(t):
         return True
-    # '안전관리'는 우대 항목에만 있으면 안전 직무로 보지 않는다
+    # '안전관리' 우대가 명시돼 있으면 살린다
     pref = section(t, PREF_HEAD, 400)
-    body = t.replace(pref, " ") if pref else t
-    body = re.sub(r"[^.\n]{0,40}안전\s*관리[^.\n]{0,30}우대", " ", body)
+    if re.search(r"안전\s*관리", pref) or re.search(r"안전\s*관리[^.\n]{0,30}우대", t):
+        return True
+    # 타공종을 모집하면서 '안전관리 경험/경력'만 요구하는 공고는 제외 (실제 안전관리 업무 병행은 인정)
+    body = re.sub(r"안전\s*관리[^.\n]{0,15}(?:경험|경력)", " ", t) if other_trade(p) else t
     secs = " ".join(section(body, h, 400) for h in (QUAL_HEAD, DUTY_HEAD))
     if SAFETY_DUTY_RE.search(body) or re.search(r"안전\s*관리", secs):
         return True
