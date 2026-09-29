@@ -139,7 +139,7 @@ EDU_RE = re.compile(r"(?:학력\s*[:：]?\s*)?(대졸\s*(?:\(4년\))?\s*(?:이�
 QUAL_HEAD = r"자격\s*요건|지원\s*자격|응시\s*자격|자격\s*조건|필수\s*(?:요건|사항)|공통\s*자격"
 PREF_HEAD = r"우대\s*(?:사항|조건|요건)|우대\s*[:：]"
 # 우대 조건에 AI 관련 역량이 있으면 강조(주황)
-AI_TERM = r"(?<![A-Za-z])AI(?![A-Za-z])|인공\s*지능|머신\s*러닝|딥\s*러닝|생성형|ChatGPT|(?<![A-Za-z])LLM(?![A-Za-z])|Machine\s*Learning"
+AI_TERM = r"(?<![A-Za-z])AI(?![A-Za-z])(?!\s*추천)|인공\s*지능|머신\s*러닝|딥\s*러닝|생성형|ChatGPT|(?<![A-Za-z])LLM(?![A-Za-z])|Machine\s*Learning"
 AI_NEAR_PREF_RE = re.compile(rf"(?:{AI_TERM})[^.\n]{{0,40}}우대|우대[^.\n]{{0,60}}(?:{AI_TERM})", re.I)
 AI_RE = re.compile(AI_TERM, re.I)
 STOP = r"이\s*기업과\s*나의|로그인\s*하고|적합도|TOP\s*궁금해요|스킬\s*핵심역량|핵심\s*역량|우대|근무\s*조건|근무\s*형태|근무지|근무\s*시간|전형|접수|복리|급여|제출\s*서류|유의\s*사항|기타\s*사항|채용\s*절차|모집\s*인원|기업\s*정보"
