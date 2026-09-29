@@ -53,6 +53,8 @@ INCLUDE_RE = re.compile(r"산업안전(?:산업)?기사|ISO\s*[-_]?\s*45001|안�
 SAFETY_DUTY_RE = re.compile(r"안전\s*관리\s*(?:자|업무|담당|선임|병행|직|팀|계획|체계)|안전\s*관리\s*(?:및|/|·)")
 DUTY_HEAD = r"담당\s*업무|주요\s*업무|업무\s*내용|직무\s*내용|모집\s*분야"
 PREF_IN_TITLE_RE = re.compile(r"[\(\[【][^\)\]】]*우대[^\)\]】]*[\)\]】]|[^\s/,]*\s*우대")
+NON_HSE_SAFETY_RE = re.compile(r"Drug\s*Safety|Pharmacovigilance|Patient\s*Safety|Food\s*Safety|Product\s*Safety|Clinical|"
+                               r"약물\s*감시|의약품\s*안전|식품\s*안전|안전성\s*(?:평가|정보)", re.I)
 WATCH_RE = re.compile(r"감시\s*단")  # 안전감시단 등 감시 인력 모집은 제외
 SALES_RE = re.compile(r"영업|세일즈|(?<![A-Za-z])Sales(?![A-Za-z])|판매\s*(?:사원|직|원)|텔레\s*마케|TM\s*상담", re.I)
 HSE_RE = re.compile(r"(?<![A-Za-z])(?:HSE|EHS|SHE|HSEQ|QHSE)(?![A-Za-z])|환경\s*안전|안전\s*환경|안전\s*보건|안전\s*관리")
@@ -110,7 +112,7 @@ HEADERS = {
     "Accept-Language": "ko-KR,ko;q=0.9",
 }
 
-SAFETY_RE = re.compile(r"안전|보건관리|(?<![A-Za-z])(?:HSE|EHS|EH&S|SHE|HSEQ|QHSE)(?![A-Za-z])|산업위생|소방|방재")
+SAFETY_RE = re.compile(r"안전|보건관리|(?<![A-Za-z])(?:HSE|EHS|EH&S|SHE|HSEQ|QHSE|HSSE|[Ss]afety|SAFETY)(?![A-Za-z])|산업위생|Industrial\s*Hygien|소방|방재")
 CAREER_ONLY_RE = re.compile(r"경력\s*\d+\s*년\s*(이상|↑)?|경력직|경력\s*사원|경력\s*채용|^경력$")
 NEWBIE_RE = re.compile(r"신입|인턴|경력\s*무관|졸업\s*예정|전체|무관")
 
@@ -142,13 +144,13 @@ ENG_RE = re.compile(r"(?:TOEIC\s*Speaking|TOEIC|토익\s*스피킹|토익|OPIc|�
 MAJOR_RE = re.compile(r"(?:산업|건설|화학|화공|기계|전기|전자|환경|소방|방재|토목|건축|안전|보건|원자력|재료|신소재|산업보건|간호)[가-힣·/]{0,6}(?:공학|학과|학|계열|전공)")
 EDU_RE = re.compile(r"(?:학력\s*[:：]?\s*)?(대졸\s*(?:\(4년\))?\s*(?:이상|↑)?|초대졸\s*(?:이상|↑)?|고졸\s*(?:이상|↑)?|학력\s*무관|4년제[^,\n]{0,10}|석사[^,\n]{0,6})")
 
-QUAL_HEAD = r"자격\s*요건|지원\s*자격|응시\s*자격|자격\s*조건|필수\s*(?:요건|사항)|공통\s*자격"
-PREF_HEAD = r"우대\s*(?:사항|조건|요건)|우대\s*[:：]"
+QUAL_HEAD = r"자격\s*요건|지원\s*자격|응시\s*자격|자격\s*조건|필수\s*(?:요건|사항)|공통\s*자격|Qualifications|Requirements|What\s+you\s+(?:need|bring)|Who\s+you\s+are"
+PREF_HEAD = r"우대\s*(?:사항|조건|요건)|우대\s*[:：]|Preferred\s+(?:Qualifications|Skills|Experience)|Nice\s+to\s+have|Desired\s+(?:Qualifications|Skills)"
 # 우대 조건에 AI 관련 역량이 있으면 강조(주황)
 AI_TERM = r"(?<![A-Za-z])AI(?![A-Za-z])(?!\s*추천)|인공\s*지능|머신\s*러닝|딥\s*러닝|생성형|ChatGPT|(?<![A-Za-z])LLM(?![A-Za-z])|Machine\s*Learning"
 AI_NEAR_PREF_RE = re.compile(rf"(?:{AI_TERM})[^.\n]{{0,40}}우대|우대[^.\n]{{0,60}}(?:{AI_TERM})", re.I)
 AI_RE = re.compile(AI_TERM, re.I)
-STOP = r"이\s*기업과\s*나의|로그인\s*하고|적합도|TOP\s*궁금해요|스킬\s*핵심역량|핵심\s*역량|우대|근무\s*조건|근무\s*형태|근무지|근무\s*시간|전형|접수|복리|급여|제출\s*서류|유의\s*사항|기타\s*사항|채용\s*절차|모집\s*인원|기업\s*정보"
+STOP = r"Preferred\s+Qualifications|Nice\s+to\s+have|Benefits|What\s+we\s+offer|이\s*기업과\s*나의|로그인\s*하고|적합도|TOP\s*궁금해요|스킬\s*핵심역량|핵심\s*역량|우대|근무\s*조건|근무\s*형태|근무지|근무\s*시간|전형|접수|복리|급여|제출\s*서류|유의\s*사항|기타\s*사항|채용\s*절차|모집\s*인원|기업\s*정보"
 
 
 @dataclass
@@ -431,6 +433,240 @@ def _inu(a):
     return f"https://www.inu.ac.kr/bbs/safety/{fnct}/{seq}/artclView.do" if seq and fnct else _href(a)
 
 
+# ---------------------------------------------------------------- 외국계 채용 사이트 · 기업 채용 페이지
+EN_SAFETY_TITLE_RE = re.compile(r"(?<![A-Za-z])(?:HSE|EHS|EH&S|SHE|HSEQ|QHSE|HSSE|Safety|Industrial\s*Hygien\w*)(?![A-Za-z])|안전|보건", re.I)
+KOREA_LOC_RE = re.compile(r"Korea|,\s*KOR(?![A-Za-z])|Bundang|Seoul|Pyeongtaek|Hwaseong|Icheon|Cheongju|Gumi|Ulsan|Yeosu|Pohang|Incheon|Suwon|Yongin|"
+                          r"Giheung|Asan|Cheonan|Onyang|Busan|Daegu|Gwangju|Daejeon|Pangyo|Seongnam|Anseong|Osan|Paju|"
+                          r"서울|경기|평택|화성|이천|청주|구미|울산|여수|포항|인천|수원|용인|기흥|아산|천안|부산|판교|파주|한국", re.I)
+
+
+def src_peoplenjob(f: Fetcher):
+    """피플앤잡(외국계 전문) — 제목 검색 + HSE/EHS 전체 검색."""
+    out, seen = [], set()
+    queries = [("jobs.title", q) for q in ("안전", "보건", "HSE", "EHS", "Safety", "SHE")]
+    queries += [("all", q) for q in ("HSE", "EHS", "NEBOSH", "산업안전기사", "ISO 45001")]
+    for fld, q in queries:
+        for page in (1, 2, 3):
+            url = f"https://www.peoplenjob.com/jobs?field={fld}&q={quote(q)}&page={page}"
+            s = BeautifulSoup(f.get(url), "html.parser")
+            cards = s.select(".jd-card")
+            for c in cards:
+                a = c.select_one(".jd-card-title a")
+                if not a:
+                    continue
+                link = a.get("href", "").split("?")[0]
+                link = urljoin("https://www.peoplenjob.com", link)
+                if link in seen:
+                    continue
+                seen.add(link)
+                for b in a.select(".jd-card-meta-urgent"):  # 'U'(긴급) 배지
+                    b.decompose()
+                title = text_of(a)
+                p = Posting("피플앤잡", title, text_of(c.select_one(".jd-card-company")), link, text_of(c))
+                career = text_of(c.select_one(".jd-card-meta-career-text"))
+                # 직급: 인턴.신입 포함 → 신입, 사원 → 상세 확인, 대리 이상만 → 경력
+                p.level = "신입" if "신입" in career else "" if "사원" in career else "경력"
+                p.deadline = re.sub(r"^(\d{1,2})\.(\d{1,2})$", r"\1/\2", text_of(c.select_one(".job-fin-date")))
+                p.company_type = "외국계"
+                p.extra = {"query": q, "career": career,
+                           "loc": text_of(c.select_one(".jd-card-meta-location-text"))}
+                out.append(p)
+            if len(cards) < 30:
+                break
+            time.sleep(0.5)
+    return out
+
+
+# (표시 이름, tenant, wd 번호, site, 업종) — Workday 공개 채용 API
+WORKDAY = [
+    ("3M", "3m", "wd1", "Search", ""),
+    ("Applied Materials", "amat", "wd1", "External", "하이테크·반도체"),
+    ("Micron", "micron", "wd1", "External", "하이테크·반도체"),
+    ("Equinix", "equinix", "wd1", "External", "데이터센터"),
+    ("Air Liquide", "airliquidehr", "wd3", "AirLiquideExternalCareer", "반도체 산업가스"),
+    ("Air Products", "airproducts", "wd5", "AP0001", "반도체 산업가스"),
+]
+# Workday 주소를 모르는 회사: 채용 홈에서 myworkdayjobs 링크를 찾아 쓴다 (못 찾으면 건너뜀)
+WORKDAY_DISCOVER = [
+    ("Lam Research", "https://careers.lamresearch.com/", "하이테크·반도체"),
+    ("Linde", "https://www.linde.com/careers", "반도체 산업가스"),
+    ("ASML", "https://www.asml.com/en/careers", "하이테크·반도체"),
+    ("Corning", "https://www.corning.com/worldwide/en/careers.html", "하이테크"),
+    ("Dow", "https://corporate.dow.com/en-us/careers.html", ""),
+    ("Honeywell", "https://careers.honeywell.com/", ""),
+]
+WD_LINK_RE = re.compile(r"https://([a-z0-9-]+)\.(wd\d+)\.myworkdayjobs\.com/(?:[a-z]{2}-[A-Z]{2}/)?([A-Za-z0-9_-]+)")
+CAREER_STATUS = {}  # 회사별 수집 결과 (사이트 현황표에 표시)
+
+
+def _html_text(h):
+    return clean(BeautifulSoup(h or "", "html.parser").get_text(" "))
+
+
+def _workday(f: Fetcher, name, tenant, wd, site, sector):
+    base = f"https://{tenant}.{wd}.myworkdayjobs.com"
+    api = f"{base}/wday/cxs/{tenant}/{site}/jobs"
+    found = {}
+    for q in ("Korea", "EHS", "HSE", "Safety", "Environmental Health Safety", "안전"):
+        for off in range(0, 200, 20):
+            r = f.c.post(api, json={"appliedFacets": {}, "limit": 20, "offset": off, "searchText": q},
+                         headers={"Accept": "application/json", "Content-Type": "application/json"})
+            r.raise_for_status()
+            d = r.json()
+            posts = d.get("jobPostings") or []
+            for jp in posts:
+                path = jp.get("externalPath", "")
+                if path and path not in found:
+                    found[path] = jp
+            if len(posts) < 20 or (q != "Korea" and off >= 40):
+                break
+            time.sleep(0.3)
+    out = []
+    for path, jp in found.items():
+        title = clean(jp.get("title", ""))
+        loc = clean(jp.get("locationsText", ""))
+        if not EN_SAFETY_TITLE_RE.search(title):
+            continue
+        multi = re.search(r"\d+\s*(?:Locations|개\s*근무지)", loc)
+        if not (KOREA_LOC_RE.search(f"{loc} {title}") or multi):
+            continue
+        p = Posting("기업 채용 페이지", title, name, f"{base}/{site}{path}", f"{title} {loc} {jp.get('postedOn', '')}")
+        p.company_type = "외국계"
+        p.extra = {"query": "Workday", "sector": sector, "loc": loc,
+                   "detail_api": f"{base}/wday/cxs/{tenant}/{site}{path}", "need_korea": bool(multi and not KOREA_LOC_RE.search(loc))}
+        out.append(p)
+    return out
+
+
+def _rmk_basf(f: Fetcher):
+    """BASF (SAP SuccessFactors 채용 사이트) — 한국 근무 공고."""
+    page = f.get("https://basf.jobs/search/?q=&locationsearch=Korea")
+    tok = re.search(r'CSRFToken\s*=\s*"([^"]+)"', page)
+    out = []
+    for pn in range(0, 5):
+        r = f.c.post("https://basf.jobs/services/recruiting/v1/jobs",
+                     json={"locale": "en_US", "pageNumber": pn, "sortBy": "", "keywords": "", "location": "Korea",
+                           "facetFilters": {}, "brand": "", "skills": [], "categoryId": 0, "alertId": "", "rcmCandidateId": ""},
+                     headers={"Accept": "application/json", "Content-Type": "application/json",
+                              "X-CSRF-Token": tok.group(1) if tok else ""})
+        r.raise_for_status()
+        rows = r.json().get("jobSearchResult") or []
+        for row in rows:
+            j = row.get("response", row)
+            title = clean(j.get("unifiedStandardTitle") or j.get("title") or "")
+            locs = " ".join(j.get("jobLocationShort") or [])
+            if not EN_SAFETY_TITLE_RE.search(title):
+                continue
+            url = f"https://basf.jobs/job/{j.get('urlTitle', 'job')}/{j.get('id')}-en_US/"
+            p = Posting("기업 채용 페이지", title, "BASF", url, f"{title} {locs}")
+            p.company_type = "외국계"
+            p.extra = {"query": "RMK", "sector": "화학", "loc": locs}
+            out.append(p)
+        if len(rows) < 10:
+            break
+    return out
+
+
+def src_company_careers(f: Fetcher):
+    """외국계 기업 채용 페이지(Workday 등)에서 한국 근무 HSE/EHS/Safety 공고."""
+    out = []
+    targets = list(WORKDAY)
+    for name, home, sector in WORKDAY_DISCOVER:
+        try:
+            m = WD_LINK_RE.search(f.get(home, tries=1))
+        except Exception as e:
+            CAREER_STATUS[name] = f"채용 홈 접속 실패({type(e).__name__})"
+            continue
+        if not m:
+            CAREER_STATUS[name] = "Workday 등 공개 API 없음 — 자체 검색(스크립트 렌더링)이라 수집 불가"
+            continue
+        targets.append((name, m.group(1), m.group(2), m.group(3), sector))
+    for name, tenant, wd, site, sector in targets:
+        try:
+            got = _workday(f, name, tenant, wd, site, sector)
+            CAREER_STATUS[name] = f"한국 HSE {len(got)}건"
+            out += got
+        except Exception as e:
+            CAREER_STATUS[name] = f"실패({type(e).__name__})"
+    try:
+        got = _rmk_basf(f)
+        CAREER_STATUS["BASF"] = f"한국 HSE {len(got)}건"
+        out += got
+    except Exception as e:
+        CAREER_STATUS["BASF"] = f"실패({type(e).__name__})"
+    if not any(v.startswith("한국") for v in CAREER_STATUS.values()):
+        raise RuntimeError("기업 채용 페이지 전부 접속 실패: " + ", ".join(f"{k} {v}" for k, v in CAREER_STATUS.items()))
+    return out
+
+
+def src_wanted(f: Fetcher):
+    """원티드 — 공개 API (GitHub Actions에서는 403 차단 중)."""
+    out = []
+    for q in ("안전관리자", "HSE", "EHS"):
+        d = json.loads(f.get(f"https://www.wanted.co.kr/api/v4/jobs?country=kr&query={quote(q)}&years=0&limit=50&offset=0&job_sort=job.latest_order"))
+        for j in d.get("data", []):
+            p = Posting("원티드", clean(j.get("position", "")), clean((j.get("company") or {}).get("name", "")),
+                        f"https://www.wanted.co.kr/wd/{j.get('id')}", clean(j.get("position", "")))
+            p.deadline = j.get("due_time") or "채용 시 마감"
+            p.extra = {"query": q}
+            out.append(p)
+    return out
+
+
+def src_catch(f: Fetcher):
+    """캐치 — 검색 결과 (GitHub Actions에서는 403 차단 중)."""
+    out, seen = [], set()
+    for q in ("안전관리자", "HSE", "EHS"):
+        s = BeautifulSoup(f.get(f"https://www.catch.co.kr/NCS/RecruitSearch?Keyword={quote(q)}"), "html.parser")
+        for a in s.select('a[href*="RecruitInfoDetails"]'):
+            link = urljoin("https://www.catch.co.kr", a["href"])
+            if link in seen or not text_of(a):
+                continue
+            seen.add(link)
+            p = Posting("캐치", text_of(a), "", link, text_of(a.parent))
+            p.extra = {"query": q}
+            out.append(p)
+    return out
+
+
+def fetch_detail(f: Fetcher, p: Posting) -> str:
+    if p.extra.get("detail_api"):  # Workday: JSON 상세
+        r = f.c.get(p.extra["detail_api"], headers={"Accept": "application/json"})
+        r.raise_for_status()
+        info = r.json().get("jobPostingInfo", {})
+        locs = " ".join([info.get("location", "")] + (info.get("additionalLocations") or []))
+        p.extra["loc"] = clean(locs) or p.extra.get("loc", "")
+        p.extra["time_type"] = info.get("timeType", "")
+        return clean(f"{info.get('title', '')} 근무지 {locs} {info.get('timeType', '')} "
+                     f"{_html_text(info.get('jobDescription'))}")
+    url = p.url
+    if p.source == "사람인":
+        url = f"https://www.saramin.co.kr/zf_user/jobs/relay/view-detail?rec_idx={p.extra['rec_idx']}&rec_seq=0"
+    return soup_text(f.get(url, encoding="cp949" if p.source == "워커" else None))
+
+
+EN_YEARS_RE = re.compile(r"(\d{1,2})\s*\+?\s*(?:or\s+more\s+|\+\s*)?years?(?:'|’)?\s*(?:of\s+)?(?:\w+\s+){0,4}?(?:experience|exp\.)", re.I)
+EN_ENTRY_RE = re.compile(r"new\s*grad|recent\s*graduate|entry[\s-]*level|(?<![A-Za-z])intern(?:ship)?(?![A-Za-z])|no\s+(?:prior\s+)?experience\s+(?:is\s+)?required|0\s*[-~]\s*\d\s*years?|신입", re.I)
+
+
+def foreign_level(p: Posting):
+    """외국계 채용 페이지·피플앤잡 공고의 경력 요건 (영문 'N+ years of experience' 포함)."""
+    t = p.detail_text
+    if p.source == "피플앤잡" and p.level == "경력":
+        return
+    if EN_ENTRY_RE.search(f"{p.title} {t[:6000]}") or re.search(r"신입\s*(?:가능|지원|포함)|경력\s*무관", t):
+        p.level = p.level or "신입"
+        return
+    years = [int(m.group(1)) for m in EN_YEARS_RE.finditer(t)]
+    years += [int(m.group(1)) for m in re.finditer(r"경력\s*(\d{1,2})\s*년\s*(?:이상|↑)", t)]
+    if years and min(years) >= 2:
+        p.level = "경력"
+    elif years:
+        p.level = "신입·경력"
+    elif p.source == "피플앤잡" and not p.level:
+        p.level = "신입·경력" if "사원" in p.extra.get("career", "") else ""
+
+
 # (이름, 수집 함수, 게시판 여부) — 순서 = 중복 시 우선순위
 SOURCES = [
     ("잡코리아", src_jobkorea, False),
@@ -445,6 +681,10 @@ SOURCES = [
         "인천대 안전공학과", "https://www.inu.ac.kr/safety/3207/subview.do", _inu), True),
     ("부경대 안전공학과", make_board_source(
         "부경대 안전공학과", "https://safety.pknu.ac.kr/safety/2080", _href), True),
+    ("피플앤잡", src_peoplenjob, False),
+    ("기업 채용 페이지", src_company_careers, False),
+    ("원티드", src_wanted, False),
+    ("캐치", src_catch, False),
 ]
 
 
@@ -537,7 +777,9 @@ def employment_of(p: Posting, text):
             e = "인턴"
         elif re.search(r"계약직|기간제|촉탁|PJT|프로젝트\s*계약", f"{p.title} {text}"):
             e = "계약직"
-        elif re.search(r"정규직", text):
+        elif re.search(r"(?<![A-Za-z])(?:Contract(?:or)?|Temporary|Fixed[\s-]*term)(?![A-Za-z])", f"{p.title} {p.extra.get('time_type', '')}", re.I):
+            e = "계약직"
+        elif re.search(r"정규직", text) or re.search(r"Full[\s_-]*time|Regular|Permanent", p.extra.get("time_type", ""), re.I):
             e = "정규직"
     if re.search(r"계약|기간제|파견|현장채용", e):
         return "계약직"
@@ -635,6 +877,8 @@ def guess_company(title):
 def analyze(p: Posting, today):
     text = p.detail_text
     detail_fields(p)
+    if p.source in ("피플앤잡", "기업 채용 페이지"):
+        foreign_level(p)
     if not p.company:
         p.company = guess_company(p.title)
     p.employment = employment_of(p, f"{p.listing_text} {text[:4000]}")
@@ -748,6 +992,10 @@ def keep(p: Posting, today) -> tuple[bool, str]:
             return False, "안전 직무 아님"
     elif not relevant_after_detail(p):
         return False, "안전 직무 아님"
+    if NON_HSE_SAFETY_RE.search(p.title):
+        return False, "안전 직무 아님"
+    if p.extra.get("need_korea") and not KOREA_LOC_RE.search(p.extra.get("loc", "")):
+        return False, "한국 근무 아님"
     if SALES_RE.search(p.title):
         return False, "영업직"
     if WATCH_RE.search(f"{p.title} {p.listing_text} {p.detail_text}"):
@@ -1060,7 +1308,7 @@ CONTRACT_TOP_RANK = 15  # 계약직 건설사는 시공능력평가(도급순위
 
 
 def contract_ok(p):
-    """계약직 유지 조건: 관심 기업이거나, 도급순위 20위 이내 건설사."""
+    """계약직 유지 조건: 관심 기업이거나, 도급순위 15위 이내 건설사."""
     rank = p.extra.get("top100")
     return calendar_eligible(p) or (p.industry == "건설" and bool(rank) and rank <= CONTRACT_TOP_RANK)
 
@@ -1449,6 +1697,8 @@ def main():
                     time.sleep(30)  # 사이트 단위로 한 번 더
                     continue
                 msg = f"{type(e).__name__}: {e}".splitlines()[0][:160]
+                if name in ("원티드", "캐치") and client_err and e.response.status_code == 403:
+                    msg = "사이트가 해외·자동 접속(GitHub Actions)을 403으로 차단 — 수집 불가"
                 if name == "충북대 안전공학과" and client_err:
                     msg = "학과 서버가 해외 접속(GitHub Actions)에 404를 반환 — 국내 IP에서만 열림 (학교 본 사이트는 정상)"
                 failures.append((name, msg))
@@ -1465,15 +1715,12 @@ def main():
                 continue
             # 목록에 '경력 n년'만 있는 공고(사람인·워커)는 경력직으로 보고 상세 조회 없이 제외
             lv = p.level or ""
-            if p.source in ("사람인", "워커") and lv.startswith("경력") and not NEWBIE_RE.search(lv):
+            if p.source in ("사람인", "워커", "피플앤잡") and lv.startswith("경력") and not NEWBIE_RE.search(lv):
                 counts["경력직"] = counts.get("경력직", 0) + 1
                 continue
             if n_detail < args.max_detail:
                 try:
-                    url = p.url
-                    if p.source == "사람인":
-                        url = f"https://www.saramin.co.kr/zf_user/jobs/relay/view-detail?rec_idx={p.extra['rec_idx']}&rec_seq=0"
-                    t = soup_text(f.get(url, encoding="cp949" if p.source == "워커" else None))
+                    t = fetch_detail(f, p)
                     if p.extra.get("posted") is not None:  # 게시판: 메뉴 등 사이트 공통부 제거, 본문만
                         i = t.find(p.title[:12])
                         t = t[i:] if i >= 0 else t
@@ -1494,6 +1741,8 @@ def main():
             p.extra.setdefault("first_seen", today.isoformat())
             kept.append(p)
         stats[name] = ", ".join(f"{k} {v}" for k, v in counts.items())
+        if name == "기업 채용 페이지" and CAREER_STATUS:
+            stats[name] += " · " + ", ".join(f"{k} {v}" for k, v in CAREER_STATUS.items())
 
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)

@@ -1,1 +1,0 @@
-{"errorCode":"HTTP_422","errorCaseId":"F33F06MUNA88QV","httpStatus":422,"locale":"ko-KR,ko;q\u003d0.9,en;q\u003d0.8","message":"","messageParams":{}}
