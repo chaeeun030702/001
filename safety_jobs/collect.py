@@ -893,6 +893,9 @@ td.src{white-space:nowrap}
 .cal-head h2{margin:0} .cal-head .range{font-size:12px;color:var(--caption);font-variant-numeric:tabular-nums}
 .cal-legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--caption);margin-bottom:8px}
 .cal-legend span::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;vertical-align:0;background:var(--border-strong)}
+.cal-legend .tgl{font-style:normal;display:inline-flex;align-items:center;gap:4px}
+.cal-legend .tgl .tg{font-style:normal;font-size:10px;font-weight:600;padding:0 4px;border-radius:4px;border:1px solid currentColor}
+.cal-legend .tgl .tg.b{color:var(--primary)} .cal-legend .tgl .tg.f{color:var(--sky)} .cal-legend .tgl .tg.k{color:var(--text-sub)}
 .cal-legend .la::before{background:var(--error)} .cal-legend .lb::before{background:var(--primary)} .cal-legend .lf::before{background:var(--sky)} .cal-legend .lp::before{background:var(--purple)}
 .cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-top:1px solid var(--border);border-left:1px solid var(--border)}
 .cal .wd{font-size:12px;font-weight:600;color:var(--caption);padding:6px 8px;background:var(--alt1);border-right:1px solid var(--border);border-bottom:1px solid var(--border)}
@@ -907,7 +910,9 @@ td.src{white-space:nowrap}
 .ev:hover{background:var(--alt1);color:var(--primary)} .ev:focus-visible{outline:2px solid var(--primary);outline-offset:1px}
 .ev::before{content:"";flex:none;width:6px;height:6px;border-radius:50%;background:var(--border-strong)}
 .ev.hA::before{background:var(--error)} .ev.hB::before{background:var(--primary)} .ev.hF::before{background:var(--sky)} .ev.pp::before{background:var(--purple)}
-.ev span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.ev .tg{flex:none;font-style:normal;font-size:10px;font-weight:600;line-height:1.4;padding:0 4px;border-radius:4px;border:1px solid currentColor}
+.ev .tg.b{color:var(--primary)} .ev .tg.f{color:var(--sky)} .ev .tg.k{color:var(--text-sub)}
 .day details summary{font-size:12px;color:var(--primary);cursor:pointer;list-style:none} .day details summary::-webkit-details-marker{display:none}
 .day details[open] summary{margin-bottom:2px}
 td.corp a.co{color:var(--text-strong);text-decoration:none} td.corp a.co:hover{color:var(--primary);text-decoration:underline}
@@ -987,8 +992,14 @@ def render_calendar(postings, today, months=2, show=5):
         def ev(p):
             c = f"ev h{p.hilite}" + (" pp" if p.prefs and not p.hilite else "")
             tip = f"{p.company} · {p.title} · {p.deadline}"
+            grp = p.extra.get("groups", [])
+            tags = ('<i class="tg b" title="대기업 계열">대</i>' if "대기업 계열" in grp else "") + \
+                   ('<i class="tg f" title="외국계">외</i>' if "외국계" in grp else "")
+            if p.extra.get("listed"):
+                ab = {"코스피": "KS", "코스닥": "KQ"}.get(p.extra["listed"], p.extra["listed"])
+                tags += f'<i class="tg k" title="{e(p.extra["listed"])} 상장">{ab}</i>'
             return (f'<a class="{c}" href="{e(p.url)}" target="_blank" rel="noopener" title="{e(tip)}">'
-                    f'<span>{e(p.company or p.title)}</span></a>')
+                    f'<span>{e(p.company or p.title)}</span>{tags}</a>')
         body = "".join(ev(p) for p in items[:show])
         if len(items) > show:
             body += f'<details><summary>+{len(items) - show}건 더 보기</summary>{"".join(ev(p) for p in items[show:])}</details>'
@@ -1002,7 +1013,9 @@ def render_calendar(postings, today, months=2, show=5):
     return (f'<section class="card" id="calendar"><div class="cal-head"><h2>채용 달력<span class="n">{n}건</span></h2>'
             f'<span class="range">{today:%Y-%m-%d} ~ {end:%Y-%m-%d} 접수 마감 기준</span></div>'
             '<div class="cal-legend"><span class="la">데이터센터·하이테크·삼성·하이닉스</span><span class="lb">대기업 계열</span><span class="lf">외국계</span>'
-            '<span class="lp">외국어·NEBOSH·IOSH·CSP 우대</span><span>기타</span></div>'
+            '<span class="lp">외국어·NEBOSH·IOSH·CSP 우대</span><span>기타</span>'
+            '<em class="tgl"><i class="tg b">대</i> 대기업 계열 <i class="tg f">외</i> 외국계 '
+            '<i class="tg k">KS</i> 코스피 <i class="tg k">KQ</i> 코스닥</em></div>'
             f'<div class="cal">{wd}{"".join(cells)}</div></section>')
 
 
