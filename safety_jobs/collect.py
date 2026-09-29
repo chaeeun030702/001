@@ -53,7 +53,7 @@ INCLUDE_RE = re.compile(r"산업안전(?:산업)?기사|ISO\s*[-_]?\s*45001|안�
 SAFETY_DUTY_RE = re.compile(r"안전\s*관리\s*(?:자|업무|담당|선임|병행|직|팀|계획|체계)|안전\s*관리\s*(?:및|/|·)")
 DUTY_HEAD = r"담당\s*업무|주요\s*업무|업무\s*내용|직무\s*내용|모집\s*분야"
 PREF_IN_TITLE_RE = re.compile(r"[\(\[【][^\)\]】]*우대[^\)\]】]*[\)\]】]|[^\s/,]*\s*우대")
-NON_HSE_SAFETY_RE = re.compile(r"Drug\s*Safety|Pharmacovigilance|Patient\s*Safety|Food\s*Safety|Product\s*Safety|Clinical|"
+NON_HSE_SAFETY_RE = re.compile(r"Functional\s*Safety|안전\s*인증|Drug\s*Safety|Pharmacovigilance|Patient\s*Safety|Food\s*Safety|Product\s*Safety|Clinical|"
                                r"약물\s*감시|의약품\s*안전|식품\s*안전|안전성\s*(?:평가|정보)", re.I)
 WATCH_RE = re.compile(r"감시\s*단")  # 안전감시단 등 감시 인력 모집은 제외
 SALES_RE = re.compile(r"영업|세일즈|(?<![A-Za-z])Sales(?![A-Za-z])|판매\s*(?:사원|직|원)|텔레\s*마케|TM\s*상담", re.I)
@@ -532,6 +532,7 @@ def _workday(f: Fetcher, name, tenant, wd, site, sector):
             continue
         p = Posting("기업 채용 페이지", title, name, f"{base}/{site}{path}", f"{title} {loc} {jp.get('postedOn', '')}")
         p.company_type = "외국계"
+        p.deadline = "채용 시 마감"  # Workday 공고에는 마감일이 없다
         p.extra = {"query": "Workday", "sector": sector, "loc": loc,
                    "detail_api": f"{base}/wday/cxs/{tenant}/{site}{path}", "need_korea": bool(multi and not KOREA_LOC_RE.search(loc))}
         out.append(p)
@@ -560,6 +561,7 @@ def _rmk_basf(f: Fetcher):
             url = f"https://basf.jobs/job/{j.get('urlTitle', 'job')}/{j.get('id')}-en_US/"
             p = Posting("기업 채용 페이지", title, "BASF", url, f"{title} {locs}")
             p.company_type = "외국계"
+            p.deadline = "채용 시 마감"
             p.extra = {"query": "RMK", "sector": "화학", "loc": locs}
             out.append(p)
         if len(rows) < 10:
@@ -802,6 +804,9 @@ BODY_SENIOR_RE = re.compile(r"(?:대리|과장|차장|부장|책임|수석)\s*�
 PE_RE = re.compile(r"기술사[^.\n]{0,40}우대|우대[^.\n]{0,6}(?:사항|조건|요건)?[^.\n]{0,40}기술사")  # 기술사 우대만 (소지·필수 표기는 판단 안 함)
 
 
+TITLE_YEARS_RE = re.compile(r"(\d{1,2})\s*(?:[-~]\s*\d{1,2}\s*)?년\s*(?:이상|↑|차|경력|\))|경력\s*(\d{1,2})\s*[-~]")
+
+
 def senior_rank(p: Posting) -> bool:
     """대리급 이상·기술사 우대 등이 명시된 공고인가 (제목·직급 표기·본문, 우대 표기 포함).
     직급 표기에 사원·신입을 함께 뽑는다고 되어 있으면 제외하지 않는다."""
@@ -839,6 +844,10 @@ def level_of(p: Posting, text):
     lv = p.level
     if senior_rank(p):
         p.extra["senior"] = True
+        return "경력"
+    # 제목의 '3년 이상', '2-5년 경력', '(10~20년)' 등 2년 이상 경력 요건
+    yrs = [int(m.group(1)) for m in TITLE_YEARS_RE.finditer(p.title)]
+    if yrs and min(yrs) >= 2 and not NEWBIE_RE.search(p.title):
         return "경력"
     if re.search(r"신입\s*[Xx×]|신입\s*불가", p.title) or (
             CAREER_ONLY_RE.search(p.title) and not NEWBIE_RE.search(p.title)):
@@ -1656,7 +1665,10 @@ def carry_over(prev_path, failed, kept, stats, today):
                 continue
         if p.industry == "건설" and not p.extra.get("top100"):
             continue
-        if senior_rank(p):  # 대리급 이상 제외 재적용
+        if senior_rank(p) or NON_HSE_SAFETY_RE.search(p.title):  # 대리급 이상·기술사 우대·비HSE 제외 재적용
+            continue
+        yrs = [int(m.group(1)) for m in TITLE_YEARS_RE.finditer(p.title)]
+        if yrs and min(yrs) >= 2 and not NEWBIE_RE.search(p.title):
             continue
         if SALES_RE.search(p.title) or WATCH_RE.search(f"{p.title} {p.detail_text}"):  # 영업직·감시단 제외 재적용
             continue
