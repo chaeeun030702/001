@@ -1,0 +1,17 @@
+HTTP/1.1 200 OK
+Date: Tue, 29 Sep 2026 06:31:03 GMT
+X-Frame-Options: SAMEORIGIN
+Content-Language: ko-KR
+Vary: Accept-Encoding,User-Agent
+Access-Control-Allow-Origin: *
+Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval' https: http: ; worker-src 'self' blob: ;
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+X-Download-Option: noopen
+Set-Cookie: JSESSIONID=2357B924576F7141C0D1902296B28529; Path=/; Secure; HttpOnly;HttpOnly;SameSite=None;Secure
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+Referrer-Policy: strict-origin-when-cross-origin
+Content-Type: text/html;charset=UTF-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+

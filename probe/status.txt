@@ -1,4 +1,2 @@
-cb3_www 200 312616 https://www.chungbuk.ac.kr/site/www/main.do
-cb3_hrd 404 91 https://hrd.chungbuk.ac.kr/hrd32
-cb3_ipsi 200 6146 https://ipsi.chungbuk.ac.kr/
-ctl_inu 200 83805 https://www.inu.ac.kr/safety/3207/subview.do
+cb4_eng_key 200 128673 https://www.chungbuk.ac.kr/www/contents.do?key=395
+cb4_eng 404 0 https://eng.chungbuk.ac.kr/
