@@ -846,7 +846,7 @@ def level_of(p: Posting, text):
         p.extra["senior"] = True
         return "경력"
     # 제목의 '3년 이상', '2-5년 경력', '(10~20년)' 등 2년 이상 경력 요건
-    yrs = [int(m.group(1)) for m in TITLE_YEARS_RE.finditer(p.title)]
+    yrs = [int(m.group(1) or m.group(2)) for m in TITLE_YEARS_RE.finditer(p.title)]
     if yrs and min(yrs) >= 2 and not NEWBIE_RE.search(p.title):
         return "경력"
     if re.search(r"신입\s*[Xx×]|신입\s*불가", p.title) or (
@@ -1667,7 +1667,7 @@ def carry_over(prev_path, failed, kept, stats, today):
             continue
         if senior_rank(p) or NON_HSE_SAFETY_RE.search(p.title):  # 대리급 이상·기술사 우대·비HSE 제외 재적용
             continue
-        yrs = [int(m.group(1)) for m in TITLE_YEARS_RE.finditer(p.title)]
+        yrs = [int(m.group(1) or m.group(2)) for m in TITLE_YEARS_RE.finditer(p.title)]
         if yrs and min(yrs) >= 2 and not NEWBIE_RE.search(p.title):
             continue
         if SALES_RE.search(p.title) or WATCH_RE.search(f"{p.title} {p.detail_text}"):  # 영업직·감시단 제외 재적용
