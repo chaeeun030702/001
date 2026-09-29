@@ -952,7 +952,7 @@ def parse_stat(v):
     return {k.strip(): int(n) for k, n in re.findall(r"([^,\d]+?)\s(\d+)(?=,|$)", v or "")}
 
 
-def render_calendar(postings, today, months=2, show=3):
+def render_calendar(postings, today, months=2, show=5):
     """접수기한 달력: 오늘부터 2개월, 주 단위. 업체명을 누르면 공고로 이동."""
     e = html.escape
     end_m, end_y = today.month + months, today.year
