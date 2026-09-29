@@ -1,8 +1,8 @@
 # 안전관리자 채용 일일 브리핑
 
-매일 **17:30 KST** GitHub Actions(`.github/workflows/safety-jobs-briefing.yml`)가
+매일 **19:07·19:27 KST** GitHub Actions(`.github/workflows/safety-jobs-briefing.yml`)가
 `collect.py`로 아래 8개 사이트의 안전관리자 채용 공고를 수집해 `briefings/`에 커밋하고,
-**18:00 KST** Routine이 `briefings/latest.*`를 읽어 브리핑을 전달한다.
+**20:00 KST** Routine이 `briefings/latest.*`를 읽어 브리핑을 전달한다.
 
 ```bash
 uv run safety_jobs/collect.py --out briefings   # latest.md / latest.html / latest.json / YYYY-MM-DD.md
