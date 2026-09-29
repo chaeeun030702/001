@@ -1,2 +1,0 @@
-cb4_eng_key 200 128673 https://www.chungbuk.ac.kr/www/contents.do?key=395
-cb4_eng 404 0 https://eng.chungbuk.ac.kr/

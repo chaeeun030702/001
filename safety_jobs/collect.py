@@ -1003,7 +1003,10 @@ def main():
                 if attempt == 1 and not client_err:
                     time.sleep(30)  # 사이트 단위로 한 번 더
                     continue
-                failures.append((name, f"{type(e).__name__}: {e}".splitlines()[0][:160]))
+                msg = f"{type(e).__name__}: {e}".splitlines()[0][:160]
+                if name == "충북대 안전공학과" and client_err:
+                    msg = "학과 서버가 해외 접속(GitHub Actions)에 404를 반환 — 국내 IP에서만 열림 (학교 본 사이트는 정상)"
+                failures.append((name, msg))
                 stats[name] = "수집 실패"
                 break
 
