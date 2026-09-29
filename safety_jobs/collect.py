@@ -53,6 +53,7 @@ INCLUDE_RE = re.compile(r"산업안전(?:산업)?기사|ISO\s*[-_]?\s*45001|안�
 SAFETY_DUTY_RE = re.compile(r"안전\s*관리\s*(?:자|업무|담당|선임|병행|직|팀|계획|체계)|안전\s*관리\s*(?:및|/|·)")
 DUTY_HEAD = r"담당\s*업무|주요\s*업무|업무\s*내용|직무\s*내용|모집\s*분야"
 PREF_IN_TITLE_RE = re.compile(r"[\(\[【][^\)\]】]*우대[^\)\]】]*[\)\]】]|[^\s/,]*\s*우대")
+WATCH_RE = re.compile(r"감시\s*단")  # 안전감시단 등 감시 인력 모집은 제외
 SALES_RE = re.compile(r"영업|세일즈|(?<![A-Za-z])Sales(?![A-Za-z])|판매\s*(?:사원|직|원)|텔레\s*마케|TM\s*상담", re.I)
 HSE_RE = re.compile(r"(?<![A-Za-z])(?:HSE|EHS|SHE|HSEQ|QHSE)(?![A-Za-z])|환경\s*안전|안전\s*환경|안전\s*보건|안전\s*관리")
 # 업체명으로 건설사 여부 판단 (제목의 '현장' 등은 공장 현장과 헷갈리므로 쓰지 않음)
@@ -749,6 +750,8 @@ def keep(p: Posting, today) -> tuple[bool, str]:
         return False, "안전 직무 아님"
     if SALES_RE.search(p.title):
         return False, "영업직"
+    if WATCH_RE.search(f"{p.title} {p.listing_text} {p.detail_text}"):
+        return False, "감시단"
     if p.industry == "건설" and not p.extra.get("top100"):
         return False, "건설사(시평 100위 밖)"
     if p.level == "경력":
@@ -1332,7 +1335,7 @@ def carry_over(prev_path, failed, kept, stats, today):
                 continue
         if p.industry == "건설" and not p.extra.get("top100"):
             continue
-        if SALES_RE.search(p.title):  # 영업직 제외 규칙 재적용
+        if SALES_RE.search(p.title) or WATCH_RE.search(f"{p.title} {p.detail_text}"):  # 영업직·감시단 제외 재적용
             continue
         if any(q.url == p.url for q in kept) or is_dup(p, kept):
             continue
