@@ -48,7 +48,7 @@ CSP_RE = re.compile(r"(?<![A-Za-z])CSP(?![A-Za-z])|Certified\s+Safety\s+Professi
 CERT_KEY_RE = re.compile(r"(산업|건설)안전(?:산업)?기사")
 ISO45001_RE = re.compile(r"ISO\s*[-_]?\s*45001|KOSHA[-\s]*MS", re.I)
 # 공고 본문에 이 중 하나라도 있으면 안전 직무 공고로 싣는다
-INCLUDE_RE = re.compile(r"산업안전(?:산업)?기사|ISO\s*[-_]?\s*45001|안전\s*공학", re.I)
+INCLUDE_RE = re.compile(r"산업안전(?:산업)?기사|(?:산업|건설)안전기술사|ISO\s*[-_]?\s*45001|안전\s*공학", re.I)
 # '안전관리'는 흔한 말이라 직무로 쓰였거나 자격·우대·담당업무 항목에 있을 때만
 SAFETY_DUTY_RE = re.compile(r"안전\s*관리\s*(?:자|업무|담당|선임|병행|직|팀|계획|체계)|안전\s*관리\s*(?:및|/|·)")
 DUTY_HEAD = r"담당\s*업무|주요\s*업무|업무\s*내용|직무\s*내용|모집\s*분야"
@@ -799,35 +799,18 @@ JUNIOR_RANK_RE = re.compile(r"사원|주임|신입|인턴|졸업|(?<![A-Za-z])(?
 RANK_FIELD_RE = re.compile(r"직급\s*(?:/\s*직책)?\s*[:：]?\s*([가-힣·,/.~\- ]{2,24}?)(?=\s*(?:급여|근무|직책|연봉|모집|$))")
 
 
-# 본문에 명시된 대리급 이상 요건(우대 포함)·기술사 우대/소지 요건
+# 본문에 명시된 대리급 이상 요건(우대 포함)
 BODY_SENIOR_RE = re.compile(r"(?:대리|과장|차장|부장|책임|수석)\s*급|(?:대리|과장|차장|부장)\s*(?:이상|~|-)")
-PE_RE = re.compile(r"기술사[^.\n]{0,40}우대|우대[^.\n]{0,6}(?:사항|조건|요건)?[^.\n]{0,40}기술사")  # 기술사 우대만 (소지·필수 표기는 판단 안 함)
 
 
 TITLE_YEARS_RE = re.compile(r"(\d{1,2})\s*(?:[-~]\s*\d{1,2}\s*)?년\s*(?:이상|↑|차|경력|\))|경력\s*(\d{1,2})\s*[-~]")
 
 
 def senior_rank(p: Posting) -> bool:
-    """대리급 이상·기술사 우대 등이 명시된 공고인가 (제목·직급 표기·본문, 우대 표기 포함).
+    """대리급 이상이 명시된 공고인가 (제목·직급 표기·본문, 우대 표기 포함). 기술사 우대는 제외하지 않는다.
     직급 표기에 사원·신입을 함께 뽑는다고 되어 있으면 제외하지 않는다."""
     title = p.title
     if SENIOR_RANK_RE.search(title) and not JUNIOR_RANK_RE.search(title):
-        return True
-    body = f"{p.title} {p.listing_text} {p.detail_text or ''}"
-    for m in PE_RE.finditer(body):
-        # '기술사 또는 산업안전기사 우대'처럼 기사 자격도 함께 인정하면 살린다
-        lead = 0 if m.group(0).startswith("우대") else 40  # '우대사항 … 기술사'는 우대 표기부터 본다
-        clause = body[max(0, m.start() - lead):m.end() + 40]
-        cut = m.start() - max(0, m.start() - lead)
-        heads = list(re.finditer(rf"{QUAL_HEAD}|{PREF_HEAD}|[.•·■▶\n]", clause[:cut]))
-        if heads:
-            clause = clause[heads[-1].end():]
-            cut -= heads[-1].end()
-        tail = re.search(rf"{QUAL_HEAD}|{PREF_HEAD}|[.•■▶\n]", clause[cut + 3:])
-        clause = clause[:cut + 3 + tail.start()] if tail else clause
-        if re.search(r"안전(?:산업)?기사", clause):
-            continue
-        p.extra["pe"] = True
         return True
     for m in BODY_SENIOR_RE.finditer(p.detail_text or ""):
         near = p.detail_text[max(0, m.start() - 12):m.end() + 4]
@@ -1060,7 +1043,7 @@ def keep(p: Posting, today) -> tuple[bool, str]:
     if p.industry == "건설" and not p.extra.get("top100"):
         return False, "건설사(시평 100위 밖)"
     if p.level == "경력":
-        return False, ("기술사 우대·요건" if p.extra.get("pe") else "대리급 이상") if p.extra.get("senior") else "경력직"
+        return False, "대리급 이상" if p.extra.get("senior") else "경력직"
     if p.employment == "계약직" and not contract_ok(p):
         return False, "계약직(관심 기업 외)"
     if p.deadline_date and p.deadline_date < today.isoformat():
@@ -1665,7 +1648,7 @@ def carry_over(prev_path, failed, kept, stats, today):
                 continue
         if p.industry == "건설" and not p.extra.get("top100"):
             continue
-        if senior_rank(p) or NON_HSE_SAFETY_RE.search(p.title):  # 대리급 이상·기술사 우대·비HSE 제외 재적용
+        if senior_rank(p) or NON_HSE_SAFETY_RE.search(p.title):  # 대리급 이상·비HSE 제외 재적용
             continue
         yrs = [int(m.group(1) or m.group(2)) for m in TITLE_YEARS_RE.finditer(p.title)]
         if yrs and min(yrs) >= 2 and not NEWBIE_RE.search(p.title):
