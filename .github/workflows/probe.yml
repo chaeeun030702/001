@@ -21,11 +21,10 @@ jobs:
             curl -sSL -A "$UA" -H "Accept-Language: ko-KR,ko;q=0.9" -m 40 -o "probe/$name.html" \
               -w "$name %{http_code} %{size_download} %{url_effective}\n" "$u" >> probe/status.txt 2>&1 || echo "$name FAIL $u" >> probe/status.txt
           done <<'LIST'
-          cb_xe https://safety.chungbuk.ac.kr/index.php?mid=safety5_2
-          cb_xe_http http://safety.chungbuk.ac.kr/index.php?mid=safety5_2
-          cb_new https://safety.cbnu.ac.kr/
-          cb_new_http http://safety.cbnu.ac.kr/
-          cb_root http://safety.chungbuk.ac.kr/index.php
+          cb2_root https://safety.chungbuk.ac.kr/
+          cb2_env_board https://env.chungbuk.ac.kr/index.php?mid=safety5_2
+          cb2_env_prof https://env.chungbuk.ac.kr/index.php?mid=safety2_1
+          cb2_env_root https://env.chungbuk.ac.kr/
           LIST
           cat probe/status.txt
       - name: commit
@@ -33,4 +32,4 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions@users.noreply.github.com
           git add probe
-          git commit -m "probe: chungbuk snapshots" && for i in 1 2 3; do git pull --rebase -q && git push && break; sleep 5; done
+          git commit -m "probe: chungbuk snapshots 2" && for i in 1 2 3; do git pull --rebase -q && git push && break; sleep 5; done
