@@ -17,6 +17,7 @@ GitHub Actions(.github/workflows/safety-jobs-briefing.yml)가 매일 실행한�
 """
 
 import argparse
+import collections
 import datetime as dt
 import difflib
 import html
@@ -633,101 +634,271 @@ def render_md(postings, failures, now, stats):
     return "\n".join(L) + "\n"
 
 
+HTML_CSS = """
+/* 레이아웃: sticky 헤더 + 좌측 섹션 내비(데스크톱) + 콘텐츠 캔버스(KPI → 차트 → 흐름도 → 필터 → 표) */
+:root{
+  --primary:#0F6FFF; --primary-hover:#0E65E8; --primary-active:#0B4FB5;
+  --bg-page:#FFFFFF; --canvas:#EEF1F5; --surface:#FFFFFF; --alt1:#F2F3F6; --alt2:#E2E4E9;
+  --text-strong:#000000; --text:#1C1C1C; --text-sub:#303030; --caption:#737373;
+  --border:#E2E4E9; --border-strong:#CCD0D6; --divider:#E9EBEF;
+  --success:#15B874; --warning:#FFA833; --error:#E63B3B;
+  --r-sm:8px; --r-md:12px; --r-lg:16px; --r-pill:9999px;
+  --sh1:0 1px 3px rgba(0,0,0,.06);
+  --font:"Pretendard Variable","Pretendard","Apple SD Gothic Neo","Noto Sans KR","Segoe UI",Roboto,-apple-system,sans-serif;
+  --mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --primary:#3F8CFF; --primary-hover:#0F6FFF; --primary-active:#0E65E8;
+  --bg-page:#1D1F24; --canvas:#15171C; --surface:#1D1F24; --alt1:#282B33; --alt2:#333741;
+  --text-strong:#FFFFFF; --text:#EBECED; --text-sub:#C4C4C4; --caption:#8A8A8A;
+  --border:#333741; --border-strong:#4A505F; --divider:#282B33;
+  --success:#44C690; --warning:#FFB95C; --error:#EB5E5E; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --primary:#3F8CFF; --primary-hover:#0F6FFF; --primary-active:#0E65E8;
+  --bg-page:#1D1F24; --canvas:#15171C; --surface:#1D1F24; --alt1:#282B33; --alt2:#333741;
+  --text-strong:#FFFFFF; --text:#EBECED; --text-sub:#C4C4C4; --caption:#8A8A8A;
+  --border:#333741; --border-strong:#4A505F; --divider:#282B33;
+  --success:#44C690; --warning:#FFB95C; --error:#EB5E5E; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--canvas);color:var(--text);font:400 14px/1.55 var(--font);margin:0}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg-page);border-bottom:1px solid var(--border);
+  display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;padding:12px 20px}
+.top h1{font-size:18px;font-weight:700;margin:0;color:var(--text-strong)}
+.top .when{font-size:12px;color:var(--caption);font-variant-numeric:tabular-nums}
+.top .chip{margin-left:auto}
+.shell{display:grid;grid-template-columns:220px minmax(0,1fr);min-height:100%}
+.side{background:var(--bg-page);border-right:1px solid var(--border);padding:12px 0;position:sticky;top:57px;align-self:start;height:calc(100vh - 57px);overflow:auto}
+.side .sec{font-size:12px;font-weight:600;color:var(--caption);padding:12px 20px 4px;letter-spacing:.02em}
+.side a{display:flex;align-items:center;justify-content:space-between;height:44px;padding:0 20px;color:var(--text-sub);text-decoration:none;font-size:14px}
+.side a:hover{background:var(--alt1)} .side a b{font-weight:600;font-variant-numeric:tabular-nums;color:var(--caption)}
+.side a:focus-visible,.chipnav a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+.chipnav{display:none;gap:8px;overflow-x:auto;padding-bottom:4px}
+.chipnav a{flex:none;padding:6px 12px;border:1px solid var(--border);border-radius:var(--r-pill);background:var(--surface);color:var(--text-sub);text-decoration:none;font-size:13px}
+main{padding:20px;display:grid;gap:16px;min-width:0;max-width:1400px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:16px;min-width:0}
+.card h2{font-size:18px;font-weight:700;margin:0 0 12px;color:var(--text-strong);text-wrap:balance}
+.card h2 .n{font-size:14px;font-weight:600;color:var(--caption);margin-left:6px}
+.kpis{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:14px 16px;display:grid;gap:2px}
+.kpi .l{font-size:12px;font-weight:600;color:var(--caption)}
+.kpi .v{font-size:32px;font-weight:700;color:var(--text-strong);font-variant-numeric:tabular-nums;line-height:1.2}
+.kpi .s{font-size:12px;color:var(--caption)}
+.kpi .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:1px}
+.charts{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))}
+.bars{display:grid;gap:8px}
+.bar{display:grid;grid-template-columns:minmax(84px,32%) minmax(0,1fr) 36px;align-items:center;gap:8px;font-size:13px}
+.bar .k{color:var(--text-sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .t{display:block;height:14px;background:var(--alt1);border-radius:4px;overflow:hidden}
+.bar .f{display:block;height:100%;background:var(--primary);border-radius:0 4px 4px 0;min-width:2px}
+.bar .f.warn{background:var(--warning)} .bar .f.none{background:var(--border-strong)}
+.bar .v{text-align:right;font-variant-numeric:tabular-nums;font-weight:600;color:var(--text)}
+.bar:hover .k{color:var(--text-strong)}
+.flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px}
+.step{flex:1 1 120px;border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 12px;background:var(--alt1);display:grid;gap:2px}
+.step .l{font-size:12px;font-weight:600;color:var(--caption)} .step .v{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text-strong)}
+.step.minus .v{color:var(--text-sub)} .step.final{background:var(--surface);border-color:var(--primary)} .step.final .v{color:var(--primary)}
+.arrow{display:flex;align-items:center;color:var(--border-strong)}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tools input{flex:1 1 220px;min-width:0;height:40px;border:1px solid var(--border-strong);border-radius:var(--r-sm);padding:0 12px;background:var(--surface);color:var(--text);font:inherit}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{height:40px;padding:0 14px;border:1px solid var(--border-strong);border-radius:var(--r-sm);background:var(--surface);color:var(--text-sub);font:600 13px var(--font);cursor:pointer}
+.seg button:hover{background:var(--alt1)}
+.seg button[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:#FFFFFF}
+.scroll{overflow-x:auto;border:1px solid var(--border);border-radius:var(--r-sm)}
+table{border-collapse:collapse;width:100%;min-width:1000px}
+th,td{padding:10px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--divider)}
+th{font-size:12px;font-weight:600;color:var(--caption);background:var(--alt1);white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+td{min-height:52px} td.lv{white-space:nowrap;color:var(--text-sub)} td.corp{min-width:150px} td.corp strong{display:block;font-weight:600;color:var(--text-strong)}
+td.dl{white-space:nowrap;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13px}
+td.dl.soon{color:var(--text-strong);font-weight:600}
+td.dl.soon::after{content:"임박";display:inline-block;margin-left:6px;padding:0 6px;border-radius:var(--r-pill);font:600 11px var(--font);
+  background:color-mix(in srgb,var(--warning) 22%,transparent);color:var(--text-strong)}
+tr.hA{background:color-mix(in srgb,var(--error) 8%,var(--surface))}
+tr.hB{background:color-mix(in srgb,var(--primary) 7%,var(--surface))}
+.pill{display:inline-flex;align-items:center;gap:4px;margin-top:4px;font-size:11px;font-weight:600;padding:1px 8px;border-radius:var(--r-pill);border:1px solid var(--border-strong);color:var(--text-sub)}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.pill.pa::before{background:var(--error)} .pill.pb::before{background:var(--primary)}
+.pill.ok::before{background:var(--success)} .pill.bad::before{background:var(--error)} .pill.keep::before{background:var(--warning)}
+a{color:var(--primary)} a:hover{color:var(--primary-hover)}
+td.src{white-space:nowrap}
+.src small{display:block;color:var(--caption)}
+.empty{color:var(--caption);font-size:13px;padding:8px 0}
+.note{font-size:12px;color:var(--caption);margin:0}
+[hidden]{display:none!important}
+@media (max-width:1023px){.shell{grid-template-columns:1fr}.side{display:none}.chipnav{display:flex}}
+@media (max-width:480px){main{padding:16px}.kpi .v{font-size:28px}}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+"""
+
+HTML_JS = """
+(function(){
+  var q=document.getElementById('q'), mode='all';
+  var btns=document.querySelectorAll('.seg button');
+  function apply(){
+    var t=(q.value||'').trim().toLowerCase();
+    document.querySelectorAll('section.grp').forEach(function(sec){
+      var n=0;
+      sec.querySelectorAll('tbody tr').forEach(function(tr){
+        var ok=(!t||tr.textContent.toLowerCase().indexOf(t)>=0)&&
+          (mode==='all'||(mode==='A'&&tr.classList.contains('hA'))||(mode==='B'&&tr.classList.contains('hB'))||
+           (mode==='soon'&&tr.querySelector('td.dl.soon')));
+        tr.hidden=!ok; if(ok)n++;
+      });
+      sec.querySelector('.n').textContent=n+'건';
+      sec.querySelector('.empty').hidden=n>0; sec.querySelector('.scroll').hidden=n===0;
+    });
+  }
+  q.addEventListener('input',apply);
+  btns.forEach(function(b){b.addEventListener('click',function(){
+    mode=b.dataset.mode; btns.forEach(function(x){x.setAttribute('aria-pressed',String(x===b))}); apply();});});
+})();
+"""
+
+
+def parse_stat(v):
+    """'목록 35, 채택 34, 경력직 1' → {'목록': 35, ...}"""
+    return {k.strip(): int(n) for k, n in re.findall(r"([^,\d]+?)\s(\d+)(?=,|$)", v or "")}
+
+
 def render_html(postings, failures, now, stats):
     e = html.escape
     today = now.date()
-    soon = {p.url for p in postings if p.deadline_date and (dt.date.fromisoformat(p.deadline_date) - today).days <= 3}
-    tag_label = {"A": '<span class="pill pa">데이터센터·하이테크·삼성·하이닉스</span>',
-                 "B": '<span class="pill pb">대기업·외국계</span>', "": ""}
-    sections, nav = [], []
-    for key, tag in GROUPS:
-        rows = sorted([p for p in postings if p.employment == key], key=sort_key)
-        if not rows:
-            continue
-        sid = {"정규직": "regular", "계약직": "contract", "인턴": "intern"}.get(key, "other")
-        nav.append(f'<a href="#{sid}">{e(tag)} <b>{len(rows)}</b></a>')
+
+    def days_left(p):
+        return (dt.date.fromisoformat(p.deadline_date) - today).days if p.deadline_date else None
+
+    soon = {id(p) for p in postings if days_left(p) is not None and days_left(p) <= 3}
+    groups = [(key, tag, sorted([p for p in postings if p.employment == key], key=sort_key)) for key, tag in GROUPS]
+    groups = [g for g in groups if g[2]]
+    sid = {"정규직": "regular", "계약직": "contract", "인턴": "intern"}
+    n_a = sum(p.hilite == "A" for p in postings)
+    n_b = sum(p.hilite == "B" for p in postings)
+    failed = {n for n, _ in failures}
+    ok_sites = len(SOURCES) - len(failed)
+
+    # KPI 타일
+    def kpi(label, value, sub="", dot=""):
+        d = f'<span class="dot" style="background:var({dot})"></span>' if dot else ""
+        return f'<div class="kpi"><span class="l">{d}{e(label)}</span><span class="v">{value}</span><span class="s">{e(sub)}</span></div>'
+    by = {k: len(r) for k, _, r in groups}
+    kpis = "".join([
+        kpi("전체 공고", len(postings), "경력직·마감 제외"),
+        kpi("정규직", by.get("정규직", 0), f"{by.get('정규직', 0) * 100 // max(len(postings), 1)}%"),
+        kpi("계약직", by.get("계약직", 0), f"{by.get('계약직', 0) * 100 // max(len(postings), 1)}%"),
+        kpi("3일 내 마감", len(soon), "접수 서두름", "--warning"),
+        kpi("데이터센터·하이테크·삼성·하이닉스", n_a, "집중 관심", "--error"),
+        kpi("대기업·외국계", n_b, "관심 기업", "--primary"),
+    ])
+
+    # 막대 차트(단일 계열, primary 한 색)
+    def bars(items, cls=lambda k: ""):
+        mx = max([v for _, v in items] + [1])
+        return '<div class="bars">' + "".join(
+            f'<div class="bar" title="{e(k)}: {v}건"><span class="k">{e(k)}</span>'
+            f'<span class="t"><span class="f {cls(k)}" style="width:{v * 100 / mx:.1f}%"></span></span><span class="v">{v}</span></div>'
+            for k, v in items) + "</div>"
+    by_src = collections.Counter(p.source for p in postings)
+    src_items = [(n.replace(" 안전공학과", ""), by_src.get(n, 0)) for n, _, _ in SOURCES]
+    buckets = [("3일 이내", 0, 3), ("4–7일", 4, 7), ("8–14일", 8, 14), ("15–30일", 15, 30), ("31일 이상", 31, 10**6)]
+    dl_items = [(lab, sum(1 for p in postings if days_left(p) is not None and lo <= days_left(p) <= hi)) for lab, lo, hi in buckets]
+    dl_items.append(("채용 시·미확인", sum(1 for p in postings if days_left(p) is None)))
+    lv = collections.Counter(p.level for p in postings)
+    lv_items = [(k, lv.get(k, 0)) for k in ("신입", "신입·경력", "경력무관", "인턴") if lv.get(k)]
+    charts = (
+        f'<div class="card"><h2>사이트별 채택 공고</h2>{bars(src_items)}</div>'
+        f'<div class="card"><h2>접수기한까지 남은 기간</h2>'
+        f'{bars(dl_items, lambda k: "warn" if k == "3일 이내" else "none" if k.startswith("채용") else "")}</div>'
+        f'<div class="card"><h2>경력 구분</h2>{bars(lv_items)}</div>')
+
+    # 수집 → 채택 흐름도
+    agg = collections.Counter()
+    for n, v in stats.items():
+        agg.update(parse_stat(v))
+    total = agg.get("목록", 0)
+    steps = [("수집 목록", total, "")]
+    for lab, keys in (("안전 직무 외", ["안전 직무 아님", "채용 공고 아님"]), ("경력직", ["경력직"]),
+                      ("마감·오래된 글", ["마감", "오래된 게시글"]), ("중복", ["중복(상위 사이트 우선)"])):
+        c = sum(agg.get(k, 0) for k in keys)
+        if c:
+            steps.append((lab, f"−{c}", "minus"))
+    steps.append(("브리핑 채택", len(postings), "final"))
+    arrow = '<span class="arrow" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>'
+    flow = arrow.join(f'<div class="step {c}"><span class="l">{e(l)}</span><span class="v">{v}</span></div>' for l, v, c in steps)
+
+    # 공고 표
+    pill = {"A": '<span class="pill pa">데이터센터·하이테크·삼성·하이닉스</span>', "B": '<span class="pill pb">대기업·외국계</span>', "": ""}
+    secs, nav = [], []
+    for key, tag, rows in groups:
+        i = sid.get(key, "other")
+        nav.append((i, tag, len(rows)))
         trs = "".join(
             f'<tr class="h{p.hilite}"><td class="lv">{e(p.level)}</td>'
-            f'<td class="corp"><strong>{e(p.company or "-")}</strong>{tag_label[p.hilite]}</td>'
+            f'<td class="corp"><strong>{e(p.company or "-")}</strong>{pill[p.hilite]}</td>'
             f"<td>{e(p.title)}</td><td>{e(p.qualification or '-')}</td><td>{e(p.preferred or '-')}</td>"
-            f'<td class="dl{" soon" if p.url in soon else ""}">{e(p.deadline)}</td>'
-            f'<td><a href="{e(p.url)}" target="_blank" rel="noopener">{e(p.source)}</a>'
-            f'{"<br><small>이전 수집</small>" if p.extra.get("carried") else ""}</td></tr>'
+            f'<td class="dl{" soon" if id(p) in soon else ""}">{e(p.deadline)}</td>'
+            f'<td class="src"><a href="{e(p.url)}" target="_blank" rel="noopener">{e(p.source)}</a>'
+            f'{"<small>이전 수집</small>" if p.extra.get("carried") else ""}</td></tr>'
             for p in rows)
-        sections.append(
-            f'<section id="{sid}"><h2>{e(tag)} <span class="n">{len(rows)}건</span></h2>'
+        secs.append(
+            f'<section class="card grp" id="{i}"><h2>{e(tag)}<span class="n">{len(rows)}건</span></h2>'
+            '<p class="empty" hidden>조건에 맞는 공고가 없습니다.</p>'
             '<div class="scroll"><table><thead><tr><th>구분</th><th>업체명</th><th>공고명</th>'
             "<th>지원 자격 (학과·자격·영어·학력)</th><th>우대 사항</th><th>접수기한</th><th>출처</th></tr></thead>"
             f"<tbody>{trs}</tbody></table></div></section>")
-    n_a = sum(p.hilite == "A" for p in postings)
-    n_b = sum(p.hilite == "B" for p in postings)
-    st = "".join(f"<li><b>{e(n)}</b> {e(v)}</li>" for n, v in stats.items())
-    fl = "".join(f"<li><b>{e(n)}</b> {e(x.splitlines()[0])}</li>" for n, x in failures)
+
+    # 수집 현황 표
+    srows = []
+    for n, _, _ in SOURCES:
+        v = stats.get(n, "")
+        d = parse_stat(v)
+        if n in failed and "유지" in v:
+            st = '<span class="pill keep">실패 · 직전 공고 유지</span>'
+        elif n in failed:
+            st = '<span class="pill bad">수집 실패</span>'
+        else:
+            st = '<span class="pill ok">정상</span>'
+        why = ", ".join(f"{k} {c}" for k, c in d.items() if k not in ("목록", "채택")) or "-"
+        err = next((x.splitlines()[0] for m, x in failures if m == n), "")
+        srows.append(f"<tr><td>{e(n)}</td><td>{st}</td><td class='dl'>{d.get('목록', '-')}</td>"
+                     f"<td class='dl'>{d.get('채택', by_src.get(n, 0))}</td><td>{e(why)}</td><td>{e(err[:80]) or '-'}</td></tr>")
+    status = ('<div class="scroll"><table style="min-width:760px"><thead><tr><th>사이트 (우선순위 순)</th><th>상태</th><th>목록</th>'
+              f'<th>채택</th><th>제외 사유</th><th>오류</th></tr></thead><tbody>{"".join(srows)}</tbody></table></div>')
+
+    side = ('<div class="sec">요약</div><a href="#summary">지표·차트</a><a href="#flow">수집 흐름</a>'
+            '<div class="sec">공고</div>' + "".join(f'<a href="#{i}">{e(t)} <b>{c}</b></a>' for i, t, c in nav)
+            + '<div class="sec">수집</div><a href="#status">사이트 현황</a>')
+    chipnav = "".join(f'<a href="#{i}">{e(t)} {c}</a>' for i, t, c in nav)
+
     return f"""<title>안전관리자 채용 브리핑</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap">
-<style>
-/* 레이아웃: 상단 요약 스트립 → 고용형태별 표. 행 배경색으로 강조 두 종류를 구분 */
-:root{{
-  --bg:#f6f7f5; --surface:#ffffff; --fg:#1d2521; --muted:#5f6b65; --line:#dfe4e0;
-  --accent:#1f6f54;            /* 안전 녹색: 링크·요약 수치 */
-  --a-bg:#fdeceb; --a-fg:#a3261c; --b-bg:#e8effc; --b-fg:#1f4fa8; --warn:#b3541e;
-  --sans:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
-  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
-}}
-@media (prefers-color-scheme: dark){{:root:not([data-theme="light"]){{
-  --bg:#121614; --surface:#1a201d; --fg:#e4e9e6; --muted:#9aa6a0; --line:#2c3531;
-  --accent:#5cc49a; --a-bg:#3a1f1c; --a-fg:#ff9c90; --b-bg:#1b2a44; --b-fg:#9dbdff; --warn:#f0a070; color-scheme:dark}}}}
-:root[data-theme="dark"]{{
-  --bg:#121614; --surface:#1a201d; --fg:#e4e9e6; --muted:#9aa6a0; --line:#2c3531;
-  --accent:#5cc49a; --a-bg:#3a1f1c; --a-fg:#ff9c90; --b-bg:#1b2a44; --b-fg:#9dbdff; --warn:#f0a070; color-scheme:dark}}
-body{{background:var(--bg);color:var(--fg);font:14px/1.55 var(--sans);padding:24px 16px 48px}}
-main{{max-width:1280px;margin:0 auto;display:grid;gap:20px}}
-header{{display:grid;gap:6px}}
-.eyebrow{{font-size:12px;letter-spacing:.08em;color:var(--muted);font-family:var(--mono)}}
-h1{{font-size:clamp(22px,4vw,30px);line-height:1.2;margin:0;text-wrap:balance}}
-.lede{{margin:0;color:var(--muted);max-width:65ch}}
-.strip{{display:flex;flex-wrap:wrap;gap:8px}}
-.strip a,.strip span{{display:inline-flex;gap:6px;align-items:center;padding:6px 10px;border:1px solid var(--line);
-  border-radius:6px;background:var(--surface);color:var(--fg);text-decoration:none;font-size:13px}}
-.strip b{{font-variant-numeric:tabular-nums;color:var(--accent)}}
-.strip .ka{{background:var(--a-bg);color:var(--a-fg);border-color:transparent}}
-.strip .kb{{background:var(--b-bg);color:var(--b-fg);border-color:transparent}}
-.strip a:focus-visible{{outline:2px solid var(--accent);outline-offset:2px}}
-section{{display:grid;gap:8px;min-width:0}}
-h2{{font-size:17px;margin:8px 0 0}} h2 .n{{color:var(--muted);font-weight:500;font-size:14px}}
-.scroll{{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:6px}}
-table{{border-collapse:collapse;width:100%;min-width:980px}}
-th,td{{padding:8px 10px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}}
-th{{font-size:12px;font-weight:500;color:var(--muted);white-space:nowrap;position:sticky;top:0;background:var(--surface)}}
-tbody tr:last-child td{{border-bottom:0}}
-td.lv{{white-space:nowrap;color:var(--muted)}} td.corp{{min-width:140px}} td.corp strong{{display:block}}
-td.dl{{white-space:nowrap;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13px}}
-td.dl.soon{{color:var(--warn);font-weight:500}}
-tr.hA{{background:var(--a-bg)}} tr.hA td.corp strong{{color:var(--a-fg)}}
-tr.hB{{background:var(--b-bg)}} tr.hB td.corp strong{{color:var(--b-fg)}}
-.pill{{display:inline-block;margin-top:4px;font-size:11px;padding:1px 6px;border-radius:4px;border:1px solid currentColor}}
-.pa{{color:var(--a-fg)}} .pb{{color:var(--b-fg)}}
-a{{color:var(--accent)}}
-.meta{{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));font-size:13px}}
-.meta ul{{margin:4px 0 0;padding-left:18px;color:var(--muted)}} .meta h3{{font-size:13px;margin:0}}
-.note{{color:var(--muted);font-size:12px;margin:0}}
-</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap">
+<style>{HTML_CSS}</style>
+<header class="top"><h1>안전관리자 채용 브리핑</h1>
+  <span class="when">{now:%Y-%m-%d %H:%M} KST 수집</span>
+  <span class="pill {'ok' if not failed else 'keep'} chip">{ok_sites}/{len(SOURCES)} 사이트 수집</span></header>
+<div class="shell">
+<nav class="side" aria-label="섹션">{side}</nav>
 <main>
-<header>
-  <div class="eyebrow">{now:%Y-%m-%d %H:%M} KST · 8개 사이트 수집</div>
-  <h1>안전관리자 채용 브리핑</h1>
-  <p class="lede">신입·경력무관·인턴 공고 {len(postings)}건입니다. 경력직 전용과 마감된 공고는 뺐고, 같은 공고는 우선순위가 높은 사이트 것만 남겼습니다. 접수기한 3일 이내는 주황색으로 표시합니다.</p>
-</header>
-<nav class="strip" aria-label="요약">{''.join(nav)}
-  <span class="ka">데이터센터·하이테크·삼성·하이닉스 <b>{n_a}</b></span>
-  <span class="kb">대기업·외국계 <b>{n_b}</b></span></nav>
-{''.join(sections)}
-<div class="meta"><div><h3>사이트별 수집 현황</h3><ul>{st}</ul></div>
-{f'<div><h3>수집 실패</h3><ul>{fl}</ul></div>' if fl else ''}</div>
-<p class="note">지원 자격·우대 사항은 상세 페이지에서 자동으로 뽑은 요약입니다. 지원 전에 원문을 확인하세요.</p>
-</main>
+<nav class="chipnav" aria-label="섹션">{chipnav}<a href="#status">사이트 현황</a></nav>
+<div class="kpis" id="summary">{kpis}</div>
+<div class="charts">{charts}</div>
+<div class="card" id="flow"><h2>수집에서 채택까지</h2><div class="flow">{flow}</div></div>
+<div class="card tools" role="search">
+  <label for="q" class="sr" hidden>공고 검색</label>
+  <input id="q" type="search" placeholder="업체명·공고명·자격 검색" aria-label="업체명, 공고명, 자격 검색">
+  <div class="seg" role="group" aria-label="강조 필터">
+    <button type="button" data-mode="all" aria-pressed="true">전체</button>
+    <button type="button" data-mode="A" aria-pressed="false">데이터센터·하이테크·삼성·하이닉스</button>
+    <button type="button" data-mode="B" aria-pressed="false">대기업·외국계</button>
+    <button type="button" data-mode="soon" aria-pressed="false">3일 내 마감</button>
+  </div></div>
+{''.join(secs)}
+<section class="card" id="status"><h2>사이트별 수집 현황</h2>{status}</section>
+<p class="note">지원 자격·우대 사항은 상세 페이지에서 자동 추출한 요약입니다. 지원 전 원문을 확인하세요.</p>
+</main></div>
+<script>{HTML_JS}</script>
 """
 
 
