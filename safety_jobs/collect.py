@@ -718,6 +718,15 @@ def sort_key(p):
     return ({"A": 0, "B": 1}.get(p.hilite, 2), p.deadline_date or "9999")
 
 
+def deadline_md(p, today):
+    """3일 이내 마감은 ⏰·굵게·D-n 으로 표시 (마크다운은 글자색을 못 쓰므로 HTML에서만 붉은색)."""
+    if p.deadline_date:
+        left = (dt.date.fromisoformat(p.deadline_date) - today).days
+        if left <= 3:
+            return f"⏰ **{md_cell(p.deadline)} (D-{left})**" if left else f"⏰ **{md_cell(p.deadline)} (오늘 마감)**"
+    return md_cell(p.deadline)
+
+
 def render_md(postings, failures, now, stats):
     L = [f"# 안전관리자 채용 브리핑 — {now:%Y-%m-%d (%a) %H:%M} KST", ""]
     n_gen = sum(p.industry == "일반 산업" for p in postings)
@@ -742,7 +751,7 @@ def render_md(postings, failures, now, stats):
             cert = f"**[{'·'.join(p.certs)} 명시]** " if p.certs else ""
             cert += f"🟣 **[{'·'.join(p.prefs)} 우대]** " if p.prefs else ""
             L.append(f"| {md_cell(p.level)} · {md_cell(p.industry)} | {corp} | {md_cell(p.title)} | {cert}{md_cell(p.qualification)} "
-                     f"| {md_cell(p.preferred)} | {md_cell(p.deadline)} | [{p.source}]({p.url}){' (이전 수집)' if p.extra.get('carried') else ''} |")
+                     f"| {md_cell(p.preferred)} | {deadline_md(p, now.date())} | [{p.source}]({p.url}){' (이전 수집)' if p.extra.get('carried') else ''} |")
         L.append("")
     L += ["---", "", "**사이트별 수집 현황**", ""]
     for name, st in stats.items():
@@ -809,7 +818,7 @@ main{padding:20px;display:grid;gap:16px;min-width:0;max-width:1400px}
 .bar .k{color:var(--text-sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bar .t{display:block;height:14px;background:var(--alt1);border-radius:4px;overflow:hidden}
 .bar .f{display:block;height:100%;background:var(--primary);border-radius:0 4px 4px 0;min-width:2px}
-.bar .f.warn{background:var(--warning)} .bar .f.pp{background:var(--purple)} .bar .f.none{background:var(--border-strong)}
+.bar .f.warn{background:var(--error)} .bar .f.pp{background:var(--purple)} .bar .f.none{background:var(--border-strong)}
 .bar .v{text-align:right;font-variant-numeric:tabular-nums;font-weight:600;color:var(--text)}
 .bar:hover .k{color:var(--text-strong)}
 .flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px}
@@ -830,9 +839,9 @@ th{font-size:12px;font-weight:600;color:var(--caption);background:var(--alt1);wh
 tbody tr:last-child td{border-bottom:0}
 td{min-height:52px} td.lv{white-space:nowrap;color:var(--text-sub)} td.lv small{display:block;font-size:12px;color:var(--caption)} td.corp{min-width:150px} td.corp strong{display:block;font-weight:600;color:var(--text-strong)}
 td.dl{white-space:nowrap;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13px}
-td.dl.soon{color:var(--text-strong);font-weight:600}
+td.dl.soon{color:var(--error);font-weight:700}
 td.dl.soon::after{content:"임박";display:inline-block;margin-left:6px;padding:0 6px;border-radius:var(--r-pill);font:600 11px var(--font);
-  background:color-mix(in srgb,var(--warning) 22%,transparent);color:var(--text-strong)}
+  background:color-mix(in srgb,var(--error) 14%,transparent);color:var(--error)}
 tr.hA{background:color-mix(in srgb,var(--error) 8%,var(--surface))}
 tr.hB{background:color-mix(in srgb,var(--primary) 7%,var(--surface))}
 .pill{display:inline-flex;align-items:center;gap:4px;margin-top:4px;font-size:11px;font-weight:600;padding:1px 8px;border-radius:var(--r-pill);border:1px solid var(--border-strong);color:var(--text-sub)}
@@ -926,7 +935,7 @@ def render_html(postings, failures, now, stats):
         kpi("일반 산업체", sum(p.industry == "일반 산업" for p in postings), "건설 외 제조·서비스 등"),
         kpi("산업·건설안전기사 명시", sum(bool(p.certs) for p in postings), "공고에 자격증 기재"),
         kpi("외국어·NEBOSH·IOSH·CSP 우대", sum(bool(p.prefs) for p in postings), "우대 조건 기재", "--purple"),
-        kpi("3일 내 마감", len(soon), "접수 서두름", "--warning"),
+        kpi("3일 내 마감", len(soon), "접수 서두름", "--error"),
         kpi("데이터센터·하이테크·삼성·하이닉스", n_a, "집중 관심", "--error"),
         kpi("대기업·외국계", n_b, "관심 기업", "--primary"),
     ])
@@ -969,6 +978,9 @@ def render_html(postings, failures, now, stats):
         c = sum(agg.get(k, 0) for k in keys)
         if c:
             steps.append((lab, f"−{c}", "minus"))
+    n_carried = sum(1 for p in postings if p.extra.get("carried"))
+    if n_carried:
+        steps.append(("이전 수집 유지", f"+{n_carried}", "minus"))
     steps.append(("브리핑 채택", len(postings), "final"))
     arrow = '<span class="arrow" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>'
     flow = arrow.join(f'<div class="step {c}"><span class="l">{e(l)}</span><span class="v">{v}</span></div>' for l, v, c in steps)
@@ -1052,30 +1064,44 @@ def render_html(postings, failures, now, stats):
 """
 
 
+UNDATED_KEEP_DAYS = 14  # 마감일이 없는 공고('채용 시 마감' 등)는 처음 수집 후 이 기간만 유지
+
+
 def carry_over(prev_path, failed, kept, stats, today):
-    """수집에 실패한 사이트는 직전 브리핑의 아직 마감 안 된 공고를 유지한다."""
+    """직전 브리핑에서 아직 접수 중인 공고를 이어서 싣는다.
+
+    검색 결과 순위가 바뀌어 오늘 목록에 안 보이거나, 사이트 수집에 실패해도
+    접수기한이 남은 공고는 리스트에 남긴다. 마감일이 없는 공고는 처음 수집 후
+    UNDATED_KEEP_DAYS 일까지만 유지한다. 지금 규칙(건설사 시평 100위 등)은 다시 적용한다.
+    """
     try:
         prev = json.loads(prev_path.read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return
-    for name in failed:
-        n = 0
-        for d in prev.get("postings", []):
-            if d.get("source") != name:
-                continue
+    prev_day = prev.get("generated_at", "")[:10]
+    added = collections.Counter()
+    for d in prev.get("postings", []):
+        try:
             p = Posting(**d)
-            if p.deadline_date and p.deadline_date < today.isoformat():
+        except TypeError:  # 이전 형식 필드
+            continue
+        if p.deadline_date:
+            if p.deadline_date < today.isoformat():
                 continue
-            first = p.extra.get("carried") or prev.get("generated_at", "")[:10]
-            if first and (today - dt.date.fromisoformat(first)).days > 3:  # 3일 넘게 못 가져오면 버린다
+        else:
+            first = p.extra.get("first_seen") or prev_day
+            if not first or (today - dt.date.fromisoformat(first)).days > UNDATED_KEEP_DAYS:
                 continue
-            if is_dup(p, kept):
-                continue
-            p.extra["carried"] = first
-            kept.append(p)
-            n += 1
-        if n:
-            stats[name] = f"수집 실패 → 직전 브리핑({prev.get('generated_at', '')[:10]})의 공고 {n}건 유지"
+        if p.industry == "건설" and not p.extra.get("top100"):
+            continue
+        if any(q.url == p.url for q in kept) or is_dup(p, kept):
+            continue
+        p.extra["carried"] = p.extra.get("carried") or prev_day
+        kept.append(p)
+        added[p.source] += 1
+    for name, n in added.items():
+        note = f"직전 브리핑에서 접수 중 공고 {n}건 유지"
+        stats[name] = f"수집 실패 → {note}" if name in failed else f"{stats.get(name, '')}, {note}".lstrip(", ")
 
 
 # ---------------------------------------------------------------- main
@@ -1142,6 +1168,7 @@ def main():
                 counts["중복(상위 사이트 우선)"] = counts.get("중복(상위 사이트 우선)", 0) + 1
                 continue
             counts["채택"] += 1
+            p.extra.setdefault("first_seen", today.isoformat())
             kept.append(p)
         stats[name] = ", ".join(f"{k} {v}" for k, v in counts.items())
 
