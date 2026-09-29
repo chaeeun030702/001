@@ -145,7 +145,7 @@ def parse_deadline(text: str, today: dt.date):
         if d:
             return f"{d:%Y-%m-%d}", d
     m = re.search(r"~\s*(\d{1,2})\s*[/.월]\s*(\d{1,2})", t) or re.search(r"\((\d{1,2})/(\d{1,2})\)", t) \
-        or re.search(r"(\d{1,2})\s*월\s*(\d{1,2})\s*일", t)
+        or re.search(r"(\d{1,2})\s*월\s*(\d{1,2})\s*일", t) or re.fullmatch(r"(\d{1,2})/(\d{1,2})", t)
     if m:
         mo, da = int(m.group(1)), int(m.group(2))
         d = safe_date(today.year, mo, da)
@@ -273,9 +273,18 @@ def src_worker(f: Fetcher):
             if not no or no.group(1) in seen:
                 continue
             seen.add(no.group(1))
+            full = text_of(tds[4])  # "제목 지역 | 채용구분 | 급여"
             title = text_of(a)
-            rest = clean(text_of(tds[4]).replace(title, "", 1))  # "지역 | 채용구분 | 급여"
-            parts = [clean(x) for x in rest.split("|")]
+            if "|" in title:
+                title = title.split("|")[0].strip()
+            head, _, rest = full.partition("|")
+            region = head.replace(title, "").strip() if title in head else ""
+            if not region and " " in title:  # 제목 끝의 지역명 분리
+                t0, _, last = title.rpartition(" ")
+                if re.fullmatch(r"[가-힣/·,]{2,12}", last) and re.search(r"서울|경기|인천|세종|강원|충|대전|부산|울산|대구|경|전|광주|제주|해외|전국|기타", last):
+                    title, region = t0, last
+            parts = [region] + [clean(x) for x in rest.split("|")]
+            title, rest = clean(title), " | ".join(parts)
             p = Posting("워커", title, text_of(tds[2]), urljoin("https://www.worker.co.kr/job/", a["href"]),
                         f"{title} {rest} {text_of(tds[6])}")
             p.employment = parts[1] if len(parts) > 1 else ""
@@ -401,6 +410,9 @@ def detail_fields(p: Posting):
         m = re.search(r"마감일\s*(20\d{2}\.\d{2}\.\d{2})", t)
         if m:
             p.deadline = m.group(1)
+        m = re.search(r"지원자격\s*경력\s*[가-힣·↑0-9 ]{2,15}?\s*학력\s*([가-힣0-9()↑ ]{2,15}?)\s*(?:스킬|우대|핵심|자격증|$)", t)
+        if m:
+            p.extra["edu"] = clean(m.group(1))
         m = re.search(r"기업구분\s*([가-힣]+)", t)
         if m:
             p.company_type = m.group(1)
@@ -475,9 +487,10 @@ def classify_company(p: Posting, text):
     blob = f"{p.company} {p.title}"
     if HILITE_A_RE.search(f"{blob} {p.listing_text} {p.extra.get('sector', '')}"):
         return "A"
-    if p.company_type in ("대기업", "외국계") or re.search(r"외국계|외투기업|외국인\s*투자", f"{blob} {text[:3000]}"):
+    if p.company_type in ("대기업", "외국계") or re.search(r"기업\s*(?:구분|형태)\s*(?:대기업|외국계)", text) \
+            or re.search(r"외국계|외투기업", p.title):
         return "B"
-    name = re.sub(r"\(주\)|㈜|주식회사|\s", "", blob)
+    name = re.sub(r"\(주\)|㈜|주식회사|\s", "", p.company)
     if any(re.search(rf"(?<![가-힣A-Za-z]){re.escape(g)}", name) for g in BIG_GROUPS + FOREIGN_NAMES):
         return "B"
     return ""
@@ -511,6 +524,8 @@ def analyze(p: Posting, today):
         edu = p.extra["cond"][2] if len(p.extra["cond"]) > 2 else ""
         if edu and "학력" not in p.qualification:
             p.qualification = " / ".join(filter(None, [p.qualification, f"학력: {edu}"]))
+    if p.extra.get("edu") and "학력" not in p.qualification:
+        p.qualification = " / ".join(filter(None, [re.sub(r"^경력\s*\S+\s*", "", p.qualification), f"학력: {p.extra['edu']}"]))
     if p.source == "워커" and "학력" not in p.qualification:
         edu = p.extra.get("exp_edu", "").split(" ", 1)[-1]
         p.qualification = " / ".join(filter(None, [p.qualification, f"학력: {edu}"]))
