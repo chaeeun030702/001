@@ -1,0 +1,10 @@
+1 200 222304 https://www.jobkorea.co.kr/theme/entry-level-internship
+2 200 2529258 https://www.saramin.co.kr/zf_user/search?searchword=%EC%95%88%EC%A0%84%EA%B4%80%EB%A6%AC%EC%9E%90&go=&flag=n&searchMode=1&searchType=search&search_done=y&search_optional_item=n
+3 200 114814 https://linkareer.com/search?direction=DESC&page=1&q=%EC%95%88%EC%A0%84%EA%B4%80%EB%A6%AC%EC%9E%90&sort=RELEVANCE&tab=open-activity
+4 200 1609862 https://www.worker.co.kr/job/list.asp
+5 200 55068 https://safety.seoultech.ac.kr/b_information/job_info
+6 404 0 https://safety.chungbuk.ac.kr/safety5_2
+7 200 83863 https://www.inu.ac.kr/safety/3207/subview.do
+curl: (28) Connection timed out after 40002 milliseconds
+8 000 0 https://safety.pknu.ac.kr/safety/2080
+8 FAIL https://safety.pknu.ac.kr/safety/2080
