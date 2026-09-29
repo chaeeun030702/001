@@ -799,8 +799,7 @@ RANK_FIELD_RE = re.compile(r"직급\s*(?:/\s*직책)?\s*[:：]?\s*([가-힣·,/.
 
 # 본문에 명시된 대리급 이상 요건(우대 포함)·기술사 우대/소지 요건
 BODY_SENIOR_RE = re.compile(r"(?:대리|과장|차장|부장|책임|수석)\s*급|(?:대리|과장|차장|부장)\s*(?:이상|~|-)")
-PE_RE = re.compile(r"기술사[^.\n]{0,40}우대|기술사\s*(?:자격\s*)?(?:증\s*)?(?:소지|보유|필수|취득|이상)|"
-                   r"Professional\s+Engineer|(?<![A-Za-z])P\.?E\.?\s+(?:license|certified)", re.I)
+PE_RE = re.compile(r"기술사[^.\n]{0,40}우대|우대[^.\n]{0,6}(?:사항|조건|요건)?[^.\n]{0,40}기술사")  # 기술사 우대만 (소지·필수 표기는 판단 안 함)
 
 
 def senior_rank(p: Posting) -> bool:
@@ -812,8 +811,9 @@ def senior_rank(p: Posting) -> bool:
     body = f"{p.title} {p.listing_text} {p.detail_text or ''}"
     for m in PE_RE.finditer(body):
         # '기술사 또는 산업안전기사 우대'처럼 기사 자격도 함께 인정하면 살린다
-        clause = body[max(0, m.start() - 40):m.end() + 40]
-        cut = m.start() - max(0, m.start() - 40)
+        lead = 0 if m.group(0).startswith("우대") else 40  # '우대사항 … 기술사'는 우대 표기부터 본다
+        clause = body[max(0, m.start() - lead):m.end() + 40]
+        cut = m.start() - max(0, m.start() - lead)
         heads = list(re.finditer(rf"{QUAL_HEAD}|{PREF_HEAD}|[.•·■▶\n]", clause[:cut]))
         if heads:
             clause = clause[heads[-1].end():]
