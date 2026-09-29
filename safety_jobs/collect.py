@@ -756,7 +756,7 @@ def keep(p: Posting, today) -> tuple[bool, str]:
         return False, "건설사(시평 100위 밖)"
     if p.level == "경력":
         return False, "경력직"
-    if p.employment == "계약직" and not calendar_eligible(p):
+    if p.employment == "계약직" and not contract_ok(p):
         return False, "계약직(관심 기업 외)"
     if p.deadline_date and p.deadline_date < today.isoformat():
         return False, "마감"
@@ -1054,6 +1054,15 @@ def calendar_eligible(p):
     if SEMI_DC_TITLE_RE.search(f"{p.company} {p.title}"):
         return True
     return bool(SEMI_DC_RE.search(f"{p.company} {p.title} {p.listing_text} {p.extra.get('sector', '')} {(p.detail_text or '')[:4000]}"))
+
+
+CONTRACT_TOP_RANK = 20  # 계약직 건설사는 시공능력평가(도급순위) 20위 이내도 인정
+
+
+def contract_ok(p):
+    """계약직 유지 조건: 관심 기업이거나, 도급순위 20위 이내 건설사."""
+    rank = p.extra.get("top100")
+    return calendar_eligible(p) or (p.industry == "건설" and bool(rank) and rank <= CONTRACT_TOP_RANK)
 
 
 def render_calendar(postings, today, months=2, show=5):
@@ -1358,7 +1367,7 @@ def carry_over(prev_path, failed, kept, stats, today):
         p.extra["carried"] = p.extra.get("carried") or prev_day
         p.hilite = classify_company(p, p.detail_text)  # 지금 기준으로 강조 다시 판정
         p.extra["listed"] = listed_market(p)
-        if p.employment == "계약직" and not calendar_eligible(p):  # 계약직은 관심 기업만
+        if p.employment == "계약직" and not contract_ok(p):  # 계약직은 관심 기업만
             continue
         if "ai" not in p.extra:
             t = p.detail_text or ""
