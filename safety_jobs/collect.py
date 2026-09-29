@@ -790,8 +790,45 @@ def employment_of(p: Posting, text):
     return "기타/미표기"
 
 
+# 대리급 이상(대리·과장·차장·부장·팀장·임원, 영문 Senior/Manager/Director 등) 공고는 경력직으로 보고 제외
+SENIOR_RANK_RE = re.compile(r"대리|과장|차장|부장|팀장|실장|임원|책임|수석|매니저|디렉터|"
+                            r"(?<![A-Za-z])(?:Senior|Sr\.?|Director|Head|Principal|Lead|Manager|Supervisor|VP|Chief)(?![A-Za-z])", re.I)
+JUNIOR_RANK_RE = re.compile(r"사원|주임|신입|인턴|졸업|(?<![A-Za-z])(?:Junior|Jr\.?|Associate|Entry|Intern|Graduate|Trainee)(?![A-Za-z])", re.I)
+RANK_FIELD_RE = re.compile(r"직급\s*(?:/\s*직책)?\s*[:：]?\s*([가-힣·,/.~\- ]{2,24}?)(?=\s*(?:급여|근무|직책|연봉|모집|$))")
+
+
+# 본문에 명시된 대리급 이상 요건(우대 포함)·기술사 우대/소지 요건
+BODY_SENIOR_RE = re.compile(r"(?:대리|과장|차장|부장|책임|수석)\s*급|(?:대리|과장|차장|부장)\s*(?:이상|~|-)")
+PE_RE = re.compile(r"기술사[^.\n]{0,40}우대|기술사\s*(?:자격\s*)?(?:증\s*)?(?:소지|보유|필수|취득|이상)|"
+                   r"Professional\s+Engineer|(?<![A-Za-z])P\.?E\.?\s+(?:license|certified)", re.I)
+
+
+def senior_rank(p: Posting) -> bool:
+    """대리급 이상·기술사 우대 등이 명시된 공고인가 (제목·직급 표기·본문, 우대 표기 포함).
+    직급 표기에 사원·신입을 함께 뽑는다고 되어 있으면 제외하지 않는다."""
+    title = p.title
+    if SENIOR_RANK_RE.search(title) and not JUNIOR_RANK_RE.search(title):
+        return True
+    body = f"{p.title} {p.listing_text} {p.detail_text or ''}"
+    if PE_RE.search(body):
+        p.extra["pe"] = True
+        return True
+    for m in BODY_SENIOR_RE.finditer(p.detail_text or ""):
+        near = p.detail_text[max(0, m.start() - 12):m.end() + 4]
+        if not JUNIOR_RANK_RE.search(near):
+            return True
+    m = RANK_FIELD_RE.search(p.detail_text or "")
+    field_ = m.group(1) if m else ""
+    if p.source == "피플앤잡":
+        field_ = p.extra.get("career", "") or field_
+    return bool(SENIOR_RANK_RE.search(field_) and not JUNIOR_RANK_RE.search(field_))
+
+
 def level_of(p: Posting, text):
     lv = p.level
+    if senior_rank(p):
+        p.extra["senior"] = True
+        return "경력"
     if re.search(r"신입\s*[Xx×]|신입\s*불가", p.title) or (
             CAREER_ONLY_RE.search(p.title) and not NEWBIE_RE.search(p.title)):
         return "경력"
@@ -1003,7 +1040,7 @@ def keep(p: Posting, today) -> tuple[bool, str]:
     if p.industry == "건설" and not p.extra.get("top100"):
         return False, "건설사(시평 100위 밖)"
     if p.level == "경력":
-        return False, "경력직"
+        return False, ("기술사 우대·요건" if p.extra.get("pe") else "대리급 이상") if p.extra.get("senior") else "경력직"
     if p.employment == "계약직" and not contract_ok(p):
         return False, "계약직(관심 기업 외)"
     if p.deadline_date and p.deadline_date < today.isoformat():
@@ -1607,6 +1644,8 @@ def carry_over(prev_path, failed, kept, stats, today):
             if not first or (today - dt.date.fromisoformat(first)).days > UNDATED_KEEP_DAYS:
                 continue
         if p.industry == "건설" and not p.extra.get("top100"):
+            continue
+        if senior_rank(p):  # 대리급 이상 제외 재적용
             continue
         if SALES_RE.search(p.title) or WATCH_RE.search(f"{p.title} {p.detail_text}"):  # 영업직·감시단 제외 재적용
             continue
