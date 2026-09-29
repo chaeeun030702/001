@@ -648,6 +648,7 @@ def analyze(p: Posting, today):
     p.deadline = disp or p.deadline or "확인 필요"
     p.deadline_date = d.isoformat() if d else ""
     p.hilite = classify_company(p, text)
+    p.extra["listed"] = listed_market(p)
     p.certs = sorted({f"{m.group(1)}안전기사" for m in CERT_KEY_RE.finditer(f"{p.title} {p.listing_text} {text}")})
     blob = f"{p.title} {p.listing_text} {text}"
     p.prefs = [lab for lab, rx in (("외국어·영어", LANG_RE), ("NEBOSH", NEBOSH_RE), ("IOSH", IOSH_RE), ("CSP", CSP_RE)) if rx.search(blob)]
@@ -735,7 +736,7 @@ def is_dup(p, kept):
 BADGE = {"A": "🔴 ", "B": "🔵 ", "F": "🌐 ", "": ""}
 GROUPS = [("정규직", "[정규직]"), ("계약직", "[계약직]"), ("인턴", "[인턴]"), ("기타/미표기", "[고용형태 미표기]")]
 LEGEND = ("🔴 데이터센터·하이테크·삼성·하이닉스 관련 · 🔵 대기업 계열사 · 🌐 외국계 회사 (여럿 해당하면 🔴 > 🔵 > 🌐, 업체명 옆에 [대기업 계열]/[외국계] 표기) · "
-          "🟣 외국어·영어 능통 / NEBOSH / IOSH / CSP 우대 (🔴·🔵와 함께 표시될 수 있음)")
+          "🟣 외국어·영어 능통 / NEBOSH / IOSH / CSP 우대 (🔴·🔵와 함께 표시될 수 있음) · [코스피]/[코스닥] 상장사")
 
 
 def md_cell(s):
@@ -775,6 +776,7 @@ def render_md(postings, failures, now, stats):
         for p in rows:
             corp = BADGE[p.hilite] + (f"**{md_cell(p.company)}**" if p.hilite else md_cell(p.company))
             corp += "".join(f" [{g}]" for g in p.extra.get("groups", []))
+            corp += f" [{p.extra['listed']}]" if p.extra.get("listed") else ""
             if p.industry == "건설" and p.extra.get("top100"):
                 corp += f" (시평 {p.extra['top100']}위)"
             cert = f"**[{'·'.join(p.certs)} 명시]** " if p.certs else ""
@@ -876,7 +878,7 @@ tr.hB{background:color-mix(in srgb,var(--primary) 7%,var(--surface))}
 tr.hF{background:color-mix(in srgb,var(--sky) 9%,var(--surface))}
 .pill{display:inline-flex;align-items:center;gap:4px;margin-top:4px;font-size:11px;font-weight:600;padding:1px 8px;border-radius:var(--r-pill);border:1px solid var(--border-strong);color:var(--text-sub)}
 .pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
-.pill.pa::before{background:var(--error)} .pill.pb::before{background:var(--primary)} .pill.pf::before{background:var(--sky)} .pill.pc{margin:0 0 4px}.pill.pc::before{background:var(--success)}
+.pill.pa::before{background:var(--error)} .pill.pb::before{background:var(--primary)} .pill.pf::before{background:var(--sky)} .pill.pk{border-color:var(--text-sub);color:var(--text-strong)} .pill.pk::before{background:var(--text-strong);border-radius:2px} .pill.pc{margin:0 0 4px}.pill.pc::before{background:var(--success)}
 .pill.pp{margin:4px 4px 0 0;border-color:var(--purple);background:color-mix(in srgb,var(--purple) 12%,transparent);color:var(--text-strong)}.pill.pp::before{background:var(--purple)}
 td.ttl .prefs{display:flex;flex-wrap:wrap}
 .pill.ok::before{background:var(--success)} .pill.bad::before{background:var(--error)} .pill.keep::before{background:var(--warning)}
@@ -929,7 +931,7 @@ HTML_JS = """
       var n=0;
       sec.querySelectorAll('tbody tr').forEach(function(tr){
         var ok=(!t||tr.textContent.toLowerCase().indexOf(t)>=0)&&
-          (mode==='all'||(mode==='A'&&tr.classList.contains('hA'))||(mode==='B'&&tr.dataset.grp.indexOf('대기업')>=0)||(mode==='F'&&tr.dataset.grp.indexOf('외국계')>=0)||
+          (mode==='all'||(mode==='A'&&tr.classList.contains('hA'))||(mode==='B'&&tr.dataset.grp.indexOf('대기업')>=0)||(mode==='F'&&tr.dataset.grp.indexOf('외국계')>=0)||(mode==='K'&&tr.dataset.listed!=='')||
            (mode==='soon'&&tr.querySelector('td.dl.soon'))||(mode==='gen'&&tr.dataset.ind==='일반 산업')||
            (mode==='cert'&&tr.dataset.cert==='1')||(mode==='pref'&&tr.dataset.pref==='1'));
         tr.hidden=!ok; if(ok)n++;
@@ -1006,7 +1008,10 @@ def render_calendar(postings, today, months=2, show=3):
 
 def group_pills(p):
     cls = {"대기업 계열": "pb", "외국계": "pf"}
-    return "".join(f'<span class="pill {cls[g]}">{g}</span>' for g in p.extra.get("groups", []))
+    out = "".join(f'<span class="pill {cls[g]}">{g}</span>' for g in p.extra.get("groups", []))
+    if p.extra.get("listed"):
+        out += f'<span class="pill pk">{p.extra["listed"]} 상장</span>'
+    return out
 
 
 def rank_pill(p):
@@ -1038,6 +1043,8 @@ def render_html(postings, failures, now, stats):
     n_a = sum(p.hilite == "A" for p in postings)
     n_b = sum("대기업 계열" in p.extra.get("groups", []) for p in postings)
     n_f = sum("외국계" in p.extra.get("groups", []) for p in postings)
+    n_ks = sum(p.extra.get("listed") == "코스피" for p in postings)
+    n_kq = sum(p.extra.get("listed") == "코스닥" for p in postings)
     failed = {n for n, _ in failures}
     ok_sites = len(SOURCES) - len(failed)
 
@@ -1057,6 +1064,7 @@ def render_html(postings, failures, now, stats):
         kpi("데이터센터·하이테크·삼성·하이닉스", n_a, "집중 관심", "--error"),
         kpi("대기업 계열", n_b, "그룹 계열사", "--primary"),
         kpi("외국계", n_f, "외국계 기업", "--sky"),
+        kpi("코스피·코스닥 상장", n_ks + n_kq, f"코스피 {n_ks} · 코스닥 {n_kq}", "--text-strong"),
     ])
 
     # 막대 차트(단일 계열, primary 한 색)
@@ -1111,7 +1119,7 @@ def render_html(postings, failures, now, stats):
         i = sid.get(key, "other")
         nav.append((i, tag, len(rows)))
         trs = "".join(
-            f'<tr class="h{p.hilite}" data-ind="{e(p.industry)}" data-cert="{1 if p.certs else 0}" data-pref="{1 if p.prefs else 0}" data-grp="{e(" ".join(p.extra.get("groups", [])))}"><td class="lv">{e(p.level)}<small>{e(p.industry)}</small></td>'
+            f'<tr class="h{p.hilite}" data-ind="{e(p.industry)}" data-cert="{1 if p.certs else 0}" data-pref="{1 if p.prefs else 0}" data-grp="{e(" ".join(p.extra.get("groups", [])))}" data-listed="{e(p.extra.get("listed", ""))}"><td class="lv">{e(p.level)}<small>{e(p.industry)}</small></td>'
             f'<td class="corp"><strong><a class="co" href="{e(p.url)}" target="_blank" rel="noopener">{e(p.company or "-")}</a></strong>{pill[p.hilite]}{group_pills(p)}{rank_pill(p)}</td>'
             f"<td class=\"ttl\">{e(p.title)}{pref_pills(p)}</td><td>{cert_pills(p)}{e(p.qualification or '-')}</td><td>{e(p.preferred or '-')}</td>"
             f'<td class="dl{" soon" if id(p) in soon else ""}">{e(p.deadline)}</td>'
@@ -1172,6 +1180,7 @@ def render_html(postings, failures, now, stats):
     <button type="button" data-mode="A" aria-pressed="false">데이터센터·하이테크·삼성·하이닉스</button>
     <button type="button" data-mode="B" aria-pressed="false">대기업 계열</button>
     <button type="button" data-mode="F" aria-pressed="false">외국계</button>
+    <button type="button" data-mode="K" aria-pressed="false">코스피·코스닥 상장</button>
     <button type="button" data-mode="gen" aria-pressed="false">일반 산업체</button>
     <button type="button" data-mode="cert" aria-pressed="false">산업·건설안전기사 명시</button>
     <button type="button" data-mode="pref" aria-pressed="false">외국어·NEBOSH·IOSH·CSP 우대</button>
@@ -1219,11 +1228,57 @@ def carry_over(prev_path, failed, kept, stats, today):
             continue
         p.extra["carried"] = p.extra.get("carried") or prev_day
         p.hilite = classify_company(p, p.detail_text)  # 지금 기준으로 강조 다시 판정
+        p.extra["listed"] = listed_market(p)
         kept.append(p)
         added[p.source] += 1
     for name, n in added.items():
         note = f"직전 브리핑에서 접수 중 공고 {n}건 유지"
         stats[name] = f"수집 실패 → {note}" if name in failed else f"{stats.get(name, '')}, {note}".lstrip(", ")
+
+
+# ---------------------------------------------------------------- 상장사 (KRX)
+KRX_MARKETS = [("코스피", "stockMkt"), ("코스닥", "kosdaqMkt")]
+LISTED: dict = {}  # 정규화 업체명 → '코스피' / '코스닥'
+
+
+def load_listed(f: Fetcher, cache: Path):
+    """한국거래소 KIND 상장법인 목록을 받아 LISTED를 채운다. 실패하면 직전 캐시를 쓴다."""
+    table, errors = {}, []
+    for market, code in KRX_MARKETS:
+        url = f"https://kind.krx.co.kr/corpgeneral/corpList.do?method=download&searchType=13&marketType={code}"
+        try:
+            s = BeautifulSoup(f.get(url, encoding="cp949"), "html.parser")
+            rows = s.find_all("tr")
+            head = [text_of(x) for x in rows[0].find_all(["th", "td"])] if rows else []
+            col = head.index("회사명") if "회사명" in head else 0
+            n = 0
+            for tr in rows[1:]:
+                tds = tr.find_all("td")
+                if len(tds) > col and text_of(tds[col]):
+                    table[norm_corp(text_of(tds[col]))] = market
+                    n += 1
+            if n < 100:
+                raise RuntimeError(f"{market} 목록이 {n}건뿐")
+        except Exception as e:
+            errors.append(f"{market}: {type(e).__name__}")
+    if table and not errors:
+        cache.parent.mkdir(parents=True, exist_ok=True)
+        cache.write_text(json.dumps(table, ensure_ascii=False), encoding="utf-8")
+    elif cache.exists():
+        table = {**json.loads(cache.read_text(encoding="utf-8")), **table}
+    LISTED.clear()
+    LISTED.update(table)
+    return errors
+
+
+def listed_market(p: Posting):
+    n = norm_corp(p.company)
+    if n in LISTED:
+        return LISTED[n]
+    m = re.search(r"기업구분[^()]{0,20}\((코스피|코스닥|유가증권|KOSPI|KOSDAQ)", p.detail_text or "")
+    if m:
+        return {"유가증권": "코스피", "KOSPI": "코스피", "KOSDAQ": "코스닥"}.get(m.group(1), m.group(1))
+    return ""
 
 
 # ---------------------------------------------------------------- main
@@ -1236,6 +1291,9 @@ def main():
     now = dt.datetime.now(KST)
     today = now.date()
     f = Fetcher()
+    krx_err = load_listed(f, Path(args.out) / "krx_listed.json")
+    if krx_err:
+        print(f"[krx] {krx_err} (캐시 {len(LISTED)}개사 사용)", file=sys.stderr)
     raw, failures, stats = [], [], {}
     for name, fn, _ in SOURCES:
         for attempt in (1, 2):
