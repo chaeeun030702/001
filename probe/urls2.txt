@@ -1,0 +1,15 @@
+jk_free https://www.jobkorea.co.kr/Theme/TemplateFreeGnoList/entry-level-internship?rSearchText=%EC%95%88%EC%A0%84%EA%B4%80%EB%A6%AC%EC%9E%90&themeNo=169&tabNo=0&jobFilter=1&psTab=40&FreePageNo=1&MainPageNo=1&GIOpenTypeCode=0
+jk_main https://www.jobkorea.co.kr/Theme/TemplateMainGnoList/entry-level-internship?rSearchText=%EC%95%88%EC%A0%84%EA%B4%80%EB%A6%AC%EC%9E%90&themeNo=169&tabNo=0&jobFilter=1&psTab=40&FreePageNo=1&MainPageNo=1&GIOpenTypeCode=0
+jk_detail https://www.jobkorea.co.kr/Recruit/GI_Read/50061056?Oem_Code=C1
+sr_list https://www.saramin.co.kr/zf_user/search?searchword=%EC%95%88%EC%A0%84%EA%B4%80%EB%A6%AC%EC%9E%90&searchType=search&exp_cd=1&exp_none=y&recruitPageCount=100&recruitSort=relation
+sr_detail https://www.saramin.co.kr/zf_user/jobs/relay/view-detail?rec_idx=55053371&rec_seq=0
+sr_view https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55053371
+wk_list https://www.worker.co.kr/job/list.asp?jobid=all&key=jkind&bkw=si&list_ea=40&p=1
+wk_detail https://www.worker.co.kr/job/view.asp?jobid=con&no=1414345
+lk_detail https://linkareer.com/activity/352699
+cb_home https://safety.chungbuk.ac.kr/
+cb_http http://safety.chungbuk.ac.kr/safety5_2
+pk_https https://safety.pknu.ac.kr/safety/2080
+pk_http http://safety.pknu.ac.kr/safety/2080
+st_detail https://safety.seoultech.ac.kr/b_information/job_info/?do=view&profboardidx=0&bnum=765&bidx=895859&cate=7&allboard=false&nowpage=1
+inu_detail https://www.inu.ac.kr/bbs/safety/862/430933/artclView.do
