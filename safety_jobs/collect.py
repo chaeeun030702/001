@@ -1040,6 +1040,19 @@ def parse_stat(v):
     return {k.strip(): int(n) for k, n in re.findall(r"([^,\d]+?)\s(\d+)(?=,|$)", v or "")}
 
 
+SEMI_DC_RE = re.compile(r"반도체|하이닉스|(?<![A-Za-z])FAB(?![A-Za-z])|웨이퍼|데이터\s*센터|(?<![A-Za-z])IDC(?![A-Za-z])|클린룸", re.I)
+SEMI_DC_TITLE_RE = re.compile(r"삼성(?!동)|하이테크")  # 제목·업체명에서만 (본문의 '삼성동' 주소 등 오인 방지)
+
+
+def calendar_eligible(p):
+    """달력에는 대기업 계열·외국계·코스피/코스닥 상장·데이터센터/반도체 관련 공고만 싣는다."""
+    if p.extra.get("groups") or p.extra.get("listed") or p.hilite == "A":
+        return True
+    if SEMI_DC_TITLE_RE.search(f"{p.company} {p.title}"):
+        return True
+    return bool(SEMI_DC_RE.search(f"{p.company} {p.title} {p.listing_text} {p.extra.get('sector', '')} {(p.detail_text or '')[:4000]}"))
+
+
 def render_calendar(postings, today, months=2, show=5):
     """접수기한 달력: 오늘부터 2개월, 주 단위. 업체명을 누르면 공고로 이동."""
     e = html.escape
@@ -1049,7 +1062,7 @@ def render_calendar(postings, today, months=2, show=5):
     end = safe_date(end_y, end_m, min(today.day, 28)) or today + dt.timedelta(days=61)
     by_day = collections.defaultdict(list)
     for p in postings:
-        if p.deadline_date:
+        if p.deadline_date and calendar_eligible(p):
             d = dt.date.fromisoformat(p.deadline_date)
             if today <= d <= end:
                 by_day[d].append(p)
@@ -1096,9 +1109,9 @@ def render_calendar(postings, today, months=2, show=5):
         d += dt.timedelta(days=1)
     n = sum(len(v) for v in by_day.values())
     return (f'<section class="card" id="calendar"><div class="cal-head"><h2>채용 달력<span class="n">{n}건</span></h2>'
-            f'<span class="range">{today:%Y-%m-%d} ~ {end:%Y-%m-%d} 접수 마감 기준</span></div>'
+            f'<span class="range">{today:%Y-%m-%d} ~ {end:%Y-%m-%d} 접수 마감 · 대기업 계열·외국계·코스피/코스닥 상장·데이터센터/반도체 관련만</span></div>'
             '<div class="cal-legend"><span class="la">데이터센터·하이테크·삼성·하이닉스</span><span class="lb">대기업 계열</span><span class="lf">외국계</span>'
-            '<span class="lp">외국어·NEBOSH·IOSH·CSP 우대</span><span>기타</span>'
+            '<span class="lp">외국어·NEBOSH·IOSH·CSP 우대</span><span>상장사·반도체 관련</span>'
             '<em class="tgl"><i class="tg b">대</i> 대기업 계열 <i class="tg f">외</i> 외국계 '
             '<i class="tg k">KS</i> 코스피 <i class="tg k">KQ</i> 코스닥 <i class="tg ai">AI</i> AI 우대</em></div>'
             f'<div class="cal">{wd}{"".join(cells)}</div></section>')
