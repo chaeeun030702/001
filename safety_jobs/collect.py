@@ -35,7 +35,7 @@ from bs4 import BeautifulSoup
 KST = dt.timezone(dt.timedelta(hours=9))
 Q = quote("안전관리자")
 # 검색어: 안전관리자 + 업종 무관 HSE/EHS 직무 + 자격증 명시 공고
-KEYWORDS = ["안전관리자", "HSE", "EHS", "안전보건", "산업안전기사", "건설안전기사", "NEBOSH", "IOSH"]
+KEYWORDS = ["안전관리자", "HSE", "EHS", "안전보건", "산업안전기사", "건설안전기사", "NEBOSH", "IOSH", "ISO45001", "안전공학"]
 # 우대 강조(보라색): 외국어·영어 능통 / NEBOSH / IOSH / CSP
 LANG_RE = re.compile(r"(?:영어|외국어|어학|English|중국어|일본어|베트남어|스페인어)\s*(?:회화\s*)?(?:능통|능숙|우수|가능|원활|비즈니스|원어민|fluent|business)"
                      r"|(?:TOEIC|토익|OPIc|오픽|TEPS|텝스|TOEIC\s*Speaking|토익\s*스피킹)\s*[:：]?\s*(?:\d{2,3}|IM|IH|AL|Lv|Level)"
@@ -46,6 +46,14 @@ HSE_ROLE_RE = re.compile(r"(?<![A-Za-z])(?:HSE|EHS|EH&S|SHE|HSEQ|QHSE)(?![A-Za-z
                          r"Engineer|Specialist|Manager|Analyst|Officer|Coordinator|Supervisor|Leader|Assistant|Staff)", re.I)
 CSP_RE = re.compile(r"(?<![A-Za-z])CSP(?![A-Za-z])|Certified\s+Safety\s+Professional", re.I)
 CERT_KEY_RE = re.compile(r"(산업|건설)안전(?:산업)?기사")
+ISO45001_RE = re.compile(r"ISO\s*[-_]?\s*45001|KOSHA[-\s]*MS", re.I)
+# 공고 본문에 이 중 하나라도 있으면 안전 직무 공고로 싣는다
+INCLUDE_RE = re.compile(r"산업안전(?:산업)?기사|ISO\s*[-_]?\s*45001|안전\s*공학", re.I)
+# '안전관리'는 흔한 말이라 직무로 쓰였거나 자격·우대·담당업무 항목에 있을 때만
+SAFETY_DUTY_RE = re.compile(r"안전\s*관리\s*(?:자|업무|담당|선임|병행|직|팀|계획|체계)|안전\s*관리\s*(?:및|/|·)")
+DUTY_HEAD = r"담당\s*업무|주요\s*업무|업무\s*내용|직무\s*내용|모집\s*분야"
+PREF_IN_TITLE_RE = re.compile(r"[\(\[【][^\)\]】]*우대[^\)\]】]*[\)\]】]|[^\s/,]*\s*우대")
+SALES_RE = re.compile(r"영업|세일즈|(?<![A-Za-z])Sales(?![A-Za-z])|판매\s*(?:사원|직|원)|텔레\s*마케|TM\s*상담", re.I)
 HSE_RE = re.compile(r"(?<![A-Za-z])(?:HSE|EHS|SHE|HSEQ|QHSE)(?![A-Za-z])|환경\s*안전|안전\s*환경|안전\s*보건|안전\s*관리")
 # 업체명으로 건설사 여부 판단 (제목의 '현장' 등은 공장 현장과 헷갈리므로 쓰지 않음)
 CONSTR_NAME_RE = re.compile(r"건설|건축|토건|토목|이앤씨|이엔씨|E&C|ENC|씨엠|(?<![A-Za-z])CM(?![A-Za-z])|종합개발|주택|건영|중공업\s*건설부문|건설부문")
@@ -135,6 +143,10 @@ EDU_RE = re.compile(r"(?:학력\s*[:：]?\s*)?(대졸\s*(?:\(4년\))?\s*(?:이�
 
 QUAL_HEAD = r"자격\s*요건|지원\s*자격|응시\s*자격|자격\s*조건|필수\s*(?:요건|사항)|공통\s*자격"
 PREF_HEAD = r"우대\s*(?:사항|조건|요건)|우대\s*[:：]"
+# 우대 조건에 AI 관련 역량이 있으면 강조(주황)
+AI_TERM = r"(?<![A-Za-z])AI(?![A-Za-z])(?!\s*추천)|인공\s*지능|머신\s*러닝|딥\s*러닝|생성형|ChatGPT|(?<![A-Za-z])LLM(?![A-Za-z])|Machine\s*Learning"
+AI_NEAR_PREF_RE = re.compile(rf"(?:{AI_TERM})[^.\n]{{0,40}}우대|우대[^.\n]{{0,60}}(?:{AI_TERM})", re.I)
+AI_RE = re.compile(AI_TERM, re.I)
 STOP = r"이\s*기업과\s*나의|로그인\s*하고|적합도|TOP\s*궁금해요|스킬\s*핵심역량|핵심\s*역량|우대|근무\s*조건|근무\s*형태|근무지|근무\s*시간|전형|접수|복리|급여|제출\s*서류|유의\s*사항|기타\s*사항|채용\s*절차|모집\s*인원|기업\s*정보"
 
 
@@ -650,8 +662,12 @@ def analyze(p: Posting, today):
     p.hilite = classify_company(p, text)
     p.extra["listed"] = listed_market(p)
     p.certs = sorted({f"{m.group(1)}안전기사" for m in CERT_KEY_RE.finditer(f"{p.title} {p.listing_text} {text}")})
+    if ISO45001_RE.search(f"{p.title} {text}"):
+        p.certs.append("ISO 45001")
     blob = f"{p.title} {p.listing_text} {text}"
     p.prefs = [lab for lab, rx in (("외국어·영어", LANG_RE), ("NEBOSH", NEBOSH_RE), ("IOSH", IOSH_RE), ("CSP", CSP_RE)) if rx.search(blob)]
+    pref_sec = section(text, PREF_HEAD, 600)
+    p.extra["ai"] = bool(AI_RE.search(pref_sec) or AI_NEAR_PREF_RE.search(text))
     rank = top100_rank(p.company)
     p.extra["top100"] = rank
     sector = f"{p.listing_text[:12]} {p.extra.get('biz', '')}"
@@ -659,6 +675,16 @@ def analyze(p: Posting, today):
     by_name = rank and not mixed or re.search(r"건설\s*부문|건설사업", f"{p.company} {p.title}")
     p.industry = "건설" if (by_name or p.source == "워커" or CONSTR_NAME_RE.search(p.company)
                             or re.search(r"건설·건축|건설업|건축|토목|공사업", sector)) else "일반 산업"
+
+
+OTHER_TRADE_RE = re.compile(r"공무|시공|공사\s*관리|현장\s*소장|현장\s*대리인|품질|설계|전기|기계|설비|토목|건축|조경|감리|생산|용접|정비|"
+                            r"배관|도장|측량|구매|총무|사무|회계|인사|물류|운전|시설\s*관리|CAD", re.I)
+
+
+def other_trade(p: Posting) -> bool:
+    """안전이 아닌 공종·직무를 모집하는 공고인가 (제목 기준, 우대 표기는 제외하고 판단)."""
+    title = PREF_IN_TITLE_RE.sub(" ", p.title)
+    return bool(OTHER_TRADE_RE.search(title)) and not re.search(r"안전\s*(?:관리|보건|담당|팀|환경)|보건\s*관리|HSE|EHS|SHE", title, re.I)
 
 
 def relevant(p: Posting):
@@ -669,11 +695,17 @@ def relevant(p: Posting):
     - HSE·EHS·자격증 검색어로 걸린 공고는 상세 본문에서 자격증/HSE 언급을 확인(None)
     """
     tags = p.extra.get("sector", "") if p.source == "사람인" else p.listing_text
-    if SAFETY_RE.search(p.title) or CERT_KEY_RE.search(f"{p.title} {tags}"):
+    # 제목의 '(안전관리 우대)' 같은 표기는 안전관리 우대가 명시된 것으로 보고 살린다
+    if any(re.search(r"안전\s*관리", m.group(0)) for m in PREF_IN_TITLE_RE.finditer(p.title)):
         return True
-    if re.search(r"공채|공개\s*채용|신입\s*(사원|직원)", p.title) and SAFETY_RE.search(tags):
+    title = PREF_IN_TITLE_RE.sub(" ", p.title)
+    if other_trade(p) and not re.search(r"안전|보건|HSE|EHS|EH&S|SHE", title, re.I):
+        return None if p.extra.get("query") else False  # 타공종 모집 → 본문의 우대 명시 여부로 판단
+    if SAFETY_RE.search(title) or CERT_KEY_RE.search(f"{p.title} {tags}"):
         return True
-    if p.extra.get("query") in ("HSE", "EHS", "안전보건", "산업안전기사", "건설안전기사", "NEBOSH", "IOSH"):
+    if re.search(r"공채|공개\s*채용|신입\s*(사원|직원)", title) and SAFETY_RE.search(tags):
+        return True
+    if p.extra.get("query"):  # 검색어로 걸렸지만 제목만으로는 모를 때 → 상세 본문 확인
         return None
     return False
 
@@ -683,9 +715,21 @@ def relevant_after_detail(p: Posting) -> bool:
     if r is not None:
         return r
     t = p.detail_text[:12000]
-    if CERT_KEY_RE.search(t) or NEBOSH_RE.search(t) or IOSH_RE.search(t):
+    if CERT_KEY_RE.search(t) or NEBOSH_RE.search(t) or IOSH_RE.search(t) or INCLUDE_RE.search(t):
         return True
-    # HSE/EHS는 직무·팀 이름으로 쓰였을 때만 (단순 'EHS 규정 준수' 같은 언급은 제외)
+    # '안전관리' 우대가 명시돼 있으면 살린다
+    pref = section(t, PREF_HEAD, 400)
+    if re.search(r"안전\s*관리", pref) or re.search(r"안전\s*관리[^.\n]{0,30}우대", t):
+        return True
+    # 타공종을 모집하면서 '안전관리 경험/경력'만 요구하는 공고는 제외 (실제 안전관리 업무 병행은 인정)
+    body = re.sub(r"안전\s*관리[^.\n]{0,15}(?:경험|경력)", " ", t) if other_trade(p) else t
+    secs = " ".join(section(body, h, 400) for h in (QUAL_HEAD, DUTY_HEAD))
+    if SAFETY_DUTY_RE.search(body) or re.search(r"안전\s*관리", secs):
+        return True
+    # HSE/EHS는 직무·팀 이름으로 쓰였을 때만 (단순 'EHS 규정 준수' 같은 언급은 제외).
+    # 타공종 모집 공고에서 회사 EHS팀이 언급된 것만으로는 살리지 않는다
+    if other_trade(p):
+        return False
     return bool(HSE_ROLE_RE.search(t))
 
 
@@ -703,6 +747,8 @@ def keep(p: Posting, today) -> tuple[bool, str]:
             return False, "안전 직무 아님"
     elif not relevant_after_detail(p):
         return False, "안전 직무 아님"
+    if SALES_RE.search(p.title):
+        return False, "영업직"
     if p.industry == "건설" and not p.extra.get("top100"):
         return False, "건설사(시평 100위 밖)"
     if p.level == "경력":
@@ -736,7 +782,7 @@ def is_dup(p, kept):
 BADGE = {"A": "🔴 ", "B": "🔵 ", "F": "🌐 ", "": ""}
 GROUPS = [("정규직", "[정규직]"), ("계약직", "[계약직]"), ("인턴", "[인턴]"), ("기타/미표기", "[고용형태 미표기]")]
 LEGEND = ("🔴 데이터센터·하이테크·삼성·하이닉스 관련 · 🔵 대기업 계열사 · 🌐 외국계 회사 (여럿 해당하면 🔴 > 🔵 > 🌐, 업체명 옆에 [대기업 계열]/[외국계] 표기) · "
-          "🟣 외국어·영어 능통 / NEBOSH / IOSH / CSP 우대 (🔴·🔵와 함께 표시될 수 있음) · [코스피]/[코스닥] 상장사")
+          "🟣 외국어·영어 능통 / NEBOSH / IOSH / CSP 우대 (🔴·🔵와 함께 표시될 수 있음) · [코스피]/[코스닥] 상장사 · 🤖 AI 역량 우대")
 
 
 def md_cell(s):
@@ -762,7 +808,7 @@ def render_md(postings, failures, now, stats):
     n_cert = sum(bool(p.certs) for p in postings)
     n_pref = sum(bool(p.prefs) for p in postings)
     L.append(f"신입·경력무관·인턴 공고 **{len(postings)}건** (경력직·마감 제외, 중복은 상위 사이트 우선) · "
-             f"일반 산업체 {n_gen}건 · 건설 {len(postings) - n_gen}건 · 산업/건설안전기사 명시 {n_cert}건 · "
+             f"일반 산업체 {n_gen}건 · 건설 {len(postings) - n_gen}건 · 산업/건설안전기사·ISO 45001 명시 {n_cert}건 · "
              f"🟣 외국어·NEBOSH·IOSH·CSP 우대 {n_pref}건")
     L += ["", "건설사는 2026년 시공능력평가 상위 100개사(토목건축)만 싣습니다."]
     L += ["", f"범례: {LEGEND}", ""]
@@ -781,6 +827,7 @@ def render_md(postings, failures, now, stats):
                 corp += f" (시평 {p.extra['top100']}위)"
             cert = f"**[{'·'.join(p.certs)} 명시]** " if p.certs else ""
             cert += f"🟣 **[{'·'.join(p.prefs)} 우대]** " if p.prefs else ""
+            cert += "🤖 **[AI 우대]** " if p.extra.get("ai") else ""
             L.append(f"| {md_cell(p.level)} · {md_cell(p.industry)} | {corp} | {md_cell(p.title)} | {cert}{md_cell(p.qualification)} "
                      f"| {md_cell(p.preferred)} | {deadline_md(p, now.date())} | [{p.source}]({p.url}){' (이전 수집)' if p.extra.get('carried') else ''} |")
         L.append("")
@@ -800,7 +847,7 @@ HTML_CSS = """
   --bg-page:#FFFFFF; --canvas:#EEF1F5; --surface:#FFFFFF; --alt1:#F2F3F6; --alt2:#E2E4E9;
   --text-strong:#000000; --text:#1C1C1C; --text-sub:#303030; --caption:#737373;
   --border:#E2E4E9; --border-strong:#CCD0D6; --divider:#E9EBEF;
-  --success:#15B874; --warning:#FFA833; --error:#E63B3B; --purple:#B357FF; --sky:#00BDDE;
+  --success:#15B874; --warning:#FFA833; --error:#E63B3B; --purple:#B357FF; --sky:#00BDDE; --orange:#FE6F3F;
   --r-sm:8px; --r-md:12px; --r-lg:16px; --r-pill:9999px;
   --sh1:0 1px 3px rgba(0,0,0,.06);
   --font:"Pretendard Variable","Pretendard","Apple SD Gothic Neo","Noto Sans KR","Segoe UI",Roboto,-apple-system,sans-serif;
@@ -811,13 +858,13 @@ HTML_CSS = """
   --bg-page:#1D1F24; --canvas:#15171C; --surface:#1D1F24; --alt1:#282B33; --alt2:#333741;
   --text-strong:#FFFFFF; --text:#EBECED; --text-sub:#C4C4C4; --caption:#8A8A8A;
   --border:#333741; --border-strong:#4A505F; --divider:#282B33;
-  --success:#44C690; --warning:#FFB95C; --error:#EB5E5E; --purple:#C279FF; --sky:#33CAE5; color-scheme:dark}}
+  --success:#44C690; --warning:#FFB95C; --error:#EB5E5E; --purple:#C279FF; --sky:#33CAE5; --orange:#FE8C65; color-scheme:dark}}
 :root[data-theme="dark"]{
   --primary:#3F8CFF; --primary-hover:#0F6FFF; --primary-active:#0E65E8;
   --bg-page:#1D1F24; --canvas:#15171C; --surface:#1D1F24; --alt1:#282B33; --alt2:#333741;
   --text-strong:#FFFFFF; --text:#EBECED; --text-sub:#C4C4C4; --caption:#8A8A8A;
   --border:#333741; --border-strong:#4A505F; --divider:#282B33;
-  --success:#44C690; --warning:#FFB95C; --error:#EB5E5E; --purple:#C279FF; --sky:#33CAE5; color-scheme:dark}
+  --success:#44C690; --warning:#FFB95C; --error:#EB5E5E; --purple:#C279FF; --sky:#33CAE5; --orange:#FE8C65; color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--canvas);color:var(--text);font:400 14px/1.55 var(--font);margin:0}
 .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg-page);border-bottom:1px solid var(--border);
@@ -918,7 +965,9 @@ td.src{white-space:nowrap}
 .ev.hA::before{background:var(--error)} .ev.hB::before{background:var(--primary)} .ev.hF::before{background:var(--sky)} .ev.pp::before{background:var(--purple)}
 .ev span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .ev .tg{flex:none;font-style:normal;font-size:10px;font-weight:600;line-height:1.4;padding:0 4px;border-radius:4px;border:1px solid currentColor}
-.ev .tg.b{color:var(--primary)} .ev .tg.f{color:var(--sky)} .ev .tg.k{color:var(--text-sub)}
+.ev .tg.b{color:var(--primary)} .ev .tg.f{color:var(--sky)} .ev .tg.k{color:var(--text-sub)} .ev .tg.ai{color:var(--orange)}
+.pill.pai{margin:4px 4px 0 0;border-color:var(--orange);background:color-mix(in srgb,var(--orange) 12%,transparent);color:var(--text-strong)} .pill.pai::before{background:var(--orange)}
+.cal-legend .tgl .tg.ai{color:var(--orange)}
 .day details summary{font-size:12px;color:var(--primary);cursor:pointer;list-style:none} .day details summary::-webkit-details-marker{display:none}
 .day details[open] summary{margin-bottom:2px}
 td.corp a.co{color:var(--text-strong);text-decoration:none} td.corp a.co:hover{color:var(--primary);text-decoration:underline}
@@ -969,7 +1018,7 @@ HTML_JS = """
         var ok=(!t||tr.textContent.toLowerCase().indexOf(t)>=0)&&
           (mode==='all'||(mode==='A'&&tr.classList.contains('hA'))||(mode==='B'&&tr.dataset.grp.indexOf('대기업')>=0)||(mode==='F'&&tr.dataset.grp.indexOf('외국계')>=0)||(mode==='K'&&tr.dataset.listed!=='')||
            (mode==='soon'&&tr.querySelector('td.dl.soon'))||(mode==='gen'&&tr.dataset.ind==='일반 산업')||
-           (mode==='cert'&&tr.dataset.cert==='1')||(mode==='pref'&&tr.dataset.pref==='1'));
+           (mode==='cert'&&tr.dataset.cert==='1')||(mode==='pref'&&tr.dataset.pref==='1')||(mode==='ai'&&tr.dataset.ai==='1'));
         tr.hidden=!ok; if(ok)n++;
       });
       sec.querySelector('.n').textContent=n+'건';
@@ -1029,6 +1078,8 @@ def render_calendar(postings, today, months=2, show=5):
             if p.extra.get("listed"):
                 ab = {"코스피": "KS", "코스닥": "KQ"}.get(p.extra["listed"], p.extra["listed"])
                 tags += f'<i class="tg k" title="{e(p.extra["listed"])} 상장">{ab}</i>'
+            if p.extra.get("ai"):
+                tags += '<i class="tg ai" title="AI 우대">AI</i>'
             return (f'<a class="{c}" href="{e(p.url)}" target="_blank" rel="noopener" title="{e(tip)}">'
                     f'<span>{e(p.company or p.title)}</span>{tags}</a>')
         body = "".join(ev(p) for p in items[:show])
@@ -1046,7 +1097,7 @@ def render_calendar(postings, today, months=2, show=5):
             '<div class="cal-legend"><span class="la">데이터센터·하이테크·삼성·하이닉스</span><span class="lb">대기업 계열</span><span class="lf">외국계</span>'
             '<span class="lp">외국어·NEBOSH·IOSH·CSP 우대</span><span>기타</span>'
             '<em class="tgl"><i class="tg b">대</i> 대기업 계열 <i class="tg f">외</i> 외국계 '
-            '<i class="tg k">KS</i> 코스피 <i class="tg k">KQ</i> 코스닥</em></div>'
+            '<i class="tg k">KS</i> 코스피 <i class="tg k">KQ</i> 코스닥 <i class="tg ai">AI</i> AI 우대</em></div>'
             f'<div class="cal">{wd}{"".join(cells)}</div></section>')
 
 
@@ -1061,6 +1112,10 @@ def group_pills(p):
 def rank_pill(p):
     r = p.extra.get("top100")
     return f'<span class="pill">시평 {r}위</span>' if p.industry == "건설" and r else ""
+
+
+def ai_pill(p):
+    return '<span class="pill pai">AI 우대</span>' if p.extra.get("ai") else ""
 
 
 def pref_pills(p):
@@ -1102,8 +1157,9 @@ def render_html(postings, failures, now, stats):
         kpi("정규직", by.get("정규직", 0), f"{by.get('정규직', 0) * 100 // max(len(postings), 1)}%"),
         kpi("계약직", by.get("계약직", 0), f"{by.get('계약직', 0) * 100 // max(len(postings), 1)}%"),
         kpi("일반 산업체", sum(p.industry == "일반 산업" for p in postings), "건설 외 제조·서비스 등"),
-        kpi("산업·건설안전기사 명시", sum(bool(p.certs) for p in postings), "공고에 자격증 기재"),
+        kpi("산업·건설안전기사·ISO 45001 명시", sum(bool(p.certs) for p in postings), "공고에 자격·인증 기재"),
         kpi("외국어·NEBOSH·IOSH·CSP 우대", sum(bool(p.prefs) for p in postings), "우대 조건 기재", "--purple"),
+        kpi("AI 우대", sum(bool(p.extra.get("ai")) for p in postings), "우대 조건에 AI 역량", "--orange"),
         kpi("3일 내 마감", len(soon), "접수 서두름", "--error"),
         kpi("데이터센터·하이테크·삼성·하이닉스", n_a, "집중 관심", "--error"),
         kpi("대기업 계열", n_b, "그룹 계열사", "--primary"),
@@ -1129,7 +1185,8 @@ def render_html(postings, failures, now, stats):
     ind_items = [("일반 산업", sum(p.industry == "일반 산업" for p in postings)),
                  ("건설", sum(p.industry == "건설" for p in postings)),
                  ("산업안전기사 명시", sum("산업안전기사" in p.certs for p in postings)),
-                 ("건설안전기사 명시", sum("건설안전기사" in p.certs for p in postings))]
+                 ("건설안전기사 명시", sum("건설안전기사" in p.certs for p in postings)),
+                 ("ISO 45001 명시", sum("ISO 45001" in p.certs for p in postings))]
     charts = (
         f'<div class="card"><h2>사이트별 채택 공고</h2>{bars(src_items)}</div>'
         f'<div class="card"><h2>접수기한까지 남은 기간</h2>'
@@ -1163,9 +1220,9 @@ def render_html(postings, failures, now, stats):
         i = sid.get(key, "other")
         nav.append((i, tag, len(rows)))
         trs = "".join(
-            f'<tr class="h{p.hilite}" data-ind="{e(p.industry)}" data-cert="{1 if p.certs else 0}" data-pref="{1 if p.prefs else 0}" data-grp="{e(" ".join(p.extra.get("groups", [])))}" data-listed="{e(p.extra.get("listed", ""))}"><td class="lv">{e(p.level)}<small>{e(p.industry)}</small></td>'
+            f'<tr class="h{p.hilite}" data-ind="{e(p.industry)}" data-cert="{1 if p.certs else 0}" data-pref="{1 if p.prefs else 0}" data-ai="{1 if p.extra.get("ai") else 0}" data-grp="{e(" ".join(p.extra.get("groups", [])))}" data-listed="{e(p.extra.get("listed", ""))}"><td class="lv">{e(p.level)}<small>{e(p.industry)}</small></td>'
             f'<td class="corp"><strong><a class="co" href="{e(p.url)}" target="_blank" rel="noopener">{e(p.company or "-")}</a></strong>{pill[p.hilite]}{group_pills(p)}{rank_pill(p)}</td>'
-            f"<td class=\"ttl\">{e(p.title)}{pref_pills(p)}</td><td>{cert_pills(p)}{e(p.qualification or '-')}</td><td>{e(p.preferred or '-')}</td>"
+            f"<td class=\"ttl\">{e(p.title)}{pref_pills(p)}{ai_pill(p)}</td><td>{cert_pills(p)}{e(p.qualification or '-')}</td><td>{e(p.preferred or '-')}</td>"
             f'<td class="dl{" soon" if id(p) in soon else ""}">{e(p.deadline)}</td>'
             f'<td class="src"><a href="{e(p.url)}" target="_blank" rel="noopener">{e(p.source)}</a>'
             f'{"<small>이전 수집</small>" if p.extra.get("carried") else ""}</td></tr>'
@@ -1232,8 +1289,9 @@ def render_html(postings, failures, now, stats):
     <button type="button" data-mode="F" aria-pressed="false">외국계</button>
     <button type="button" data-mode="K" aria-pressed="false">코스피·코스닥 상장</button>
     <button type="button" data-mode="gen" aria-pressed="false">일반 산업체</button>
-    <button type="button" data-mode="cert" aria-pressed="false">산업·건설안전기사 명시</button>
+    <button type="button" data-mode="cert" aria-pressed="false">산업·건설안전기사·ISO 45001 명시</button>
     <button type="button" data-mode="pref" aria-pressed="false">외국어·NEBOSH·IOSH·CSP 우대</button>
+    <button type="button" data-mode="ai" aria-pressed="false">AI 우대</button>
     <button type="button" data-mode="soon" aria-pressed="false">3일 내 마감</button>
   </div></div>
 {''.join(secs)}
@@ -1274,11 +1332,16 @@ def carry_over(prev_path, failed, kept, stats, today):
                 continue
         if p.industry == "건설" and not p.extra.get("top100"):
             continue
+        if SALES_RE.search(p.title):  # 영업직 제외 규칙 재적용
+            continue
         if any(q.url == p.url for q in kept) or is_dup(p, kept):
             continue
         p.extra["carried"] = p.extra.get("carried") or prev_day
         p.hilite = classify_company(p, p.detail_text)  # 지금 기준으로 강조 다시 판정
         p.extra["listed"] = listed_market(p)
+        if "ai" not in p.extra:
+            t = p.detail_text or ""
+            p.extra["ai"] = bool(AI_RE.search(section(t, PREF_HEAD, 600)) or AI_NEAR_PREF_RE.search(t))
         kept.append(p)
         added[p.source] += 1
     for name, n in added.items():
