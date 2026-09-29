@@ -48,7 +48,10 @@ CSP_RE = re.compile(r"(?<![A-Za-z])CSP(?![A-Za-z])|Certified\s+Safety\s+Professi
 CERT_KEY_RE = re.compile(r"(산업|건설)안전(?:산업)?기사")
 ISO45001_RE = re.compile(r"ISO\s*[-_]?\s*45001|KOSHA[-\s]*MS", re.I)
 # 공고 본문에 이 중 하나라도 있으면 안전 직무 공고로 싣는다
-INCLUDE_RE = re.compile(r"산업안전(?:산업)?기사|안전\s*관리|ISO\s*[-_]?\s*45001|안전\s*공학", re.I)
+INCLUDE_RE = re.compile(r"산업안전(?:산업)?기사|ISO\s*[-_]?\s*45001|안전\s*공학", re.I)
+# '안전관리'는 흔한 말이라 직무로 쓰였거나 자격·우대·담당업무 항목에 있을 때만
+SAFETY_DUTY_RE = re.compile(r"안전\s*관리\s*(?:자|업무|담당|선임|병행|직|팀|계획|체계)|안전\s*관리\s*(?:및|/|·)")
+DUTY_HEAD = r"담당\s*업무|주요\s*업무|업무\s*내용|직무\s*내용|모집\s*분야"
 HSE_RE = re.compile(r"(?<![A-Za-z])(?:HSE|EHS|SHE|HSEQ|QHSE)(?![A-Za-z])|환경\s*안전|안전\s*환경|안전\s*보건|안전\s*관리")
 # 업체명으로 건설사 여부 판단 (제목의 '현장' 등은 공장 현장과 헷갈리므로 쓰지 않음)
 CONSTR_NAME_RE = re.compile(r"건설|건축|토건|토목|이앤씨|이엔씨|E&C|ENC|씨엠|(?<![A-Za-z])CM(?![A-Za-z])|종합개발|주택|건영|중공업\s*건설부문|건설부문")
@@ -695,6 +698,9 @@ def relevant_after_detail(p: Posting) -> bool:
         return r
     t = p.detail_text[:12000]
     if CERT_KEY_RE.search(t) or NEBOSH_RE.search(t) or IOSH_RE.search(t) or INCLUDE_RE.search(t):
+        return True
+    secs = " ".join(section(t, h, 400) for h in (QUAL_HEAD, PREF_HEAD, DUTY_HEAD))
+    if SAFETY_DUTY_RE.search(t) or re.search(r"안전\s*관리", secs):
         return True
     # HSE/EHS는 직무·팀 이름으로 쓰였을 때만 (단순 'EHS 규정 준수' 같은 언급은 제외)
     return bool(HSE_ROLE_RE.search(t))
