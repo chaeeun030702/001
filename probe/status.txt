@@ -1,7 +1,4 @@
-cb_xe 404 0 https://safety.chungbuk.ac.kr/index.php?mid=safety5_2
-cb_xe_http 404 196 http://safety.chungbuk.ac.kr/index.php?mid=safety5_2
-cb_new 404 0 https://safety.chungbuk.ac.kr/error.html
-cb_new_http 404 0 https://safety.chungbuk.ac.kr/error.html
-curl: (7) Failed to connect to safety.chungbuk.ac.kr port 80 after 17371 ms: Couldn't connect to server
-cb_root 000 0 http://safety.chungbuk.ac.kr/index.php
-cb_root FAIL http://safety.chungbuk.ac.kr/index.php
+cb2_root 404 0 https://safety.chungbuk.ac.kr/
+cb2_env_board 404 0 https://env.chungbuk.ac.kr/index.php?mid=safety5_2
+cb2_env_prof 404 0 https://env.chungbuk.ac.kr/index.php?mid=safety2_1
+cb2_env_root 404 0 https://env.chungbuk.ac.kr/
