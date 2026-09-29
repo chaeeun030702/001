@@ -756,6 +756,8 @@ def keep(p: Posting, today) -> tuple[bool, str]:
         return False, "건설사(시평 100위 밖)"
     if p.level == "경력":
         return False, "경력직"
+    if p.employment == "계약직" and not calendar_eligible(p):
+        return False, "계약직(관심 기업 외)"
     if p.deadline_date and p.deadline_date < today.isoformat():
         return False, "마감"
     return True, ""
@@ -1045,7 +1047,8 @@ SEMI_DC_TITLE_RE = re.compile(r"삼성(?!동)|하이테크")  # 제목·업체�
 
 
 def calendar_eligible(p):
-    """달력에는 대기업 계열·외국계·코스피/코스닥 상장·데이터센터/반도체 관련 공고만 싣는다."""
+    """관심 기업: 대기업 계열·외국계·코스피/코스닥 상장·데이터센터/반도체 관련.
+    달력에는 이 공고만 싣고, 계약직은 이 조건일 때만 브리핑에 남긴다."""
     if p.extra.get("groups") or p.extra.get("listed") or p.hilite == "A":
         return True
     if SEMI_DC_TITLE_RE.search(f"{p.company} {p.title}"):
@@ -1355,6 +1358,8 @@ def carry_over(prev_path, failed, kept, stats, today):
         p.extra["carried"] = p.extra.get("carried") or prev_day
         p.hilite = classify_company(p, p.detail_text)  # 지금 기준으로 강조 다시 판정
         p.extra["listed"] = listed_market(p)
+        if p.employment == "계약직" and not calendar_eligible(p):  # 계약직은 관심 기업만
+            continue
         if "ai" not in p.extra:
             t = p.detail_text or ""
             p.extra["ai"] = bool(AI_RE.search(section(t, PREF_HEAD, 600)) or AI_NEAR_PREF_RE.search(t))
