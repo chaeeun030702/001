@@ -4,7 +4,7 @@
 """자기소개서 일일 브리핑 HTML 생성.
 
 drafts/index.json 과 drafts/*.md 초안을 읽어 아티팩트용 index.html 을 만든다.
-초안 md 형식은 아래와 같다(머리말 + 기업 분석 + 문항).
+초안 md 형식은 아래와 같다(머리말 + 기업 개요 + 기업 분석 + 문항).
 
     ---
     company: 대한전선(주)
@@ -13,8 +13,11 @@ drafts/index.json 과 drafts/*.md 초안을 읽어 아티팩트용 index.html �
     deadline: 2026-10-11
     tags: 코스피
     written: 2026-10-01
-    questions: 자소설닷컴 2026 하반기 문항        (문항 출처 또는 '추정 문항')
+    questions: 자소설닷컴 2026 하반기 문항        (문항 출처, 양식이 없으면 '홈페이지 채용 정보 기준 구성')
     ---
+    ## 기업 개요
+    - 회사: 설립 연도 · 본사 · 상장 시장 · 소속 그룹
+    - 주요 사업: ...   (매출 규모·임직원 수·주요 사업장·시공능력평가 순위 등)
     ## 기업 분석
     - DART: ...
     - 최근 기사: [제목](URL) (YYYY-MM-DD)
@@ -66,6 +69,9 @@ def parse_draft(text):
             questions.append(cur)
         elif head.strip().startswith("기업 분석"):
             analysis = [l[2:].strip() for l in rest.splitlines() if l.startswith("- ")]
+        elif head.strip().startswith("기업 개요"):
+            # 반환 형태를 바꾸지 않도록 머리말에 목록으로 담는다
+            meta["overview"] = [l[2:].strip() for l in rest.splitlines() if l.startswith("- ")]
     return meta, analysis, questions
 
 
@@ -108,7 +114,7 @@ def chips_of(m):
 
 
 def draft_body(d, analysis_cls="facts"):
-    """공고 정보 표 + 기업 분석 + 문항 카드(편집·글자수·복사)."""
+    """공고 정보 표 + 기업 개요 + 기업 분석 + 문항 카드(편집·글자수·복사)."""
     m = d["meta"]
     qs = []
     for q in d["questions"]:
@@ -122,12 +128,14 @@ def draft_body(d, analysis_cls="facts"):
 <span class="cnt"><b>{n:,}</b> / {q["limit"]:,}자</span><span class="state"></span>
 <button type="button" class="copy">답변 복사</button></div></div>''')
     analysis = "".join(f"<li>{inline(a)}</li>" for a in d["analysis"]) or "<li>기업 분석 없음</li>"
+    overview = "".join(f"<li>{inline(a)}</li>" for a in m.get("overview", []))
+    overview = f'<h3>기업 개요</h3><ul class="{analysis_cls}">{overview}</ul>\n' if overview else ""
     return f'''<div class="ref"><table class="kv"><tbody>
 <tr><th>공고</th><td><a href="{e(m.get("url", ""))}" target="_blank" rel="noopener">공고 원문 열기</a></td></tr>
 <tr><th>마감 · 작성</th><td class="num">{e(m.get("deadline", ""))} 마감 · {e(m.get("written", ""))} 작성</td></tr>
 <tr><th>문항 출처</th><td>{e(m.get("questions", "-"))}</td></tr>
 </tbody></table>
-<h3>기업 분석</h3><ul class="{analysis_cls}">{analysis}</ul></div>
+{overview}<h3>기업 분석</h3><ul class="{analysis_cls}">{analysis}</ul></div>
 {"".join(qs)}'''
 
 
@@ -148,7 +156,7 @@ def render_letter(d, today):
 <header><div><div class="eyebrow">{e(m.get("title", ""))}</div><h1 contenteditable="true" spellcheck="false">{e(title)}</h1>
 <div class="chips">{chips_of(m)}{dpill(d["left"])}</div></div>
 <div class="doc-actions"><button type="button" class="copy-all btn-ghost">전체 답변 복사</button><button type="button" class="print btn-ghost">인쇄 · PDF</button></div></header>
-<p class="hint">제목·소제목·답변을 눌러 바로 고칠 수 있습니다. 고친 뒤 브라우저의 '다른 이름으로 저장'(Ctrl+S)으로 HTML 파일을 저장하면 수정 내용이 그대로 남습니다. 인쇄할 때는 공고 정보·기업 분석과 버튼이 빠지고 문항과 답변만 A4에 나옵니다.</p>
+<p class="hint">제목·소제목·답변을 눌러 바로 고칠 수 있습니다. 고친 뒤 브라우저의 '다른 이름으로 저장'(Ctrl+S)으로 HTML 파일을 저장하면 수정 내용이 그대로 남습니다. 인쇄할 때는 공고 정보·기업 개요·기업 분석과 버튼이 빠지고 문항과 답변만 A4에 나옵니다.</p>
 {draft_body(d)}
 <footer>작성 {e(m.get("written", ""))} · 글자수는 줄바꿈 제외·공백 포함 기준입니다. 제출 전 공고 원문 문항·글자수와 대조하세요.</footer>
 </div>
@@ -318,7 +326,7 @@ PAGE = """<title>자기소개서 일일 브리핑</title>
 <li><b>자격</b> 산업안전기사·ISO45001·NEBOSH는 '취득 준비 중'</li>
 <li><b>필수 포함</b> AI 교육 5건 · 해외 안전 교육 15건</li>
 <li><b>웹사이트</b> e-safety.vercel.app 표기</li>
-<li><b>기업 분석</b> DART 사업보고서 · 최근 6개월 안전 기사(없으면 주요 기사)</li>
+<li><b>기업 개요·분석</b> DART 사업보고서 · 최근 6개월 안전 기사(없으면 주요 기사)</li>
 </ul></section>
 {cards}
 <footer>답변은 바로 고칠 수 있고, 글자수(줄바꿈 제외·공백 포함)는 입력하면서 다시 셉니다. 고친 내용은 이 브라우저에만 남으니 제출 전 '답변 복사'로 옮겨 두세요.</footer>
