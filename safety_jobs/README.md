@@ -40,3 +40,9 @@ uv run safety_jobs/collect.py --out briefings   # latest.md / latest.html / late
   HTML(`latest.html`)은 행 배경색으로 구분한다.
 
 지원 자격·우대 사항은 상세 페이지 본문에서 자동 추출한 요약이므로 지원 전 원문 확인이 필요하다.
+
+## 자기소개서 자동 작성
+
+관심 기업(대기업 계열·외국계·코스피·코스닥) **정규직** 공고는 접수 마감 10일 전에
+매일 20:47 KST Routine이 `프로젝트/claude 자기소개서/현대건설 신입사원 자기소개서/`에 초안을 쓴다.
+대상 선정은 `safety_jobs/cover_letters.py`, 작성 규칙은 그 폴더의 `README.md` 참고.
