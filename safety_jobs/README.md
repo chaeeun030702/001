@@ -41,8 +41,13 @@ uv run safety_jobs/collect.py --out briefings   # latest.md / latest.html / late
 
 지원 자격·우대 사항은 상세 페이지 본문에서 자동 추출한 요약이므로 지원 전 원문 확인이 필요하다.
 
-## 자기소개서 자동 작성
+## 자기소개서 일일 브리핑
 
 관심 기업(대기업 계열·외국계·코스피·코스닥) **정규직** 공고는 접수 마감 10일 전에
-매일 20:47 KST Routine이 `프로젝트/claude 자기소개서/현대건설 신입사원 자기소개서/`에 초안을 쓴다.
-대상 선정은 `safety_jobs/cover_letters.py`, 작성 규칙은 그 폴더의 `README.md` 참고.
+매일 20:30 KST Routine이 자기소개서 초안을 쓰고, 비공개 아티팩트 「자기소개서 일일 브리핑」에 모아 게시한다.
+개인 자료(자소서 아카이브)와 초안은 공개 저장소에 두지 않고 그 아티팩트의 파일(`archive/`, `drafts/`)로만 보관한다.
+
+| 스크립트 | 역할 |
+|---|---|
+| `cover_letters.py` | 브리핑에서 대상 공고 선정 (`--done drafts/index.json`으로 작성한 공고 제외) |
+| `cover_brief.py` | `drafts/*.md` 초안을 A4 세로 편집형 HTML(문항 카드·실시간 글자수·답변 복사)로 생성 |
