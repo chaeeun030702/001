@@ -20,6 +20,7 @@ import argparse
 import collections
 import datetime as dt
 import difflib
+import gzip
 import html
 import json
 import re
@@ -497,6 +498,7 @@ WORKDAY_DISCOVER = [
 ]
 WD_LINK_RE = re.compile(r"https://([a-z0-9-]+)\.(wd\d+)\.myworkdayjobs\.com/(?:[a-z]{2}-[A-Z]{2}/)?([A-Za-z0-9_-]+)")
 CAREER_STATUS = {}  # 회사별 수집 결과 (사이트 현황표에 표시)
+PREV_TOTAL = None   # 직전 브리핑 공고 수 (KPI 변화량)
 
 
 def _html_text(h):
@@ -1129,6 +1131,8 @@ def render_md(postings, failures, now, stats):
         L.append(f"- {name}: {st}")
     if failures:
         L += ["", "**수집 실패**", ""] + [f"- {n}: {e}" for n, e in failures]
+    if CAREER_STATUS:
+        L += ["", "**기업 채용 페이지**", "", "| 기업 | 결과 |", "|---|---|"] + [f"| {k} | {v} |" for k, v in CAREER_STATUS.items()]
     L += ["", "_지원 자격·우대 사항은 상세 페이지에서 자동 추출한 요약입니다. 지원 전 원문을 확인하세요._"]
     return "\n".join(L) + "\n"
 
@@ -1169,6 +1173,8 @@ body{background:var(--canvas);color:var(--text);font:400 14px/1.55 var(--font);m
 .edit-bar button{height:32px;padding:0 12px;border:1px solid var(--border-strong);border-radius:var(--r-sm);background:var(--surface);color:var(--text-sub);font:600 13px var(--font);cursor:pointer}
 .edit-bar button:hover{background:var(--alt1)} .edit-bar button[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:#FFFFFF}
 .edit-bar #edit-msg{font-size:12px;color:var(--caption)}
+.icon-btn{width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;border:0;background:none;color:var(--text-sub);border-radius:var(--r-sm);cursor:pointer}
+.icon-btn:hover{background:var(--alt1);color:var(--text-strong)}
 body.editing main [contenteditable="true"]{outline:1px dashed var(--border-strong);outline-offset:2px;cursor:text}
 body.editing main [contenteditable="true"]:focus{outline:2px solid var(--primary)}
 .shell{display:grid;grid-template-columns:220px minmax(0,1fr);min-height:100%}
@@ -1198,8 +1204,8 @@ main{padding:20px;display:grid;gap:16px;min-width:0;max-width:1400px}
 .bar .f.warn{background:var(--error)} .bar .f.pp{background:var(--purple)} .bar .f.none{background:var(--border-strong)}
 .bar .v{text-align:right;font-variant-numeric:tabular-nums;font-weight:600;color:var(--text)}
 .bar:hover .k{color:var(--text-strong)}
-.flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px}
-.step{flex:1 1 120px;border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 12px;background:var(--alt1);display:grid;gap:2px}
+.flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:8px;overflow-x:auto;padding-bottom:2px}
+.step{flex:1 0 104px;border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 12px;background:var(--alt1);display:grid;gap:2px}
 .step .l{font-size:12px;font-weight:600;color:var(--caption)} .step .v{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text-strong)}
 .step.minus .v{color:var(--text-sub)} .step.final{background:var(--surface);border-color:var(--primary)} .step.final .v{color:var(--primary)}
 .arrow{display:flex;align-items:center;color:var(--border-strong)}
@@ -1275,6 +1281,16 @@ td.corp a.co{color:var(--text-strong);text-decoration:none} td.corp a.co:hover{c
 """
 
 HTML_JS = """
+(function(){
+  /* 테마 전환: 다크 토큰을 직접 쓰는 data-theme 전환, 선택은 이 브라우저에만 기억 */
+  var b=document.getElementById('theme-toggle'), r=document.documentElement; if(!b) return;
+  try{var t=localStorage.getItem('brief-theme'); if(t) r.dataset.theme=t;}catch(e){}
+  b.addEventListener('click',function(){
+    var dark=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;
+    r.dataset.theme=dark?'light':'dark'; b.setAttribute('aria-pressed',String(!dark));
+    try{localStorage.setItem('brief-theme',r.dataset.theme)}catch(e){}
+  });
+})();
 (function(){
   /* 편집: 표·제목·메모 텍스트를 직접 고치고, 이 브라우저에 저장 (같은 날 브리핑에만 적용) */
   var bar=document.querySelector('.edit-bar'); if(!bar) return;
@@ -1463,13 +1479,18 @@ def render_html(postings, failures, now, stats):
     failed = {n for n, _ in failures}
     ok_sites = len(SOURCES) - len(failed)
 
-    # KPI 타일
+    # KPI 타일 (전체 공고는 직전 브리핑 대비 변화량)
+    if PREV_TOTAL is None:
+        delta_txt = "경력직·마감 제외"
+    else:
+        dv = len(postings) - PREV_TOTAL
+        delta_txt = f"직전 대비 {'▲' if dv > 0 else '▼' if dv < 0 else '–'}{abs(dv) if dv else ''} (경력직·마감 제외)"
     def kpi(label, value, sub="", dot=""):
         d = f'<span class="dot" style="background:var({dot})"></span>' if dot else ""
         return f'<div class="kpi"><span class="l">{d}{e(label)}</span><span class="v">{value}</span><span class="s">{e(sub)}</span></div>'
     by = {k: len(r) for k, _, r in groups}
     kpis = "".join([
-        kpi("전체 공고", len(postings), "경력직·마감 제외"),
+        kpi("전체 공고", len(postings), delta_txt),
         kpi("정규직", by.get("정규직", 0), f"{by.get('정규직', 0) * 100 // max(len(postings), 1)}%"),
         kpi("계약직", by.get("계약직", 0), f"{by.get('계약직', 0) * 100 // max(len(postings), 1)}%"),
         kpi("일반 산업체", sum(p.industry == "일반 산업" for p in postings), "건설 외 제조·서비스 등"),
@@ -1480,6 +1501,7 @@ def render_html(postings, failures, now, stats):
         kpi("데이터센터·하이테크·삼성·하이닉스", n_a, "집중 관심", "--error"),
         kpi("대기업 계열", n_b, "그룹 계열사", "--primary"),
         kpi("외국계", n_f, "외국계 기업", "--sky"),
+        kpi("외국계 채널", sum(p.source in ("피플앤잡", "기업 채용 페이지") for p in postings), "피플앤잡·기업 채용 페이지", "--sky"),
         kpi("코스피·코스닥 상장", n_ks + n_kq, f"코스피 {n_ks} · 코스닥 {n_kq}", "--text-strong"),
     ])
 
@@ -1517,7 +1539,8 @@ def render_html(postings, failures, now, stats):
         agg.update(parse_stat(v))
     total = agg.get("목록", 0)
     steps = [("수집 목록", total, "")]
-    for lab, keys in (("안전 직무 외", ["안전 직무 아님", "채용 공고 아님"]), ("경력직", ["경력직"]),
+    for lab, keys in (("안전 직무 외", ["안전 직무 아님", "채용 공고 아님"]), ("경력직·대리급 이상", ["경력직", "대리급 이상"]),
+                      ("대상 기준 외", ["건설사(시평 100위 밖)", "계약직(관심 기업 외)", "영업직", "감시단", "한국 근무 아님"]),
                       ("마감·오래된 글", ["마감", "오래된 게시글"]), ("중복", ["중복(상위 사이트 우선)"])):
         c = sum(agg.get(k, 0) for k in keys)
         if c:
@@ -1568,9 +1591,20 @@ def render_html(postings, failures, now, stats):
     status = ('<div class="scroll"><table style="min-width:760px"><thead><tr><th>사이트 (우선순위 순)</th><th>상태</th><th>목록</th>'
               f'<th>채택</th><th>제외 사유</th><th>오류</th></tr></thead><tbody>{"".join(srows)}</tbody></table></div>')
 
+    crows = []
+    for k, v in CAREER_STATUS.items():
+        m = re.match(r"한국 HSE (\d+)건", v)
+        st = ('<span class="pill ok">수집</span>' if m else
+              '<span class="pill keep">API 없음</span>' if "API 없음" in v else '<span class="pill bad">접속 실패</span>')
+        crows.append(f"<tr><td>{e(k)}</td><td>{st}</td><td class='dl'>{m.group(1) if m else '-'}</td>"
+                     f"<td>{'-' if m else e(v)}</td></tr>")
+    careers = ('<section class="card" id="careers"><h2>기업 채용 페이지 현황<span class="n">한국 근무 HSE·EHS·Safety 공고 기준</span></h2>'
+               '<div class="scroll"><table style="min-width:560px"><thead><tr><th>기업</th><th>상태</th><th>한국 HSE 공고</th><th>비고</th></tr></thead>'
+               f'<tbody>{"".join(crows)}</tbody></table></div></section>') if crows else ""
     side = ('<div class="sec">요약</div><a href="#summary">지표·차트</a><a href="#calendar">채용 달력</a><a href="#flow">수집 흐름</a>'
             '<div class="sec">공고</div>' + "".join(f'<a href="#{i}">{e(t)} <b>{c}</b></a>' for i, t, c in nav)
-            + '<div class="sec">수집</div><a href="#status">사이트 현황</a>')
+            + '<div class="sec">수집</div><a href="#status">사이트 현황</a>'
+            + ('<a href="#careers">기업 채용 페이지</a>' if crows else ""))
     chipnav = '<a href="#calendar">채용 달력</a>' + "".join(f'<a href="#{i}">{e(t)} {c}</a>' for i, t, c in nav)
 
     return f"""<title>안전관리자 채용 브리핑</title>
@@ -1586,7 +1620,9 @@ def render_html(postings, failures, now, stats):
     <button type="button" id="edit-save" hidden>저장</button>
     <button type="button" id="edit-reset" hidden>원래대로</button>
     <span id="edit-msg" role="status"></span>
-  </div></header>
+  <button type="button" class="icon-btn" id="theme-toggle" aria-label="라이트/다크 테마 전환" title="테마 전환">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+  </button></div></header>
 <div class="shell">
 <nav class="side" aria-label="섹션">{side}</nav>
 <main>
@@ -1612,6 +1648,7 @@ def render_html(postings, failures, now, stats):
   </div></div>
 {''.join(secs)}
 <section class="card" id="status"><h2>사이트별 수집 현황</h2>{status}</section>
+{careers}
 <p class="note">지원 자격·우대 사항은 상세 페이지에서 자동 추출한 요약입니다. 지원 전 원문을 확인하세요.</p>
 </main></div>
 <script>{HTML_JS}</script>
@@ -1786,12 +1823,21 @@ def main():
             p.extra.setdefault("first_seen", today.isoformat())
             kept.append(p)
         stats[name] = ", ".join(f"{k} {v}" for k, v in counts.items())
-        if name == "기업 채용 페이지" and CAREER_STATUS:
-            stats[name] += " · " + ", ".join(f"{k} {v}" for k, v in CAREER_STATUS.items())
 
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
+    global PREV_TOTAL
+    try:
+        PREV_TOTAL = len(json.loads((out / "latest.json").read_text(encoding="utf-8")).get("postings", []))
+    except (OSError, ValueError):
+        PREV_TOTAL = None
     carry_over(out / "latest.json", [n for n, _ in failures], kept, stats, today)
+    uniq_kept, seen_url = [], set()  # 같은 공고(URL) 중복 방지
+    for p in kept:
+        if p.url not in seen_url:
+            seen_url.add(p.url)
+            uniq_kept.append(p)
+    kept[:] = uniq_kept
     md = render_md(kept, failures, now, stats)
     (out / f"{today:%Y-%m-%d}.md").write_text(md, encoding="utf-8")
     (out / "latest.md").write_text(md, encoding="utf-8")
@@ -1805,8 +1851,15 @@ def main():
     for p in kept:
         p.detail_text = p.detail_text[:1500]
     (out / "latest.json").write_text(json.dumps(
-        {"generated_at": now.isoformat(), "postings": [asdict(p) for p in kept], "failures": failures, "stats": stats},
+        {"generated_at": now.isoformat(), "postings": [asdict(p) for p in kept], "failures": failures, "stats": stats,
+         "careers": CAREER_STATUS},
         ensure_ascii=False, indent=1), encoding="utf-8")
+    # 날짜별 보관본 — 이후 작업·규칙 변경 때도 이전 수집 정보를 되살릴 수 있게 남긴다
+    hist = out / "history"
+    hist.mkdir(exist_ok=True)
+    with gzip.open(hist / f"{today:%Y-%m-%d}.json.gz", "wt", encoding="utf-8") as fh:
+        json.dump({"generated_at": now.isoformat(), "postings": [asdict(p) for p in kept], "stats": stats},
+                  fh, ensure_ascii=False)
     print(md)
     return 0 if len(failures) < len(SOURCES) else 2
 

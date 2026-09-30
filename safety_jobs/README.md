@@ -22,6 +22,11 @@ uv run safety_jobs/collect.py --out briefings   # latest.md / latest.html / late
 | 11 | 원티드 | 공개 API — 현재 GitHub Actions 접속을 403 차단 |
 | 12 | 캐치 | 검색 결과 — 현재 GitHub Actions 접속을 403 차단 |
 
+## 이전 수집 정보 유지
+
+- 접수기한이 남은 공고는 다음 수집에서 목록에 안 보여도 `latest.json`에서 이어받는다(마감일 없는 공고는 14일).
+- 실행마다 원격 최신 `briefings/`를 이어받아 수집하고, 결과는 `briefings/history/YYYY-MM-DD.json.gz`에 날짜별로 보관한다.
+
 ## 규칙
 
 - **대상**: 안전 직무(안전·보건·HSE/EHS·소방·방재) 공고 중 신입 / 경력무관 / 신입·경력 / 인턴. 경력직 전용·마감 공고 제외.
