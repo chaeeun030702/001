@@ -1,4 +1,4 @@
-# 안전관리자 채용 일일 브리핑 — 8개 사이트 수집 후 briefings/ 에 커밋
+# 안전관리자 채용 일일 브리핑 — 12개 사이트 수집 후 briefings/ 에 커밋
 # 20:00 KST Routine이 briefings/latest.* 를 읽어 브리핑 전달.
 # GitHub 예약 실행은 지연·누락될 수 있어 19:07 / 19:27 KST 두 번 잡아 둔다(늦게 끝난 쪽이 최신).
 name: safety-jobs-briefing
@@ -22,19 +22,26 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
+      - name: Use latest briefings (이전 수집 정보 유지)
+        # push로 시작된 실행은 트리거 커밋을 체크아웃하므로, 그 뒤에 올라온 최신 브리핑을 이어받는다
+        run: |
+          git fetch -q origin "${GITHUB_REF_NAME}" && git checkout "origin/${GITHUB_REF_NAME}" -- briefings || true
       - name: Collect
         run: uv run safety_jobs/collect.py --out briefings
       - name: Commit briefing
         run: |
           git config user.name github-actions
           git config user.email github-actions@users.noreply.github.com
-          git add briefings
-          if git diff --cached --quiet; then echo "no changes"; exit 0; fi
-          git commit -q -m "briefing: $(TZ=Asia/Seoul date +%F)"
-          # 다른 실행이 먼저 브리핑을 올렸으면 이번 수집 결과(최신)를 우선해 합친다
+          # 결과를 보관한 뒤 원격 최신 커밋 위에 그대로 덮어쓴다 (JSON을 git이 줄 단위로 합치면 공고가 중복됨)
+          out=$(mktemp -d); cp -r briefings/. "$out"/
           for i in 1 2 3 4; do
-            if git pull -q --rebase -X theirs && git push -q; then echo "pushed"; exit 0; fi
-            git rebase --abort 2>/dev/null || true
+            git fetch -q origin "${GITHUB_REF_NAME}"
+            git reset -q --hard "origin/${GITHUB_REF_NAME}"
+            mkdir -p briefings && cp -r "$out"/. briefings/
+            git add briefings
+            if git diff --cached --quiet; then echo "no changes"; exit 0; fi
+            git commit -q -m "briefing: $(TZ=Asia/Seoul date +%F)"
+            if git push -q origin "HEAD:${GITHUB_REF_NAME}"; then echo "pushed"; exit 0; fi
             sleep $((i * 5))
           done
           echo "::error::briefing push failed"; exit 1
