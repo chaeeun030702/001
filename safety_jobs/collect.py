@@ -498,6 +498,21 @@ WORKDAY_DISCOVER = [
 ]
 WD_LINK_RE = re.compile(r"https://([a-z0-9-]+)\.(wd\d+)\.myworkdayjobs\.com/(?:[a-z]{2}-[A-Z]{2}/)?([A-Za-z0-9_-]+)")
 CAREER_STATUS = {}  # 회사별 수집 결과 (사이트 현황표에 표시)
+PREV_SEEN = {}      # 직전 브리핑의 URL/업체+공고명 → 처음 수집일 (신규 판정)
+REPORT_EVERY = 2    # 보고 주기: 짝수 날(2·4·…·30일) 20:00 — Routine cron '2-30/2'
+
+
+def last_report_date(today):
+    """오늘 이전의 마지막 보고일 (짝수 날, 30일까지). 그 뒤에 처음 수집된 공고가 '신규'."""
+    d = today - dt.timedelta(days=1)
+    while not (d.day % 2 == 0 and d.day <= 30):
+        d -= dt.timedelta(days=1)
+    return d
+
+
+def is_new(p, today):
+    fs = p.extra.get("first_seen")
+    return bool(fs) and fs > last_report_date(today).isoformat()
 PREV_TOTAL = None   # 직전 브리핑 공고 수 (KPI 변화량)
 
 
@@ -1106,7 +1121,15 @@ def render_md(postings, failures, now, stats):
              f"일반 산업체 {n_gen}건 · 건설 {len(postings) - n_gen}건 · 산업/건설안전기사·ISO 45001 명시 {n_cert}건 · "
              f"🟣 외국어·NEBOSH·IOSH·CSP 우대 {n_pref}건")
     L += ["", "건설사는 2026년 시공능력평가 상위 100개사(토목건축)만 싣습니다."]
-    L += ["", f"범례: {LEGEND}", ""]
+    L += ["", f"범례: {LEGEND} · 🆕 지난 보고({last_report_date(now.date()):%m/%d}) 이후 추가", ""]
+    new = sorted([p for p in postings if is_new(p, now.date())], key=sort_key)
+    L += [f"## 🆕 신규 공고 {len(new)}건 (지난 보고 {last_report_date(now.date()):%m/%d} 이후)", ""]
+    if new:
+        L += ["| 업체명 | 공고명 | 고용형태 | 접수기한 | 출처 |", "|---|---|---|---|---|"]
+        L += [f"| {BADGE[p.hilite]}{md_cell(p.company)} | {md_cell(p.title)} | {p.employment} | {deadline_md(p, now.date())} | [{p.source}]({p.url}) |" for p in new]
+    else:
+        L.append("_새로 추가된 공고가 없습니다._")
+    L.append("")
     for key, tag in GROUPS:
         rows = sorted([p for p in postings if p.employment == key], key=sort_key)
         if not rows:
@@ -1115,7 +1138,7 @@ def render_md(postings, failures, now, stats):
         L.append("| 구분 | 업체명 | 공고명 | 지원 자격 (학과·자격·영어·학력) | 우대 사항 | 접수기한 | 출처 |")
         L.append("|---|---|---|---|---|---|---|")
         for p in rows:
-            corp = BADGE[p.hilite] + (f"**{md_cell(p.company)}**" if p.hilite else md_cell(p.company))
+            corp = ("🆕 " if is_new(p, now.date()) else "") + BADGE[p.hilite] + (f"**{md_cell(p.company)}**" if p.hilite else md_cell(p.company))
             corp += "".join(f" [{g}]" for g in p.extra.get("groups", []))
             corp += f" [{p.extra['listed']}]" if p.extra.get("listed") else ""
             if p.industry == "건설" and p.extra.get("top100"):
@@ -1175,6 +1198,7 @@ body{background:var(--canvas);color:var(--text);font:400 14px/1.55 var(--font);m
 .edit-bar #edit-msg{font-size:12px;color:var(--caption)}
 .icon-btn{width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;border:0;background:none;color:var(--text-sub);border-radius:var(--r-sm);cursor:pointer}
 .icon-btn:hover{background:var(--alt1);color:var(--text-strong)}
+.edit-bar .icon-btn{width:40px;height:40px;padding:0;border:0;background:none}
 body.editing main [contenteditable="true"]{outline:1px dashed var(--border-strong);outline-offset:2px;cursor:text}
 body.editing main [contenteditable="true"]:focus{outline:2px solid var(--primary)}
 .shell{display:grid;grid-template-columns:220px minmax(0,1fr);min-height:100%}
@@ -1265,6 +1289,8 @@ td.src{white-space:nowrap}
 .ev span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .ev .tg{flex:none;font-style:normal;font-size:10px;font-weight:600;line-height:1.4;padding:0 4px;border-radius:4px;border:1px solid currentColor}
 .ev .tg.b{color:var(--primary)} .ev .tg.f{color:var(--sky)} .ev .tg.k{color:var(--text-sub)} .ev .tg.ai{color:var(--orange)}
+.pill.pn{border-color:var(--success);background:color-mix(in srgb,var(--success) 14%,transparent);color:var(--text-strong)} .pill.pn::before{background:var(--success)}
+.ev .tg.n,.cal-legend .tgl .tg.n{color:var(--success)}
 .pill.pai{margin:4px 4px 0 0;border-color:var(--orange);background:color-mix(in srgb,var(--orange) 12%,transparent);color:var(--text-strong)} .pill.pai::before{background:var(--orange)}
 .cal-legend .tgl .tg.ai{color:var(--orange)}
 .day details summary{font-size:12px;color:var(--primary);cursor:pointer;list-style:none} .day details summary::-webkit-details-marker{display:none}
@@ -1327,7 +1353,7 @@ HTML_JS = """
         var ok=(!t||tr.textContent.toLowerCase().indexOf(t)>=0)&&
           (mode==='all'||(mode==='A'&&tr.classList.contains('hA'))||(mode==='B'&&tr.dataset.grp.indexOf('대기업')>=0)||(mode==='F'&&tr.dataset.grp.indexOf('외국계')>=0)||(mode==='K'&&tr.dataset.listed!=='')||
            (mode==='soon'&&tr.querySelector('td.dl.soon'))||(mode==='gen'&&tr.dataset.ind==='일반 산업')||
-           (mode==='cert'&&tr.dataset.cert==='1')||(mode==='pref'&&tr.dataset.pref==='1')||(mode==='ai'&&tr.dataset.ai==='1'));
+           (mode==='cert'&&tr.dataset.cert==='1')||(mode==='pref'&&tr.dataset.pref==='1')||(mode==='ai'&&tr.dataset.ai==='1')||(mode==='new'&&tr.dataset.new==='1'));
         tr.hidden=!ok; if(ok)n++;
       });
       sec.querySelector('.n').textContent=n+'건';
@@ -1412,6 +1438,8 @@ def render_calendar(postings, today, months=2, show=5):
                 tags += f'<i class="tg k" title="{e(p.extra["listed"])} 상장">{ab}</i>'
             if p.extra.get("ai"):
                 tags += '<i class="tg ai" title="AI 우대">AI</i>'
+            if is_new(p, today):
+                tags += '<i class="tg n" title="지난 보고 이후 신규">N</i>'
             return (f'<a class="{c}" href="{e(p.url)}" target="_blank" rel="noopener" title="{e(tip)}">'
                     f'<span>{e(p.company or p.title)}</span>{tags}</a>')
         body = "".join(ev(p) for p in items[:show])
@@ -1429,8 +1457,12 @@ def render_calendar(postings, today, months=2, show=5):
             '<div class="cal-legend"><span class="la">데이터센터·하이테크·삼성·하이닉스</span><span class="lb">대기업 계열</span><span class="lf">외국계</span>'
             '<span class="lp">외국어·NEBOSH·IOSH·CSP 우대</span><span>상장사·반도체 관련</span>'
             '<em class="tgl"><i class="tg b">대</i> 대기업 계열 <i class="tg f">외</i> 외국계 '
-            '<i class="tg k">KS</i> 코스피 <i class="tg k">KQ</i> 코스닥 <i class="tg ai">AI</i> AI 우대</em></div>'
+            '<i class="tg k">KS</i> 코스피 <i class="tg k">KQ</i> 코스닥 <i class="tg ai">AI</i> AI 우대 <i class="tg n">N</i> 신규</em></div>'
             f'<div class="cal">{wd}{"".join(cells)}</div></section>')
+
+
+def new_pill(p, today):
+    return '<span class="pill pn">신규</span>' if is_new(p, today) else ""
 
 
 def group_pills(p):
@@ -1476,6 +1508,8 @@ def render_html(postings, failures, now, stats):
     n_f = sum("외국계" in p.extra.get("groups", []) for p in postings)
     n_ks = sum(p.extra.get("listed") == "코스피" for p in postings)
     n_kq = sum(p.extra.get("listed") == "코스닥" for p in postings)
+    new_rows = sorted([p for p in postings if is_new(p, today)], key=sort_key)
+    n_new = len(new_rows)
     failed = {n for n, _ in failures}
     ok_sites = len(SOURCES) - len(failed)
 
@@ -1491,6 +1525,7 @@ def render_html(postings, failures, now, stats):
     by = {k: len(r) for k, _, r in groups}
     kpis = "".join([
         kpi("전체 공고", len(postings), delta_txt),
+        kpi("신규", n_new, f"지난 보고({last_report_date(today):%m/%d}) 이후 추가", "--success"),
         kpi("정규직", by.get("정규직", 0), f"{by.get('정규직', 0) * 100 // max(len(postings), 1)}%"),
         kpi("계약직", by.get("계약직", 0), f"{by.get('계약직', 0) * 100 // max(len(postings), 1)}%"),
         kpi("일반 산업체", sum(p.industry == "일반 산업" for p in postings), "건설 외 제조·서비스 등"),
@@ -1559,8 +1594,8 @@ def render_html(postings, failures, now, stats):
         i = sid.get(key, "other")
         nav.append((i, tag, len(rows)))
         trs = "".join(
-            f'<tr class="h{p.hilite}" data-ind="{e(p.industry)}" data-cert="{1 if p.certs else 0}" data-pref="{1 if p.prefs else 0}" data-ai="{1 if p.extra.get("ai") else 0}" data-grp="{e(" ".join(p.extra.get("groups", [])))}" data-listed="{e(p.extra.get("listed", ""))}"><td class="lv">{e(p.level)}<small>{e(p.industry)}</small></td>'
-            f'<td class="corp"><strong><a class="co" href="{e(p.url)}" target="_blank" rel="noopener">{e(p.company or "-")}</a></strong>{pill[p.hilite]}{group_pills(p)}{rank_pill(p)}</td>'
+            f'<tr class="h{p.hilite}" data-ind="{e(p.industry)}" data-cert="{1 if p.certs else 0}" data-pref="{1 if p.prefs else 0}" data-ai="{1 if p.extra.get("ai") else 0}" data-grp="{e(" ".join(p.extra.get("groups", [])))}" data-listed="{e(p.extra.get("listed", ""))}" data-new="{1 if is_new(p, today) else 0}"><td class="lv">{e(p.level)}<small>{e(p.industry)}</small></td>'
+            f'<td class="corp"><strong><a class="co" href="{e(p.url)}" target="_blank" rel="noopener">{e(p.company or "-")}</a></strong>{new_pill(p, today)}{pill[p.hilite]}{group_pills(p)}{rank_pill(p)}</td>'
             f"<td class=\"ttl\">{e(p.title)}{pref_pills(p)}{ai_pill(p)}</td><td>{cert_pills(p)}{e(p.qualification or '-')}</td><td>{e(p.preferred or '-')}</td>"
             f'<td class="dl{" soon" if id(p) in soon else ""}">{e(p.deadline)}</td>'
             f'<td class="src"><a href="{e(p.url)}" target="_blank" rel="noopener">{e(p.source)}</a>'
@@ -1601,11 +1636,20 @@ def render_html(postings, failures, now, stats):
     careers = ('<section class="card" id="careers"><h2>기업 채용 페이지 현황<span class="n">한국 근무 HSE·EHS·Safety 공고 기준</span></h2>'
                '<div class="scroll"><table style="min-width:560px"><thead><tr><th>기업</th><th>상태</th><th>한국 HSE 공고</th><th>비고</th></tr></thead>'
                f'<tbody>{"".join(crows)}</tbody></table></div></section>') if crows else ""
-    side = ('<div class="sec">요약</div><a href="#summary">지표·차트</a><a href="#calendar">채용 달력</a><a href="#flow">수집 흐름</a>'
+    nrows = "".join(
+        f'<tr class="h{p.hilite}"><td class="corp"><strong><a class="co" href="{e(p.url)}" target="_blank" rel="noopener">{e(p.company or "-")}</a></strong>'
+        f'{group_pills(p)}</td><td>{e(p.title)}</td><td class="lv">{e(p.employment)}<small>{e(p.level)}</small></td>'
+        f'<td class="dl{" soon" if id(p) in soon else ""}">{e(p.deadline)}</td><td class="src"><a href="{e(p.url)}" target="_blank" rel="noopener">{e(p.source)}</a></td></tr>'
+        for p in new_rows)
+    newsec = (f'<section class="card" id="new"><h2>신규 공고<span class="n">{n_new}건 · 지난 보고({last_report_date(today):%m/%d}) 이후 추가</span></h2>'
+              + ('<div class="scroll"><table style="min-width:720px"><thead><tr><th>업체명</th><th>공고명</th><th>고용형태</th><th>접수기한</th><th>출처</th></tr></thead>'
+                 f'<tbody>{nrows}</tbody></table></div>' if new_rows else '<p class="empty">새로 추가된 공고가 없습니다.</p>')
+              + '</section>')
+    side = ('<div class="sec">요약</div><a href="#new">신규 공고 <b>' + str(n_new) + '</b></a><a href="#summary">지표·차트</a><a href="#calendar">채용 달력</a><a href="#flow">수집 흐름</a>'
             '<div class="sec">공고</div>' + "".join(f'<a href="#{i}">{e(t)} <b>{c}</b></a>' for i, t, c in nav)
             + '<div class="sec">수집</div><a href="#status">사이트 현황</a>'
             + ('<a href="#careers">기업 채용 페이지</a>' if crows else ""))
-    chipnav = '<a href="#calendar">채용 달력</a>' + "".join(f'<a href="#{i}">{e(t)} {c}</a>' for i, t, c in nav)
+    chipnav = f'<a href="#new">신규 {n_new}</a><a href="#calendar">채용 달력</a>' + "".join(f'<a href="#{i}">{e(t)} {c}</a>' for i, t, c in nav)
 
     return f"""<title>안전관리자 채용 브리핑</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1628,6 +1672,7 @@ def render_html(postings, failures, now, stats):
 <main>
 <nav class="chipnav" aria-label="섹션">{chipnav}<a href="#status">사이트 현황</a></nav>
 <div class="kpis" id="summary">{kpis}</div>
+{newsec}
 {render_calendar(postings, today)}
 <div class="charts">{charts}</div>
 <div class="card" id="flow"><h2>수집에서 채택까지</h2><div class="flow">{flow}</div></div>
@@ -1636,6 +1681,7 @@ def render_html(postings, failures, now, stats):
   <input id="q" type="search" placeholder="업체명·공고명·자격 검색" aria-label="업체명, 공고명, 자격 검색">
   <div class="seg" role="group" aria-label="강조 필터">
     <button type="button" data-mode="all" aria-pressed="true">전체</button>
+    <button type="button" data-mode="new" aria-pressed="false">신규</button>
     <button type="button" data-mode="A" aria-pressed="false">데이터센터·하이테크·삼성·하이닉스</button>
     <button type="button" data-mode="B" aria-pressed="false">대기업 계열</button>
     <button type="button" data-mode="F" aria-pressed="false">외국계</button>
@@ -1767,6 +1813,14 @@ def main():
     krx_err = load_listed(f, Path(args.out) / "krx_listed.json")
     if krx_err:
         print(f"[krx] {krx_err} (캐시 {len(LISTED)}개사 사용)", file=sys.stderr)
+    try:  # 이전에 본 공고는 처음 수집일을 이어받는다
+        for d in json.loads((Path(args.out) / "latest.json").read_text(encoding="utf-8")).get("postings", []):
+            fs = (d.get("extra") or {}).get("first_seen")
+            if fs:
+                PREV_SEEN.setdefault(d["url"], fs)
+                PREV_SEEN.setdefault(norm_company(d.get("company", "")) + "|" + norm_title(d.get("title", ""), d.get("company", "")), fs)
+    except (OSError, ValueError, KeyError):
+        pass
     raw, failures, stats = [], [], {}
     for name, fn, _ in SOURCES:
         for attempt in (1, 2):
@@ -1820,7 +1874,8 @@ def main():
                 counts["중복(상위 사이트 우선)"] = counts.get("중복(상위 사이트 우선)", 0) + 1
                 continue
             counts["채택"] += 1
-            p.extra.setdefault("first_seen", today.isoformat())
+            p.extra["first_seen"] = (PREV_SEEN.get(p.url) or PREV_SEEN.get(norm_company(p.company) + "|" + norm_title(p.title, p.company))
+                                     or p.extra.get("first_seen") or today.isoformat())
             kept.append(p)
         stats[name] = ", ".join(f"{k} {v}" for k, v in counts.items())
 
