@@ -4,7 +4,7 @@
 """자기소개서 자동 작성 대상 공고 선정.
 
 브리핑(briefings/latest.json)에서 관심 기업(대기업 계열·외국계·코스피·코스닥)의
-정규직 안전관리자 공고 중 접수 마감이 10일 이내로 들어온 공고를 고른다.
+정규직 안전관리자 공고 중 접수 마감이 5일 이내로 들어온 공고를 고른다.
 이미 초안이 있는 공고(drafts/index.json 에 같은 공고 URL이 있는 것)는 건너뛴다.
 초안과 개인 자료는 공개 저장소가 아니라 비공개 아티팩트(자기소개서 일일 브리핑)에 둔다.
 
@@ -21,7 +21,7 @@ import sys
 from pathlib import Path
 
 KST = dt.timezone(dt.timedelta(hours=9))
-LEAD_DAYS = 10  # 마감 10일 전부터 작성 (그 뒤에 처음 수집된 공고는 수집 즉시)
+LEAD_DAYS = 5  # 마감 5일 전부터 작성 (그 뒤에 처음 수집된 공고는 수집 즉시)
 TARGET_GROUPS = ("대기업 계열", "외국계")
 TARGET_MARKETS = ("코스피", "코스닥")
 

@@ -124,7 +124,7 @@ def render(drafts, today, now):
     table = ('<div class="scroll"><table><colgroup><col style="width:20%"><col style="width:16%"><col><col style="width:14%">'
              '<col style="width:10%"><col style="width:9%"></colgroup><thead><tr><th>업체</th><th>구분</th><th>공고</th>'
              '<th>마감일</th><th>남은 기간</th><th>문항</th></tr></thead><tbody>' + "".join(rows) + "</tbody></table></div>"
-             if rows else '<p class="empty">마감 전 초안이 없습니다. 관심 기업 정규직 공고가 마감 10일 전이 되면 여기에 초안이 추가됩니다.</p>')
+             if rows else '<p class="empty">마감 전 초안이 없습니다. 관심 기업 정규직 공고가 마감 5일 전이 되면 여기에 초안이 추가됩니다.</p>')
 
     cards = []
     for d in live:
@@ -236,7 +236,7 @@ footer{{font-size:12px;color:var(--cap)}}
 @media (prefers-reduced-motion:reduce){{*{{transition:none!important}}}}
 </style>
 <div class="sheet">
-<header><div><div class="eyebrow">안전관리자 · 정규직 · 마감 10일 전 자동 작성</div><h1>자기소개서 일일 브리핑</h1></div>
+<header><div><div class="eyebrow">안전관리자 · 정규직 · 마감 5일 전 자동 작성</div><h1>자기소개서 일일 브리핑</h1></div>
 <div class="gen">{date} ({weekday}) · 생성 {gen} KST</div></header>
 <div class="tiles">{tiles}</div>
 <section class="card"><h2>마감순 초안</h2>{table}</section>
