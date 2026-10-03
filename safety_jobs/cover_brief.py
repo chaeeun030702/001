@@ -391,6 +391,7 @@ SCRIPT = r"""<script>
 </script>"""
 
 EXCLUDE_BAR = ('<div class="xbar" hidden><button type="button" class="danger" id="xdel" disabled>선택 삭제</button>'
+               '<span id="xask" hidden><button type="button" class="danger" id="xok">제외 확정</button> <button type="button" id="xno">취소</button></span>'
                '<span class="msg" id="xmsg">체크한 공고는 이 목록에서 빠지고 다음 리포트부터 제외됩니다.</span></div>'
                '<details class="xlist" id="xlist" hidden><summary>제외한 공고 <b id="xcnt">0</b>건 · 되돌리기</summary><ul id="xul"></ul></details>')
 
@@ -403,7 +404,7 @@ EXCLUDE_SCRIPT = r"""<script>
  if(!db)return;
  var bar=document.querySelector(".xbar"),del=document.getElementById("xdel"),msg=document.getElementById("xmsg"),
      list=document.getElementById("xlist"),ul=document.getElementById("xul"),cnt=document.getElementById("xcnt"),
-     all=document.querySelector(".pickall"),col=db.collection("excluded");
+     all=document.querySelector(".pickall"),col=db.collection("excluded"),ask=document.getElementById("xask"),ok=document.getElementById("xok"),no=document.getElementById("xno"),hint=msg.textContent,pending=[];
  if(!bar)return; bar.hidden=false;
  function picks(){return Array.from(document.querySelectorAll("input.pick"))}
  function sync(){var n=picks().filter(function(c){return c.checked&&!c.closest("tr").classList.contains("gone")}).length;
@@ -414,12 +415,18 @@ EXCLUDE_SCRIPT = r"""<script>
  del.addEventListener("click",async function(){
   var sel=picks().filter(function(c){return c.checked&&!c.closest("tr").classList.contains("gone")});
   if(!sel.length)return;
-  if(!confirm(sel.length+"건을 다음 리포트부터 제외할까요?"))return;
-  del.disabled=true;msg.textContent="저장 중…";
+  pending=sel;del.hidden=true;ask.hidden=false;
+  msg.textContent=sel.length+"건을 다음 리포트부터 제외할까요?";
+ });
+ no.addEventListener("click",function(){pending=[];ask.hidden=true;del.hidden=false;msg.textContent=hint;sync()});
+ ok.addEventListener("click",async function(){
+  var sel=pending;pending=[];if(!sel.length)return;
+  ok.disabled=no.disabled=true;msg.textContent="저장 중…";
   try{for(var i=0;i<sel.length;i++){var c=sel[i];
     await col.doc(c.dataset.id).set({company:c.dataset.company,title:c.dataset.title,url:c.dataset.url,at:new Date().toISOString()})}
    msg.textContent=sel.length+"건을 제외했습니다. 다음 리포트부터 나오지 않습니다.";
-  }catch(e){msg.textContent="저장하지 못했습니다("+(e&&e.code||"오류")+"). 편집 권한이 있는 계정으로 열었는지 확인해 주세요.";sync()}
+  }catch(e){msg.textContent="저장하지 못했습니다("+(e&&(e.code||e.message)||"오류")+"). 편집 권한이 있는 계정으로 열었는지 확인해 주세요."}
+  ok.disabled=no.disabled=false;ask.hidden=true;del.hidden=false;sync();
  });
  col.onSnapshot(function(snap){
   var ids={};ul.textContent="";
