@@ -1389,17 +1389,23 @@ th.pickcell,td.pickcell{width:44px;text-align:center;padding-left:8px;padding-ri
 .pickcell input{width:16px;height:16px;margin:2px 0 0;cursor:pointer;accent-color:var(--primary)}
 tr.xd{display:none!important} .ev.xd{display:none!important}
 tr.xon{outline:2px solid var(--error);outline-offset:-2px}
-.xbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;width:100%;padding-top:4px;border-top:1px solid var(--divider)}
+.xbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:8px;position:relative}
+.top .xbar .xmsg{max-width:320px;text-align:right;line-height:1.35}
+.xbar li button{white-space:nowrap;flex:none}
+@media (max-width:719px){.top .xbar .xmsg:not(.ask){display:none}.top .xbar{width:100%;justify-content:flex-start}}
 .xbar button{height:40px;padding:0 14px;border:1px solid var(--border-strong);border-radius:var(--r-sm);background:var(--surface);color:var(--text-sub);font:600 13px var(--font);cursor:pointer}
 .xbar button.danger{border-color:var(--error);color:var(--error)} .xbar button.danger:not(:disabled):hover{background:color-mix(in srgb,var(--error) 10%,var(--surface))}
 .xgrp{display:inline-flex;flex-wrap:wrap;align-items:center;gap:8px}
 .xmsg{font-size:12px;color:var(--caption)} .xmsg.ask{font-size:14px;font-weight:600;color:var(--text-strong)}
-.xlist{flex-basis:100%;font-size:13px;color:var(--text-sub)} .xlist summary{cursor:pointer;color:var(--caption);font-size:12px}
+.xlist{font-size:13px;color:var(--text-sub);position:relative}
+.xlist summary{cursor:pointer;color:var(--text-sub);font-size:12px;font-weight:600;height:40px;display:flex;align-items:center;gap:4px;padding:0 10px;border:1px solid var(--border-strong);border-radius:var(--r-sm);list-style:none}
+.xlist summary::-webkit-details-marker{display:none}
+.xlist[open] ul{position:absolute;right:0;top:46px;z-index:6;width:min(420px,calc(100vw - 32px));background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--sh2,0 2px 8px rgba(0,0,0,.08));padding:10px;margin:0}
+.xlist ul:empty::before{content:"제외한 공고가 없습니다.";color:var(--caption);font-size:12px}
 .xbar button.danger.solid{background:var(--error);border-color:var(--error);color:#FFFFFF}
 .xbar button.danger.solid:not(:disabled):hover{background:var(--error);filter:brightness(.9)}
 .xbar button:disabled{opacity:.45;cursor:not-allowed}
-.xbar details summary{cursor:pointer;font-size:13px;color:var(--text-sub);font-weight:600}
-.xbar ul{margin:8px 0 0;padding:0;list-style:none;display:grid;gap:4px;max-height:240px;overflow:auto}
+.xbar ul{list-style:none;display:grid;gap:4px;max-height:300px;overflow:auto}
 .xbar li{display:flex;gap:8px;align-items:center;font-size:13px}
 .xbar li button{height:28px;padding:0 10px;font-size:12px}
 .icon-btn:hover{background:var(--alt1);color:var(--text-strong)}
@@ -1975,6 +1981,12 @@ def render_html(postings, failures, now, stats):
 <header class="top"><h1>안전관리자 채용 브리핑</h1>
   <span class="when">{now:%Y-%m-%d %H:%M} KST 수집</span>
   <span class="pill {'ok' if not failed else 'keep'} chip">{ok_sites}/{len(SOURCES)} 사이트 수집</span>
+  <div class="xbar" role="group" aria-label="선택 공고 삭제">
+    <span id="x-msg" class="xmsg" role="status">체크한 공고는 이 목록에서 빠지고 다음 리포트부터 제외됩니다.</span>
+    <button type="button" id="x-del" class="danger solid" disabled>선택 삭제</button>
+    <span id="x-confirm" class="xgrp" role="group" aria-label="제외 확인" hidden><button type="button" id="x-yes" class="danger solid">제외 확정</button> <button type="button" id="x-no">취소</button></span>
+    <details id="x-list" class="xlist"><summary>제외한 공고 <b id="x-cnt">0</b>건 · 되돌리기</summary><ul id="x-items"></ul></details>
+  </div>
   <div class="edit-bar" data-key="brief-{now:%Y%m%d%H%M}">
     <button type="button" id="edit-toggle" aria-pressed="false">편집</button>
     <button type="button" id="edit-save" hidden>저장</button>
@@ -2009,11 +2021,6 @@ def render_html(postings, failures, now, stats):
     <button type="button" data-mode="ai" aria-pressed="false">AI 우대</button>
     <button type="button" data-mode="soon" aria-pressed="false">3일 내 마감</button>
   </div>
-  <div class="xbar" role="group" aria-label="선택 공고 삭제">
-    <button type="button" id="x-del" class="danger solid" disabled>선택 삭제</button>
-    <span id="x-confirm" class="xgrp" role="group" aria-label="제외 확인" hidden><button type="button" id="x-yes" class="danger solid">제외 확정</button> <button type="button" id="x-no">취소</button></span>
-    <span id="x-msg" class="xmsg" role="status">체크한 공고는 이 목록에서 빠지고 다음 리포트부터 제외됩니다.</span>
-    <details id="x-list" class="xlist"><summary>제외한 공고 <b id="x-cnt">0</b>건 · 되돌리기</summary><ul id="x-items"></ul></details>
   </div></div>
 {''.join(secs)}
 <section class="card" id="status"><h2>사이트별 수집 현황</h2>{status}</section>
