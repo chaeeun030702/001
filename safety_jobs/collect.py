@@ -975,6 +975,7 @@ def analyze(p: Posting, today):
     p.prefs = [lab for lab, rx in (("외국어·영어", LANG_RE), ("NEBOSH", NEBOSH_RE), ("IOSH", IOSH_RE), ("CSP", CSP_RE)) if rx.search(blob)]
     pref_sec = section(text, PREF_HEAD, 600)
     p.extra["ai"] = bool(AI_RE.search(pref_sec) or AI_NEAR_PREF_RE.search(text))
+    p.extra["benefits"] = benefits_of(f"{p.listing_text} {text}")
     rank = top100_rank(p.company)
     p.extra["top100"] = rank
     sector = f"{p.listing_text[:12]} {p.extra.get('biz', '')}"
@@ -1361,6 +1362,7 @@ def render_md(postings, failures, now, stats):
             cert = f"**[{'·'.join(p.certs)} 명시]** " if p.certs else ""
             cert += f"🟣 **[{'·'.join(p.prefs)} 우대]** " if p.prefs else ""
             cert += "🤖 **[AI 우대]** " if p.extra.get("ai") else ""
+            cert += f"🏠 **[복지: {'·'.join(p.extra['benefits'])}]** " if p.extra.get("benefits") else ""
             L.append(f"| {md_cell(p.level)} · {md_cell(p.industry)}<br>{md_cell(pay_text(p))} | {corp} | {md_cell(p.title)} | {cert}{md_cell(p.qualification)} "
                      f"| {md_cell(p.preferred)} | {deadline_md(p, now.date())} | [{p.source}]({p.url}){' (이전 수집)' if p.extra.get('carried') else ''} |")
         L.append("")
@@ -1537,6 +1539,8 @@ td.src{white-space:nowrap}
 .ev .tg.b{color:var(--primary)} .ev .tg.f{color:var(--sky)} .ev .tg.k{color:var(--text-sub)} .ev .tg.ai{color:var(--orange)}
 .pill.pn{border-color:var(--success);background:color-mix(in srgb,var(--success) 14%,transparent);color:var(--text-strong)} .pill.pn::before{background:var(--success)}
 .ev .tg.n,.cal-legend .tgl .tg.n{color:var(--success)}
+.bnf{display:flex;flex-wrap:wrap;gap:0 4px;margin-top:2px}
+.pill.pw{margin:4px 0 0;border-color:var(--warning);background:color-mix(in srgb,var(--warning) 14%,transparent);color:var(--text-strong)} .pill.pw::before{background:var(--warning)}
 .pill.pai{margin:4px 4px 0 0;border-color:var(--orange);background:color-mix(in srgb,var(--orange) 12%,transparent);color:var(--text-strong)} .pill.pai::before{background:var(--orange)}
 .cal-legend .tgl .tg.ai{color:var(--orange)}
 .day details summary{font-size:12px;color:var(--primary);cursor:pointer;list-style:none} .day details summary::-webkit-details-marker{display:none}
@@ -1599,7 +1603,7 @@ HTML_JS = """
         var ok=!tr.classList.contains('xd')&&(!t||tr.textContent.toLowerCase().indexOf(t)>=0)&&
           (mode==='all'||(mode==='A'&&tr.classList.contains('hA'))||(mode==='B'&&tr.dataset.grp.indexOf('대기업')>=0)||(mode==='F'&&tr.dataset.grp.indexOf('외국계')>=0)||(mode==='K'&&tr.dataset.listed!=='')||
            (mode==='soon'&&tr.querySelector('td.dl.soon'))||(mode==='gen'&&tr.dataset.ind==='일반 산업')||
-           (mode==='cert'&&tr.dataset.cert==='1')||(mode==='pref'&&tr.dataset.pref==='1')||(mode==='ai'&&tr.dataset.ai==='1')||(mode==='new'&&tr.dataset.new==='1'));
+           (mode==='cert'&&tr.dataset.cert==='1')||(mode==='pref'&&tr.dataset.pref==='1')||(mode==='ai'&&tr.dataset.ai==='1')||(mode==='new'&&tr.dataset.new==='1')||(mode==='bnf'&&tr.dataset.bnf==='1'));
         tr.hidden=!ok; if(ok)n++;
       });
       sec.querySelector('.n').textContent=n+'건';
@@ -1817,6 +1821,24 @@ def rank_pill(p):
     return f'<span class="pill">시평 {r}위</span>' if p.industry == "건설" and r else ""
 
 
+# 복지 표시: 공고 본문에 명시된 경우만 (자녀학자금 · 노조 · 주택지원 · 기숙사)
+BENEFIT_RES = [
+    ("자녀학자금", re.compile(r"자녀\s*(?:대학\s*)?(?:학자금|학비|교육비|장학금?)|학자금\s*(?:지원|보조|대출)")),
+    ("노조", re.compile(r"노동\s*조합|노조(?!\s*(?:없|미가입))")),
+    ("주택지원", re.compile(r"주택\s*(?:자금|구입|지원|대출|임차)|주거\s*(?:비\s*)?지원|사택|전세\s*(?:자금|대출|지원)|임차\s*지원")),
+    ("기숙사", re.compile(r"기숙사")),
+]
+
+
+def benefits_of(text):
+    return [lab for lab, rx in BENEFIT_RES if rx.search(text or "")]
+
+
+def benefit_pills(p):
+    b = p.extra.get("benefits") or []
+    return ('<span class="bnf">' + "".join(f'<span class="pill pw">{x}</span>' for x in b) + "</span>") if b else ""
+
+
 def ai_pill(p):
     return '<span class="pill pai">AI 우대</span>' if p.extra.get("ai") else ""
 
@@ -1871,6 +1893,7 @@ def render_html(postings, failures, now, stats):
         kpi("일반 산업체", sum(p.industry == "일반 산업" for p in postings), "건설 외 제조·서비스 등"),
         kpi("산업·건설안전기사·ISO 45001 명시", sum(bool(p.certs) for p in postings), "공고에 자격·인증 기재"),
         kpi("외국어·NEBOSH·IOSH·CSP 우대", sum(bool(p.prefs) for p in postings), "우대 조건 기재", "--purple"),
+        kpi("복지 명시", sum(bool(p.extra.get("benefits")) for p in postings), "자녀학자금·노조·주택지원·기숙사", "--warning"),
         kpi("AI 우대", sum(bool(p.extra.get("ai")) for p in postings), "우대 조건에 AI 역량", "--orange"),
         kpi("3일 내 마감", len(soon), "접수 서두름", "--error"),
         kpi("데이터센터·하이테크·삼성·하이닉스", n_a, "집중 관심", "--error"),
@@ -1939,9 +1962,9 @@ def render_html(postings, failures, now, stats):
         i = sid.get(key, "other")
         nav.append((i, tag, len(rows)))
         trs = "".join(
-            f'<tr class="h{p.hilite}" data-url="{e(p.url)}" data-ind="{e(p.industry)}" data-cert="{1 if p.certs else 0}" data-pref="{1 if p.prefs else 0}" data-ai="{1 if p.extra.get("ai") else 0}" data-grp="{e(" ".join(p.extra.get("groups", [])))}" data-listed="{e(p.extra.get("listed", ""))}" data-new="{1 if is_new(p, today) else 0}">{xsel(p)}<td class="lv">{e(p.level)}<small>{e(p.industry)}</small>{sal_small(p)}</td>'
+            f'<tr class="h{p.hilite}" data-url="{e(p.url)}" data-ind="{e(p.industry)}" data-cert="{1 if p.certs else 0}" data-pref="{1 if p.prefs else 0}" data-ai="{1 if p.extra.get("ai") else 0}" data-grp="{e(" ".join(p.extra.get("groups", [])))}" data-listed="{e(p.extra.get("listed", ""))}" data-new="{1 if is_new(p, today) else 0}" data-bnf="{1 if p.extra.get("benefits") else 0}">{xsel(p)}<td class="lv">{e(p.level)}<small>{e(p.industry)}</small>{sal_small(p)}</td>'
             f'<td class="corp"><strong><a class="co" href="{e(p.url)}" target="_blank" rel="noopener">{e(p.company or "-")}</a></strong>{new_pill(p, today)}{pill[p.hilite]}{group_pills(p)}{rank_pill(p)}</td>'
-            f"<td class=\"ttl\">{e(p.title)}{pref_pills(p)}{ai_pill(p)}</td><td>{cert_pills(p)}{e(p.qualification or '-')}</td><td>{e(p.preferred or '-')}</td>"
+            f"<td class=\"ttl\">{e(p.title)}{pref_pills(p)}{ai_pill(p)}{benefit_pills(p)}</td><td>{cert_pills(p)}{e(p.qualification or '-')}</td><td>{e(p.preferred or '-')}</td>"
             f'<td class="dl{" soon" if id(p) in soon else ""}">{e(p.deadline)}</td>'
             f'<td class="src"><a href="{e(p.url)}" target="_blank" rel="noopener">{e(p.source)}</a>'
             f'{"<small>이전 수집</small>" if p.extra.get("carried") else ""}</td></tr>'
@@ -1984,7 +2007,7 @@ def render_html(postings, failures, now, stats):
     def rows5(rows, pill_new=False):
         return "".join(
             f'<tr class="h{p.hilite}" data-url="{e(p.url)}">{xsel(p)}<td class="corp"><strong><a class="co" href="{e(p.url)}" target="_blank" rel="noopener">{e(p.company or "-")}</a></strong>'
-            f'{new_pill(p, today) if pill_new else ""}{group_pills(p)}</td><td>{e(p.title)}</td><td class="lv">{e(p.employment)}<small>{e(p.level)}</small>{sal_small(p)}</td>'
+            f'{new_pill(p, today) if pill_new else ""}{group_pills(p)}</td><td>{e(p.title)}{benefit_pills(p)}</td><td class="lv">{e(p.employment)}<small>{e(p.level)}</small>{sal_small(p)}</td>'
             f'<td class="dl{" soon" if id(p) in soon else ""}">{e(p.deadline)}</td><td class="src"><a href="{e(p.url)}" target="_blank" rel="noopener">{e(p.source)}</a></td></tr>'
             for p in rows)
     head5 = '<div class="scroll"><table class="t5"><thead><tr>' + PICK_TH + '<th>업체명</th><th>공고명</th><th>고용형태 · 연봉</th><th>접수기한</th><th>출처</th></tr></thead>'
@@ -2047,6 +2070,7 @@ def render_html(postings, failures, now, stats):
     <button type="button" data-mode="pref" aria-pressed="false">외국어·NEBOSH·IOSH·CSP 우대</button>
     <button type="button" data-mode="ai" aria-pressed="false">AI 우대</button>
     <button type="button" data-mode="soon" aria-pressed="false">3일 내 마감</button>
+    <button type="button" data-mode="bnf" aria-pressed="false">복지: 학자금·노조·주택·기숙사</button>
   </div>
   </div></div>
 {''.join(secs)}
@@ -2106,6 +2130,8 @@ def carry_over(prev_path, failed, kept, stats, today):
         p.extra["listed"] = listed_market(p)
         if p.employment == "계약직" and not contract_ok(p):  # 계약직은 관심 기업만
             continue
+        if "benefits" not in p.extra:
+            p.extra["benefits"] = benefits_of(f"{p.listing_text} {p.detail_text}")
         if "ai" not in p.extra:
             t = p.detail_text or ""
             p.extra["ai"] = bool(AI_RE.search(section(t, PREF_HEAD, 600)) or AI_NEAR_PREF_RE.search(t))
