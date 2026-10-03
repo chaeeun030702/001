@@ -1,0 +1,14 @@
+sr_post_55158724 200 376693 https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55158724 snips=2
+  csn None
+sr_post_55178333 200 382884 https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55178333 snips=2
+  csn None
+jk_post_50077074 200 132725 https://www.jobkorea.co.kr/Recruit/GI_Read/50077074?Oem_Code=C1 snips=0
+  co links []
+jk_co_50077074 200 258170 https://www.jobkorea.co.kr/company/1623930 snips=1
+jk_co_salary_50077074 200 313081 https://www.jobkorea.co.kr/company/1623930/salary snips=12
+jk_post_50076771 200 135544 https://www.jobkorea.co.kr/Recruit/GI_Read/50076771?Oem_Code=C1 snips=0
+  co links []
+jk_co_50076771 200 273756 https://www.jobkorea.co.kr/company/1842322 snips=1
+jk_co_salary_50076771 200 303149 https://www.jobkorea.co.kr/company/1842322/salary snips=12
+kreditjob ERR [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1000)
+jobplanet 403 4551 https://www.jobplanet.co.kr/companies?query=%ED%98%84%EB%8C%80%EB%A1%9C%ED%85%9C snips=0
