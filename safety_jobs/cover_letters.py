@@ -57,12 +57,19 @@ def draft_id(url):
     return hashlib.sha1(url.encode()).hexdigest()[:8]
 
 
+def load_excluded(path):
+    sys.path.insert(0, str(Path(__file__).parent))
+    from cover_brief import load_excluded as _load
+    return _load(path)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--briefing", action="append", default=[], help="latest.json (여러 개면 최신 것)")
     ap.add_argument("--done", default="drafts/index.json", help="작성된 초안 목록")
     ap.add_argument("--days", type=int, default=LEAD_DAYS)
     ap.add_argument("--today", help="YYYY-MM-DD (기본: 오늘 KST)")
+    ap.add_argument("--exclude", help="제외 목록 JSON(브리핑 페이지에서 '선택 삭제'한 공고, 초안 id 기준)")
     args = ap.parse_args()
 
     d = load_latest(args.briefing or ["briefings/latest.json"])
@@ -71,6 +78,7 @@ def main():
         return 2
     today = dt.date.fromisoformat(args.today) if args.today else dt.datetime.now(KST).date()
     done = drafted_urls(args.done)
+    excluded = load_excluded(args.exclude)
 
     targets = []
     for p in d.get("postings", []):
@@ -80,7 +88,7 @@ def main():
         if not tags:
             continue
         left = (dt.date.fromisoformat(p["deadline_date"]) - today).days
-        if not 0 < left <= args.days or p["url"] in done:
+        if not 0 < left <= args.days or p["url"] in done or draft_id(p["url"]) in excluded:
             continue
         targets.append({
             "company": p["company"], "title": p["title"], "url": p["url"], "source": p["source"],

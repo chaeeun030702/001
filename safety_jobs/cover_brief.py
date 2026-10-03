@@ -173,8 +173,8 @@ document.querySelector("button.copy-all").addEventListener("click",function(){{
 '''
 
 
-def render(drafts, today, now):
-    live = [d for d in drafts if (d["left"] is None or d["left"] >= 0)]
+def render(drafts, today, now, excluded=()):
+    live = [d for d in drafts if (d["left"] is None or d["left"] >= 0) and d["id"] not in excluded]
     new = [d for d in live if d["meta"].get("written") == today.isoformat()]
     live.sort(key=lambda d: (d["left"] if d["left"] is not None else 999, d["meta"].get("company", "")))
     near = min((d["left"] for d in live if d["left"] is not None), default=None)
@@ -188,11 +188,13 @@ def render(drafts, today, now):
         m = d["meta"]
         chips = "".join(f'<span class="chip">{e(t.strip())}</span>' for t in m.get("tags", "").split(",") if t.strip())
         badge = '<span class="pill new">NEW</span> ' if d in new else ""
-        rows.append(f'<tr><td>{badge}<a href="#{d["id"]}">{e(m.get("company", ""))}</a></td><td>{chips}</td>'
+        rows.append(f'<tr data-id="{d["id"]}"><td class="pickcell"><input type="checkbox" class="pick" data-id="{d["id"]}" '
+                    f'data-company="{e(m.get("company", ""))}" data-title="{e(m.get("title", ""))}" data-url="{e(m.get("url", ""))}" '
+                    f'aria-label="{e(m.get("company", ""))} 선택"></td><td>{badge}<a href="#{d["id"]}">{e(m.get("company", ""))}</a></td><td>{chips}</td>'
                     f'<td class="wrap">{e(m.get("title", ""))}</td><td class="num">{e(m.get("deadline", ""))}</td>'
                     f'<td>{dpill(d["left"])}</td><td class="num">{len(d["questions"])}문항</td></tr>')
-    table = ('<div class="scroll"><table><colgroup><col style="width:20%"><col style="width:16%"><col><col style="width:14%">'
-             '<col style="width:10%"><col style="width:9%"></colgroup><thead><tr><th>업체</th><th>구분</th><th>공고</th>'
+    table = (EXCLUDE_BAR + '<div class="scroll"><table><colgroup><col style="width:36px"><col style="width:19%"><col style="width:15%"><col><col style="width:14%">'
+             '<col style="width:10%"><col style="width:9%"></colgroup><thead><tr><th class="pickcell"><input type="checkbox" class="pickall" aria-label="전체 선택"></th><th>업체</th><th>구분</th><th>공고</th>'
              '<th>마감일</th><th>남은 기간</th><th>문항</th></tr></thead><tbody>' + "".join(rows) + "</tbody></table></div>"
              if rows else '<p class="empty">마감 전 초안이 없습니다. 관심 기업 정규직 공고가 마감 5일 전이 되면 여기에 초안이 추가됩니다.</p>')
 
@@ -207,7 +209,7 @@ def render(drafts, today, now):
 {draft_body(d)}
 </div></details>''')
 
-    return PAGE.format(style=STYLE, script=SCRIPT, date=f"{today:%Y-%m-%d}", weekday="월화수목금토일"[today.weekday()], gen=f"{now:%Y-%m-%d %H:%M}",
+    return PAGE.format(style=STYLE, script=SCRIPT + EXCLUDE_SCRIPT, date=f"{today:%Y-%m-%d}", weekday="월화수목금토일"[today.weekday()], gen=f"{now:%Y-%m-%d %H:%M}",
                        tiles=tiles_html, table=table, cards="".join(cards) or "")
 
 
@@ -292,6 +294,17 @@ footer{font-size:12px;color:var(--cap)}
 @media print{@page{size:A4 portrait;margin:14mm}body{background:#fff;padding:0}.ref,.doc-actions,button.copy,.state,.meter,.hint{display:none!important}
 .q{break-inside:avoid;border-color:#ccc}.sheet{max-width:none}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.xbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:0 0 10px}
+.xbar[hidden]{display:none}
+.xbar button{font:600 13px var(--font);border-radius:8px;padding:6px 12px;min-height:34px;cursor:pointer;border:1px solid var(--border-strong);background:var(--surface);color:var(--sub)}
+.xbar button.danger{background:var(--err);border-color:var(--err);color:#fff}
+.xbar button:disabled{opacity:.45;cursor:not-allowed}
+.xbar .msg{font-size:12px;color:var(--cap)}
+.pickcell{width:36px;text-align:center} .pickcell input{width:16px;height:16px;cursor:pointer;accent-color:var(--primary)}
+.xlist{margin:8px 0 0;font-size:13px;color:var(--sub)} .xlist summary{cursor:pointer;color:var(--cap);font-size:12px}
+.xlist ul{margin:6px 0 0;padding-left:18px} .xlist li{margin:2px 0} .xlist button{margin-left:6px;font:600 12px var(--font);border:1px solid var(--border-strong);background:var(--surface);color:var(--primary);border-radius:6px;padding:1px 8px;cursor:pointer}
+tr.gone,.draft.gone{display:none}
+@media print{.xbar,.xlist,.pickcell{display:none!important}}
 </style>"""
 
 SCRIPT = r"""<script>
@@ -310,6 +323,52 @@ SCRIPT = r"""<script>
    function sel(){var r=document.createRange();r.selectNodeContents(a);var s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent="선택됨 · Ctrl+C"}
    try{navigator.clipboard.writeText(t).then(done,sel)}catch(e){sel()}});
  });
+})();
+</script>"""
+
+EXCLUDE_BAR = ('<div class="xbar" hidden><button type="button" class="danger" id="xdel" disabled>선택 삭제</button>'
+               '<span class="msg" id="xmsg">체크한 공고는 이 목록에서 빠지고 다음 리포트부터 제외됩니다.</span></div>'
+               '<details class="xlist" id="xlist" hidden><summary>제외한 공고 <b id="xcnt">0</b>건 · 되돌리기</summary><ul id="xul"></ul></details>')
+
+# 제외 목록은 아티팩트 db 의 excluded 컬렉션(문서 id = 초안 id)에 둔다. 매일 루틴이 이 컬렉션을 읽어
+# drafts/excluded.json 으로 내려받고 cover_letters.py·cover_brief.py 에 --exclude 로 넘긴다.
+EXCLUDE_SCRIPT = r"""<script>
+(async function(){
+ if(!window.claude||!claude.use)return;
+ var db=null;try{db=await claude.use("db")}catch(e){}
+ if(!db)return;
+ var bar=document.querySelector(".xbar"),del=document.getElementById("xdel"),msg=document.getElementById("xmsg"),
+     list=document.getElementById("xlist"),ul=document.getElementById("xul"),cnt=document.getElementById("xcnt"),
+     all=document.querySelector(".pickall"),col=db.collection("excluded");
+ if(!bar)return; bar.hidden=false;
+ function picks(){return Array.from(document.querySelectorAll("input.pick"))}
+ function sync(){var n=picks().filter(function(c){return c.checked&&!c.closest("tr").classList.contains("gone")}).length;
+  del.disabled=!n; del.textContent=n?"선택 삭제 ("+n+")":"선택 삭제"}
+ document.addEventListener("change",function(ev){
+  if(ev.target===all){picks().forEach(function(c){if(!c.closest("tr").classList.contains("gone"))c.checked=all.checked})}
+  if(ev.target.classList&&(ev.target.classList.contains("pick")||ev.target===all))sync()});
+ del.addEventListener("click",async function(){
+  var sel=picks().filter(function(c){return c.checked&&!c.closest("tr").classList.contains("gone")});
+  if(!sel.length)return;
+  if(!confirm(sel.length+"건을 다음 리포트부터 제외할까요?"))return;
+  del.disabled=true;msg.textContent="저장 중…";
+  try{for(var i=0;i<sel.length;i++){var c=sel[i];
+    await col.doc(c.dataset.id).set({company:c.dataset.company,title:c.dataset.title,url:c.dataset.url,at:new Date().toISOString()})}
+   msg.textContent=sel.length+"건을 제외했습니다. 다음 리포트부터 나오지 않습니다.";
+  }catch(e){msg.textContent="저장하지 못했습니다("+(e&&e.code||"오류")+"). 편집 권한이 있는 계정으로 열었는지 확인해 주세요.";sync()}
+ });
+ col.onSnapshot(function(snap){
+  var ids={};ul.textContent="";
+  snap.docs.forEach(function(d){var v=d.data()||{};ids[d.id]=1;
+   var li=document.createElement("li");li.textContent=(v.company||d.id)+" — "+(v.title||"");
+   var b=document.createElement("button");b.type="button";b.textContent="되돌리기";
+   b.addEventListener("click",async function(){b.disabled=true;try{await col.doc(d.id).delete()}catch(e){b.disabled=false}});
+   li.appendChild(b);ul.appendChild(li)});
+  document.querySelectorAll("tr[data-id]").forEach(function(tr){tr.classList.toggle("gone",!!ids[tr.dataset.id]);
+   if(ids[tr.dataset.id]){var c=tr.querySelector("input.pick");if(c)c.checked=false}});
+  document.querySelectorAll("details.draft").forEach(function(dd){dd.classList.toggle("gone",!!ids[dd.id])});
+  var n=snap.docs.length;cnt.textContent=n;list.hidden=!n;sync();
+ },function(){msg.textContent="제외 목록을 불러오지 못했습니다."});
 })();
 </script>"""
 
@@ -335,11 +394,31 @@ PAGE = """<title>자기소개서 일일 브리핑</title>
 """
 
 
+def load_excluded(path):
+    """제외 목록 JSON → 초안 id 집합. 파일이 없거나 깨졌으면 빈 집합."""
+    if not path:
+        return set()
+    try:
+        data = json.loads(Path(path).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return set()
+    if isinstance(data, dict):
+        data = data.get("excluded") or data.get("docs") or list(data.values())
+    out = set()
+    for x in data or []:
+        if isinstance(x, str):
+            out.add(x)
+        elif isinstance(x, dict) and (x.get("id") or x.get("doc_id")):
+            out.add(x.get("id") or x.get("doc_id"))
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--drafts", default="drafts")
     ap.add_argument("--out", default="index.html")
     ap.add_argument("--today")
+    ap.add_argument("--exclude", help="제외 목록 JSON(아티팩트 db excluded 컬렉션을 내려받은 것: id 목록 또는 {id,...} 목록)")
     args = ap.parse_args()
     now = dt.datetime.now(KST)
     today = dt.date.fromisoformat(args.today) if args.today else now.date()
@@ -357,12 +436,14 @@ def main():
         meta, analysis, questions = parse_draft(f.read_text(encoding="utf-8"))
         drafts.append({"id": Path(item["file"]).stem.split("_")[-1], "meta": meta, "analysis": analysis,
                        "questions": questions, "left": d_left(meta.get("deadline", ""), today)})
-    Path(args.out).write_text(render(drafts, today, now), encoding="utf-8")
+    excluded = load_excluded(args.exclude)
+    Path(args.out).write_text(render(drafts, today, now, excluded), encoding="utf-8")
     letters = Path(args.out).parent / "letters"
     letters.mkdir(exist_ok=True)
     for d in drafts:
         (letters / f"{d['id']}.html").write_text(render_letter(d, today), encoding="utf-8")
-    print(f"{args.out}: 초안 {len(drafts)}건, letters/*.html {len(drafts)}개")
+    shown = sum(1 for d in drafts if d["id"] not in excluded)
+    print(f"{args.out}: 초안 {len(drafts)}건(제외 {len(drafts) - shown}건), letters/*.html {len(drafts)}개")
     return 0
 
 
