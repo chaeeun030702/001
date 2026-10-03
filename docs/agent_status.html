@@ -3,46 +3,71 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
 <style>
-/* 레이아웃: 상단 요약 줄 → 에이전트 카드 그리드(픽셀 아이콘 + 상태 + 결과 막대) → 수집 실행 */
+/* 레이아웃: 메인 에이전트(발주) 카드 → 연결선(하청) → 서브에이전트 카드 그리드, 각 카드에 진행률 막대 */
 :root{
-  --bg:#F3F1EE; --surface:#FFFFFF; --ink:#1B1A19; --sub:#5E5A55; --line:#E3DFD9;
-  --clawd:#D97757; --tile:#232120; --ok:#15B874; --run:#0F6FFF; --mute:#9A948C;
+  --bg:#F3F1EE; --surface:#FFFFFF; --ink:#1B1A19; --sub:#5E5A55; --line:#E3DFD9; --wire:#C9C2B8;
+  --clawd:#D97757; --tile:#232120; --ok:#15B874; --run:#0F6FFF; --wait:#9A948C;
   --font:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
   --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#141312; --surface:#1E1C1B; --ink:#F2EFEA; --sub:#B5AFA7; --line:#33302D;
-  --clawd:#E2856A; --tile:#0E0D0C; --ok:#44C690; --run:#3F8CFF; --mute:#7D776F; color-scheme:dark}}
+  --bg:#141312; --surface:#1E1C1B; --ink:#F2EFEA; --sub:#B5AFA7; --line:#33302D; --wire:#4A4540;
+  --clawd:#E2856A; --tile:#0E0D0C; --ok:#44C690; --run:#3F8CFF; --wait:#7D776F; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#141312; --surface:#1E1C1B; --ink:#F2EFEA; --sub:#B5AFA7; --line:#33302D;
-  --clawd:#E2856A; --tile:#0E0D0C; --ok:#44C690; --run:#3F8CFF; --mute:#7D776F; color-scheme:dark}
+  --bg:#141312; --surface:#1E1C1B; --ink:#F2EFEA; --sub:#B5AFA7; --line:#33302D; --wire:#4A4540;
+  --clawd:#E2856A; --tile:#0E0D0C; --ok:#44C690; --run:#3F8CFF; --wait:#7D776F; color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font:400 15px/1.6 var(--font);padding-inline:16px;padding-block:28px 48px}
-.wrap{max-width:1080px;margin:0 auto;display:grid;gap:20px}
+.wrap{max-width:1120px;margin:0 auto;display:grid;gap:18px}
 header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 16px}
 h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 .when{font:500 12px var(--mono);color:var(--sub)}
-.sum{display:flex;flex-wrap:wrap;gap:8px}
-.chip{font:600 13px var(--font);padding:4px 12px;border-radius:9999px;border:1px solid var(--line);background:var(--surface);color:var(--sub)}
-.chip b{font-family:var(--mono);color:var(--ink);margin-right:4px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:12px}
-.ag{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;grid-template-columns:72px minmax(0,1fr);gap:4px 14px;align-items:start}
-.av{grid-row:span 3;width:72px;height:72px;border-radius:12px;background:var(--tile);display:grid;place-items:center}
-.av svg{width:56px;height:auto;display:block}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--sub)}
+.legend span::before{content:"";display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px;vertical-align:0}
+.legend .l-done::before{background:var(--ok)} .legend .l-run::before{background:var(--run)} .legend .l-wait::before{background:var(--wait)}
+
+/* 카드 공통 */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 14px;align-items:start;position:relative}
+.av{grid-row:span 4;border-radius:12px;background:var(--tile);display:grid;place-items:center}
+.av svg{display:block;height:auto}
 .av.run svg{animation:bob 1.2s steps(2) infinite}
 @keyframes bob{50%{transform:translateY(-3px)}}
 @media (prefers-reduced-motion:reduce){.av.run svg{animation:none}}
-.nm{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px}
-.nm h2{font-size:16px;font-weight:700;margin:0}
+.nm{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;min-width:0}
+.nm h2,.nm h3{margin:0;font-weight:700}
+.role{font:700 10px var(--mono);letter-spacing:.08em;color:var(--sub);text-transform:uppercase}
 .st{font:700 11px var(--mono);letter-spacing:.04em;padding:2px 8px;border-radius:6px;color:#fff}
-.st.done{background:var(--ok)} .st.run{background:var(--run)}
+.st.done{background:var(--ok)} .st.run{background:var(--run)} .st.wait{background:var(--wait)}
 .task{font-size:13px;color:var(--sub);margin:0;min-width:0}
-.bar{display:flex;height:8px;border-radius:9999px;overflow:hidden;background:var(--line)}
-.bar i{display:block;background:var(--clawd)}
+.prog{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px}
+.bar{height:10px;border-radius:9999px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:9999px;background:var(--run);transition:width .4s}
+.bar i.done{background:var(--ok)}
+.pct{font:700 13px var(--mono);font-variant-numeric:tabular-nums;min-width:46px;text-align:right}
 .res{font:500 12px var(--mono);color:var(--sub)} .res b{color:var(--ink)}
-.cos{grid-column:1/-1;margin:8px 0 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:4px}
-.cos li{font-size:12px;padding:1px 8px;border-radius:9999px;border:1px solid var(--line);color:var(--mute)}
+
+/* 메인 에이전트 */
+.main{max-width:560px;margin:0 auto;width:100%;border-color:var(--clawd);box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.main .av{width:96px;height:96px} .main .av svg{width:76px}
+.main h2{font-size:20px}
+
+/* 하청 연결선 */
+.org{display:grid;gap:0}
+.wire{height:28px;display:grid;place-items:center}
+.wire::before{content:"";width:2px;height:100%;background:var(--wire)}
+.subs{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:28px 12px;padding-top:22px;border-top:2px solid var(--wire);position:relative}
+.subs .card::before{content:"";position:absolute;left:50%;top:-24px;width:2px;height:22px;background:var(--wire)}
+.subs .card::after{content:attr(data-order);position:absolute;left:calc(50% + 8px);top:-22px;font:600 10px var(--mono);color:var(--sub);background:var(--bg);padding:0 4px;border-radius:4px}
+.subs .av{width:64px;height:64px} .subs .av svg{width:50px}
+.subs h3{font-size:15px}
+.cos{grid-column:1/-1;margin:6px 0 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:4px}
+.cos li{font-size:12px;padding:1px 8px;border-radius:9999px;border:1px solid var(--line);color:var(--wait)}
 .cos li.hit{border-color:var(--clawd);color:var(--ink);background:color-mix(in srgb,var(--clawd) 12%,transparent)}
+@media (max-width:640px){
+  .subs{border-top:0;border-left:2px solid var(--wire);padding:8px 0 0 16px;gap:12px}
+  .subs .card::before{left:-18px;top:28px;width:16px;height:2px}
+  .subs .card::after{display:none}
+}
 .note{font-size:12px;color:var(--sub);margin:0;max-width:72ch}
 </style>
 
@@ -62,36 +87,55 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 
 <div class="wrap">
 <header>
-  <div><h1>에이전트 작업현황</h1><div class="when">2026-10-04 08:25 KST 기준 · 신입 초봉 웹 조사 + 수집 실행</div></div>
-  <div class="sum"><span class="chip"><b>7</b>완료</span><span class="chip"><b>0</b>진행 중</span><span class="chip"><b>60</b>개사 조사</span><span class="chip"><b>28</b>개사 초봉 반영</span></div>
+  <div><h1>에이전트 작업현황</h1><div class="when" id="when"></div></div>
+  <div class="legend"><span class="l-done">완료</span><span class="l-run">진행 중</span><span class="l-wait">대기</span></div>
 </header>
-
-<div class="grid" id="grid"></div>
-<p class="note">조사 에이전트는 잡코리아·캐치·사람인·인크루트·자소설닷컴 페이지를 직접 열지 못해 검색 결과 요약으로만 수치를 확인했습니다. 색이 칠해진 회사가 초봉을 찾아 브리핑에 반영한 곳입니다.</p>
+<div class="org" id="org"></div>
+<p class="note" id="note"></p>
 </div>
 
 <script>
-var AGENTS=[
- {n:"조사 에이전트 1",s:"done",t:"신입 초봉 웹 조사",found:["엠이엠씨코리아"],miss:["두레시닝","디비월드","리뉴에스엘피","제이에스테크","방주산업","케이씨씨건설","태영산업","한농화성","엠플러스"]},
- {n:"조사 에이전트 2",s:"done",t:"신입 초봉 웹 조사",found:["에이치엘비제넥스","이터널그룹","삼우에프앤지","제닉"],miss:["티엑스알로보틱스","트래닛","에코심플렉스","범한유니솔루션","호반티비엠","삼성다이나에이치백"]},
- {n:"조사 에이전트 3",s:"done",t:"신입 초봉 웹 조사",found:["한독크린텍","금호건설","LG유플러스","에스디바이오센서","HDC현대산업개발","한국드레가"],miss:["와이씨켐","레몬","지엔씨에너지","하이브"]},
- {n:"조사 에이전트 4",s:"done",t:"신입 초봉 웹 조사",found:["유엘코리아","노보노디스크","Applied Materials","에이프로","에스엠세이프","대영포장","삼호이앤에프"],miss:["신성에스티","다인","한성크린텍"]},
- {n:"조사 에이전트 5",s:"done",t:"신입 초봉 웹 조사",found:["심텍","실리콘투","두산로지스틱스솔루션","대명에너지","에스앤더블류"],miss:["SK","KG모빌리티커머셜","은성산업개발","유니온가스","우양기건"]},
- {n:"조사 에이전트 6",s:"done",t:"신입 초봉 웹 조사 · 의심 수치 재확인",found:["에스트라오토모티브","케어젠","에이치알에스","하이테크엔지니어링","행정안전부","승일"],miss:["액트로","AirSense SEC","에벨릭스코리아","HD현대중공업(숨김)"]},
- {n:"수집 실행",s:"done",t:"GitHub Actions — 복지 표시(자녀학자금·노조·주택지원·기숙사) 반영 수집",note:"388건 수집 · 복지 명시 60건(기숙사 36·자녀학자금 33·주택지원 7·노조 6) · 신입 초봉 130건",found:[],miss:[]}
-];
-var g=document.getElementById('grid');
-AGENTS.forEach(function(a){
-  var tot=a.found.length+a.miss.length, el=document.createElement('article'); el.className='ag';
-  var av='<div class="av '+(a.s==='run'?'run':'')+'"><svg viewBox="0 0 18 10" role="img" aria-label="에이전트"><use href="#clawd"/></svg></div>';
-  var st='<span class="st '+a.s+'">'+(a.s==='done'?'완료':'진행 중')+'</span>';
-  var res=tot?('<div class="bar" aria-hidden="true"><i style="width:'+(a.found.length*100/tot)+'%"></i></div><div class="res">초봉 확인 <b>'+a.found.length+'</b> / '+tot+'개사</div>')
-             :'<div class="res">'+(a.note||'끝나면 브리핑 페이지를 갱신합니다')+'</div>';
-  el.innerHTML=av+'<div class="nm"><h2></h2>'+st+'</div><p class="task"></p>'+res;
-  el.querySelector('h2').textContent=a.n; el.querySelector('.task').textContent=a.t;
-  if(tot){var ul=document.createElement('ul'); ul.className='cos';
-    a.found.concat(a.miss).forEach(function(c,i){var li=document.createElement('li'); li.textContent=c; if(i<a.found.length) li.className='hit'; ul.appendChild(li)});
-    el.appendChild(ul);}
-  g.appendChild(el);
-});
+/* 작업 데이터 — 에이전트를 맡길 때마다 이 블록만 고친다 (progress: 0~100) */
+var JOB={
+  updated:"2026-10-04 08:25 KST",
+  main:{name:"메인 에이전트",task:"신입 초봉 인터넷 재조사 → 브리핑 반영, 복지 표시 수집",note:"서브에이전트 6곳에 회사 10곳씩 조사를 맡기고, 결과를 검토해 브리핑에 반영했습니다. 마지막으로 GitHub Actions 수집을 맡겨 복지 표시를 적용했습니다."},
+  subs:[
+   {name:"조사 에이전트 1",order:"하청 1",status:"done",progress:100,task:"10개사 신입 초봉 웹 조사",found:["엠이엠씨코리아"],miss:["두레시닝","디비월드","리뉴에스엘피","제이에스테크","방주산업","케이씨씨건설","태영산업","한농화성","엠플러스"]},
+   {name:"조사 에이전트 2",order:"하청 2",status:"done",progress:100,task:"10개사 신입 초봉 웹 조사",found:["에이치엘비제넥스","이터널그룹","삼우에프앤지","제닉"],miss:["티엑스알로보틱스","트래닛","에코심플렉스","범한유니솔루션","호반티비엠","삼성다이나에이치백"]},
+   {name:"조사 에이전트 3",order:"하청 3",status:"done",progress:100,task:"10개사 신입 초봉 웹 조사",found:["한독크린텍","금호건설","LG유플러스","에스디바이오센서","HDC현대산업개발","한국드레가"],miss:["와이씨켐","레몬","지엔씨에너지","하이브"]},
+   {name:"조사 에이전트 4",order:"하청 4",status:"done",progress:100,task:"10개사 신입 초봉 웹 조사",found:["유엘코리아","노보노디스크","Applied Materials","에이프로","에스엠세이프","대영포장","삼호이앤에프"],miss:["신성에스티","다인","한성크린텍"]},
+   {name:"조사 에이전트 5",order:"하청 5",status:"done",progress:100,task:"10개사 신입 초봉 웹 조사",found:["심텍","실리콘투","두산로지스틱스솔루션","대명에너지","에스앤더블류"],miss:["SK","KG모빌리티커머셜","은성산업개발","유니온가스","우양기건"]},
+   {name:"조사 에이전트 6",order:"하청 6",status:"done",progress:100,task:"10개사 조사 · 의심 수치 재확인",found:["에스트라오토모티브","케어젠","에이치알에스","하이테크엔지니어링","행정안전부","승일"],miss:["액트로","AirSense SEC","에벨릭스코리아","HD현대중공업(숨김)"]},
+   {name:"수집 실행",order:"하청 7",status:"done",progress:100,task:"GitHub Actions — 복지 표시 반영 수집",result:"388건 수집 · 복지 명시 60건 · 신입 초봉 130건"}
+  ]
+};
+
+var LABEL={done:"완료",run:"진행 중",wait:"대기"};
+function esc(t){var d=document.createElement('div');d.textContent=t==null?'':String(t);return d.innerHTML}
+function icon(st){return '<div class="av '+(st==='run'?'run':'')+'"><svg viewBox="0 0 18 10" role="img" aria-label="에이전트"><use href="#clawd"/></svg></div>'}
+function prog(p,st){p=Math.max(0,Math.min(100,Math.round(p)));return '<div class="prog" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+p+'"><div class="bar"><i class="'+(st==='done'?'done':'')+'" style="width:'+p+'%"></i></div><span class="pct">'+p+'%</span></div>'}
+(function(){
+  var subs=JOB.subs, n=subs.length;
+  var total=n?subs.reduce(function(a,s){return a+(+s.progress||0)},0)/n:0;
+  var done=subs.filter(function(s){return s.status==='done'}).length;
+  var run=subs.filter(function(s){return s.status==='run'}).length;
+  var mainSt=done===n?'done':(run||done?'run':'wait');
+  document.getElementById('when').textContent=JOB.updated+' 기준';
+  var html='<article class="card main">'+icon(mainSt)+
+    '<div class="nm"><span class="role">발주 · Main</span><h2>'+esc(JOB.main.name)+'</h2><span class="st '+mainSt+'">'+LABEL[mainSt]+'</span></div>'+
+    '<p class="task">'+esc(JOB.main.task)+'</p>'+prog(total,mainSt)+
+    '<div class="res">서브에이전트 <b>'+n+'</b> · 완료 <b>'+done+'</b> · 진행 중 <b>'+run+'</b> · 대기 <b>'+(n-done-run)+'</b></div></article>';
+  html+='<div class="wire" aria-hidden="true"></div><div class="subs">';
+  subs.forEach(function(s){
+    var found=s.found||[], miss=s.miss||[], tot=found.length+miss.length;
+    var res=tot?'초봉 확인 <b>'+found.length+'</b> / '+tot+'개사':esc(s.result||'');
+    html+='<article class="card" data-order="'+esc(s.order||'')+'">'+icon(s.status)+
+      '<div class="nm"><span class="role">하청 · Sub</span><h3>'+esc(s.name)+'</h3><span class="st '+s.status+'">'+LABEL[s.status]+'</span></div>'+
+      '<p class="task">'+esc(s.task)+'</p>'+prog(s.progress||0,s.status)+'<div class="res">'+res+'</div>';
+    if(tot){html+='<ul class="cos">'+found.map(function(c){return '<li class="hit">'+esc(c)+'</li>'}).join('')+miss.map(function(c){return '<li>'+esc(c)+'</li>'}).join('')+'</ul>'}
+    html+='</article>';
+  });
+  document.getElementById('org').innerHTML=html+'</div>';
+  document.getElementById('note').textContent=JOB.main.note+' 주황색 회사는 초봉을 찾아 브리핑에 반영한 곳입니다.';
+})();
 </script>
