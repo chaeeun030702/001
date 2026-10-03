@@ -62,8 +62,8 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 
 <div class="wrap">
 <header>
-  <div><h1>에이전트 작업현황</h1><div class="when">2026-10-04 08:02 KST 기준 · 신입 초봉 웹 조사 + 수집 실행</div></div>
-  <div class="sum"><span class="chip"><b>6</b>조사 완료</span><span class="chip"><b>1</b>진행 중</span><span class="chip"><b>60</b>개사 조사</span><span class="chip"><b>28</b>개사 초봉 반영</span></div>
+  <div><h1>에이전트 작업현황</h1><div class="when">2026-10-04 08:25 KST 기준 · 신입 초봉 웹 조사 + 수집 실행</div></div>
+  <div class="sum"><span class="chip"><b>7</b>완료</span><span class="chip"><b>0</b>진행 중</span><span class="chip"><b>60</b>개사 조사</span><span class="chip"><b>28</b>개사 초봉 반영</span></div>
 </header>
 
 <div class="grid" id="grid"></div>
@@ -78,7 +78,7 @@ var AGENTS=[
  {n:"조사 에이전트 4",s:"done",t:"신입 초봉 웹 조사",found:["유엘코리아","노보노디스크","Applied Materials","에이프로","에스엠세이프","대영포장","삼호이앤에프"],miss:["신성에스티","다인","한성크린텍"]},
  {n:"조사 에이전트 5",s:"done",t:"신입 초봉 웹 조사",found:["심텍","실리콘투","두산로지스틱스솔루션","대명에너지","에스앤더블류"],miss:["SK","KG모빌리티커머셜","은성산업개발","유니온가스","우양기건"]},
  {n:"조사 에이전트 6",s:"done",t:"신입 초봉 웹 조사 · 의심 수치 재확인",found:["에스트라오토모티브","케어젠","에이치알에스","하이테크엔지니어링","행정안전부","승일"],miss:["액트로","AirSense SEC","에벨릭스코리아","HD현대중공업(숨김)"]},
- {n:"수집 실행",s:"run",t:"GitHub Actions — 복지 표시(자녀학자금·노조·주택지원·기숙사) 반영 수집",found:[],miss:[]}
+ {n:"수집 실행",s:"done",t:"GitHub Actions — 복지 표시(자녀학자금·노조·주택지원·기숙사) 반영 수집",note:"388건 수집 · 복지 명시 60건(기숙사 36·자녀학자금 33·주택지원 7·노조 6) · 신입 초봉 130건",found:[],miss:[]}
 ];
 var g=document.getElementById('grid');
 AGENTS.forEach(function(a){
@@ -86,7 +86,7 @@ AGENTS.forEach(function(a){
   var av='<div class="av '+(a.s==='run'?'run':'')+'"><svg viewBox="0 0 18 10" role="img" aria-label="에이전트"><use href="#clawd"/></svg></div>';
   var st='<span class="st '+a.s+'">'+(a.s==='done'?'완료':'진행 중')+'</span>';
   var res=tot?('<div class="bar" aria-hidden="true"><i style="width:'+(a.found.length*100/tot)+'%"></i></div><div class="res">초봉 확인 <b>'+a.found.length+'</b> / '+tot+'개사</div>')
-             :'<div class="res">끝나면 브리핑 페이지를 갱신합니다</div>';
+             :'<div class="res">'+(a.note||'끝나면 브리핑 페이지를 갱신합니다')+'</div>';
   el.innerHTML=av+'<div class="nm"><h2></h2>'+st+'</div><p class="task"></p>'+res;
   el.querySelector('h2').textContent=a.n; el.querySelector('.task').textContent=a.t;
   if(tot){var ul=document.createElement('ul'); ul.className='cos';
