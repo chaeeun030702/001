@@ -1385,17 +1385,18 @@ body{background:var(--canvas);color:var(--text);font:400 14px/1.55 var(--font);m
 .edit-bar button:hover{background:var(--alt1)} .edit-bar button[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:#FFFFFF}
 .edit-bar #edit-msg{font-size:12px;color:var(--caption)}
 .icon-btn{width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;border:0;background:none;color:var(--text-sub);border-radius:var(--r-sm);cursor:pointer}
-td.corp:has(.xsel){position:relative;padding-left:40px}
-.xsel{position:absolute;left:12px;top:12px;width:18px;height:18px;margin:0;accent-color:var(--primary);cursor:pointer}
+th.pickcell,td.pickcell{width:44px;text-align:center;padding-left:8px;padding-right:4px}
+.pickcell input{width:16px;height:16px;margin:2px 0 0;cursor:pointer;accent-color:var(--primary)}
 tr.xd{display:none!important} .ev.xd{display:none!important}
 tr.xon{outline:2px solid var(--error);outline-offset:-2px}
 .xbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;width:100%;padding-top:4px;border-top:1px solid var(--divider)}
 .xbar button{height:40px;padding:0 14px;border:1px solid var(--border-strong);border-radius:var(--r-sm);background:var(--surface);color:var(--text-sub);font:600 13px var(--font);cursor:pointer}
 .xbar button.danger{border-color:var(--error);color:var(--error)} .xbar button.danger:not(:disabled):hover{background:color-mix(in srgb,var(--error) 10%,var(--surface))}
 .xgrp{display:inline-flex;flex-wrap:wrap;align-items:center;gap:8px}
-.xconf{padding:4px 4px 4px 12px;border:1px solid var(--error);border-radius:var(--r-sm);background:color-mix(in srgb,var(--error) 6%,var(--surface))}
-.xconf #x-q{font-size:14px;font-weight:600;color:var(--text-strong)}
+.xmsg{font-size:12px;color:var(--caption)} .xmsg.ask{font-size:14px;font-weight:600;color:var(--text-strong)}
+.xlist{flex-basis:100%;font-size:13px;color:var(--text-sub)} .xlist summary{cursor:pointer;color:var(--caption);font-size:12px}
 .xbar button.danger.solid{background:var(--error);border-color:var(--error);color:#FFFFFF}
+.xbar button.danger.solid:not(:disabled):hover{background:var(--error);filter:brightness(.9)}
 .xbar button:disabled{opacity:.45;cursor:not-allowed}
 .xbar details summary{cursor:pointer;font-size:13px;color:var(--text-sub);font-weight:600}
 .xbar ul{margin:8px 0 0;padding:0;list-style:none;display:grid;gap:4px;max-height:240px;overflow:auto}
@@ -1448,8 +1449,8 @@ main{padding:20px;display:grid;gap:16px;min-width:0;max-width:1400px}
 table.t5,table.t7{table-layout:fixed;overflow-wrap:anywhere}
 table.t5{min-width:920px} table.t7{min-width:1100px}
 .t5 th,.t7 th,.t5 td.lv,.t7 td.lv,.t5 td.dl,.t7 td.dl,.t5 td.src,.t7 td.src{white-space:normal}
-.t5 th:nth-child(1){width:20%}.t5 th:nth-child(2){width:32%}.t5 th:nth-child(3){width:26%}.t5 th:nth-child(4){width:14%}.t5 th:nth-child(5){width:8%}
-.t7 th:nth-child(1){width:9%}.t7 th:nth-child(2){width:15%}.t7 th:nth-child(3){width:20%}.t7 th:nth-child(4){width:20%}.t7 th:nth-child(5){width:16%}.t7 th:nth-child(6){width:12%}.t7 th:nth-child(7){width:8%}
+.t5 th:nth-child(1){width:44px}.t5 th:nth-child(2){width:20%}.t5 th:nth-child(3){width:31%}.t5 th:nth-child(4){width:25%}.t5 th:nth-child(5){width:14%}.t5 th:nth-child(6){width:8%}
+.t7 th:nth-child(1){width:44px}.t7 th:nth-child(2){width:9%}.t7 th:nth-child(3){width:15%}.t7 th:nth-child(4){width:19%}.t7 th:nth-child(5){width:20%}.t7 th:nth-child(6){width:16%}.t7 th:nth-child(7){width:11%}.t7 th:nth-child(8){width:8%}
 td.lv small.sal{color:var(--text-sub);font-weight:600}
 td.lv small.sal a.starter{color:var(--primary);text-decoration:none} td.lv small.sal a.starter:hover{text-decoration:underline}
 table{border-collapse:collapse;width:100%;min-width:1000px}
@@ -1581,14 +1582,20 @@ HTML_JS = """
      DB가 없는 환경(내려받은 HTML)은 이 브라우저에서만 숨긴다. */
   var LS='brief-excluded', db=null, col=null, ex={};
   var del=document.getElementById('x-del'); if(!del) return;
-  var clr=document.getElementById('x-clear'), nEl=document.getElementById('x-n'), cEl=document.getElementById('x-cnt'),
-      ul=document.getElementById('x-items'), msg=document.getElementById('x-msg');
-  function say(t){msg.textContent=t}
+  var cEl=document.getElementById('x-cnt'), ul=document.getElementById('x-items'), msg=document.getElementById('x-msg');
+  var HINT='체크한 공고는 이 목록에서 빠지고 다음 리포트부터 제외됩니다.';
+  function say(t,ask){msg.textContent=t||HINT; msg.classList.toggle('ask',!!ask)}
   function sel(){return Array.prototype.slice.call(document.querySelectorAll('input.xsel:checked'))}
   function sync(){
     var urls={}; sel().forEach(function(c){urls[c.dataset.url]=1});
-    var n=Object.keys(urls).length; nEl.textContent=n; del.disabled=!n; clr.disabled=!n;
+    var n=Object.keys(urls).length; del.disabled=!n;
     document.querySelectorAll('tr[data-url]').forEach(function(tr){tr.classList.toggle('xon',!!urls[tr.dataset.url])});
+    document.querySelectorAll('input.pickall').forEach(function(a){
+      var bs=Array.prototype.filter.call(a.closest('table').querySelectorAll('tbody tr'),function(tr){return !tr.hidden&&!tr.classList.contains('xd')})
+        .map(function(tr){return tr.querySelector('input.xsel')}).filter(Boolean);
+      var on=bs.filter(function(b){return b.checked}).length;
+      a.checked=bs.length>0&&on===bs.length; a.indeterminate=on>0&&on<bs.length;
+    });
   }
   function render(){
     var keys=Object.keys(ex);
@@ -1598,7 +1605,7 @@ HTML_JS = """
     keys.forEach(function(u){
       var li=document.createElement('li'), s=document.createElement('span'), b=document.createElement('button');
       s.textContent=(ex[u].company||'-')+' · '+(ex[u].title||'');
-      b.type='button'; b.textContent='복원'; b.addEventListener('click',function(){restore(u)});
+      b.type='button'; b.textContent='되돌리기'; b.addEventListener('click',function(){restore(u)});
       li.appendChild(b); li.appendChild(s); ul.appendChild(li);
     });
     document.dispatchEvent(new Event('brief-refilter')); sync();
@@ -1606,18 +1613,21 @@ HTML_JS = """
   function hid(u){var h=0;for(var i=0;i<u.length;i++){h=(h*31+u.charCodeAt(i))|0}return 'x'+(h>>>0).toString(36)+u.length.toString(36)}
   function loadLocal(){try{ex=JSON.parse(localStorage.getItem(LS)||'{}')||{}}catch(e){ex={}}}
   function saveLocal(){try{localStorage.setItem(LS,JSON.stringify(ex))}catch(e){}}
-  document.addEventListener('change',function(ev){if(ev.target.classList&&ev.target.classList.contains('xsel')){
+  document.addEventListener('change',function(ev){if(ev.target.classList&&ev.target.classList.contains('pickall')){
+    var on=ev.target.checked;
+    Array.prototype.forEach.call(ev.target.closest('table').querySelectorAll('tbody tr'),function(tr){
+      if(tr.hidden||tr.classList.contains('xd')) return; var b=tr.querySelector('input.xsel'); if(!b) return;
+      document.querySelectorAll('input.xsel').forEach(function(c){if(c.dataset.url===b.dataset.url)c.checked=on});
+    }); sync(); return;}
+    if(ev.target.classList&&ev.target.classList.contains('xsel')){
     var u=ev.target.dataset.url, on=ev.target.checked;
     document.querySelectorAll('input.xsel').forEach(function(c){if(c.dataset.url===u)c.checked=on}); sync();}});
-  clr.addEventListener('click',function(){sel().forEach(function(c){c.checked=false}); sync();});
-  var act=document.getElementById('x-act'), conf=document.getElementById('x-confirm'), qEl=document.getElementById('x-q'),
-      yes=document.getElementById('x-yes'), no=document.getElementById('x-no');
+  var conf=document.getElementById('x-confirm'), yes=document.getElementById('x-yes'), no=document.getElementById('x-no');
   function picked(){var m={}; sel().forEach(function(c){m[c.dataset.url]={url:c.dataset.url,company:c.dataset.company,title:c.dataset.title}}); return m}
-  function askClose(){conf.hidden=true; act.hidden=false; del.focus()}
+  function askClose(){conf.hidden=true; del.hidden=false; say(''); del.focus()}
   del.addEventListener('click',function(){
     var n=Object.keys(picked()).length; if(!n) return;
-    qEl.textContent=n+'건을 다음 리포트부터 제외할까요?'; say('');
-    act.hidden=true; conf.hidden=false; yes.focus();
+    del.hidden=true; conf.hidden=false; say(n+'건을 다음 리포트부터 제외할까요?',true); yes.focus();
   });
   no.addEventListener('click',askClose);
   conf.addEventListener('keydown',function(ev){if(ev.key==='Escape')askClose()});
@@ -1633,11 +1643,11 @@ HTML_JS = """
     if(!col){ saveLocal(); render(); say(done+'건을 이 브라우저에서 숨겼습니다. 다음 리포트에 반영하려면 게시된 브리핑 페이지에서 삭제하세요.'); }
     else { render(); if(done===list.length) say(done+'건을 제외했습니다 — 다음 리포트부터 빠집니다.'); }
     sel().forEach(function(c){c.checked=false}); sync();
-    yes.disabled=false; no.disabled=false; conf.hidden=true; act.hidden=false;
+    yes.disabled=false; no.disabled=false; conf.hidden=true; del.hidden=false;
   });
   async function restore(u){
-    if(col){ try{ await col.doc(hid(u)).delete(); say('복원했습니다. 다음 리포트부터 다시 수집합니다.'); }catch(e){ say('복원하지 못했습니다 ('+(e&&e.code||'error')+').'); } }
-    else { delete ex[u]; saveLocal(); render(); say('복원했습니다.'); }
+    if(col){ try{ await col.doc(hid(u)).delete(); say('되돌렸습니다. 다음 리포트부터 다시 수집합니다.'); }catch(e){ say('복원하지 못했습니다 ('+(e&&e.code||'error')+').'); } }
+    else { delete ex[u]; saveLocal(); render(); say('되돌렸습니다.'); }
   }
   loadLocal(); render();
   if(window.claude&&typeof window.claude.use==='function'){
@@ -1747,11 +1757,14 @@ def render_calendar(postings, today, months=2, show=5):
             f'<div class="cal">{wd}{"".join(cells)}</div></section>')
 
 
+PICK_TH = '<th class="pickcell"><input type="checkbox" class="pickall" aria-label="전체 선택"></th>'
+
+
 def xsel(p):
-    """업체명 왼쪽 선택 체크박스 (선택 삭제 → 다음 리포트부터 제외)."""
+    """맨 왼쪽 선택 칸 (체크 → 선택 삭제 → 제외 확정 시 다음 리포트부터 제외)."""
     e = html.escape
-    return (f'<input type="checkbox" class="xsel" data-url="{e(p.url)}" data-company="{e(p.company)}" '
-            f'data-title="{e(p.title)}" aria-label="{e((p.company or "") + " 공고 선택")}">')
+    return (f'<td class="pickcell"><input type="checkbox" class="xsel" data-url="{e(p.url)}" data-company="{e(p.company)}" '
+            f'data-title="{e(p.title)}" aria-label="{e((p.company or "") + " 선택")}"></td>')
 
 
 def new_pill(p, today):
@@ -1893,8 +1906,8 @@ def render_html(postings, failures, now, stats):
         i = sid.get(key, "other")
         nav.append((i, tag, len(rows)))
         trs = "".join(
-            f'<tr class="h{p.hilite}" data-url="{e(p.url)}" data-ind="{e(p.industry)}" data-cert="{1 if p.certs else 0}" data-pref="{1 if p.prefs else 0}" data-ai="{1 if p.extra.get("ai") else 0}" data-grp="{e(" ".join(p.extra.get("groups", [])))}" data-listed="{e(p.extra.get("listed", ""))}" data-new="{1 if is_new(p, today) else 0}"><td class="lv">{e(p.level)}<small>{e(p.industry)}</small>{sal_small(p)}</td>'
-            f'<td class="corp">{xsel(p)}<strong><a class="co" href="{e(p.url)}" target="_blank" rel="noopener">{e(p.company or "-")}</a></strong>{new_pill(p, today)}{pill[p.hilite]}{group_pills(p)}{rank_pill(p)}</td>'
+            f'<tr class="h{p.hilite}" data-url="{e(p.url)}" data-ind="{e(p.industry)}" data-cert="{1 if p.certs else 0}" data-pref="{1 if p.prefs else 0}" data-ai="{1 if p.extra.get("ai") else 0}" data-grp="{e(" ".join(p.extra.get("groups", [])))}" data-listed="{e(p.extra.get("listed", ""))}" data-new="{1 if is_new(p, today) else 0}">{xsel(p)}<td class="lv">{e(p.level)}<small>{e(p.industry)}</small>{sal_small(p)}</td>'
+            f'<td class="corp"><strong><a class="co" href="{e(p.url)}" target="_blank" rel="noopener">{e(p.company or "-")}</a></strong>{new_pill(p, today)}{pill[p.hilite]}{group_pills(p)}{rank_pill(p)}</td>'
             f"<td class=\"ttl\">{e(p.title)}{pref_pills(p)}{ai_pill(p)}</td><td>{cert_pills(p)}{e(p.qualification or '-')}</td><td>{e(p.preferred or '-')}</td>"
             f'<td class="dl{" soon" if id(p) in soon else ""}">{e(p.deadline)}</td>'
             f'<td class="src"><a href="{e(p.url)}" target="_blank" rel="noopener">{e(p.source)}</a>'
@@ -1903,7 +1916,7 @@ def render_html(postings, failures, now, stats):
         secs.append(
             f'<section class="card grp" id="{i}"><h2>{e(tag)}<span class="n">{len(rows)}건</span></h2>'
             '<p class="empty" hidden>조건에 맞는 공고가 없습니다.</p>'
-            '<div class="scroll"><table class="t7"><thead><tr><th>구분 · 연봉</th><th>업체명</th><th>공고명</th>'
+            '<div class="scroll"><table class="t7"><thead><tr>' + PICK_TH + '<th>구분 · 연봉</th><th>업체명</th><th>공고명</th>'
             "<th>지원 자격 (학과·자격·영어·학력)</th><th>우대 사항</th><th>접수기한</th><th>출처</th></tr></thead>"
             f"<tbody>{trs}</tbody></table></div></section>")
 
@@ -1937,11 +1950,11 @@ def render_html(postings, failures, now, stats):
                f'<tbody>{"".join(crows)}</tbody></table></div></section>') if crows else ""
     def rows5(rows, pill_new=False):
         return "".join(
-            f'<tr class="h{p.hilite}" data-url="{e(p.url)}"><td class="corp">{xsel(p)}<strong><a class="co" href="{e(p.url)}" target="_blank" rel="noopener">{e(p.company or "-")}</a></strong>'
+            f'<tr class="h{p.hilite}" data-url="{e(p.url)}">{xsel(p)}<td class="corp"><strong><a class="co" href="{e(p.url)}" target="_blank" rel="noopener">{e(p.company or "-")}</a></strong>'
             f'{new_pill(p, today) if pill_new else ""}{group_pills(p)}</td><td>{e(p.title)}</td><td class="lv">{e(p.employment)}<small>{e(p.level)}</small>{sal_small(p)}</td>'
             f'<td class="dl{" soon" if id(p) in soon else ""}">{e(p.deadline)}</td><td class="src"><a href="{e(p.url)}" target="_blank" rel="noopener">{e(p.source)}</a></td></tr>'
             for p in rows)
-    head5 = '<div class="scroll"><table class="t5"><thead><tr><th>업체명</th><th>공고명</th><th>고용형태 · 연봉</th><th>접수기한</th><th>출처</th></tr></thead>'
+    head5 = '<div class="scroll"><table class="t5"><thead><tr>' + PICK_TH + '<th>업체명</th><th>공고명</th><th>고용형태 · 연봉</th><th>접수기한</th><th>출처</th></tr></thead>'
     newsec = (f'<section class="card" id="new"><h2>신규 공고<span class="n">{n_new}건 · 지난 보고({last_report_date(today):%m/%d}) 이후 추가</span></h2>'
               + (f'{head5}<tbody>{rows5(new_rows)}</tbody></table></div>' if new_rows else '<p class="empty">새로 추가된 공고가 없습니다.</p>')
               + '</section>')
@@ -1997,12 +2010,10 @@ def render_html(postings, failures, now, stats):
     <button type="button" data-mode="soon" aria-pressed="false">3일 내 마감</button>
   </div>
   <div class="xbar" role="group" aria-label="선택 공고 삭제">
-    <span id="x-act" class="xgrp"><button type="button" id="x-del" class="danger" disabled>선택 삭제 <b id="x-n">0</b></button>
-    <button type="button" id="x-clear" disabled>선택 해제</button></span>
-    <span id="x-confirm" class="xgrp xconf" role="group" aria-label="제외 확인" hidden><span id="x-q"></span>
-    <button type="button" id="x-yes" class="danger solid">제외 확정</button><button type="button" id="x-no">취소</button></span>
-    <details id="x-list"><summary>삭제한 공고 <b id="x-cnt">0</b></summary><ul id="x-items"></ul></details>
-    <span id="x-msg" class="note" role="status"></span>
+    <button type="button" id="x-del" class="danger solid" disabled>선택 삭제</button>
+    <span id="x-confirm" class="xgrp" role="group" aria-label="제외 확인" hidden><button type="button" id="x-yes" class="danger solid">제외 확정</button> <button type="button" id="x-no">취소</button></span>
+    <span id="x-msg" class="xmsg" role="status">체크한 공고는 이 목록에서 빠지고 다음 리포트부터 제외됩니다.</span>
+    <details id="x-list" class="xlist"><summary>제외한 공고 <b id="x-cnt">0</b>건 · 되돌리기</summary><ul id="x-items"></ul></details>
   </div></div>
 {''.join(secs)}
 <section class="card" id="status"><h2>사이트별 수집 현황</h2>{status}</section>
