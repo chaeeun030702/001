@@ -249,7 +249,9 @@ def render(drafts, today, now, excluded=(), postings=None):
         ecls = "ok" if emp.startswith("정규직") else "warn" if "계약" in emp else "mute"
         chips += f'<div class="emp"><span class="pill {ecls}">{e(emp)}</span></div>'
         pay = starter_of(d, pst)
-        title_html = e(m.get("title", "")) + (f'<div class="pay">{e(pay)}</div>' if pay else "")
+        url = m.get("url", "")
+        title_html = ((f'<a class="jd" href="{e(url)}" target="_blank" rel="noopener" title="공고 원문 열기">{e(m.get("title", ""))}</a>'
+                       if url.startswith("http") else e(m.get("title", ""))) + (f'<div class="pay">{e(pay)}</div>' if pay else ""))
         badge = '<span class="pill new">NEW</span> ' if d in new else ""
         rows.append(f'<tr data-id="{d["id"]}"><td class="pickcell"><input type="checkbox" class="pick" data-id="{d["id"]}" '
                     f'data-company="{e(m.get("company", ""))}" data-title="{e(m.get("title", ""))}" data-url="{e(m.get("url", ""))}" '
@@ -354,6 +356,7 @@ footer{font-size:12px;color:var(--cap)}
 .btn-ghost{color:var(--primary);background:var(--surface);border:1px solid var(--border-strong)}
 .hint{font-size:12px;color:var(--cap);margin:0}
 .chips{margin-top:6px}
+a.jd{color:var(--text);text-decoration:underline;text-decoration-color:var(--border-strong);text-underline-offset:3px} a.jd:hover{color:var(--primary);text-decoration-color:var(--primary)} a.jd::after{content:" ↗";font-size:11px;color:var(--cap)}
 .emp{margin-top:4px} td .chip,.emp .pill{white-space:normal;max-width:100%} .pay{margin-top:4px;font-size:12px;color:var(--cap);font-variant-numeric:tabular-nums}
 @media print{@page{size:A4 portrait;margin:14mm}body{background:#fff;padding:0}.ref,.doc-actions,button.copy,.state,.meter,.hint{display:none!important}
 .q{break-inside:avoid;border-color:#ccc}.sheet{max-width:none}}
