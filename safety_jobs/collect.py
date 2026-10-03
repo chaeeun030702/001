@@ -1039,13 +1039,19 @@ def relevant_after_detail(p: Posting) -> bool:
     return bool(HSE_ROLE_RE.search(t))
 
 
-def excluded_corp(company) -> bool:
-    """회사명에 제외 용어(EXCLUDE_CORP_TERMS)가 있는가."""
-    return bool(EXCLUDE_CORP_RE.search(re.sub(r"\s", "", company or "")))
+PUBLIC_CORP_RE = re.compile(r"(?:공단|공사|진흥원|기술원|연구원|안전원|재단)(?:\(.*?\))?$")  # 공공기관은 제외하지 않는다
+
+
+def excluded_corp(p: Posting) -> bool:
+    """회사명에 제외 용어(EXCLUDE_CORP_TERMS)가 있는 민간 업체인가. 공공기관은 제외하지 않는다."""
+    name = re.sub(r"\s|\(주\)|㈜|주식회사", "", p.company or "")
+    if not EXCLUDE_CORP_RE.search(name):
+        return False
+    return not ("공공" in p.company_type or PUBLIC_CORP_RE.search(name))
 
 
 def keep(p: Posting, today) -> tuple[bool, str]:
-    if excluded_corp(p.company):
+    if excluded_corp(p):
         return False, "제외 업체명"
     blob = f"{p.title} {p.listing_text} {p.extra.get('sector', '')}"
     if p.extra.get("posted") is not None:  # 학과 게시판: 최근 글 + 채용 공고 + 안전 직무
@@ -1740,7 +1746,7 @@ def carry_over(prev_path, failed, kept, stats, today):
             first = p.extra.get("first_seen") or prev_day
             if not first or (today - dt.date.fromisoformat(first)).days > UNDATED_KEEP_DAYS:
                 continue
-        if excluded_corp(p.company):  # 제외 업체명 재적용
+        if excluded_corp(p):  # 제외 업체명 재적용
             continue
         if p.industry == "건설" and not p.extra.get("top100"):
             continue
