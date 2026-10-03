@@ -12,6 +12,7 @@ drafts/index.json 과 drafts/*.md 초안을 읽어 아티팩트용 index.html �
     url: https://...
     deadline: 2026-10-11
     tags: 코스피
+    starter: 신입 초봉 4,500만원 (2025)   (선택: 사용자가 확인한 초봉, 채용현황 브리핑 값보다 우선)
     written: 2026-10-01
     questions: 자소설닷컴 2026 하반기 문항        (문항 출처, 양식이 없으면 '홈페이지 채용 정보 기준 구성')
     ---
@@ -229,7 +230,8 @@ def pay_of(m, postings):
     pst = postings["url"].get(m.get("url", ""))
     ex = (pst or {}).get("extra") or {}
     pay = (ex.get("salary") or ("연봉 미기재" if pst else "")).strip()
-    starter = (ex.get("starter") or "").strip() or next(
+    # 초안 머리말 starter: 는 사용자가 확인해 정한 값이라 브리핑보다 우선한다
+    starter = (m.get("starter") or "").strip() or (ex.get("starter") or "").strip() or next(
         (postings["starter"][k] for k in company_keys(m.get("company", "")) if k in postings["starter"]), "")
     return " · ".join(x for x in (pay, starter or "신입 초봉 확인 못 함") if x)
 
