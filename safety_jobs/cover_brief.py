@@ -30,8 +30,8 @@ drafts/index.json 과 drafts/*.md 초안을 읽어 아티팩트용 index.html �
         [--briefing briefings/latest.json ...] [--exclude excluded.json]
 
 표의 '구분' 아래에는 고용형태(머리말 employment), '공고' 아래에는 공고 기재 연봉 · 신입 초봉을 적는다.
-초봉은 --briefing 으로 준 채용 브리핑의 extra.starter(잡코리아 기업 연봉정보 '신입 초봉 N만원 (연도)')를
-먼저 쓰고, 없으면 초안 기업 분석 '- 신입 연봉:' 줄의 굵은 값을 '(초안 조사·추정)'으로 표시한다.
+초봉은 --briefing 으로 준 채용현황 브리핑의 extra.starter(잡코리아 기업 연봉정보 '신입 초봉 N만원 (연도)')로만
+통일한다(같은 공고 → 같은 업체 순, 없으면 '신입 초봉 확인 못 함'). 초안 카드 기본 정보에도 같은 값을 적는다.
 """
 import argparse
 import datetime as dt
@@ -132,13 +132,20 @@ def draft_body(d, analysis_cls="facts"):
 <div class="qfoot"><div class="meter"><i style="width:{min(100, n * 100 // max(q["limit"], 1))}%"></i></div>
 <span class="cnt"><b>{n:,}</b> / {q["limit"]:,}자</span><span class="state"></span>
 <button type="button" class="copy">답변 복사</button></div></div>''')
-    analysis = "".join(f"<li>{inline(a)}</li>" for a in d["analysis"]) or "<li>기업 분석 없음</li>"
+    def ana(a):
+        # 신입 연봉 줄은 채용현황 브리핑 값으로 통일하고, 초안 조사 내용은 굵게 하지 않고 참고로만 남긴다
+        if d.get("pay") and a.startswith("신입 연봉:"):
+            rest = a[len("신입 연봉:"):].replace("**", "").strip()
+            return (f'신입 연봉: <b>{e(d["pay"])}</b> (채용현황 브리핑 기준)'
+                    + (f' / 초안 조사 참고(브리핑 값과 다를 수 있음): {inline(rest)}' if rest else ""))
+        return inline(a)
+    analysis = "".join(f"<li>{ana(a)}</li>" for a in d["analysis"]) or "<li>기업 분석 없음</li>"
     overview = "".join(f"<li>{inline(a)}</li>" for a in m.get("overview", []))
     overview = f'<h3>기업 개요</h3><ul class="{analysis_cls}">{overview}</ul>\n' if overview else ""
     return f'''<div class="ref"><table class="kv"><tbody>
 <tr><th>공고</th><td><a href="{e(m.get("url", ""))}" target="_blank" rel="noopener">공고 원문 열기</a></td></tr>
 <tr><th>마감 · 작성</th><td class="num">{e(m.get("deadline", ""))} 마감 · {e(m.get("written", ""))} 작성</td></tr>
-<tr><th>문항 출처</th><td>{e(m.get("questions", "-"))}</td></tr>
+<tr><th>문항 출처</th><td>{e(m.get("questions", "-"))}</td></tr>{f'<tr><th>연봉 · 초봉</th><td>{e(d["pay"])} <span class="hint">(채용현황 브리핑 기준)</span></td></tr>' if d.get("pay") else ""}
 </tbody></table>
 {overview}<h3>기업 분석</h3><ul class="{analysis_cls}">{analysis}</ul></div>
 {"".join(qs)}'''
@@ -190,32 +197,16 @@ def employment_of(m, posting=None):
     return hit.group(0) if hit else "미표기"
 
 
-def starter_of(d, posting=None):
-    """표시용 급여: 공고 기재 연봉 · 신입 초봉. 초봉은 채용 브리핑(collect.py)의 starter 값이 먼저,
-    없으면 초안 기업 분석 '신입 연봉:' 줄의 굵은 값(괄호 설명 앞까지)."""
-    ex = (posting or {}).get("extra") or {}
-    pay = (ex.get("salary") or ("연봉 미기재" if posting else "")).strip()
-    starter = (ex.get("starter") or "").strip()
-    if not starter:
-        line = next((a for a in d["analysis"] if a.startswith("신입 연봉:")), "")
-        b = re.search(r"\*\*(.+?)\*\*", line)
-        s = (b.group(1) if b else line[len("신입 연봉:"):]).strip()
-        s = re.sub(r"[(（][^()（）]*[)）]", "", s).strip()
-        if "확인 못" in s and not re.search(r"\d{1,3},\d{3}", s):
-            starter = "신입 초봉 확인 못 함"
-        elif s:
-            s = re.split(r"[(（]", s, 1)[0].strip(" ·/—-")
-            starter = s if re.search(r"\d", s) else ""
-            if starter and not re.search(r"초봉|초임|신입", starter):
-                starter = "신입 초봉 " + starter
-            if starter:
-                starter += " (초안 조사·추정)"
-    return " · ".join(x for x in (pay, starter) if x)
+def company_keys(name):
+    """업체명 비교 키: (주)·㈜·주식회사·공백을 빼고, 괄호 속 별칭(예: S-OIL)도 키로 쓴다."""
+    n = re.sub(r"\(주\)|㈜|주식회사|\s", "", name or "")
+    keys = {re.sub(r"\(.*?\)", "", n)} | set(re.findall(r"\((.*?)\)", n))
+    return {k.lower().replace("-", "") for k in keys if k}
 
 
 def load_postings(paths):
-    """채용 브리핑 latest.json 들에서 url → 공고(dict)."""
-    out = {}
+    """채용 브리핑 latest.json 들 → {"url": url → 공고, "starter": 업체 키 → 신입 초봉}."""
+    by_url, starter = {}, {}
     for p in paths or []:
         try:
             data = json.loads(Path(p).read_text(encoding="utf-8"))
@@ -223,13 +214,28 @@ def load_postings(paths):
             print(f"[skip] 브리핑 {p} 읽기 실패", file=sys.stderr)
             continue
         for x in data.get("postings", []) if isinstance(data, dict) else []:
-            if x.get("url") and (x["url"] not in out or (x.get("extra") or {}).get("starter")):
-                out[x["url"]] = x
-    return out
+            st = ((x.get("extra") or {}).get("starter") or "").strip()
+            if x.get("url") and (x["url"] not in by_url or st):
+                by_url[x["url"]] = x
+            if st:
+                for k in company_keys(x.get("company", "")):
+                    starter.setdefault(k, st)
+    return {"url": by_url, "starter": starter}
+
+
+def pay_of(m, postings):
+    """표시용 급여: 공고 기재 연봉 · 신입 초봉. 신입 초봉은 채용현황 브리핑(collect.py extra.starter) 값으로만
+    통일한다 — 같은 공고(url)의 값, 없으면 같은 업체의 다른 공고 값, 그래도 없으면 '확인 못 함'."""
+    pst = postings["url"].get(m.get("url", ""))
+    ex = (pst or {}).get("extra") or {}
+    pay = (ex.get("salary") or ("연봉 미기재" if pst else "")).strip()
+    starter = (ex.get("starter") or "").strip() or next(
+        (postings["starter"][k] for k in company_keys(m.get("company", "")) if k in postings["starter"]), "")
+    return " · ".join(x for x in (pay, starter or "신입 초봉 확인 못 함") if x)
 
 
 def render(drafts, today, now, excluded=(), postings=None):
-    postings = postings or {}
+    postings = postings or {"url": {}, "starter": {}}
     live = [d for d in drafts if (d["left"] is None or d["left"] >= 0) and d["id"] not in excluded]
     new = [d for d in live if d["meta"].get("written") == today.isoformat()]
     live.sort(key=lambda d: (d["left"] if d["left"] is not None else 999, d["meta"].get("company", "")))
@@ -242,13 +248,13 @@ def render(drafts, today, now, excluded=(), postings=None):
     rows = []
     for d in live:
         m = d["meta"]
-        pst = postings.get(m.get("url", ""))
+        pst = postings["url"].get(m.get("url", ""))
         emp = employment_of(m, pst)
         chips = "".join(f'<span class="chip">{e(t.strip())}</span>' for t in m.get("tags", "").split(",")
                         if t.strip() and not EMP_RE.fullmatch(t.strip()))
         ecls = "ok" if emp.startswith("정규직") else "warn" if "계약" in emp else "mute"
         chips += f'<div class="emp"><span class="pill {ecls}">{e(emp)}</span></div>'
-        pay = starter_of(d, pst)
+        pay = d.get("pay") or pay_of(m, postings)
         url = m.get("url", "")
         title_html = ((f'<a class="jd" href="{e(url)}" target="_blank" rel="noopener" title="공고 원문 열기">{e(m.get("title", ""))}</a>'
                        if url.startswith("http") else e(m.get("title", ""))) + (f'<div class="pay">{e(pay)}</div>' if pay else ""))
@@ -512,7 +518,10 @@ def main():
         drafts.append({"id": Path(item["file"]).stem.split("_")[-1], "meta": meta, "analysis": analysis,
                        "questions": questions, "left": d_left(meta.get("deadline", ""), today)})
     excluded = load_excluded(args.exclude)
-    Path(args.out).write_text(render(drafts, today, now, excluded, load_postings(args.briefing)), encoding="utf-8")
+    postings = load_postings(args.briefing)
+    for d in drafts:
+        d["pay"] = pay_of(d["meta"], postings)
+    Path(args.out).write_text(render(drafts, today, now, excluded, postings), encoding="utf-8")
     letters = Path(args.out).parent / "letters"
     letters.mkdir(exist_ok=True)
     for d in drafts:
