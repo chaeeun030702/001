@@ -57,6 +57,10 @@ PREF_IN_TITLE_RE = re.compile(r"[\(\[【][^\)\]】]*우대[^\)\]】]*[\)\]】]|[
 NON_HSE_SAFETY_RE = re.compile(r"Functional\s*Safety|안전\s*인증|Drug\s*Safety|Pharmacovigilance|Patient\s*Safety|Food\s*Safety|Product\s*Safety|Clinical|"
                                r"약물\s*감시|의약품\s*안전|식품\s*안전|안전성\s*(?:평가|정보)", re.I)
 WATCH_RE = re.compile(r"감시\s*단")  # 안전감시단 등 감시 인력 모집은 제외
+# 회사명에 이 용어가 있으면 제외 (안전·소방 전문 용역사, 학원·교육기관 등). 공백은 무시하고 비교한다
+EXCLUDE_CORP_TERMS = ("소방", "조경", "구조엔지니어링", "감시단", "재해예방", "구조안전", "세이프티", "안전관리", "학원",
+                      "소방기술단", "교육원", "안전시스템", "방재", "무사퇴근", "보건안전", "호남산업")
+EXCLUDE_CORP_RE = re.compile("|".join(map(re.escape, EXCLUDE_CORP_TERMS)))
 SALES_RE = re.compile(r"영업|세일즈|(?<![A-Za-z])Sales(?![A-Za-z])|판매\s*(?:사원|직|원)|텔레\s*마케|TM\s*상담", re.I)
 HSE_RE = re.compile(r"(?<![A-Za-z])(?:HSE|EHS|SHE|HSEQ|QHSE)(?![A-Za-z])|환경\s*안전|안전\s*환경|안전\s*보건|안전\s*관리")
 # 업체명으로 건설사 여부 판단 (제목의 '현장' 등은 공장 현장과 헷갈리므로 쓰지 않음)
@@ -1035,7 +1039,14 @@ def relevant_after_detail(p: Posting) -> bool:
     return bool(HSE_ROLE_RE.search(t))
 
 
+def excluded_corp(company) -> bool:
+    """회사명에 제외 용어(EXCLUDE_CORP_TERMS)가 있는가."""
+    return bool(EXCLUDE_CORP_RE.search(re.sub(r"\s", "", company or "")))
+
+
 def keep(p: Posting, today) -> tuple[bool, str]:
+    if excluded_corp(p.company):
+        return False, "제외 업체명"
     blob = f"{p.title} {p.listing_text} {p.extra.get('sector', '')}"
     if p.extra.get("posted") is not None:  # 학과 게시판: 최근 글 + 채용 공고 + 안전 직무
         posted = safe_date(*map(int, p.extra["posted"].split("-"))) if p.extra["posted"] else None
@@ -1729,6 +1740,8 @@ def carry_over(prev_path, failed, kept, stats, today):
             first = p.extra.get("first_seen") or prev_day
             if not first or (today - dt.date.fromisoformat(first)).days > UNDATED_KEEP_DAYS:
                 continue
+        if excluded_corp(p.company):  # 제외 업체명 재적용
+            continue
         if p.industry == "건설" and not p.extra.get("top100"):
             continue
         if senior_rank(p) or NON_HSE_SAFETY_RE.search(p.title):  # 대리급 이상·비HSE 제외 재적용
