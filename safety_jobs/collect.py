@@ -1223,7 +1223,7 @@ def load_starter_manual():
     except (OSError, ValueError):
         return
     for it in items:
-        if it.get("pay"):
+        if it.get("pay") or it.get("suppress"):  # suppress: 근거 없는 잡코리아 값 숨김
             for name in [it.get("company", "")] + list(it.get("aliases", [])):
                 if norm_corp(name):
                     STARTER_MANUAL[norm_corp(name)] = it
@@ -1265,6 +1265,10 @@ def fill_starter(f, postings, today, cache: Path):
     load_starter_manual()
     for p in postings:
         man = STARTER_MANUAL.get(norm_corp(p.company))
+        if man and man.get("suppress") and not man.get("pay"):
+            p.extra["starter"] = ""
+            p.extra.pop("starter_url", None)
+            continue
         if man:  # 인터넷 조사 값 우선
             p.extra["starter"] = f"신입 초봉 {man['pay']}" + (f" ({man['year']}, {man.get('source', '웹 조사')})" if man.get("year") else f" ({man.get('source', '웹 조사')})")
             p.extra["starter_url"] = man.get("url", "")
