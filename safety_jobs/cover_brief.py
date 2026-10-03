@@ -27,6 +27,11 @@ drafts/index.json 과 drafts/*.md 초안을 읽어 아티팩트용 index.html �
     본문 문단...
 
     python3 safety_jobs/cover_brief.py --drafts drafts --out index.html [--today YYYY-MM-DD]
+        [--briefing briefings/latest.json ...] [--exclude excluded.json]
+
+표의 '구분' 아래에는 고용형태(머리말 employment), '공고' 아래에는 공고 기재 연봉 · 신입 초봉을 적는다.
+초봉은 --briefing 으로 준 채용 브리핑의 extra.starter(잡코리아 기업 연봉정보 '신입 초봉 N만원 (연도)')를
+먼저 쓰고, 없으면 초안 기업 분석 '- 신입 연봉:' 줄의 굵은 값을 '(초안 조사·추정)'으로 표시한다.
 """
 import argparse
 import datetime as dt
@@ -173,7 +178,58 @@ document.querySelector("button.copy-all").addEventListener("click",function(){{
 '''
 
 
-def render(drafts, today, now, excluded=()):
+EMP_RE = re.compile(r"정규직|계약직|인턴|파견직?|위촉직|프리랜서")
+
+
+def employment_of(m, posting=None):
+    """고용형태: 초안 머리말 employment → 브리핑 공고 employment → 태그 순."""
+    for v in (m.get("employment", ""), (posting or {}).get("employment", "")):
+        if v.strip() and v.strip() != "기타/미표기":
+            return v.strip()
+    hit = EMP_RE.search(m.get("tags", ""))
+    return hit.group(0) if hit else "미표기"
+
+
+def starter_of(d, posting=None):
+    """표시용 급여: 공고 기재 연봉 · 신입 초봉. 초봉은 채용 브리핑(collect.py)의 starter 값이 먼저,
+    없으면 초안 기업 분석 '신입 연봉:' 줄의 굵은 값(괄호 설명 앞까지)."""
+    ex = (posting or {}).get("extra") or {}
+    pay = (ex.get("salary") or ("연봉 미기재" if posting else "")).strip()
+    starter = (ex.get("starter") or "").strip()
+    if not starter:
+        line = next((a for a in d["analysis"] if a.startswith("신입 연봉:")), "")
+        b = re.search(r"\*\*(.+?)\*\*", line)
+        s = (b.group(1) if b else line[len("신입 연봉:"):]).strip()
+        s = re.sub(r"[(（][^()（）]*[)）]", "", s).strip()
+        if "확인 못" in s and not re.search(r"\d{1,3},\d{3}", s):
+            starter = "신입 초봉 확인 못 함"
+        elif s:
+            s = re.split(r"[(（]", s, 1)[0].strip(" ·/—-")
+            starter = s if re.search(r"\d", s) else ""
+            if starter and not re.search(r"초봉|초임|신입", starter):
+                starter = "신입 초봉 " + starter
+            if starter:
+                starter += " (초안 조사·추정)"
+    return " · ".join(x for x in (pay, starter) if x)
+
+
+def load_postings(paths):
+    """채용 브리핑 latest.json 들에서 url → 공고(dict)."""
+    out = {}
+    for p in paths or []:
+        try:
+            data = json.loads(Path(p).read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            print(f"[skip] 브리핑 {p} 읽기 실패", file=sys.stderr)
+            continue
+        for x in data.get("postings", []) if isinstance(data, dict) else []:
+            if x.get("url") and (x["url"] not in out or (x.get("extra") or {}).get("starter")):
+                out[x["url"]] = x
+    return out
+
+
+def render(drafts, today, now, excluded=(), postings=None):
+    postings = postings or {}
     live = [d for d in drafts if (d["left"] is None or d["left"] >= 0) and d["id"] not in excluded]
     new = [d for d in live if d["meta"].get("written") == today.isoformat()]
     live.sort(key=lambda d: (d["left"] if d["left"] is not None else 999, d["meta"].get("company", "")))
@@ -186,12 +242,19 @@ def render(drafts, today, now, excluded=()):
     rows = []
     for d in live:
         m = d["meta"]
-        chips = "".join(f'<span class="chip">{e(t.strip())}</span>' for t in m.get("tags", "").split(",") if t.strip())
+        pst = postings.get(m.get("url", ""))
+        emp = employment_of(m, pst)
+        chips = "".join(f'<span class="chip">{e(t.strip())}</span>' for t in m.get("tags", "").split(",")
+                        if t.strip() and not EMP_RE.fullmatch(t.strip()))
+        ecls = "ok" if emp.startswith("정규직") else "warn" if "계약" in emp else "mute"
+        chips += f'<div class="emp"><span class="pill {ecls}">{e(emp)}</span></div>'
+        pay = starter_of(d, pst)
+        title_html = e(m.get("title", "")) + (f'<div class="pay">{e(pay)}</div>' if pay else "")
         badge = '<span class="pill new">NEW</span> ' if d in new else ""
         rows.append(f'<tr data-id="{d["id"]}"><td class="pickcell"><input type="checkbox" class="pick" data-id="{d["id"]}" '
                     f'data-company="{e(m.get("company", ""))}" data-title="{e(m.get("title", ""))}" data-url="{e(m.get("url", ""))}" '
                     f'aria-label="{e(m.get("company", ""))} 선택"></td><td>{badge}<a href="#{d["id"]}">{e(m.get("company", ""))}</a></td><td>{chips}</td>'
-                    f'<td class="wrap">{e(m.get("title", ""))}</td><td class="num">{e(m.get("deadline", ""))}</td>'
+                    f'<td class="wrap">{title_html}</td><td class="num">{e(m.get("deadline", ""))}</td>'
                     f'<td>{dpill(d["left"])}</td><td class="num">{len(d["questions"])}문항</td></tr>')
     table = (EXCLUDE_BAR + '<div class="scroll"><table><colgroup><col style="width:36px"><col style="width:19%"><col style="width:15%"><col><col style="width:14%">'
              '<col style="width:10%"><col style="width:9%"></colgroup><thead><tr><th class="pickcell"><input type="checkbox" class="pickall" aria-label="전체 선택"></th><th>업체</th><th>구분</th><th>공고</th>'
@@ -291,6 +354,7 @@ footer{font-size:12px;color:var(--cap)}
 .btn-ghost{color:var(--primary);background:var(--surface);border:1px solid var(--border-strong)}
 .hint{font-size:12px;color:var(--cap);margin:0}
 .chips{margin-top:6px}
+.emp{margin-top:4px} td .chip,.emp .pill{white-space:normal;max-width:100%} .pay{margin-top:4px;font-size:12px;color:var(--cap);font-variant-numeric:tabular-nums}
 @media print{@page{size:A4 portrait;margin:14mm}body{background:#fff;padding:0}.ref,.doc-actions,button.copy,.state,.meter,.hint{display:none!important}
 .q{break-inside:avoid;border-color:#ccc}.sheet{max-width:none}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -418,6 +482,7 @@ def main():
     ap.add_argument("--drafts", default="drafts")
     ap.add_argument("--out", default="index.html")
     ap.add_argument("--today")
+    ap.add_argument("--briefing", action="append", help="채용 브리핑 latest.json(초봉·고용형태 조회용, 여러 번 가능)")
     ap.add_argument("--exclude", help="제외 목록 JSON(아티팩트 db excluded 컬렉션을 내려받은 것: id 목록 또는 {id,...} 목록)")
     args = ap.parse_args()
     now = dt.datetime.now(KST)
@@ -437,7 +502,7 @@ def main():
         drafts.append({"id": Path(item["file"]).stem.split("_")[-1], "meta": meta, "analysis": analysis,
                        "questions": questions, "left": d_left(meta.get("deadline", ""), today)})
     excluded = load_excluded(args.exclude)
-    Path(args.out).write_text(render(drafts, today, now, excluded), encoding="utf-8")
+    Path(args.out).write_text(render(drafts, today, now, excluded, load_postings(args.briefing)), encoding="utf-8")
     letters = Path(args.out).parent / "letters"
     letters.mkdir(exist_ok=True)
     for d in drafts:
