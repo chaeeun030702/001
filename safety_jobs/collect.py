@@ -1051,7 +1051,36 @@ def excluded_corp(p: Posting) -> bool:
     return not ("공공" in p.company_type or PUBLIC_CORP_RE.search(name))
 
 
+# 브리핑 화면에서 체크 후 삭제한 공고 (Routine이 페이지 DB에서 safety_jobs/excluded.json으로 옮겨 둔다)
+EXCLUDED_PATH = Path(__file__).with_name("excluded.json")
+EXCLUDED_URLS: set = set()
+EXCLUDED_KEYS: set = set()
+
+
+def _ex_key(company, title):
+    return norm_company(company or "") + "|" + norm_title(title or "", company or "")
+
+
+def load_excluded():
+    try:
+        items = json.loads(EXCLUDED_PATH.read_text(encoding="utf-8")).get("items", [])
+    except (OSError, ValueError):
+        return 0
+    for it in items:
+        if it.get("url"):
+            EXCLUDED_URLS.add(it["url"])
+        if it.get("company") or it.get("title"):
+            EXCLUDED_KEYS.add(_ex_key(it.get("company"), it.get("title")))
+    return len(items)
+
+
+def user_excluded(p: Posting) -> bool:
+    return p.url in EXCLUDED_URLS or _ex_key(p.company, p.title) in EXCLUDED_KEYS
+
+
 def keep(p: Posting, today) -> tuple[bool, str]:
+    if user_excluded(p):
+        return False, "사용자 삭제"
     if excluded_corp(p):
         return False, "제외 업체명"
     blob = f"{p.title} {p.listing_text} {p.extra.get('sector', '')}"
@@ -1133,7 +1162,8 @@ def salary_of(p):
 
 # ---------------------------------------------------------------- 기업별 신입사원 초봉 (잡코리아 기업 연봉정보)
 STARTER: dict = {}          # norm_corp(업체명) → {"id", "pay", "year", "checked"}
-STARTER_MAX_LOOKUPS = 160   # 실행당 새로 조회할 기업 수 (나머지는 다음 실행)
+STARTER_MAX_LOOKUPS = 250   # 실행당 새로 조회할 기업 수 (나머지는 다음 실행)
+STARTER_MATCH_V = 2         # 매칭 규칙 버전 — 이전 규칙으로 못 찾은 업체는 바로 다시 조회
 STARTER_TTL_DAYS, STARTER_MISS_DAYS = 30, 14
 
 
@@ -1144,9 +1174,31 @@ def _jk_company_id(f, name):
         return None
     t = f.get(f"https://www.jobkorea.co.kr/Search/?stext={quote(q)}&tabType=corp", tries=2).replace('\\"', '"')
     want = norm_corp(name)
-    for m in re.finditer(r'"name":"([^"]+)","businessNo":"[^"]*".{0,600}?"urlId":"(\d+)"', t):
-        if norm_corp(m.group(1)) == want:
-            return m.group(2)
+    cands = [(norm_corp(m.group(1)), m.group(2))
+             for m in re.finditer(r'"name":"([^"]+)","businessNo":"[^"]*".{0,600}?"urlId":"(\d+)"', t)]
+    cands += [(norm_corp(BeautifulSoup(m.group(2), "html.parser").get_text()), m.group(1))
+              for m in re.finditer(r'href="https://www\.jobkorea\.co\.kr/Company/(\d+)"[^>]*>(.{0,300}?)</a>', t, re.S)]
+    for n, cid in cands:  # 1) 정규화 이름 일치
+        if n == want:
+            return cid
+    # 2) 완화: 한쪽 이름이 다른 쪽에 포함(짧은 쪽 3자 이상, 길이 차 6자 이내) — 가장 비슷한 것
+    best, score = None, 0.0
+    for n, cid in cands:
+        if not n:
+            continue
+        short, long_ = sorted((n, want), key=len)
+        if len(short) >= 3 and short in long_ and len(long_) - len(short) <= 6:
+            r = difflib.SequenceMatcher(None, n, want).ratio()
+            if r > score:
+                best, score = cid, r
+    if best:
+        return best
+    # 3) 검색 결과 기업이 하나뿐이고 이름이 매우 비슷하면 채택
+    uniq = {cid: n for n, cid in cands if n}
+    if len(uniq) == 1:
+        cid, n = next(iter(uniq.items()))
+        if difflib.SequenceMatcher(None, n, want).ratio() >= 0.75:
+            return cid
     return None
 
 
@@ -1177,12 +1229,13 @@ def fill_starter(f, postings, today, cache: Path):
         hit = STARTER.get(key)
         if hit:
             age = (today - dt.date.fromisoformat(hit["checked"])).days
-            if age <= (STARTER_TTL_DAYS if hit.get("pay") else STARTER_MISS_DAYS):
+            stale_miss = not hit.get("id") and hit.get("v", 1) < STARTER_MATCH_V
+            if not stale_miss and age <= (STARTER_TTL_DAYS if hit.get("pay") else STARTER_MISS_DAYS):
                 continue
         if looked >= STARTER_MAX_LOOKUPS:
             continue
         looked += 1
-        rec = {"id": None, "pay": None, "year": "", "checked": today.isoformat()}
+        rec = {"id": None, "pay": None, "year": "", "checked": today.isoformat(), "v": STARTER_MATCH_V}
         try:
             rec["id"] = (hit or {}).get("id") or _jk_company_id(f, p.company)
             if rec["id"]:
@@ -1332,6 +1385,18 @@ body{background:var(--canvas);color:var(--text);font:400 14px/1.55 var(--font);m
 .edit-bar button:hover{background:var(--alt1)} .edit-bar button[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:#FFFFFF}
 .edit-bar #edit-msg{font-size:12px;color:var(--caption)}
 .icon-btn{width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;border:0;background:none;color:var(--text-sub);border-radius:var(--r-sm);cursor:pointer}
+td.corp:has(.xsel){position:relative;padding-left:40px}
+.xsel{position:absolute;left:12px;top:12px;width:18px;height:18px;margin:0;accent-color:var(--primary);cursor:pointer}
+tr.xd{display:none!important} .ev.xd{display:none!important}
+tr.xon{outline:2px solid var(--error);outline-offset:-2px}
+.xbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;width:100%;padding-top:4px;border-top:1px solid var(--divider)}
+.xbar button{height:40px;padding:0 14px;border:1px solid var(--border-strong);border-radius:var(--r-sm);background:var(--surface);color:var(--text-sub);font:600 13px var(--font);cursor:pointer}
+.xbar button.danger{border-color:var(--error);color:var(--error)} .xbar button.danger:not(:disabled):hover{background:color-mix(in srgb,var(--error) 10%,var(--surface))}
+.xbar button:disabled{opacity:.45;cursor:not-allowed}
+.xbar details summary{cursor:pointer;font-size:13px;color:var(--text-sub);font-weight:600}
+.xbar ul{margin:8px 0 0;padding:0;list-style:none;display:grid;gap:4px;max-height:240px;overflow:auto}
+.xbar li{display:flex;gap:8px;align-items:center;font-size:13px}
+.xbar li button{height:28px;padding:0 10px;font-size:12px}
 .icon-btn:hover{background:var(--alt1);color:var(--text-strong)}
 .edit-bar .icon-btn{width:40px;height:40px;padding:0;border:0;background:none}
 body.editing main [contenteditable="true"]{outline:1px dashed var(--border-strong);outline-offset:2px;cursor:text}
@@ -1493,7 +1558,7 @@ HTML_JS = """
     document.querySelectorAll('section.grp').forEach(function(sec){
       var n=0;
       sec.querySelectorAll('tbody tr').forEach(function(tr){
-        var ok=(!t||tr.textContent.toLowerCase().indexOf(t)>=0)&&
+        var ok=!tr.classList.contains('xd')&&(!t||tr.textContent.toLowerCase().indexOf(t)>=0)&&
           (mode==='all'||(mode==='A'&&tr.classList.contains('hA'))||(mode==='B'&&tr.dataset.grp.indexOf('대기업')>=0)||(mode==='F'&&tr.dataset.grp.indexOf('외국계')>=0)||(mode==='K'&&tr.dataset.listed!=='')||
            (mode==='soon'&&tr.querySelector('td.dl.soon'))||(mode==='gen'&&tr.dataset.ind==='일반 산업')||
            (mode==='cert'&&tr.dataset.cert==='1')||(mode==='pref'&&tr.dataset.pref==='1')||(mode==='ai'&&tr.dataset.ai==='1')||(mode==='new'&&tr.dataset.new==='1'));
@@ -1503,9 +1568,72 @@ HTML_JS = """
       sec.querySelector('.empty').hidden=n>0; sec.querySelector('.scroll').hidden=n===0;
     });
   }
-  q.addEventListener('input',apply);
+  q.addEventListener('input',apply); document.addEventListener('brief-refilter',apply);
   btns.forEach(function(b){b.addEventListener('click',function(){
     mode=b.dataset.mode; btns.forEach(function(x){x.setAttribute('aria-pressed',String(x===b))}); apply();});});
+})();
+(function(){
+  /* 선택 삭제: 업체 왼쪽 체크 → '선택 삭제' → 게시 페이지의 공유 DB(excluded)에 기록, 다음 리포트부터 수집에서 제외.
+     DB가 없는 환경(내려받은 HTML)은 이 브라우저에서만 숨긴다. */
+  var LS='brief-excluded', db=null, col=null, ex={};
+  var del=document.getElementById('x-del'); if(!del) return;
+  var clr=document.getElementById('x-clear'), nEl=document.getElementById('x-n'), cEl=document.getElementById('x-cnt'),
+      ul=document.getElementById('x-items'), msg=document.getElementById('x-msg');
+  function say(t){msg.textContent=t}
+  function sel(){return Array.prototype.slice.call(document.querySelectorAll('input.xsel:checked'))}
+  function sync(){
+    var urls={}; sel().forEach(function(c){urls[c.dataset.url]=1});
+    var n=Object.keys(urls).length; nEl.textContent=n; del.disabled=!n; clr.disabled=!n;
+    document.querySelectorAll('tr[data-url]').forEach(function(tr){tr.classList.toggle('xon',!!urls[tr.dataset.url])});
+  }
+  function render(){
+    var keys=Object.keys(ex);
+    document.querySelectorAll('tr[data-url]').forEach(function(tr){tr.classList.toggle('xd',!!ex[tr.dataset.url])});
+    document.querySelectorAll('a.ev').forEach(function(a){a.classList.toggle('xd',!!ex[a.getAttribute('href')])});
+    cEl.textContent=keys.length; ul.textContent='';
+    keys.forEach(function(u){
+      var li=document.createElement('li'), s=document.createElement('span'), b=document.createElement('button');
+      s.textContent=(ex[u].company||'-')+' · '+(ex[u].title||'');
+      b.type='button'; b.textContent='복원'; b.addEventListener('click',function(){restore(u)});
+      li.appendChild(b); li.appendChild(s); ul.appendChild(li);
+    });
+    document.dispatchEvent(new Event('brief-refilter')); sync();
+  }
+  function hid(u){var h=0;for(var i=0;i<u.length;i++){h=(h*31+u.charCodeAt(i))|0}return 'x'+(h>>>0).toString(36)+u.length.toString(36)}
+  function loadLocal(){try{ex=JSON.parse(localStorage.getItem(LS)||'{}')||{}}catch(e){ex={}}}
+  function saveLocal(){try{localStorage.setItem(LS,JSON.stringify(ex))}catch(e){}}
+  document.addEventListener('change',function(ev){if(ev.target.classList&&ev.target.classList.contains('xsel')){
+    var u=ev.target.dataset.url, on=ev.target.checked;
+    document.querySelectorAll('input.xsel').forEach(function(c){if(c.dataset.url===u)c.checked=on}); sync();}});
+  clr.addEventListener('click',function(){sel().forEach(function(c){c.checked=false}); sync();});
+  del.addEventListener('click',async function(){
+    var pick={}; sel().forEach(function(c){pick[c.dataset.url]={url:c.dataset.url,company:c.dataset.company,title:c.dataset.title}});
+    var list=Object.keys(pick); if(!list.length) return;
+    del.disabled=true; say('삭제 중…');
+    var done=0;
+    for(var i=0;i<list.length;i++){
+      var it=pick[list[i]]; it.at=new Date().toISOString();
+      if(col){ try{ await col.doc(hid(it.url)).set(it); done++; }catch(e){ say('저장하지 못했습니다 ('+(e&&e.code||'error')+'). 편집 권한이 있는 계정으로 열어 주세요.'); break; } }
+      else { ex[it.url]=it; done++; }
+    }
+    if(!col){ saveLocal(); render(); say(done+'건을 이 브라우저에서 숨겼습니다. 다음 리포트에 반영하려면 게시된 브리핑 페이지에서 삭제하세요.'); }
+    else if(done===list.length){ say(done+'건 삭제 — 다음 리포트부터 제외됩니다.'); }
+    sel().forEach(function(c){c.checked=false}); sync();
+  });
+  async function restore(u){
+    if(col){ try{ await col.doc(hid(u)).delete(); say('복원했습니다. 다음 리포트부터 다시 수집합니다.'); }catch(e){ say('복원하지 못했습니다 ('+(e&&e.code||'error')+').'); } }
+    else { delete ex[u]; saveLocal(); render(); say('복원했습니다.'); }
+  }
+  loadLocal(); render();
+  if(window.claude&&typeof window.claude.use==='function'){
+    window.claude.use('db').then(function(d){
+      if(!d){ say('공유 저장소를 쓸 수 없어 이 브라우저에서만 숨깁니다.'); return; }
+      db=d; col=db.collection('excluded');
+      col.onSnapshot(function(snap){
+        var m={}; snap.docs.forEach(function(doc){var v=doc.data(); if(v&&v.url) m[v.url]=v}); ex=m; render();
+      }, function(){ col=null; say('공유 저장소 연결이 끊겨 이 브라우저에서만 숨깁니다.'); });
+    }).catch(function(){});
+  }
 })();
 """
 
@@ -1602,6 +1730,13 @@ def render_calendar(postings, today, months=2, show=5):
             '<em class="tgl"><i class="tg b">대</i> 대기업 계열 <i class="tg f">외</i> 외국계 '
             '<i class="tg k">KS</i> 코스피 <i class="tg k">KQ</i> 코스닥 <i class="tg ai">AI</i> AI 우대 <i class="tg n">N</i> 신규</em></div>'
             f'<div class="cal">{wd}{"".join(cells)}</div></section>')
+
+
+def xsel(p):
+    """업체명 왼쪽 선택 체크박스 (선택 삭제 → 다음 리포트부터 제외)."""
+    e = html.escape
+    return (f'<input type="checkbox" class="xsel" data-url="{e(p.url)}" data-company="{e(p.company)}" '
+            f'data-title="{e(p.title)}" aria-label="{e((p.company or "") + " 공고 선택")}">')
 
 
 def new_pill(p, today):
@@ -1743,8 +1878,8 @@ def render_html(postings, failures, now, stats):
         i = sid.get(key, "other")
         nav.append((i, tag, len(rows)))
         trs = "".join(
-            f'<tr class="h{p.hilite}" data-ind="{e(p.industry)}" data-cert="{1 if p.certs else 0}" data-pref="{1 if p.prefs else 0}" data-ai="{1 if p.extra.get("ai") else 0}" data-grp="{e(" ".join(p.extra.get("groups", [])))}" data-listed="{e(p.extra.get("listed", ""))}" data-new="{1 if is_new(p, today) else 0}"><td class="lv">{e(p.level)}<small>{e(p.industry)}</small>{sal_small(p)}</td>'
-            f'<td class="corp"><strong><a class="co" href="{e(p.url)}" target="_blank" rel="noopener">{e(p.company or "-")}</a></strong>{new_pill(p, today)}{pill[p.hilite]}{group_pills(p)}{rank_pill(p)}</td>'
+            f'<tr class="h{p.hilite}" data-url="{e(p.url)}" data-ind="{e(p.industry)}" data-cert="{1 if p.certs else 0}" data-pref="{1 if p.prefs else 0}" data-ai="{1 if p.extra.get("ai") else 0}" data-grp="{e(" ".join(p.extra.get("groups", [])))}" data-listed="{e(p.extra.get("listed", ""))}" data-new="{1 if is_new(p, today) else 0}"><td class="lv">{e(p.level)}<small>{e(p.industry)}</small>{sal_small(p)}</td>'
+            f'<td class="corp">{xsel(p)}<strong><a class="co" href="{e(p.url)}" target="_blank" rel="noopener">{e(p.company or "-")}</a></strong>{new_pill(p, today)}{pill[p.hilite]}{group_pills(p)}{rank_pill(p)}</td>'
             f"<td class=\"ttl\">{e(p.title)}{pref_pills(p)}{ai_pill(p)}</td><td>{cert_pills(p)}{e(p.qualification or '-')}</td><td>{e(p.preferred or '-')}</td>"
             f'<td class="dl{" soon" if id(p) in soon else ""}">{e(p.deadline)}</td>'
             f'<td class="src"><a href="{e(p.url)}" target="_blank" rel="noopener">{e(p.source)}</a>'
@@ -1787,7 +1922,7 @@ def render_html(postings, failures, now, stats):
                f'<tbody>{"".join(crows)}</tbody></table></div></section>') if crows else ""
     def rows5(rows, pill_new=False):
         return "".join(
-            f'<tr class="h{p.hilite}"><td class="corp"><strong><a class="co" href="{e(p.url)}" target="_blank" rel="noopener">{e(p.company or "-")}</a></strong>'
+            f'<tr class="h{p.hilite}" data-url="{e(p.url)}"><td class="corp">{xsel(p)}<strong><a class="co" href="{e(p.url)}" target="_blank" rel="noopener">{e(p.company or "-")}</a></strong>'
             f'{new_pill(p, today) if pill_new else ""}{group_pills(p)}</td><td>{e(p.title)}</td><td class="lv">{e(p.employment)}<small>{e(p.level)}</small>{sal_small(p)}</td>'
             f'<td class="dl{" soon" if id(p) in soon else ""}">{e(p.deadline)}</td><td class="src"><a href="{e(p.url)}" target="_blank" rel="noopener">{e(p.source)}</a></td></tr>'
             for p in rows)
@@ -1845,6 +1980,12 @@ def render_html(postings, failures, now, stats):
     <button type="button" data-mode="pref" aria-pressed="false">외국어·NEBOSH·IOSH·CSP 우대</button>
     <button type="button" data-mode="ai" aria-pressed="false">AI 우대</button>
     <button type="button" data-mode="soon" aria-pressed="false">3일 내 마감</button>
+  </div>
+  <div class="xbar" role="group" aria-label="선택 공고 삭제">
+    <button type="button" id="x-del" class="danger" disabled>선택 삭제 <b id="x-n">0</b></button>
+    <button type="button" id="x-clear" disabled>선택 해제</button>
+    <details id="x-list"><summary>삭제한 공고 <b id="x-cnt">0</b></summary><ul id="x-items"></ul></details>
+    <span id="x-msg" class="note" role="status"></span>
   </div></div>
 {''.join(secs)}
 <section class="card" id="status"><h2>사이트별 수집 현황</h2>{status}</section>
@@ -1886,6 +2027,8 @@ def carry_over(prev_path, failed, kept, stats, today):
         if excluded_corp(p):  # 제외 업체명 재적용
             continue
         if p.industry == "건설" and not p.extra.get("top100"):
+            continue
+        if user_excluded(p):  # 브리핑에서 삭제한 공고
             continue
         if senior_rank(p) or NON_HSE_SAFETY_RE.search(p.title):  # 대리급 이상·비HSE 제외 재적용
             continue
@@ -1977,6 +2120,9 @@ def main():
                 PREV_SEEN.setdefault(norm_company(d.get("company", "")) + "|" + norm_title(d.get("title", ""), d.get("company", "")), fs)
     except (OSError, ValueError, KeyError):
         pass
+    n_ex = load_excluded()
+    if n_ex:
+        print(f"[excluded] 사용자 삭제 {n_ex}건 적용", file=sys.stderr)
     raw, failures, stats = [], [], {}
     for name, fn, _ in SOURCES:
         for attempt in (1, 2):
