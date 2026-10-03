@@ -1,0 +1,97 @@
+<title>에이전트 작업현황</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* 레이아웃: 상단 요약 줄 → 에이전트 카드 그리드(픽셀 아이콘 + 상태 + 결과 막대) → 수집 실행 */
+:root{
+  --bg:#F3F1EE; --surface:#FFFFFF; --ink:#1B1A19; --sub:#5E5A55; --line:#E3DFD9;
+  --clawd:#D97757; --tile:#232120; --ok:#15B874; --run:#0F6FFF; --mute:#9A948C;
+  --font:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141312; --surface:#1E1C1B; --ink:#F2EFEA; --sub:#B5AFA7; --line:#33302D;
+  --clawd:#E2856A; --tile:#0E0D0C; --ok:#44C690; --run:#3F8CFF; --mute:#7D776F; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141312; --surface:#1E1C1B; --ink:#F2EFEA; --sub:#B5AFA7; --line:#33302D;
+  --clawd:#E2856A; --tile:#0E0D0C; --ok:#44C690; --run:#3F8CFF; --mute:#7D776F; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:400 15px/1.6 var(--font);padding-inline:16px;padding-block:28px 48px}
+.wrap{max-width:1080px;margin:0 auto;display:grid;gap:20px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 16px}
+h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
+.when{font:500 12px var(--mono);color:var(--sub)}
+.sum{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:600 13px var(--font);padding:4px 12px;border-radius:9999px;border:1px solid var(--line);background:var(--surface);color:var(--sub)}
+.chip b{font-family:var(--mono);color:var(--ink);margin-right:4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:12px}
+.ag{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;grid-template-columns:72px minmax(0,1fr);gap:4px 14px;align-items:start}
+.av{grid-row:span 3;width:72px;height:72px;border-radius:12px;background:var(--tile);display:grid;place-items:center}
+.av svg{width:56px;height:auto;display:block}
+.av.run svg{animation:bob 1.2s steps(2) infinite}
+@keyframes bob{50%{transform:translateY(-3px)}}
+@media (prefers-reduced-motion:reduce){.av.run svg{animation:none}}
+.nm{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px}
+.nm h2{font-size:16px;font-weight:700;margin:0}
+.st{font:700 11px var(--mono);letter-spacing:.04em;padding:2px 8px;border-radius:6px;color:#fff}
+.st.done{background:var(--ok)} .st.run{background:var(--run)}
+.task{font-size:13px;color:var(--sub);margin:0;min-width:0}
+.bar{display:flex;height:8px;border-radius:9999px;overflow:hidden;background:var(--line)}
+.bar i{display:block;background:var(--clawd)}
+.res{font:500 12px var(--mono);color:var(--sub)} .res b{color:var(--ink)}
+.cos{grid-column:1/-1;margin:8px 0 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:4px}
+.cos li{font-size:12px;padding:1px 8px;border-radius:9999px;border:1px solid var(--line);color:var(--mute)}
+.cos li.hit{border-color:var(--clawd);color:var(--ink);background:color-mix(in srgb,var(--clawd) 12%,transparent)}
+.note{font-size:12px;color:var(--sub);margin:0;max-width:72ch}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="clawd" viewBox="0 0 18 10">
+    <g fill="var(--clawd)" shape-rendering="crispEdges">
+      <rect x="2" y="0" width="14" height="7"/>
+      <rect x="0" y="3" width="18" height="2"/>
+      <rect x="3" y="7" width="1" height="2"/><rect x="5" y="7" width="1" height="2"/>
+      <rect x="12" y="7" width="1" height="2"/><rect x="14" y="7" width="1" height="2"/>
+    </g>
+    <g fill="var(--tile)" shape-rendering="crispEdges">
+      <rect x="4" y="2" width="1" height="1"/><rect x="13" y="2" width="1" height="1"/>
+    </g>
+  </symbol>
+</svg>
+
+<div class="wrap">
+<header>
+  <div><h1>에이전트 작업현황</h1><div class="when">2026-10-04 08:02 KST 기준 · 신입 초봉 웹 조사 + 수집 실행</div></div>
+  <div class="sum"><span class="chip"><b>6</b>조사 완료</span><span class="chip"><b>1</b>진행 중</span><span class="chip"><b>60</b>개사 조사</span><span class="chip"><b>28</b>개사 초봉 반영</span></div>
+</header>
+
+<div class="grid" id="grid"></div>
+<p class="note">조사 에이전트는 잡코리아·캐치·사람인·인크루트·자소설닷컴 페이지를 직접 열지 못해 검색 결과 요약으로만 수치를 확인했습니다. 색이 칠해진 회사가 초봉을 찾아 브리핑에 반영한 곳입니다.</p>
+</div>
+
+<script>
+var AGENTS=[
+ {n:"조사 에이전트 1",s:"done",t:"신입 초봉 웹 조사",found:["엠이엠씨코리아"],miss:["두레시닝","디비월드","리뉴에스엘피","제이에스테크","방주산업","케이씨씨건설","태영산업","한농화성","엠플러스"]},
+ {n:"조사 에이전트 2",s:"done",t:"신입 초봉 웹 조사",found:["에이치엘비제넥스","이터널그룹","삼우에프앤지","제닉"],miss:["티엑스알로보틱스","트래닛","에코심플렉스","범한유니솔루션","호반티비엠","삼성다이나에이치백"]},
+ {n:"조사 에이전트 3",s:"done",t:"신입 초봉 웹 조사",found:["한독크린텍","금호건설","LG유플러스","에스디바이오센서","HDC현대산업개발","한국드레가"],miss:["와이씨켐","레몬","지엔씨에너지","하이브"]},
+ {n:"조사 에이전트 4",s:"done",t:"신입 초봉 웹 조사",found:["유엘코리아","노보노디스크","Applied Materials","에이프로","에스엠세이프","대영포장","삼호이앤에프"],miss:["신성에스티","다인","한성크린텍"]},
+ {n:"조사 에이전트 5",s:"done",t:"신입 초봉 웹 조사",found:["심텍","실리콘투","두산로지스틱스솔루션","대명에너지","에스앤더블류"],miss:["SK","KG모빌리티커머셜","은성산업개발","유니온가스","우양기건"]},
+ {n:"조사 에이전트 6",s:"done",t:"신입 초봉 웹 조사 · 의심 수치 재확인",found:["에스트라오토모티브","케어젠","에이치알에스","하이테크엔지니어링","행정안전부","승일"],miss:["액트로","AirSense SEC","에벨릭스코리아","HD현대중공업(숨김)"]},
+ {n:"수집 실행",s:"run",t:"GitHub Actions — 복지 표시(자녀학자금·노조·주택지원·기숙사) 반영 수집",found:[],miss:[]}
+];
+var g=document.getElementById('grid');
+AGENTS.forEach(function(a){
+  var tot=a.found.length+a.miss.length, el=document.createElement('article'); el.className='ag';
+  var av='<div class="av '+(a.s==='run'?'run':'')+'"><svg viewBox="0 0 18 10" role="img" aria-label="에이전트"><use href="#clawd"/></svg></div>';
+  var st='<span class="st '+a.s+'">'+(a.s==='done'?'완료':'진행 중')+'</span>';
+  var res=tot?('<div class="bar" aria-hidden="true"><i style="width:'+(a.found.length*100/tot)+'%"></i></div><div class="res">초봉 확인 <b>'+a.found.length+'</b> / '+tot+'개사</div>')
+             :'<div class="res">끝나면 브리핑 페이지를 갱신합니다</div>';
+  el.innerHTML=av+'<div class="nm"><h2></h2>'+st+'</div><p class="task"></p>'+res;
+  el.querySelector('h2').textContent=a.n; el.querySelector('.task').textContent=a.t;
+  if(tot){var ul=document.createElement('ul'); ul.className='cos';
+    a.found.concat(a.miss).forEach(function(c,i){var li=document.createElement('li'); li.textContent=c; if(i<a.found.length) li.className='hit'; ul.appendChild(li)});
+    el.appendChild(ul);}
+  g.appendChild(el);
+});
+</script>
