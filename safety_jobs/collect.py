@@ -36,7 +36,7 @@ from bs4 import BeautifulSoup
 KST = dt.timezone(dt.timedelta(hours=9))
 Q = quote("안전관리자")
 # 검색어: 안전관리자 + 업종 무관 HSE/EHS 직무 + 자격증 명시 공고
-KEYWORDS = ["안전관리자", "HSE", "EHS", "안전보건", "산업안전기사", "건설안전기사", "NEBOSH", "IOSH", "ISO45001", "안전공학"]
+KEYWORDS = ["안전관리자", "HSE", "EHS", "안전보건", "산업안전기사", "건설안전기사", "NEBOSH", "IOSH", "ISO45001", "안전공학", "안전"]
 # 우대 강조(보라색): 외국어·영어 능통 / NEBOSH / IOSH / CSP
 LANG_RE = re.compile(r"(?:영어|외국어|어학|English|중국어|일본어|베트남어|스페인어)\s*(?:회화\s*)?(?:능통|능숙|우수|가능|원활|비즈니스|원어민|fluent|business)"
                      r"|(?:TOEIC|토익|OPIc|오픽|TEPS|텝스|TOEIC\s*Speaking|토익\s*스피킹)\s*[:：]?\s*(?:\d{2,3}|IM|IH|AL|Lv|Level)"
@@ -57,6 +57,10 @@ PREF_IN_TITLE_RE = re.compile(r"[\(\[【][^\)\]】]*우대[^\)\]】]*[\)\]】]|[
 NON_HSE_SAFETY_RE = re.compile(r"Functional\s*Safety|안전\s*인증|Drug\s*Safety|Pharmacovigilance|Patient\s*Safety|Food\s*Safety|Product\s*Safety|Clinical|"
                                r"약물\s*감시|의약품\s*안전|식품\s*안전|안전성\s*(?:평가|정보)", re.I)
 WATCH_RE = re.compile(r"감시\s*단")  # 안전감시단 등 감시 인력 모집은 제외
+# 회사명에 이 용어가 있으면 제외 (안전·소방 전문 용역사, 학원·교육기관 등). 공백은 무시하고 비교한다
+EXCLUDE_CORP_TERMS = ("소방", "조경", "구조엔지니어링", "감시단", "재해예방", "구조안전", "세이프티", "안전관리", "학원",
+                      "소방기술단", "교육원", "안전시스템", "방재", "무사퇴근", "보건안전", "호남산업")
+EXCLUDE_CORP_RE = re.compile("|".join(map(re.escape, EXCLUDE_CORP_TERMS)))
 SALES_RE = re.compile(r"영업|세일즈|(?<![A-Za-z])Sales(?![A-Za-z])|판매\s*(?:사원|직|원)|텔레\s*마케|TM\s*상담", re.I)
 HSE_RE = re.compile(r"(?<![A-Za-z])(?:HSE|EHS|SHE|HSEQ|QHSE)(?![A-Za-z])|환경\s*안전|안전\s*환경|안전\s*보건|안전\s*관리")
 # 업체명으로 건설사 여부 판단 (제목의 '현장' 등은 공장 현장과 헷갈리므로 쓰지 않음)
@@ -308,7 +312,7 @@ def src_saramin(f: Fetcher):
 
 def src_linkareer(f: Fetcher):
     acts = {}
-    for kw in ("안전관리자", "HSE", "EHS", "산업안전기사"):
+    for kw in ("안전관리자", "HSE", "EHS", "산업안전기사", "안전"):
         url = f"https://linkareer.com/search?direction=DESC&page=1&q={quote(kw)}&sort=RELEVANCE&tab=open-activity"
         m = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', f.get(url), re.S)
         if not m:
@@ -621,7 +625,7 @@ def src_company_careers(f: Fetcher):
 def src_wanted(f: Fetcher):
     """원티드 — 공개 API (GitHub Actions에서는 403 차단 중)."""
     out = []
-    for q in ("안전관리자", "HSE", "EHS"):
+    for q in ("안전관리자", "HSE", "EHS", "안전"):
         d = json.loads(f.get(f"https://www.wanted.co.kr/api/v4/jobs?country=kr&query={quote(q)}&years=0&limit=50&offset=0&job_sort=job.latest_order"))
         for j in d.get("data", []):
             p = Posting("원티드", clean(j.get("position", "")), clean((j.get("company") or {}).get("name", "")),
@@ -635,7 +639,7 @@ def src_wanted(f: Fetcher):
 def src_catch(f: Fetcher):
     """캐치 — 검색 결과 (GitHub Actions에서는 403 차단 중)."""
     out, seen = [], set()
-    for q in ("안전관리자", "HSE", "EHS"):
+    for q in ("안전관리자", "HSE", "EHS", "안전"):
         s = BeautifulSoup(f.get(f"https://www.catch.co.kr/NCS/RecruitSearch?Keyword={quote(q)}"), "html.parser")
         for a in s.select('a[href*="RecruitInfoDetails"]'):
             link = urljoin("https://www.catch.co.kr", a["href"])
@@ -962,6 +966,7 @@ def analyze(p: Posting, today):
     p.deadline = disp or p.deadline or "확인 필요"
     p.deadline_date = d.isoformat() if d else ""
     p.hilite = classify_company(p, text)
+    p.extra["salary"] = "" if salary_of(p) == NO_SALARY else salary_of(p)
     p.extra["listed"] = listed_market(p)
     p.certs = sorted({f"{m.group(1)}안전기사" for m in CERT_KEY_RE.finditer(f"{p.title} {p.listing_text} {text}")})
     if ISO45001_RE.search(f"{p.title} {text}"):
@@ -1035,7 +1040,20 @@ def relevant_after_detail(p: Posting) -> bool:
     return bool(HSE_ROLE_RE.search(t))
 
 
+PUBLIC_CORP_RE = re.compile(r"(?:공단|공사|진흥원|기술원|연구원|안전원|재단)(?:\(.*?\))?$")  # 공공기관은 제외하지 않는다
+
+
+def excluded_corp(p: Posting) -> bool:
+    """회사명에 제외 용어(EXCLUDE_CORP_TERMS)가 있는 민간 업체인가. 공공기관은 제외하지 않는다."""
+    name = re.sub(r"\s|\(주\)|㈜|주식회사", "", p.company or "")
+    if not EXCLUDE_CORP_RE.search(name):
+        return False
+    return not ("공공" in p.company_type or PUBLIC_CORP_RE.search(name))
+
+
 def keep(p: Posting, today) -> tuple[bool, str]:
+    if excluded_corp(p):
+        return False, "제외 업체명"
     blob = f"{p.title} {p.listing_text} {p.extra.get('sector', '')}"
     if p.extra.get("posted") is not None:  # 학과 게시판: 최근 글 + 채용 공고 + 안전 직무
         posted = safe_date(*map(int, p.extra["posted"].split("-"))) if p.extra["posted"] else None
@@ -1089,6 +1107,39 @@ def is_dup(p, kept):
 
 
 # ---------------------------------------------------------------- 출력
+# ---------------------------------------------------------------- 연봉 · 대기업 신입 공채
+_AMT = r"\d[\d,\.]*(?:\s*(?:만\s*원|만원|원|억))?(?:\s*[~\-–]\s*\d[\d,\.]*)?\s*(?:만\s*원|만원|원|억)(?:\s*(?:이상|이하|내외|수준|부터|전후))?"
+_WON = r"₩\s*\d[\d,]*"
+SALARY_AMT_RE = re.compile(rf"(?:연봉|연\s*급|급여|월\s*급여|월급|초봉|초임)\s*(?:조건|기준)?\s*[:：]?\s*(?:\(?\s*)?((?:(?:일급|월급|시급|주급|연봉)\s*)?(?:약\s*)?(?:{_AMT}|{_WON}))")
+_DECIDE = (r"회사\s*내규(?:에\s*(?:따[라른름]\w*|의\w*))?|내규에\s*(?:따[라른름]\w*)|면접\s*[후시]\s*(?:연봉\s*)?(?:결정|협의)|"
+           r"추후\s*(?:협의|결정)|협의\s*후\s*결정|협의\s*결정|협의")
+SALARY_TXT_RE = re.compile(rf"(?:연봉|연\s*급|급여|보수|월급)[^.\n]{{0,12}}?({_DECIDE})")
+SALARY_LOOSE_RE = re.compile(r"(회사\s*내규(?:에\s*(?:따[라른름]\w*))?|면접\s*후\s*(?:연봉\s*)?(?:결정|협의))")
+NO_SALARY = "연봉 미기재"
+
+
+def salary_of(p):
+    """공고 본문에서 연봉(금액 · 회사 내규 · 면접 후 결정 등)을 찾는다. 없으면 '연봉 미기재'."""
+    if "salary" in p.extra:
+        return p.extra["salary"] or NO_SALARY
+    for t in (p.detail_text, p.listing_text):
+        t = clean(t)
+        for rx in (SALARY_AMT_RE, SALARY_TXT_RE, SALARY_LOOSE_RE):
+            m = rx.search(t)
+            if m:
+                return re.sub(r"^면접\s*([후시])\s*", r"면접 \1 ", clean(m.group(1)))[:40]
+    return NO_SALARY
+
+
+BIGCORP_TITLE_RE = re.compile(r"공채|공개\s*채용|신입\s*사원|하반기\s*신입|채용\s*연계")
+
+
+def is_bigcorp_entry(p):
+    """대기업 신입 공채: 대기업 계열이면서 경력직이 아니고, 신입이거나 제목에 공채류 표기가 있는 공고."""
+    return ("대기업 계열" in p.extra.get("groups", []) and p.level != "경력"
+            and (p.level == "신입" or bool(BIGCORP_TITLE_RE.search(p.title))))
+
+
 BADGE = {"A": "🔴 ", "B": "🔵 ", "F": "🌐 ", "": ""}
 GROUPS = [("정규직", "[정규직]"), ("계약직", "[계약직]"), ("인턴", "[인턴]"), ("기타/미표기", "[고용형태 미표기]")]
 LEGEND = ("🔴 데이터센터·하이테크·삼성·하이닉스 관련 · 🔵 대기업 계열사 · 🌐 외국계 회사 (여럿 해당하면 🔴 > 🔵 > 🌐, 업체명 옆에 [대기업 계열]/[외국계] 표기) · "
@@ -1122,11 +1173,20 @@ def render_md(postings, failures, now, stats):
              f"🟣 외국어·NEBOSH·IOSH·CSP 우대 {n_pref}건")
     L += ["", "건설사는 2026년 시공능력평가 상위 100개사(토목건축)만 싣습니다."]
     L += ["", f"범례: {LEGEND} · 🆕 지난 보고({last_report_date(now.date()):%m/%d}) 이후 추가", ""]
+    big = sorted([p for p in postings if is_bigcorp_entry(p)], key=sort_key)
+    L += [f"## 🏢 대기업 신입 공채 {len(big)}건", ""]
+    if big:
+        L += ["| 업체명 | 공고명 | 고용형태 · 연봉 | 접수기한 | 출처 |", "|---|---|---|---|---|"]
+        L += [f"| {('🆕 ' if is_new(p, now.date()) else '') + BADGE[p.hilite]}{md_cell(p.company)} | {md_cell(p.title)} | {p.employment}<br>{md_cell(salary_of(p))} "
+              f"| {deadline_md(p, now.date())} | [{p.source}]({p.url}) |" for p in big]
+    else:
+        L.append("_대기업 신입 공채 공고가 없습니다._")
+    L.append("")
     new = sorted([p for p in postings if is_new(p, now.date())], key=sort_key)
     L += [f"## 🆕 신규 공고 {len(new)}건 (지난 보고 {last_report_date(now.date()):%m/%d} 이후)", ""]
     if new:
-        L += ["| 업체명 | 공고명 | 고용형태 | 접수기한 | 출처 |", "|---|---|---|---|---|"]
-        L += [f"| {BADGE[p.hilite]}{md_cell(p.company)} | {md_cell(p.title)} | {p.employment} | {deadline_md(p, now.date())} | [{p.source}]({p.url}) |" for p in new]
+        L += ["| 업체명 | 공고명 | 고용형태 · 연봉 | 접수기한 | 출처 |", "|---|---|---|---|---|"]
+        L += [f"| {BADGE[p.hilite]}{md_cell(p.company)} | {md_cell(p.title)} | {p.employment}<br>{md_cell(salary_of(p))} | {deadline_md(p, now.date())} | [{p.source}]({p.url}) |" for p in new]
     else:
         L.append("_새로 추가된 공고가 없습니다._")
     L.append("")
@@ -1135,7 +1195,7 @@ def render_md(postings, failures, now, stats):
         if not rows:
             continue
         L += [f"## {tag} {len(rows)}건", ""]
-        L.append("| 구분 | 업체명 | 공고명 | 지원 자격 (학과·자격·영어·학력) | 우대 사항 | 접수기한 | 출처 |")
+        L.append("| 구분 · 연봉 | 업체명 | 공고명 | 지원 자격 (학과·자격·영어·학력) | 우대 사항 | 접수기한 | 출처 |")
         L.append("|---|---|---|---|---|---|---|")
         for p in rows:
             corp = ("🆕 " if is_new(p, now.date()) else "") + BADGE[p.hilite] + (f"**{md_cell(p.company)}**" if p.hilite else md_cell(p.company))
@@ -1146,7 +1206,7 @@ def render_md(postings, failures, now, stats):
             cert = f"**[{'·'.join(p.certs)} 명시]** " if p.certs else ""
             cert += f"🟣 **[{'·'.join(p.prefs)} 우대]** " if p.prefs else ""
             cert += "🤖 **[AI 우대]** " if p.extra.get("ai") else ""
-            L.append(f"| {md_cell(p.level)} · {md_cell(p.industry)} | {corp} | {md_cell(p.title)} | {cert}{md_cell(p.qualification)} "
+            L.append(f"| {md_cell(p.level)} · {md_cell(p.industry)}<br>{md_cell(salary_of(p))} | {corp} | {md_cell(p.title)} | {cert}{md_cell(p.qualification)} "
                      f"| {md_cell(p.preferred)} | {deadline_md(p, now.date())} | [{p.source}]({p.url}){' (이전 수집)' if p.extra.get('carried') else ''} |")
         L.append("")
     L += ["---", "", "**사이트별 수집 현황**", ""]
@@ -1240,6 +1300,13 @@ main{padding:20px;display:grid;gap:16px;min-width:0;max-width:1400px}
 .seg button:hover{background:var(--alt1)}
 .seg button[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:#FFFFFF}
 .scroll{overflow-x:auto;border:1px solid var(--border);border-radius:var(--r-sm)}
+/* 열 너비: 대기업 신입 공채·신규 공고(5열 .t5)와 본문 표(7열 .t7) */
+table.t5,table.t7{table-layout:fixed;overflow-wrap:anywhere}
+table.t5{min-width:920px} table.t7{min-width:1100px}
+.t5 th,.t7 th,.t5 td.lv,.t7 td.lv,.t5 td.dl,.t7 td.dl,.t5 td.src,.t7 td.src{white-space:normal}
+.t5 th:nth-child(1){width:20%}.t5 th:nth-child(2){width:32%}.t5 th:nth-child(3){width:26%}.t5 th:nth-child(4){width:14%}.t5 th:nth-child(5){width:8%}
+.t7 th:nth-child(1){width:9%}.t7 th:nth-child(2){width:15%}.t7 th:nth-child(3){width:20%}.t7 th:nth-child(4){width:20%}.t7 th:nth-child(5){width:16%}.t7 th:nth-child(6){width:12%}.t7 th:nth-child(7){width:8%}
+td.lv small.sal{color:var(--text-sub);font-weight:600}
 table{border-collapse:collapse;width:100%;min-width:1000px}
 th,td{padding:10px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--divider)}
 th{font-size:12px;font-weight:600;color:var(--caption);background:var(--alt1);white-space:nowrap}
@@ -1509,6 +1576,7 @@ def render_html(postings, failures, now, stats):
     n_ks = sum(p.extra.get("listed") == "코스피" for p in postings)
     n_kq = sum(p.extra.get("listed") == "코스닥" for p in postings)
     new_rows = sorted([p for p in postings if is_new(p, today)], key=sort_key)
+    big_rows = sorted([p for p in postings if is_bigcorp_entry(p)], key=sort_key)
     n_new = len(new_rows)
     failed = {n for n, _ in failures}
     ok_sites = len(SOURCES) - len(failed)
@@ -1587,6 +1655,9 @@ def render_html(postings, failures, now, stats):
     arrow = '<span class="arrow" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>'
     flow = arrow.join(f'<div class="step {c}"><span class="l">{e(l)}</span><span class="v">{v}</span></div>' for l, v, c in steps)
 
+    def sal_small(p):
+        return f'<small class="sal">{e(salary_of(p))}</small>'
+
     # 공고 표
     pill = {"A": '<span class="pill pa">데이터센터·하이테크·삼성·하이닉스</span>', "B": "", "F": "", "": ""}
     secs, nav = [], []
@@ -1594,7 +1665,7 @@ def render_html(postings, failures, now, stats):
         i = sid.get(key, "other")
         nav.append((i, tag, len(rows)))
         trs = "".join(
-            f'<tr class="h{p.hilite}" data-ind="{e(p.industry)}" data-cert="{1 if p.certs else 0}" data-pref="{1 if p.prefs else 0}" data-ai="{1 if p.extra.get("ai") else 0}" data-grp="{e(" ".join(p.extra.get("groups", [])))}" data-listed="{e(p.extra.get("listed", ""))}" data-new="{1 if is_new(p, today) else 0}"><td class="lv">{e(p.level)}<small>{e(p.industry)}</small></td>'
+            f'<tr class="h{p.hilite}" data-ind="{e(p.industry)}" data-cert="{1 if p.certs else 0}" data-pref="{1 if p.prefs else 0}" data-ai="{1 if p.extra.get("ai") else 0}" data-grp="{e(" ".join(p.extra.get("groups", [])))}" data-listed="{e(p.extra.get("listed", ""))}" data-new="{1 if is_new(p, today) else 0}"><td class="lv">{e(p.level)}<small>{e(p.industry)}</small>{sal_small(p)}</td>'
             f'<td class="corp"><strong><a class="co" href="{e(p.url)}" target="_blank" rel="noopener">{e(p.company or "-")}</a></strong>{new_pill(p, today)}{pill[p.hilite]}{group_pills(p)}{rank_pill(p)}</td>'
             f"<td class=\"ttl\">{e(p.title)}{pref_pills(p)}{ai_pill(p)}</td><td>{cert_pills(p)}{e(p.qualification or '-')}</td><td>{e(p.preferred or '-')}</td>"
             f'<td class="dl{" soon" if id(p) in soon else ""}">{e(p.deadline)}</td>'
@@ -1604,7 +1675,7 @@ def render_html(postings, failures, now, stats):
         secs.append(
             f'<section class="card grp" id="{i}"><h2>{e(tag)}<span class="n">{len(rows)}건</span></h2>'
             '<p class="empty" hidden>조건에 맞는 공고가 없습니다.</p>'
-            '<div class="scroll"><table><thead><tr><th>구분</th><th>업체명</th><th>공고명</th>'
+            '<div class="scroll"><table class="t7"><thead><tr><th>구분 · 연봉</th><th>업체명</th><th>공고명</th>'
             "<th>지원 자격 (학과·자격·영어·학력)</th><th>우대 사항</th><th>접수기한</th><th>출처</th></tr></thead>"
             f"<tbody>{trs}</tbody></table></div></section>")
 
@@ -1636,20 +1707,24 @@ def render_html(postings, failures, now, stats):
     careers = ('<section class="card" id="careers"><h2>기업 채용 페이지 현황<span class="n">한국 근무 HSE·EHS·Safety 공고 기준</span></h2>'
                '<div class="scroll"><table style="min-width:560px"><thead><tr><th>기업</th><th>상태</th><th>한국 HSE 공고</th><th>비고</th></tr></thead>'
                f'<tbody>{"".join(crows)}</tbody></table></div></section>') if crows else ""
-    nrows = "".join(
-        f'<tr class="h{p.hilite}"><td class="corp"><strong><a class="co" href="{e(p.url)}" target="_blank" rel="noopener">{e(p.company or "-")}</a></strong>'
-        f'{group_pills(p)}</td><td>{e(p.title)}</td><td class="lv">{e(p.employment)}<small>{e(p.level)}</small></td>'
-        f'<td class="dl{" soon" if id(p) in soon else ""}">{e(p.deadline)}</td><td class="src"><a href="{e(p.url)}" target="_blank" rel="noopener">{e(p.source)}</a></td></tr>'
-        for p in new_rows)
+    def rows5(rows, pill_new=False):
+        return "".join(
+            f'<tr class="h{p.hilite}"><td class="corp"><strong><a class="co" href="{e(p.url)}" target="_blank" rel="noopener">{e(p.company or "-")}</a></strong>'
+            f'{new_pill(p, today) if pill_new else ""}{group_pills(p)}</td><td>{e(p.title)}</td><td class="lv">{e(p.employment)}<small>{e(p.level)}</small>{sal_small(p)}</td>'
+            f'<td class="dl{" soon" if id(p) in soon else ""}">{e(p.deadline)}</td><td class="src"><a href="{e(p.url)}" target="_blank" rel="noopener">{e(p.source)}</a></td></tr>'
+            for p in rows)
+    head5 = '<div class="scroll"><table class="t5"><thead><tr><th>업체명</th><th>공고명</th><th>고용형태 · 연봉</th><th>접수기한</th><th>출처</th></tr></thead>'
     newsec = (f'<section class="card" id="new"><h2>신규 공고<span class="n">{n_new}건 · 지난 보고({last_report_date(today):%m/%d}) 이후 추가</span></h2>'
-              + ('<div class="scroll"><table style="min-width:720px"><thead><tr><th>업체명</th><th>공고명</th><th>고용형태</th><th>접수기한</th><th>출처</th></tr></thead>'
-                 f'<tbody>{nrows}</tbody></table></div>' if new_rows else '<p class="empty">새로 추가된 공고가 없습니다.</p>')
+              + (f'{head5}<tbody>{rows5(new_rows)}</tbody></table></div>' if new_rows else '<p class="empty">새로 추가된 공고가 없습니다.</p>')
               + '</section>')
-    side = ('<div class="sec">요약</div><a href="#new">신규 공고 <b>' + str(n_new) + '</b></a><a href="#summary">지표·차트</a><a href="#calendar">채용 달력</a><a href="#flow">수집 흐름</a>'
+    bigsec = (f'<section class="card" id="bigcorp"><h2>대기업 신입 공채<span class="n">{len(big_rows)}건</span></h2>'
+              + (f'{head5}<tbody>{rows5(big_rows, True)}</tbody></table></div>' if big_rows else '<p class="empty">대기업 신입 공채 공고가 없습니다.</p>')
+              + '</section>')
+    side = ('<div class="sec">요약</div><a href="#bigcorp">대기업 신입 공채 <b>' + str(len(big_rows)) + '</b></a><a href="#new">신규 공고 <b>' + str(n_new) + '</b></a><a href="#summary">지표·차트</a><a href="#calendar">채용 달력</a><a href="#flow">수집 흐름</a>'
             '<div class="sec">공고</div>' + "".join(f'<a href="#{i}">{e(t)} <b>{c}</b></a>' for i, t, c in nav)
             + '<div class="sec">수집</div><a href="#status">사이트 현황</a>'
             + ('<a href="#careers">기업 채용 페이지</a>' if crows else ""))
-    chipnav = f'<a href="#new">신규 {n_new}</a><a href="#calendar">채용 달력</a>' + "".join(f'<a href="#{i}">{e(t)} {c}</a>' for i, t, c in nav)
+    chipnav = f'<a href="#bigcorp">대기업 신입 공채 {len(big_rows)}</a><a href="#new">신규 {n_new}</a><a href="#calendar">채용 달력</a>' + "".join(f'<a href="#{i}">{e(t)} {c}</a>' for i, t, c in nav)
 
     return f"""<title>안전관리자 채용 브리핑</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1672,6 +1747,7 @@ def render_html(postings, failures, now, stats):
 <main>
 <nav class="chipnav" aria-label="섹션">{chipnav}<a href="#status">사이트 현황</a></nav>
 <div class="kpis" id="summary">{kpis}</div>
+{bigsec}
 {newsec}
 {render_calendar(postings, today)}
 <div class="charts">{charts}</div>
@@ -1729,6 +1805,8 @@ def carry_over(prev_path, failed, kept, stats, today):
             first = p.extra.get("first_seen") or prev_day
             if not first or (today - dt.date.fromisoformat(first)).days > UNDATED_KEEP_DAYS:
                 continue
+        if excluded_corp(p):  # 제외 업체명 재적용
+            continue
         if p.industry == "건설" and not p.extra.get("top100"):
             continue
         if senior_rank(p) or NON_HSE_SAFETY_RE.search(p.title):  # 대리급 이상·비HSE 제외 재적용
