@@ -1392,6 +1392,10 @@ tr.xon{outline:2px solid var(--error);outline-offset:-2px}
 .xbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;width:100%;padding-top:4px;border-top:1px solid var(--divider)}
 .xbar button{height:40px;padding:0 14px;border:1px solid var(--border-strong);border-radius:var(--r-sm);background:var(--surface);color:var(--text-sub);font:600 13px var(--font);cursor:pointer}
 .xbar button.danger{border-color:var(--error);color:var(--error)} .xbar button.danger:not(:disabled):hover{background:color-mix(in srgb,var(--error) 10%,var(--surface))}
+.xgrp{display:inline-flex;flex-wrap:wrap;align-items:center;gap:8px}
+.xconf{padding:4px 4px 4px 12px;border:1px solid var(--error);border-radius:var(--r-sm);background:color-mix(in srgb,var(--error) 6%,var(--surface))}
+.xconf #x-q{font-size:14px;font-weight:600;color:var(--text-strong)}
+.xbar button.danger.solid{background:var(--error);border-color:var(--error);color:#FFFFFF}
 .xbar button:disabled{opacity:.45;cursor:not-allowed}
 .xbar details summary{cursor:pointer;font-size:13px;color:var(--text-sub);font-weight:600}
 .xbar ul{margin:8px 0 0;padding:0;list-style:none;display:grid;gap:4px;max-height:240px;overflow:auto}
@@ -1606,19 +1610,30 @@ HTML_JS = """
     var u=ev.target.dataset.url, on=ev.target.checked;
     document.querySelectorAll('input.xsel').forEach(function(c){if(c.dataset.url===u)c.checked=on}); sync();}});
   clr.addEventListener('click',function(){sel().forEach(function(c){c.checked=false}); sync();});
-  del.addEventListener('click',async function(){
-    var pick={}; sel().forEach(function(c){pick[c.dataset.url]={url:c.dataset.url,company:c.dataset.company,title:c.dataset.title}});
-    var list=Object.keys(pick); if(!list.length) return;
-    del.disabled=true; say('삭제 중…');
+  var act=document.getElementById('x-act'), conf=document.getElementById('x-confirm'), qEl=document.getElementById('x-q'),
+      yes=document.getElementById('x-yes'), no=document.getElementById('x-no');
+  function picked(){var m={}; sel().forEach(function(c){m[c.dataset.url]={url:c.dataset.url,company:c.dataset.company,title:c.dataset.title}}); return m}
+  function askClose(){conf.hidden=true; act.hidden=false; del.focus()}
+  del.addEventListener('click',function(){
+    var n=Object.keys(picked()).length; if(!n) return;
+    qEl.textContent=n+'건을 다음 리포트부터 제외할까요?'; say('');
+    act.hidden=true; conf.hidden=false; yes.focus();
+  });
+  no.addEventListener('click',askClose);
+  conf.addEventListener('keydown',function(ev){if(ev.key==='Escape')askClose()});
+  yes.addEventListener('click',async function(){
+    var pick=picked(); var list=Object.keys(pick); if(!list.length){askClose(); return;}
+    yes.disabled=true; no.disabled=true; say('저장 중…');
     var done=0;
     for(var i=0;i<list.length;i++){
       var it=pick[list[i]]; it.at=new Date().toISOString();
-      if(col){ try{ await col.doc(hid(it.url)).set(it); done++; }catch(e){ say('저장하지 못했습니다 ('+(e&&e.code||'error')+'). 편집 권한이 있는 계정으로 열어 주세요.'); break; } }
+      if(col){ try{ await col.doc(hid(it.url)).set(it); ex[it.url]=it; done++; }catch(e){ say('저장하지 못했습니다 ('+(e&&e.code||'error')+'). 편집 권한이 있는 계정으로 열어 주세요.'); break; } }
       else { ex[it.url]=it; done++; }
     }
     if(!col){ saveLocal(); render(); say(done+'건을 이 브라우저에서 숨겼습니다. 다음 리포트에 반영하려면 게시된 브리핑 페이지에서 삭제하세요.'); }
-    else if(done===list.length){ say(done+'건 삭제 — 다음 리포트부터 제외됩니다.'); }
+    else { render(); if(done===list.length) say(done+'건을 제외했습니다 — 다음 리포트부터 빠집니다.'); }
     sel().forEach(function(c){c.checked=false}); sync();
+    yes.disabled=false; no.disabled=false; conf.hidden=true; act.hidden=false;
   });
   async function restore(u){
     if(col){ try{ await col.doc(hid(u)).delete(); say('복원했습니다. 다음 리포트부터 다시 수집합니다.'); }catch(e){ say('복원하지 못했습니다 ('+(e&&e.code||'error')+').'); } }
@@ -1982,8 +1997,10 @@ def render_html(postings, failures, now, stats):
     <button type="button" data-mode="soon" aria-pressed="false">3일 내 마감</button>
   </div>
   <div class="xbar" role="group" aria-label="선택 공고 삭제">
-    <button type="button" id="x-del" class="danger" disabled>선택 삭제 <b id="x-n">0</b></button>
-    <button type="button" id="x-clear" disabled>선택 해제</button>
+    <span id="x-act" class="xgrp"><button type="button" id="x-del" class="danger" disabled>선택 삭제 <b id="x-n">0</b></button>
+    <button type="button" id="x-clear" disabled>선택 해제</button></span>
+    <span id="x-confirm" class="xgrp xconf" role="group" aria-label="제외 확인" hidden><span id="x-q"></span>
+    <button type="button" id="x-yes" class="danger solid">제외 확정</button><button type="button" id="x-no">취소</button></span>
     <details id="x-list"><summary>삭제한 공고 <b id="x-cnt">0</b></summary><ul id="x-items"></ul></details>
     <span id="x-msg" class="note" role="status"></span>
   </div></div>
