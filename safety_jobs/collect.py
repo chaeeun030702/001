@@ -1212,6 +1212,23 @@ def _jk_starter_pay(f, cid):
     return f"{m.group(1)}만원", (y.group(1) if y else "")
 
 
+# 인터넷 조사로 확인한 신입 초봉 (잡코리아 값보다 우선). safety_jobs/starter_manual.json
+STARTER_MANUAL_PATH = Path(__file__).with_name("starter_manual.json")
+STARTER_MANUAL: dict = {}
+
+
+def load_starter_manual():
+    try:
+        items = json.loads(STARTER_MANUAL_PATH.read_text(encoding="utf-8")).get("items", [])
+    except (OSError, ValueError):
+        return
+    for it in items:
+        if it.get("pay"):
+            for name in [it.get("company", "")] + list(it.get("aliases", [])):
+                if norm_corp(name):
+                    STARTER_MANUAL[norm_corp(name)] = it
+
+
 def load_starter(cache: Path):
     try:
         STARTER.update(json.loads(cache.read_text(encoding="utf-8")))
@@ -1245,7 +1262,13 @@ def fill_starter(f, postings, today, cache: Path):
             print(f"[starter] {p.company}: {e}", file=sys.stderr)
             continue
         STARTER[key] = rec
+    load_starter_manual()
     for p in postings:
+        man = STARTER_MANUAL.get(norm_corp(p.company))
+        if man:  # 인터넷 조사 값 우선
+            p.extra["starter"] = f"신입 초봉 {man['pay']}" + (f" ({man['year']}, {man.get('source', '웹 조사')})" if man.get("year") else f" ({man.get('source', '웹 조사')})")
+            p.extra["starter_url"] = man.get("url", "")
+            continue
         hit = STARTER.get(norm_corp(p.company)) or {}
         p.extra["starter"] = (f"신입 초봉 {hit['pay']}" + (f" ({hit['year']})" if hit.get("year") else "")) if hit.get("pay") else ""
         if hit.get("pay"):
