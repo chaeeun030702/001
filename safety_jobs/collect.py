@@ -1131,6 +1131,81 @@ def salary_of(p):
     return NO_SALARY
 
 
+# ---------------------------------------------------------------- 기업별 신입사원 초봉 (잡코리아 기업 연봉정보)
+STARTER: dict = {}          # norm_corp(업체명) → {"id", "pay", "year", "checked"}
+STARTER_MAX_LOOKUPS = 160   # 실행당 새로 조회할 기업 수 (나머지는 다음 실행)
+STARTER_TTL_DAYS, STARTER_MISS_DAYS = 30, 14
+
+
+def _jk_company_id(f, name):
+    """잡코리아 기업 검색에서 업체명이 같은 기업의 urlId."""
+    q = re.sub(r"\(.*?\)|㈜|주식회사|유한회사", "", name).strip()
+    if not q:
+        return None
+    t = f.get(f"https://www.jobkorea.co.kr/Search/?stext={quote(q)}&tabType=corp", tries=2).replace('\\"', '"')
+    want = norm_corp(name)
+    for m in re.finditer(r'"name":"([^"]+)","businessNo":"[^"]*".{0,600}?"urlId":"(\d+)"', t):
+        if norm_corp(m.group(1)) == want:
+            return m.group(2)
+    return None
+
+
+def _jk_starter_pay(f, cid):
+    """기업 연봉정보 페이지의 '신입사원 초봉 N 만원'과 기준 연도."""
+    txt = soup_text(f.get(f"https://www.jobkorea.co.kr/company/{cid}/salary", tries=2))
+    m = re.search(r"신입\s*사원\s*초봉\s*([\d,]+)\s*만\s*원", txt)
+    if not m or m.group(1).replace(",", "") in ("", "0"):
+        return None, None
+    y = re.search(r"(20\d{2})년\s*기준", txt)
+    return f"{m.group(1)}만원", (y.group(1) if y else "")
+
+
+def load_starter(cache: Path):
+    try:
+        STARTER.update(json.loads(cache.read_text(encoding="utf-8")))
+    except (OSError, ValueError):
+        pass
+
+
+def fill_starter(f, postings, today, cache: Path):
+    """공고 업체별 신입 초봉을 채운다 (캐시 30일, 못 찾은 업체는 14일 뒤 재조회)."""
+    looked = 0
+    for p in postings:
+        key = norm_corp(p.company)
+        if not key or len(key) < 2:
+            continue
+        hit = STARTER.get(key)
+        if hit:
+            age = (today - dt.date.fromisoformat(hit["checked"])).days
+            if age <= (STARTER_TTL_DAYS if hit.get("pay") else STARTER_MISS_DAYS):
+                continue
+        if looked >= STARTER_MAX_LOOKUPS:
+            continue
+        looked += 1
+        rec = {"id": None, "pay": None, "year": "", "checked": today.isoformat()}
+        try:
+            rec["id"] = (hit or {}).get("id") or _jk_company_id(f, p.company)
+            if rec["id"]:
+                rec["pay"], rec["year"] = _jk_starter_pay(f, rec["id"])
+            time.sleep(0.3)
+        except Exception as e:
+            print(f"[starter] {p.company}: {e}", file=sys.stderr)
+            continue
+        STARTER[key] = rec
+    for p in postings:
+        hit = STARTER.get(norm_corp(p.company)) or {}
+        p.extra["starter"] = (f"신입 초봉 {hit['pay']}" + (f" ({hit['year']})" if hit.get("year") else "")) if hit.get("pay") else ""
+        if hit.get("pay"):
+            p.extra["starter_url"] = f"https://www.jobkorea.co.kr/company/{hit['id']}/salary"
+    cache.write_text(json.dumps(STARTER, ensure_ascii=False, indent=0), encoding="utf-8")
+    return looked
+
+
+def pay_text(p):
+    """표시용: 공고 기재 연봉 + 기업 신입 초봉."""
+    return " · ".join(x for x in (salary_of(p), p.extra.get("starter", "")) if x)
+
+
 BIGCORP_TITLE_RE = re.compile(r"공채|공개\s*채용|신입\s*사원|하반기\s*신입|채용\s*연계")
 
 
@@ -1177,7 +1252,7 @@ def render_md(postings, failures, now, stats):
     L += [f"## 🏢 대기업 신입 공채 {len(big)}건", ""]
     if big:
         L += ["| 업체명 | 공고명 | 고용형태 · 연봉 | 접수기한 | 출처 |", "|---|---|---|---|---|"]
-        L += [f"| {('🆕 ' if is_new(p, now.date()) else '') + BADGE[p.hilite]}{md_cell(p.company)} | {md_cell(p.title)} | {p.employment}<br>{md_cell(salary_of(p))} "
+        L += [f"| {('🆕 ' if is_new(p, now.date()) else '') + BADGE[p.hilite]}{md_cell(p.company)} | {md_cell(p.title)} | {p.employment}<br>{md_cell(pay_text(p))} "
               f"| {deadline_md(p, now.date())} | [{p.source}]({p.url}) |" for p in big]
     else:
         L.append("_대기업 신입 공채 공고가 없습니다._")
@@ -1186,7 +1261,7 @@ def render_md(postings, failures, now, stats):
     L += [f"## 🆕 신규 공고 {len(new)}건 (지난 보고 {last_report_date(now.date()):%m/%d} 이후)", ""]
     if new:
         L += ["| 업체명 | 공고명 | 고용형태 · 연봉 | 접수기한 | 출처 |", "|---|---|---|---|---|"]
-        L += [f"| {BADGE[p.hilite]}{md_cell(p.company)} | {md_cell(p.title)} | {p.employment}<br>{md_cell(salary_of(p))} | {deadline_md(p, now.date())} | [{p.source}]({p.url}) |" for p in new]
+        L += [f"| {BADGE[p.hilite]}{md_cell(p.company)} | {md_cell(p.title)} | {p.employment}<br>{md_cell(pay_text(p))} | {deadline_md(p, now.date())} | [{p.source}]({p.url}) |" for p in new]
     else:
         L.append("_새로 추가된 공고가 없습니다._")
     L.append("")
@@ -1206,7 +1281,7 @@ def render_md(postings, failures, now, stats):
             cert = f"**[{'·'.join(p.certs)} 명시]** " if p.certs else ""
             cert += f"🟣 **[{'·'.join(p.prefs)} 우대]** " if p.prefs else ""
             cert += "🤖 **[AI 우대]** " if p.extra.get("ai") else ""
-            L.append(f"| {md_cell(p.level)} · {md_cell(p.industry)}<br>{md_cell(salary_of(p))} | {corp} | {md_cell(p.title)} | {cert}{md_cell(p.qualification)} "
+            L.append(f"| {md_cell(p.level)} · {md_cell(p.industry)}<br>{md_cell(pay_text(p))} | {corp} | {md_cell(p.title)} | {cert}{md_cell(p.qualification)} "
                      f"| {md_cell(p.preferred)} | {deadline_md(p, now.date())} | [{p.source}]({p.url}){' (이전 수집)' if p.extra.get('carried') else ''} |")
         L.append("")
     L += ["---", "", "**사이트별 수집 현황**", ""]
@@ -1307,6 +1382,7 @@ table.t5{min-width:920px} table.t7{min-width:1100px}
 .t5 th:nth-child(1){width:20%}.t5 th:nth-child(2){width:32%}.t5 th:nth-child(3){width:26%}.t5 th:nth-child(4){width:14%}.t5 th:nth-child(5){width:8%}
 .t7 th:nth-child(1){width:9%}.t7 th:nth-child(2){width:15%}.t7 th:nth-child(3){width:20%}.t7 th:nth-child(4){width:20%}.t7 th:nth-child(5){width:16%}.t7 th:nth-child(6){width:12%}.t7 th:nth-child(7){width:8%}
 td.lv small.sal{color:var(--text-sub);font-weight:600}
+td.lv small.sal a.starter{color:var(--primary);text-decoration:none} td.lv small.sal a.starter:hover{text-decoration:underline}
 table{border-collapse:collapse;width:100%;min-width:1000px}
 th,td{padding:10px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--divider)}
 th{font-size:12px;font-weight:600;color:var(--caption);background:var(--alt1);white-space:nowrap}
@@ -1656,7 +1732,9 @@ def render_html(postings, failures, now, stats):
     flow = arrow.join(f'<div class="step {c}"><span class="l">{e(l)}</span><span class="v">{v}</span></div>' for l, v, c in steps)
 
     def sal_small(p):
-        return f'<small class="sal">{e(salary_of(p))}</small>'
+        st = p.extra.get("starter", "")
+        link = (f'<a class="starter" href="{e(p.extra.get("starter_url", ""))}" target="_blank" rel="noopener">{e(st)}</a>' if st else "")
+        return f'<small class="sal">{e(salary_of(p))}</small>' + (f'<small class="sal">{link}</small>' if link else "")
 
     # 공고 표
     pill = {"A": '<span class="pill pa">데이터센터·하이테크·삼성·하이닉스</span>', "B": "", "F": "", "": ""}
@@ -1971,6 +2049,9 @@ def main():
             seen_url.add(p.url)
             uniq_kept.append(p)
     kept[:] = uniq_kept
+    load_starter(out / "starter_salary.json")
+    n_look = fill_starter(f, kept, today, out / "starter_salary.json")
+    print(f"[starter] 신규 조회 {n_look}개사, 초봉 확인 {sum(bool(p.extra.get('starter')) for p in kept)}/{len(kept)}건", file=sys.stderr)
     md = render_md(kept, failures, now, stats)
     (out / f"{today:%Y-%m-%d}.md").write_text(md, encoding="utf-8")
     (out / "latest.md").write_text(md, encoding="utf-8")
