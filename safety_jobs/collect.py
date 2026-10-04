@@ -197,11 +197,14 @@ def soup_text(html_: str) -> str:
 
 class Fetcher:
     def __init__(self):
-        self.c = httpx.Client(headers=HEADERS, follow_redirects=True, timeout=40)
+        self.c = httpx.Client(headers=HEADERS, follow_redirects=True, timeout=25)
+        self.deadline = None  # 사이트 단위 시간 한도 (time.time() 기준)
 
     def get(self, url, encoding=None, tries=3):
         last = None
         for i in range(tries):
+            if self.deadline and time.time() > self.deadline:
+                raise TimeoutError("사이트 수집 시간 한도 초과")
             try:
                 r = self.c.get(url, headers={"Referer": url})
                 r.raise_for_status()
@@ -530,6 +533,8 @@ def _workday(f: Fetcher, name, tenant, wd, site, sector):
     found = {}
     for q in ("Korea", "EHS", "HSE", "Safety", "Environmental Health Safety", "안전"):
         for off in range(0, 200, 20):
+            if f.deadline and time.time() > f.deadline:
+                raise TimeoutError("사이트 수집 시간 한도 초과")
             r = f.c.post(api, json={"appliedFacets": {}, "limit": 20, "offset": off, "searchText": q},
                          headers={"Accept": "application/json", "Content-Type": "application/json"})
             r.raise_for_status()
@@ -2293,14 +2298,16 @@ def main():
     if n_ex:
         print(f"[excluded] 사용자 삭제 {n_ex}건 적용", file=sys.stderr)
     raw, failures, stats = [], [], {}
+    SOURCE_BUDGET = 420  # 사이트 하나에 최대 7분 (느린 사이트가 전체 실행을 막지 않게)
     for name, fn, _ in SOURCES:
         for attempt in (1, 2):
+            f.deadline = time.time() + SOURCE_BUDGET
             try:
                 raw.append((name, fn(f)))
                 break
             except Exception as e:  # 사이트 하나가 실패해도 나머지는 계속
                 client_err = isinstance(e, httpx.HTTPStatusError) and e.response.status_code < 500
-                if attempt == 1 and not client_err:
+                if attempt == 1 and not client_err and "시간 한도" not in str(e):
                     time.sleep(30)  # 사이트 단위로 한 번 더
                     continue
                 msg = f"{type(e).__name__}: {e}".splitlines()[0][:160]
@@ -2312,6 +2319,8 @@ def main():
                 stats[name] = "수집 실패"
                 break
 
+    f.deadline = None
+    t_detail_end = time.time() + 22 * 60  # 상세 조회 전체 한도 22분
     kept, n_detail = [], 0
     for name, found in raw:
         counts = {"목록": len(found), "채택": 0}
@@ -2325,7 +2334,7 @@ def main():
             if p.source in ("사람인", "워커", "피플앤잡") and lv.startswith("경력") and not NEWBIE_RE.search(lv):
                 counts["경력직"] = counts.get("경력직", 0) + 1
                 continue
-            if n_detail < args.max_detail:
+            if n_detail < args.max_detail and time.time() < t_detail_end:
                 for attempt in (1, 2):  # 상세 본문이 없으면 자격·우대·복지·연봉을 못 읽으므로 한 번 더 시도
                     try:
                         t = fetch_detail(f, p)
@@ -2365,7 +2374,7 @@ def main():
     carry_over(out / "latest.json", [n for n, _ in failures], kept, stats, today)
     # 본문 없이 실린 공고(이전 수집 포함)는 남은 한도 안에서 상세를 다시 읽어 복지·연봉·자격을 채운다
     for p in kept:
-        if n_detail >= args.max_detail:
+        if n_detail >= args.max_detail or time.time() > t_detail_end + 4 * 60:
             break
         if len(p.detail_text or "") >= 600 or p.url.startswith("manual:") or p.extra.get("posted") is not None:
             continue
