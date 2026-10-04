@@ -104,13 +104,10 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 <script>
 /* 작업 데이터 — 에이전트를 맡길 때마다 이 블록만 고친다 (progress: 0~100) */
 var JOB={
-  updated:"2026-10-04 21:20 KST",updatedISO:"2026-10-04T12:20:00Z",
-  main:{name:"메인 에이전트",task:"직무 확인 필요 그룹 추가 + 상세 본문 누락(건화정공 등) 수정",note:"#64는 45분 제한으로 중단됐고, 시간 한도를 넣은 재수집이 18분 만에 끝나 브리핑을 갱신했습니다."},
+  updated:"2026-10-05 08:47 KST",updatedISO:"2026-10-04T23:47:41Z",
+  main:{name:"메인 에이전트",task:"캐치 '안전' 검색 결과를 ChatGPT로 분석",note:"캐치는 이 환경의 접속을 403으로 막아, 웹 검색이 되는 ChatGPT(gpt-5-search-api)에 분석을 맡깁니다."},
   subs:[
-   {name:"공고 확인 에이전트 1",order:"하청 1",status:"done",progress:100,task:"한국가스기술공사·신세계그룹·한국서부발전·로옴코리아·SK에코플랜트 공고 링크·마감일 확인",label:"공고 확인",unit:"건",found:["한국가스기술공사","신세계그룹","한국서부발전","로옴코리아"],miss:["SK에코플랜트"]},
-   {name:"공고 확인 에이전트 2",order:"하청 2",status:"done",progress:100,task:"포스코이앤씨·우미건설·현대건설·한화토탈에너지스·롯데케미칼 공고 링크·마감일 확인",label:"공고 확인",unit:"건",found:["포스코이앤씨","현대건설","한화토탈에너지스","롯데케미칼"],miss:["우미건설"]},
-   {name:"수집 실행 #64",order:"하청 3",status:"fail",progress:100,task:"GitHub Actions — 직무 확인 필요 그룹 반영 수집",result:"45분 제한 초과로 중단(느린 사이트 대기) — 다음 실행에 포함"},
-   {name:"수집 실행 (재수집)",order:"하청 4",status:"done",progress:100,task:"직무 확인 필요 · 상세 한도 1600 · 본문 재조회 · 복지 표현 확대 · 시간 한도",result:"418건 수집 · 본문 없는 공고 74→5건 · 복지 표시 60→86건 · 직무 확인 필요 23건 · 건화정공 자녀학자금·노조 표시"}
+   {name:"ChatGPT (gpt-5-search-api)",order:"하청 1",status:"done",progress:100,task:"캐치 '안전' 검색 페이지 분석 — 진행 중 안전·보건·HSE 공고 표",label:"공고 확인",unit:"건",found:["한국산업안전보건공단","KG스틸","린데코리아"],miss:[]}
   ]
 };
 
