@@ -652,7 +652,33 @@ def src_catch(f: Fetcher):
     return out
 
 
+MANUAL_POSTINGS_PATH = Path(__file__).with_name("manual_postings.json")
+
+
+def src_manual(f: Fetcher):
+    """다른 브리핑·채용 달력에서 넘겨받은 공고 (safety_jobs/manual_postings.json). 직무 확인이 필요하면 표시."""
+    try:
+        items = json.loads(MANUAL_POSTINGS_PATH.read_text(encoding="utf-8")).get("items", [])
+    except (OSError, ValueError):
+        return []
+    out = []
+    for it in items:
+        if not it.get("company"):
+            continue
+        p = Posting("직접 추가", clean(it.get("title") or f"{it['company']} 채용"), clean(it["company"]),
+                    it.get("url") or f"manual:{it['company']}:{it.get('title', '')}", clean(it.get("title", "")))
+        p.deadline = it.get("deadline") or "확인 필요"
+        p.employment = it.get("employment") or ""
+        p.level = it.get("level") or "신입"
+        p.extra = {"manual": True, "needs_check": it.get("safety_job") != "yes",
+                   "check_note": it.get("note", ""), "via": it.get("via", "")}
+        out.append(p)
+    return out
+
+
 def fetch_detail(f: Fetcher, p: Posting) -> str:
+    if p.url.startswith("manual:"):
+        return ""
     if p.extra.get("detail_api"):  # Workday: JSON 상세
         r = f.c.get(p.extra["detail_api"], headers={"Accept": "application/json"})
         r.raise_for_status()
@@ -708,6 +734,7 @@ SOURCES = [
     ("기업 채용 페이지", src_company_careers, False),
     ("원티드", src_wanted, False),
     ("캐치", src_catch, False),
+    ("직접 추가", src_manual, False),
 ]
 
 
@@ -1079,6 +1106,26 @@ def user_excluded(p: Posting) -> bool:
     return p.url in EXCLUDED_URLS or _ex_key(p.company, p.title) in EXCLUDED_KEYS
 
 
+PUBLIC_NAME_RE = re.compile(r"(?:공사|공단|발전|공기업|진흥원|기술원)(?:\(주\)|㈜)?$|^한국")
+ENERGY_CHEM_RE = re.compile(r"에너지|화학|케미칼|정유|오일|가스|발전|석유|플랜트|원자력|전력")
+GONGCHAE_RE = re.compile(r"공채|공개\s*채용|신입\s*사원|하반기\s*(?:신입|채용)|대졸\s*신입|채용형\s*인턴")
+
+
+def needs_check_reason(p: Posting) -> str:
+    """안전 직무로 확정되진 않았지만 놓치면 안 되는 공고인가 → '직무 확인 필요'로 남긴다."""
+    name = re.sub(r"\s|\(주\)|㈜|주식회사", "", p.company or "")
+    focus = bool(p.extra.get("groups") or p.extra.get("listed") or p.extra.get("top100") or PUBLIC_NAME_RE.search(name))
+    if not focus:
+        return ""
+    t = (p.detail_text or "")[:12000]
+    text = " ".join([p.title, p.listing_text] + [section(t, h, 400) for h in (DUTY_HEAD, QUAL_HEAD, PREF_HEAD)])
+    if GONGCHAE_RE.search(p.title) and (p.industry == "건설" or ENERGY_CHEM_RE.search(f"{name} {p.extra.get('biz', '')}")):
+        return "건설·에너지 공채 — 안전 직무 포함 여부 확인 필요"
+    if p.extra.get("query") and SAFETY_RE.search(text):
+        return "안전 키워드에 걸렸지만 직무 확인 필요"
+    return ""
+
+
 def keep(p: Posting, today) -> tuple[bool, str]:
     if user_excluded(p):
         return False, "사용자 삭제"
@@ -1095,8 +1142,14 @@ def keep(p: Posting, today) -> tuple[bool, str]:
             return False, "채용 공고 아님"
         if not SAFETY_RE.search(f"{blob} {p.detail_text[:8000]}"):
             return False, "안전 직무 아님"
+    elif p.extra.get("manual"):
+        pass
     elif not relevant_after_detail(p):
-        return False, "안전 직무 아님"
+        why = needs_check_reason(p)
+        if not why:
+            return False, "안전 직무 아님"
+        p.extra["needs_check"] = True
+        p.extra["check_note"] = why
     if NON_HSE_SAFETY_RE.search(p.title):
         return False, "안전 직무 아님"
     if p.extra.get("need_korea") and not KOREA_LOC_RE.search(p.extra.get("loc", "")):
@@ -1338,6 +1391,16 @@ def render_md(postings, failures, now, stats):
     else:
         L.append("_대기업 신입 공채 공고가 없습니다._")
     L.append("")
+    chk = sorted([p for p in postings if p.extra.get("needs_check")], key=sort_key)
+    postings = [p for p in postings if not p.extra.get("needs_check")]
+    L += [f"## ⚠️ 직무 확인 필요 {len(chk)}건 (안전 키워드는 걸렸지만 안전 직무인지 원문 확인 필요)", ""]
+    if chk:
+        L += ["| 업체명 | 공고명 | 확인 사유 | 접수기한 | 출처 |", "|---|---|---|---|---|"]
+        L += [f"| {BADGE[p.hilite]}{md_cell(p.company)} | {md_cell(p.title)} | {md_cell(p.extra.get('check_note', ''))} | {deadline_md(p, now.date())} | "
+              + (f"[{p.source}]({p.url})" if not p.url.startswith("manual:") else p.source) + " |" for p in chk]
+    else:
+        L.append("_확인이 필요한 공고가 없습니다._")
+    L.append("")
     new = sorted([p for p in postings if is_new(p, now.date())], key=sort_key)
     L += [f"## 🆕 신규 공고 {len(new)}건 (지난 보고 {last_report_date(now.date()):%m/%d} 이후)", ""]
     if new:
@@ -1541,6 +1604,8 @@ td.src{white-space:nowrap}
 .ev .tg.n,.cal-legend .tgl .tg.n{color:var(--success)}
 .bnf{display:flex;flex-wrap:wrap;gap:0 4px;margin-top:2px}
 .pill.pw{margin:4px 0 0;border-color:var(--warning);background:color-mix(in srgb,var(--warning) 14%,transparent);color:var(--text-strong)} .pill.pw::before{background:var(--warning)}
+.pill.pck{margin:0 0 4px;border-color:var(--warning);color:var(--text-strong)} .pill.pck::before{background:var(--warning)}
+small.ckn{display:block;font-size:12px;color:var(--caption)}
 .pill.pai{margin:4px 4px 0 0;border-color:var(--orange);background:color-mix(in srgb,var(--orange) 12%,transparent);color:var(--text-strong)} .pill.pai::before{background:var(--orange)}
 .cal-legend .tgl .tg.ai{color:var(--orange)}
 .day details summary{font-size:12px;color:var(--primary);cursor:pointer;list-style:none} .day details summary::-webkit-details-marker{display:none}
@@ -1861,6 +1926,8 @@ def render_html(postings, failures, now, stats):
         return (dt.date.fromisoformat(p.deadline_date) - today).days if p.deadline_date else None
 
     soon = {id(p) for p in postings if days_left(p) is not None and days_left(p) <= 3}
+    check_rows = sorted([p for p in postings if p.extra.get("needs_check")], key=sort_key)
+    postings_all, postings = postings, [p for p in postings if not p.extra.get("needs_check")]
     groups = [(key, tag, sorted([p for p in postings if p.employment == key], key=sort_key)) for key, tag in GROUPS]
     groups = [g for g in groups if g[2]]
     sid = {"정규직": "regular", "계약직": "contract", "인턴": "intern"}
@@ -2017,7 +2084,20 @@ def render_html(postings, failures, now, stats):
     bigsec = (f'<section class="card" id="bigcorp"><h2>대기업 신입 공채<span class="n">{len(big_rows)}건</span></h2>'
               + (f'{head5}<tbody>{rows5(big_rows, True)}</tbody></table></div>' if big_rows else '<p class="empty">대기업 신입 공채 공고가 없습니다.</p>')
               + '</section>')
-    side = ('<div class="sec">요약</div><a href="#bigcorp">대기업 신입 공채 <b>' + str(len(big_rows)) + '</b></a><a href="#new">신규 공고 <b>' + str(n_new) + '</b></a><a href="#summary">지표·차트</a><a href="#calendar">채용 달력</a><a href="#flow">수집 흐름</a>'
+    crow = "".join(
+        f'<tr class="h{p.hilite}" data-url="{e(p.url)}">{xsel(p)}<td class="corp"><strong>'
+        + (f'<a class="co" href="{e(p.url)}" target="_blank" rel="noopener">{e(p.company or "-")}</a>' if not p.url.startswith("manual:") else e(p.company or "-"))
+        + f'</strong>{new_pill(p, today)}{group_pills(p)}</td><td>{e(p.title)}{benefit_pills(p)}</td>'
+        f'<td><span class="pill pck">직무 확인 필요</span><small class="ckn">{e(p.extra.get("check_note", ""))}</small></td>'
+        f'<td class="dl{" soon" if id(p) in soon else ""}">{e(p.deadline)}</td>'
+        + (f'<td class="src"><a href="{e(p.url)}" target="_blank" rel="noopener">{e(p.source)}</a>' if not p.url.startswith("manual:") else f'<td class="src">{e(p.source)}')
+        + (f'<small>{e(p.extra.get("via", ""))}</small>' if p.extra.get("via") else "") + '</td></tr>'
+        for p in check_rows)
+    checksec = (f'<section class="card" id="check"><h2>직무 확인 필요<span class="n">{len(check_rows)}건 · 안전 키워드는 걸렸지만 안전 직무인지 공고 원문 확인 필요</span></h2>'
+                + ('<div class="scroll"><table class="t5"><thead><tr>' + PICK_TH + '<th>업체명</th><th>공고명</th><th>확인 사유</th><th>접수기한</th><th>출처</th></tr></thead>'
+                   f'<tbody>{crow}</tbody></table></div>' if check_rows else '<p class="empty">확인이 필요한 공고가 없습니다.</p>')
+                + '</section>')
+    side = ('<div class="sec">요약</div><a href="#bigcorp">대기업 신입 공채 <b>' + str(len(big_rows)) + '</b></a><a href="#check">직무 확인 필요 <b>' + str(len(check_rows)) + '</b></a><a href="#new">신규 공고 <b>' + str(n_new) + '</b></a><a href="#summary">지표·차트</a><a href="#calendar">채용 달력</a><a href="#flow">수집 흐름</a>'
             '<div class="sec">공고</div>' + "".join(f'<a href="#{i}">{e(t)} <b>{c}</b></a>' for i, t, c in nav)
             + '<div class="sec">수집</div><a href="#status">사이트 현황</a>'
             + ('<a href="#careers">기업 채용 페이지</a>' if crows else ""))
@@ -2052,7 +2132,8 @@ def render_html(postings, failures, now, stats):
 <div class="kpis" id="summary">{kpis}</div>
 {bigsec}
 {newsec}
-{render_calendar(postings, today)}
+{checksec}
+{render_calendar(postings_all, today)}
 <div class="charts">{charts}</div>
 <div class="card" id="flow"><h2>수집에서 채택까지</h2><div class="flow">{flow}</div></div>
 <div class="card tools" role="search">
@@ -2236,7 +2317,7 @@ def main():
         counts = {"목록": len(found), "채택": 0}
         for p in found:
             # 목록 단계에서 명백히 무관한 것은 상세 조회 전에 거른다
-            if p.extra.get("posted") is None and relevant(p) is False:
+            if p.extra.get("posted") is None and not p.extra.get("manual") and relevant(p) is False:
                 counts["안전 직무 아님"] = counts.get("안전 직무 아님", 0) + 1
                 continue
             # 목록에 '경력 n년'만 있는 공고(사람인·워커)는 경력직으로 보고 상세 조회 없이 제외

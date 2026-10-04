@@ -20,10 +20,11 @@ description: 서브에이전트(Agent 도구)·병렬 조사·GitHub Actions 실
    - `JOB.subs[]`: 하청마다 `name`, `order`("하청 1"…), `status`, `progress`, `task`, 결과
      - `status`: `wait`(대기) · `run`(진행 중) · `done`(완료)
      - `progress`: 0~100. 알 수 없으면 시작 0, 실행 중 대략값, 끝나면 100
-     - 결과: 대상 목록이면 `found`(성공)·`miss`(실패) 배열, 아니면 `result` 한 줄 문자열
+     - 결과: 대상 목록이면 `found`(성공)·`miss`(실패) 배열(+ `label` 예: "초봉 확인", `unit` 예: "개사"), 아니면 `result` 한 줄 문자열
    - `JOB.updated`: "YYYY-MM-DD HH:MM KST"
    - 메인 진행률·상태는 서브 진행률 평균과 상태로 자동 계산된다 (직접 넣지 않는다).
 2. **게시**: Artifact 도구로 publish. 처음이면 `icon: "robot"`, 이후에는 같은 파일 경로(또는 같은 `url`)로 다시 publish해 같은 링크를 유지한다.
+2-1. **항상 열기**: 게시(갱신)할 때마다 Artifact 도구 `action: "open"`으로 작업현황 페이지를 사용자에게 연다.
 3. **진행 중**: 서브에이전트가 끝날 때마다 해당 카드를 `done`/100과 결과로 바꿔 다시 publish한다.
 4. **답변에 함께**: 매번 아래 형식의 표를 답변에 넣는다.
 

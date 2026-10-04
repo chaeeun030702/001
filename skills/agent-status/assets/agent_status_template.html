@@ -128,7 +128,7 @@ function prog(p,st){p=Math.max(0,Math.min(100,Math.round(p)));return '<div class
   html+='<div class="wire" aria-hidden="true"></div><div class="subs">';
   subs.forEach(function(s){
     var found=s.found||[], miss=s.miss||[], tot=found.length+miss.length;
-    var res=tot?'초봉 확인 <b>'+found.length+'</b> / '+tot+'개사':esc(s.result||'');
+    var res=tot?esc(s.label||'확인')+' <b>'+found.length+'</b> / '+tot+esc(s.unit||'건'):esc(s.result||'');
     html+='<article class="card" data-order="'+esc(s.order||'')+'">'+icon(s.status)+
       '<div class="nm"><span class="role">하청 · Sub</span><h3>'+esc(s.name)+'</h3><span class="st '+s.status+'">'+LABEL[s.status]+'</span></div>'+
       '<p class="task">'+esc(s.task)+'</p>'+prog(s.progress||0,s.status)+'<div class="res">'+res+'</div>';
