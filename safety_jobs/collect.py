@@ -2272,7 +2272,7 @@ def listed_market(p: Posting):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="briefings", help="출력 디렉터리")
-    ap.add_argument("--max-detail", type=int, default=500, help="상세 페이지 최대 조회 수")
+    ap.add_argument("--max-detail", type=int, default=1600, help="상세 페이지 최대 조회 수")
     args = ap.parse_args()
 
     now = dt.datetime.now(KST)
@@ -2326,16 +2326,21 @@ def main():
                 counts["경력직"] = counts.get("경력직", 0) + 1
                 continue
             if n_detail < args.max_detail:
-                try:
-                    t = fetch_detail(f, p)
-                    if p.extra.get("posted") is not None:  # 게시판: 메뉴 등 사이트 공통부 제거, 본문만
-                        i = t.find(p.title[:12])
-                        t = t[i:] if i >= 0 else t
-                    p.detail_text = t[:15000]
-                    n_detail += 1
-                    time.sleep(0.3)
-                except Exception as e:
-                    print(f"[detail] {p.url}: {e}", file=sys.stderr)
+                for attempt in (1, 2):  # 상세 본문이 없으면 자격·우대·복지·연봉을 못 읽으므로 한 번 더 시도
+                    try:
+                        t = fetch_detail(f, p)
+                        if p.extra.get("posted") is not None:  # 게시판: 메뉴 등 사이트 공통부 제거, 본문만
+                            i = t.find(p.title[:12])
+                            t = t[i:] if i >= 0 else t
+                        p.detail_text = t[:15000]
+                        n_detail += 1
+                        time.sleep(0.3)
+                        break
+                    except Exception as e:
+                        print(f"[detail] {p.url}: {e}", file=sys.stderr)
+                        time.sleep(2)
+            elif not p.url.startswith("manual:"):
+                counts["상세 미조회(한도)"] = counts.get("상세 미조회(한도)", 0) + 1
             analyze(p, today)
             ok, why = keep(p, today)
             if not ok:
@@ -2358,6 +2363,31 @@ def main():
     except (OSError, ValueError):
         PREV_TOTAL = None
     carry_over(out / "latest.json", [n for n, _ in failures], kept, stats, today)
+    # 본문 없이 실린 공고(이전 수집 포함)는 남은 한도 안에서 상세를 다시 읽어 복지·연봉·자격을 채운다
+    for p in kept:
+        if n_detail >= args.max_detail:
+            break
+        if len(p.detail_text or "") >= 600 or p.url.startswith("manual:") or p.extra.get("posted") is not None:
+            continue
+        try:
+            t = fetch_detail(f, p)
+        except Exception as e:
+            print(f"[detail-refill] {p.url}: {e}", file=sys.stderr)
+            continue
+        n_detail += 1
+        if len(t) <= len(p.detail_text or ""):
+            continue
+        p.detail_text = t[:15000]
+        p.extra["benefits"] = benefits_of(f"{p.listing_text} {t}")
+        p.extra.pop("salary", None)
+        sal = salary_of(p)
+        p.extra["salary"] = "" if sal == NO_SALARY else sal
+        if not p.qualification or p.qualification == "-":
+            p.qualification = summarize_qual(section(t, QUAL_HEAD), t[:6000])
+        if not p.preferred:
+            pref = section(t, PREF_HEAD, 180)
+            p.preferred = pref[:110] if pref else ""
+        time.sleep(0.3)
     uniq_kept, seen_url = [], set()  # 같은 공고(URL) 중복 방지
     for p in kept:
         if p.url not in seen_url:
