@@ -1,0 +1,15 @@
+{
+  "_comment": "NotebookLM MCP (alfredang/notebooklm-mcp) 등록용 샘플. <UV_경로>와 <프로젝트_경로>를 실제 값으로 교체하세요. Claude Desktop은 claude_desktop_config.json에, Claude Code는 프로젝트 .mcp.json 또는 `claude mcp add`로 등록합니다.",
+  "mcpServers": {
+    "notebooklm": {
+      "command": "<UV_경로>",
+      "args": [
+        "--directory",
+        "<프로젝트_경로>",
+        "run",
+        "python",
+        "server.py"
+      ]
+    }
+  }
+}
