@@ -24,7 +24,7 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 .when{font:500 12px var(--mono);color:var(--sub)}
 .legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--sub)}
 .legend span::before{content:"";display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px;vertical-align:0}
-.legend .l-done::before{background:var(--ok)} .legend .l-run::before{background:var(--run)} .legend .l-wait::before{background:var(--wait)}
+.legend .l-done::before{background:var(--ok)} .legend .l-run::before{background:var(--run)} .legend .l-wait::before{background:var(--wait)} .legend .l-fail::before{background:var(--err,#E63B3B)}
 
 /* 카드 공통 */
 .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 14px;align-items:start;position:relative}
@@ -37,7 +37,8 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 .nm h2,.nm h3{margin:0;font-weight:700}
 .role{font:700 10px var(--mono);letter-spacing:.08em;color:var(--sub);text-transform:uppercase}
 .st{font:700 11px var(--mono);letter-spacing:.04em;padding:2px 8px;border-radius:6px;color:#fff}
-.st.done{background:var(--ok)} .st.run{background:var(--run)} .st.wait{background:var(--wait)}
+.st.done{background:var(--ok)} .st.run{background:var(--run)} .st.wait{background:var(--wait)} .st.fail{background:var(--err,#E63B3B)}
+.bar i.fail{background:var(--err,#E63B3B)}
 .task{font-size:13px;color:var(--sub);margin:0;min-width:0}
 .prog{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px}
 .bar{height:10px;border-radius:9999px;background:var(--line);overflow:hidden}
@@ -94,7 +95,7 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 <div class="wrap">
 <header>
   <div><h1>에이전트 작업현황</h1><div class="when"><span id="when"></span> · <span class="live" id="live">LIVE</span> <span id="ago"></span></div></div>
-  <div class="legend"><span class="l-done">완료</span><span class="l-run">진행 중</span><span class="l-wait">대기</span></div>
+  <div class="legend"><span class="l-done">완료</span><span class="l-run">진행 중</span><span class="l-wait">대기</span><span class="l-fail">중단</span></div>
 </header>
 <div class="org" id="org"></div>
 <p class="note" id="note"></p>
@@ -116,10 +117,10 @@ var JOB={
   ]
 };
 
-var LABEL={done:"완료",run:"진행 중",wait:"대기"};
+var LABEL={done:"완료",run:"진행 중",wait:"대기",fail:"중단"};
 function esc(t){var d=document.createElement('div');d.textContent=t==null?'':String(t);return d.innerHTML}
 function icon(st){return '<div class="av '+(st==='run'?'run':'')+'"><svg viewBox="0 0 18 10" role="img" aria-label="에이전트"><use href="#clawd"/></svg></div>'}
-function prog(p,st,key){p=Math.max(0,Math.min(100,Math.round(p)));return '<div class="prog" data-k="'+key+'" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+p+'"><div class="bar"><i class="'+(st==='done'?'done':'')+'" style="width:'+p+'%"></i></div><span class="pct">'+p+'%</span></div>'}
+function prog(p,st,key){p=Math.max(0,Math.min(100,Math.round(p)));return '<div class="prog" data-k="'+key+'" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+p+'"><div class="bar"><i class="'+(st==='done'?'done':st==='fail'?'fail':'')+'" style="width:'+p+'%"></i></div><span class="pct">'+p+'%</span></div>'}
 /* 실시간: 진행 중 하청에 startedAt(ISO)·etaMin이 있으면 경과 시간으로 진행률을 매초 계산 (완료 전에는 최대 95%) */
 function liveP(s,now){if(s.status!=='run'||!s.startedAt||!s.etaMin)return +s.progress||0;var el=(now-Date.parse(s.startedAt))/60000;return Math.max(+s.progress||0,Math.min(95,el/s.etaMin*100))}
 function fmtEl(ms){var t=Math.max(0,Math.floor(ms/1000)),m=Math.floor(t/60),x=t%60;return m+'분 '+(x<10?'0':'')+x+'초'}

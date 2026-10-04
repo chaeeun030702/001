@@ -18,7 +18,7 @@ description: 서브에이전트(Agent 도구)·병렬 조사·GitHub Actions 실
 1. **시작할 때**: `assets/agent_status_template.html`을 복사해(이미 게시한 페이지가 있으면 그 파일을 그대로 고쳐) 맨 아래 `JOB` 데이터만 바꾼다.
    - `JOB.main`: `name`, `task`(전체 목표), `note`(한두 문장 요약)
    - `JOB.subs[]`: 하청마다 `name`, `order`("하청 1"…), `status`, `progress`, `task`, 결과
-     - `status`: `wait`(대기) · `run`(진행 중) · `done`(완료)
+     - `status`: `wait`(대기) · `run`(진행 중) · `done`(완료) · `fail`(중단)
      - `progress`: 0~100. 알 수 없으면 시작 0, 실행 중 대략값, 끝나면 100
      - 결과: 대상 목록이면 `found`(성공)·`miss`(실패) 배열(+ `label` 예: "초봉 확인", `unit` 예: "개사"), 아니면 `result` 한 줄 문자열
    - `JOB.updated`: "YYYY-MM-DD HH:MM KST", `JOB.updatedISO`: 같은 시각의 ISO(UTC) — '마지막 갱신 n초 전' 표시
