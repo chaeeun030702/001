@@ -21,7 +21,9 @@ description: 서브에이전트(Agent 도구)·병렬 조사·GitHub Actions 실
      - `status`: `wait`(대기) · `run`(진행 중) · `done`(완료)
      - `progress`: 0~100. 알 수 없으면 시작 0, 실행 중 대략값, 끝나면 100
      - 결과: 대상 목록이면 `found`(성공)·`miss`(실패) 배열(+ `label` 예: "초봉 확인", `unit` 예: "개사"), 아니면 `result` 한 줄 문자열
-   - `JOB.updated`: "YYYY-MM-DD HH:MM KST"
+   - `JOB.updated`: "YYYY-MM-DD HH:MM KST", `JOB.updatedISO`: 같은 시각의 ISO(UTC) — '마지막 갱신 n초 전' 표시
+   - **실시간**: 진행 중 하청에 `startedAt`(ISO)·`etaMin`(예상 분)을 넣으면 페이지가 매초 경과 시간·진행률(최대 95%)을 갱신하고 헤더에 LIVE 표시가 뜬다.
+     게시한 새 버전은 열려 있는 화면에 자동 반영되므로, 상태가 바뀔 때마다 다시 publish 한다.
    - 메인 진행률·상태는 서브 진행률 평균과 상태로 자동 계산된다 (직접 넣지 않는다).
 2. **게시**: Artifact 도구로 publish. 처음이면 `icon: "robot"`, 이후에는 같은 파일 경로(또는 같은 `url`)로 다시 publish해 같은 링크를 유지한다.
 2-1. **항상 열기**: 게시(갱신)할 때마다 Artifact 도구 `action: "open"`으로 작업현황 페이지를 사용자에게 연다.

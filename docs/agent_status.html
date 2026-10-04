@@ -69,6 +69,12 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
   .subs .card::after{display:none}
 }
 .note{font-size:12px;color:var(--sub);margin:0;max-width:72ch}
+.live{display:inline-flex;align-items:center;gap:6px;font:700 11px var(--mono);letter-spacing:.06em;color:var(--run);padding:2px 8px;border:1px solid var(--run);border-radius:9999px}
+.live::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--run);animation:blink 1.4s infinite}
+.live.off{color:var(--sub);border-color:var(--line)} .live.off::before{background:var(--wait);animation:none}
+@keyframes blink{50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.live::before{animation:none}}
+.eta{font:500 12px var(--mono);color:var(--sub);font-variant-numeric:tabular-nums}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -87,7 +93,7 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 
 <div class="wrap">
 <header>
-  <div><h1>에이전트 작업현황</h1><div class="when" id="when"></div></div>
+  <div><h1>에이전트 작업현황</h1><div class="when"><span id="when"></span> · <span class="live" id="live">LIVE</span> <span id="ago"></span></div></div>
   <div class="legend"><span class="l-done">완료</span><span class="l-run">진행 중</span><span class="l-wait">대기</span></div>
 </header>
 <div class="org" id="org"></div>
@@ -97,19 +103,22 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 <script>
 /* 작업 데이터 — 에이전트를 맡길 때마다 이 블록만 고친다 (progress: 0~100) */
 var JOB={
-  updated:"2026-10-04 08:55 KST",
+  updated:"2026-10-04 20:27 KST",updatedISO:"2026-10-04T11:27:00Z",
   main:{name:"메인 에이전트",task:"직무 확인 필요 공고 10건 추가 + 수집기에 '직무 확인 필요' 그룹 반영",note:"서브에이전트 2곳에 공고 5건씩 링크·마감일 확인을 맡기고, 그동안 수집기를 고칩니다."},
   subs:[
    {name:"공고 확인 에이전트 1",order:"하청 1",status:"done",progress:100,task:"한국가스기술공사·신세계그룹·한국서부발전·로옴코리아·SK에코플랜트 공고 링크·마감일 확인",label:"공고 확인",unit:"건",found:["한국가스기술공사","신세계그룹","한국서부발전","로옴코리아"],miss:["SK에코플랜트"]},
    {name:"공고 확인 에이전트 2",order:"하청 2",status:"done",progress:100,task:"포스코이앤씨·우미건설·현대건설·한화토탈에너지스·롯데케미칼 공고 링크·마감일 확인",label:"공고 확인",unit:"건",found:["포스코이앤씨","현대건설","한화토탈에너지스","롯데케미칼"],miss:["우미건설"]},
-   {name:"수집 실행",order:"하청 3",status:"run",progress:5,task:"GitHub Actions — 직무 확인 필요 그룹 반영 수집",result:"코드 반영 후 시작"}
+   {name:"수집 실행",order:"하청 3",status:"run",progress:5,startedAt:"2026-10-04T11:15:36Z",etaMin:12,task:"GitHub Actions — 직무 확인 필요 그룹 반영 수집",result:"코드 반영 후 시작"}
   ]
 };
 
 var LABEL={done:"완료",run:"진행 중",wait:"대기"};
 function esc(t){var d=document.createElement('div');d.textContent=t==null?'':String(t);return d.innerHTML}
 function icon(st){return '<div class="av '+(st==='run'?'run':'')+'"><svg viewBox="0 0 18 10" role="img" aria-label="에이전트"><use href="#clawd"/></svg></div>'}
-function prog(p,st){p=Math.max(0,Math.min(100,Math.round(p)));return '<div class="prog" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+p+'"><div class="bar"><i class="'+(st==='done'?'done':'')+'" style="width:'+p+'%"></i></div><span class="pct">'+p+'%</span></div>'}
+function prog(p,st,key){p=Math.max(0,Math.min(100,Math.round(p)));return '<div class="prog" data-k="'+key+'" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+p+'"><div class="bar"><i class="'+(st==='done'?'done':'')+'" style="width:'+p+'%"></i></div><span class="pct">'+p+'%</span></div>'}
+/* 실시간: 진행 중 하청에 startedAt(ISO)·etaMin이 있으면 경과 시간으로 진행률을 매초 계산 (완료 전에는 최대 95%) */
+function liveP(s,now){if(s.status!=='run'||!s.startedAt||!s.etaMin)return +s.progress||0;var el=(now-Date.parse(s.startedAt))/60000;return Math.max(+s.progress||0,Math.min(95,el/s.etaMin*100))}
+function fmtEl(ms){var t=Math.max(0,Math.floor(ms/1000)),m=Math.floor(t/60),x=t%60;return m+'분 '+(x<10?'0':'')+x+'초'}
 (function(){
   var subs=JOB.subs, n=subs.length;
   var total=n?subs.reduce(function(a,s){return a+(+s.progress||0)},0)/n:0;
@@ -119,19 +128,29 @@ function prog(p,st){p=Math.max(0,Math.min(100,Math.round(p)));return '<div class
   document.getElementById('when').textContent=JOB.updated+' 기준';
   var html='<article class="card main">'+icon(mainSt)+
     '<div class="nm"><span class="role">발주 · Main</span><h2>'+esc(JOB.main.name)+'</h2><span class="st '+mainSt+'">'+LABEL[mainSt]+'</span></div>'+
-    '<p class="task">'+esc(JOB.main.task)+'</p>'+prog(total,mainSt)+
+    '<p class="task">'+esc(JOB.main.task)+'</p>'+prog(total,mainSt,'main')+
     '<div class="res">서브에이전트 <b>'+n+'</b> · 완료 <b>'+done+'</b> · 진행 중 <b>'+run+'</b> · 대기 <b>'+(n-done-run)+'</b></div></article>';
   html+='<div class="wire" aria-hidden="true"></div><div class="subs">';
-  subs.forEach(function(s){
+  subs.forEach(function(s,si){
     var found=s.found||[], miss=s.miss||[], tot=found.length+miss.length;
     var res=tot?esc(s.label||'확인')+' <b>'+found.length+'</b> / '+tot+esc(s.unit||'건'):esc(s.result||'');
     html+='<article class="card" data-order="'+esc(s.order||'')+'">'+icon(s.status)+
       '<div class="nm"><span class="role">하청 · Sub</span><h3>'+esc(s.name)+'</h3><span class="st '+s.status+'">'+LABEL[s.status]+'</span></div>'+
-      '<p class="task">'+esc(s.task)+'</p>'+prog(s.progress||0,s.status)+'<div class="res">'+res+'</div>';
+      '<p class="task">'+esc(s.task)+'</p>'+prog(s.progress||0,s.status,'s'+si)+'<div class="res">'+res+'</div>'+(s.status==='run'&&s.startedAt?'<div class="eta" data-e="'+si+'"></div>':'');
     if(tot){html+='<ul class="cos">'+found.map(function(c){return '<li class="hit">'+esc(c)+'</li>'}).join('')+miss.map(function(c){return '<li>'+esc(c)+'</li>'}).join('')+'</ul>'}
     html+='</article>';
   });
   document.getElementById('org').innerHTML=html+'</div>';
+  function tick(){
+    var now=Date.now(), ps=subs.map(function(s){return liveP(s,now)}), avg=n?ps.reduce(function(a,b){return a+b},0)/n:0;
+    function set(k,v){var el=document.querySelector('.prog[data-k="'+k+'"]'); if(!el)return; v=Math.round(v); el.setAttribute('aria-valuenow',v); el.querySelector('i').style.width=v+'%'; el.querySelector('.pct').textContent=v+'%'}
+    ps.forEach(function(v,i){set('s'+i,v)}); set('main',avg);
+    subs.forEach(function(s,i){var e=document.querySelector('.eta[data-e="'+i+'"]'); if(e) e.textContent='경과 '+fmtEl(now-Date.parse(s.startedAt))+(s.etaMin?' · 예상 약 '+s.etaMin+'분':'')});
+    var up=Date.parse(JOB.updatedISO||''), ago=document.getElementById('ago'), live=document.getElementById('live');
+    if(!isNaN(up)){ago.textContent='마지막 갱신 '+fmtEl(now-up)+' 전'}
+    live.classList.toggle('off',!run); live.textContent=run?'LIVE':'대기 없음';
+  }
+  tick(); if(run) setInterval(tick,1000);
   document.getElementById('note').textContent=JOB.main.note+' 주황색은 결과를 찾아 반영한 항목입니다.';
 })();
 </script>
