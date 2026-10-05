@@ -415,7 +415,8 @@ button.req.on{background:var(--primary);color:var(--surface)} button.req:disable
 SCRIPT = r"""<script>
 (function(){
  function len(t){return t.replace(/\n/g,"").length}
- function text(el){return Array.from(el.querySelectorAll("p")).map(function(p){return p.innerText.trim()}).filter(Boolean).join("\n\n")||el.innerText.trim()}
+ function raw(e){return e.innerText||e.textContent||""}  // 접힌 <details> 안에서는 innerText 가 빈 문자열
+ function text(el){return Array.from(el.querySelectorAll("p")).map(function(p){return raw(p).trim()}).filter(Boolean).join("\n\n")||raw(el).trim()}
  document.querySelectorAll(".q").forEach(function(q,i){
   var a=q.querySelector(".ans"),lim=+a.dataset.limit,key="cl:"+(q.closest(".draft")||{}).id+":"+i;
   try{var s=localStorage.getItem(key);if(s)a.innerHTML=s}catch(e){}
@@ -423,6 +424,7 @@ SCRIPT = r"""<script>
    q.querySelector(".meter i").style.width=Math.min(100,r*100)+"%";q.classList.remove("ok","low","over");
    var st=q.querySelector(".state");if(r>1){q.classList.add("over");st.textContent="초과 "+(n-lim)+"자"}else if(r>=.8){q.classList.add("ok");st.textContent="적정"}else{q.classList.add("low");st.textContent="부족"}}
   a.addEventListener("input",function(){upd();try{localStorage.setItem(key,a.innerHTML)}catch(e){}});upd();
+  var dd=q.closest("details");if(dd)dd.addEventListener("toggle",function(){if(dd.open)upd()});
   var b=q.querySelector("button.copy");b.addEventListener("click",function(){var t=text(a);
    function done(){b.textContent="복사됨";setTimeout(function(){b.textContent="답변 복사"},1500)}
    function sel(){var r=document.createRange();r.selectNodeContents(a);var s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent="선택됨 · Ctrl+C"}
