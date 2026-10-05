@@ -1408,6 +1408,18 @@ def is_bigcorp_entry(p):
 
 BADGE = {"A": "🔴 ", "B": "🔵 ", "F": "🌐 ", "": ""}
 GROUPS = [("정규직", "[정규직]"), ("계약직", "[계약직]"), ("인턴", "[인턴]"), ("기타/미표기", "[고용형태 미표기]")]
+SARAMIN_TODAY = ("사람인 오늘", "[사람인 · 오늘 찾은 신규]")
+
+
+def employment_groups(postings, today):
+    """공고 표 묶음. 사람인은 오늘 처음 찾은 공고를 따로 모으고, 나머지는 정규직·계약직·(인턴)·고용형태 미표기로 나눈다."""
+    t = today.isoformat()
+    fresh = [p for p in postings if p.source == "사람인" and p.extra.get("first_seen") == t]
+    ids = {id(p) for p in fresh}
+    rest = [p for p in postings if id(p) not in ids]
+    out = [(SARAMIN_TODAY[0], SARAMIN_TODAY[1], sorted(fresh, key=sort_key))]
+    out += [(key, tag, sorted([p for p in rest if p.employment == key], key=sort_key)) for key, tag in GROUPS]
+    return [g for g in out if g[2]]
 LEGEND = ("🔴 데이터센터·하이테크·삼성·하이닉스 관련 · 🔵 대기업 계열사 · 🌐 외국계 회사 (여럿 해당하면 🔴 > 🔵 > 🌐, 업체명 옆에 [대기업 계열]/[외국계] 표기) · "
           "🟣 외국어·영어 능통 / NEBOSH / IOSH / CSP 우대 (🔴·🔵와 함께 표시될 수 있음) · [코스피]/[코스닥] 상장사 · 🤖 AI 역량 우대")
 
@@ -1466,10 +1478,7 @@ def render_md(postings, failures, now, stats):
     else:
         L.append("_새로 추가된 공고가 없습니다._")
     L.append("")
-    for key, tag in GROUPS:
-        rows = sorted([p for p in postings if p.employment == key], key=sort_key)
-        if not rows:
-            continue
+    for key, tag, rows in employment_groups(postings, now.date()):
         L += [f"## {tag} {len(rows)}건", ""]
         L.append("| 구분 · 연봉 | 업체명 | 공고명 | 지원 자격 (학과·자격·영어·학력) | 우대 사항 | 접수기한 | 출처 |")
         L.append("|---|---|---|---|---|---|---|")
@@ -1985,9 +1994,8 @@ def render_html(postings, failures, now, stats):
     soon = {id(p) for p in postings if days_left(p) is not None and days_left(p) <= 3}
     check_rows = sorted([p for p in postings if p.extra.get("needs_check")], key=sort_key)
     postings_all, postings = postings, [p for p in postings if not p.extra.get("needs_check")]
-    groups = [(key, tag, sorted([p for p in postings if p.employment == key], key=sort_key)) for key, tag in GROUPS]
-    groups = [g for g in groups if g[2]]
-    sid = {"정규직": "regular", "계약직": "contract", "인턴": "intern"}
+    groups = employment_groups(postings, today)
+    sid = {SARAMIN_TODAY[0]: "saramin-today", "정규직": "regular", "계약직": "contract", "인턴": "intern"}
     n_a = sum(p.hilite == "A" for p in postings)
     n_b = sum("대기업 계열" in p.extra.get("groups", []) for p in postings)
     n_f = sum("외국계" in p.extra.get("groups", []) for p in postings)
