@@ -1,1 +1,1666 @@
-{"items": []}
+{
+ "items": [
+  {
+   "url": "https://linkareer.com/activity/353542",
+   "company": "SK텔레콤",
+   "title": "[SK텔레콤] 5G무선통신망 구축 현장 안전관리자",
+   "at": "2026-10-03T22:08:51.347Z"
+  },
+  {
+   "url": "https://linkareer.com/activity/353096",
+   "company": "현대자동차",
+   "title": "[현대자동차] [계약직] 이동식 안전체험관 운영 및 보조",
+   "at": "2026-10-03T22:08:51.851Z"
+  },
+  {
+   "url": "https://linkareer.com/activity/354617",
+   "company": "LG유플러스",
+   "title": "[LG유플러스] [NW부문] 보건관리자 계약직 채용",
+   "at": "2026-10-03T22:08:52.217Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55086631",
+   "company": "(주)호반티비엠",
+   "title": "2027 신입사원 채용 (TBM(안전))",
+   "at": "2026-10-03T22:08:52.632Z"
+  },
+  {
+   "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/50043045?Oem_Code=C1",
+   "company": "㈜방주산업",
+   "title": "[용인,평택,아산탕정] 삼성반도체 안전담당자 모집",
+   "at": "2026-10-03T22:08:52.998Z"
+  },
+  {
+   "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/50060213?Oem_Code=C1",
+   "company": "제이에스테크",
+   "title": "한화오션,삼성중공업,국방부 협력사 사내 화재감시 및 안...",
+   "at": "2026-10-03T22:08:53.356Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54971101",
+   "company": "(주)삼호이앤에프",
+   "title": "소방전기공사 안전관리자 채용 경력무관 (평택 고덕 삼성 현장)",
+   "at": "2026-10-03T22:08:53.709Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55063240",
+   "company": "금호건설(주)",
+   "title": "[금호건설(주) 하남교산 현장] 안전관리자 모집합니다.",
+   "at": "2026-10-03T22:08:54.095Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55164666",
+   "company": "(주)포스코이앤씨",
+   "title": "[포스코이앤씨] 서울 성북구 정릉 현장 안전지원직",
+   "at": "2026-10-03T22:08:54.480Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55187169",
+   "company": "(주)호반건설",
+   "title": "(주)호반건설(광주첨단3 A7현장) 소방안전관리자 채용 공고",
+   "at": "2026-10-03T22:08:54.856Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55187866",
+   "company": "코오롱글로벌(주)",
+   "title": "코오롱글로벌(주) 안전관리자 보조원 채용 공고",
+   "at": "2026-10-03T22:14:20.738Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55191053",
+   "company": "코오롱글로벌(주)",
+   "title": "[건설현장소방안전관리자] 강북구 번동1-5구역 가로주택정비사업",
+   "at": "2026-10-03T22:14:21.099Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55187933",
+   "company": "금호건설(주)",
+   "title": "금호건설(주) [평택전력구 2공구] 안전관리자 모집",
+   "at": "2026-10-03T22:14:21.478Z"
+  },
+  {
+   "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/50025585?Oem_Code=C1",
+   "company": "한화호텔앤드리조트㈜",
+   "title": "한화호텔&리조트 설악 워터피아 (마케팅(기획), 수상안전...",
+   "at": "2026-10-03T22:14:21.860Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55176922",
+   "company": "케이씨(주)",
+   "title": "[대주KC그룹] 케이씨 환경안전팀 안전보건관리자 모집",
+   "at": "2026-10-03T22:14:22.242Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55190332",
+   "company": "코오롱글로벌(주)",
+   "title": "코오롱글로벌(주) 경북 상주 공동주택 현장 소방안전관리자 채용",
+   "at": "2026-10-03T22:14:22.576Z"
+  },
+  {
+   "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/50094215?Oem_Code=C1",
+   "company": "㈜리뉴에스엘피(Renew SLP Inc.)",
+   "title": "셔틀버스안전도우미",
+   "at": "2026-10-03T22:14:22.992Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54660585",
+   "company": "대성유리창호(주)",
+   "title": "(건설회사) 건축,안전관리자 정규직원 모집",
+   "at": "2026-10-03T22:14:23.358Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55076132",
+   "company": "에이치디현대중공업(주)",
+   "title": "26년 6기 전문 테크니션 육성과정 모집",
+   "at": "2026-10-03T22:14:23.699Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54672370",
+   "company": "(주)정도",
+   "title": "(해외) 베트남 반도체 현장 안전관리자 모집",
+   "at": "2026-10-03T22:14:24.073Z"
+  },
+  {
+   "url": "https://linkareer.com/activity/353971",
+   "company": "행정안전부",
+   "title": "[행정안전부] 2026년 제2기 국가재난안전교육원 청년인턴(행정) 추가 채용시험 공고",
+   "at": "2026-10-03T22:14:24.421Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55090788",
+   "company": "(주)에스엘푸드원",
+   "title": "부문별 채용 공고 (공무, 구매, 개발, 품질관리, 인사노무안전)",
+   "at": "2026-10-03T22:14:24.800Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55178333",
+   "company": "코레일테크(주)",
+   "title": "코레일테크(주) 중부지사 단기(~12/14) 안전관리자 채용",
+   "at": "2026-10-03T22:14:25.177Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54975385",
+   "company": "(주)한경에스앤씨",
+   "title": "건설안전분야 문서작성, 컨설팅분야 신입/경력직 모집합니다",
+   "at": "2026-10-03T22:14:25.542Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54977730",
+   "company": "동부건설(주)",
+   "title": "동부건설(주) 호남고속철도2단계 제2공구 보건관리자 채용",
+   "at": "2026-10-03T22:14:25.901Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54991625",
+   "company": "대영포장(주)",
+   "title": "대영포장(주)안산공장 관리팀 신입 구매/총무/인사 채용공고",
+   "at": "2026-10-03T22:14:26.270Z"
+  },
+  {
+   "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/50054755?Oem_Code=C1",
+   "company": "㈜소노인터내셔널",
+   "title": "[소노벨 천안] 워터파크(수상안전요원) 신입/경력 인재 ...",
+   "at": "2026-10-03T22:14:26.628Z"
+  },
+  {
+   "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/50022639?Oem_Code=C1",
+   "company": "㈜모백스",
+   "title": "(주)모백스 공사현장 안전관리담당자 채용",
+   "at": "2026-10-03T22:14:26.984Z"
+  },
+  {
+   "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/50007893?Oem_Code=C1",
+   "company": "중소벤처기업진흥공단",
+   "title": "진한종합물류(주) 안전벨트 재포장 작업자 정직원 구함",
+   "at": "2026-10-03T22:14:27.346Z"
+  },
+  {
+   "url": "https://linkareer.com/activity/352861",
+   "company": "(주)두원잡",
+   "title": "[2026년 미래내일 일경험(인턴형) 대한창조안전원 경영·사무 직무 참여 청년 모집! (~10/11)",
+   "at": "2026-10-03T22:14:27.772Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55012177",
+   "company": "에스케이",
+   "title": "아파트 등 건설현장에서 근무하실 반장님 모집[안전시설]",
+   "at": "2026-10-03T22:14:28.205Z"
+  },
+  {
+   "url": "https://linkareer.com/activity/350516",
+   "company": "하남시안전체험장",
+   "title": "2026 하남시안전체험장 신규 로고 공모전",
+   "at": "2026-10-03T22:14:28.582Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55124240",
+   "company": "(주)동림",
+   "title": "울산 무거동 현장 철골(강구조물) 안전관리자 신입 모집",
+   "at": "2026-10-03T22:14:28.917Z"
+  },
+  {
+   "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/50003238?Oem_Code=C1",
+   "company": "한국브룩스오토메이션㈜",
+   "title": "한국브룩스오토메이션 환경안전 담당자(계약직)",
+   "at": "2026-10-03T22:14:29.281Z"
+  },
+  {
+   "url": "https://linkareer.com/activity/345896",
+   "company": "서울특별시학교안전공제회",
+   "title": "2026년도 메타버스 학교안전문화 확산 공모전",
+   "at": "2026-10-03T22:14:29.705Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55184188",
+   "company": "(주)한국이포",
+   "title": "(주)한국이포 관리부 총무 사원모집",
+   "at": "2026-10-03T22:14:30.053Z"
+  },
+  {
+   "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/50076902?Oem_Code=C1",
+   "company": "중소벤처기업진흥공단",
+   "title": "(주)씨케이안전유리 [기숙사] 제조 단순 종사원",
+   "at": "2026-10-03T22:14:30.488Z"
+  },
+  {
+   "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/50087486?Oem_Code=C1",
+   "company": "중소벤처기업진흥공단",
+   "title": "좋은엘리베이터(주) 엘리베이터 안전 관리 유지보수 인력...",
+   "at": "2026-10-03T22:14:30.828Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54779036",
+   "company": "(주)리드원엔지니어링",
+   "title": "안전 인허가 컨설팅 신입/경력 모집 (화학물질관리법/PSM)",
+   "at": "2026-10-03T22:14:31.185Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55179696",
+   "company": "대명에너지(주)",
+   "title": "전남 고흥군, 전남 광양시 BESS 발전소 전기안전관리자 각 모집",
+   "at": "2026-10-03T22:14:31.556Z"
+  },
+  {
+   "url": "https://linkareer.com/activity/350157",
+   "company": "IT국비지원교육센터",
+   "title": "[ 메가존 클라우드교육 ] 클라우드 & 정보보안전문가 채용연계형 국비",
+   "at": "2026-10-03T22:14:31.914Z"
+  },
+  {
+   "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/50032693?Oem_Code=C1",
+   "company": "㈜에스에이치산업",
+   "title": "[제작]건설현장 안전시설물 실사출력 업무(초보자 가능)",
+   "at": "2026-10-03T22:14:32.284Z"
+  },
+  {
+   "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/50026516?Oem_Code=C1",
+   "company": "유일티엔에스㈜",
+   "title": "소방안전관리팀 신입사원 채용합니다",
+   "at": "2026-10-03T22:14:32.641Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55087822",
+   "company": "㈜화일프레스",
+   "title": "㈜화일프레스 안전부 안전관리(생산) 채용 공고",
+   "at": "2026-10-03T22:14:32.981Z"
+  },
+  {
+   "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/50036321?Oem_Code=C1",
+   "company": "㈜세온이앤에스",
+   "title": "ASPICE/기능안전 엔지니어 신입",
+   "at": "2026-10-03T22:14:33.329Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55098703",
+   "company": "(주)동남",
+   "title": "대기환경기사(총무) 안전보건 담당자 채용",
+   "at": "2026-10-03T22:14:33.676Z"
+  },
+  {
+   "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/50044751?Oem_Code=C1",
+   "company": "영진물산㈜",
+   "title": "영진물산(주)/ 관리사무원모집/히트판/안전용품",
+   "at": "2026-10-03T22:14:34.054Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55109077",
+   "company": "(주)일우정밀",
+   "title": "(주)일우정밀 관리팀(인사/총무) 담당자 모집",
+   "at": "2026-10-03T22:14:34.397Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55113563",
+   "company": "에이치에스화성(주)",
+   "title": "[용인세브란스 공사] 건설현장 안전관리자 계약직 채용",
+   "at": "2026-10-03T22:14:34.790Z"
+  },
+  {
+   "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/50056069?Oem_Code=C1",
+   "company": "㈜티엔에이치코리아",
+   "title": "토목안전진단 신입사원 채용공고",
+   "at": "2026-10-03T22:14:35.461Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55124788",
+   "company": "(주)안전선박",
+   "title": "(주)안전선박 안전관리자(감독) 모집",
+   "at": "2026-10-03T22:14:35.816Z"
+  },
+  {
+   "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/50070326?Oem_Code=C1",
+   "company": "㈜쎄린스",
+   "title": "안전규격 인증 Coordinator",
+   "at": "2026-10-03T22:14:36.276Z"
+  },
+  {
+   "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/50068319?Oem_Code=C1",
+   "company": "주식회사 라이즈에듀케이션코리아",
+   "title": "[RISE어학원 강남] 셔틀안전지도 및 원내 도우미 선생님 ...",
+   "at": "2026-10-03T22:14:36.673Z"
+  },
+  {
+   "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/50074746?Oem_Code=C1",
+   "company": "경인선박안전설비",
+   "title": "선박 안전설비-구명정,소화설비 검사원 모집",
+   "at": "2026-10-03T22:14:36.984Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55159969",
+   "company": "(주)이안알앤씨",
+   "title": "(주)이안알앤씨 건축시공 및 안전관리 신입/경력 모집",
+   "at": "2026-10-03T22:14:37.322Z"
+  },
+  {
+   "url": "https://linkareer.com/activity/354228",
+   "company": "행정안전부",
+   "title": "행정안전부 2026 모바일신분증 아이디어 공모전",
+   "at": "2026-10-03T22:14:37.679Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55165166",
+   "company": "(주)에스제이엔지니어링",
+   "title": "(주)에스제이엔지니어링 플랜트 건설 안전파트 채용공고",
+   "at": "2026-10-03T22:14:37.993Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55172518",
+   "company": "주식회사한강엔지니어링",
+   "title": "안전진단(건축분야) 신입, 경력직 모집합니다",
+   "at": "2026-10-03T22:14:38.321Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55164299",
+   "company": "(주)피엔이",
+   "title": "원자력시설 화재안전기술분야 원자력 기술직 신입/경력사원 채용",
+   "at": "2026-10-03T22:14:38.637Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55188480",
+   "company": "신화에스앤씨(주)",
+   "title": "[안전관리자]공무 및 안전관리 업무 채용공고",
+   "at": "2026-10-03T22:14:38.998Z"
+  },
+  {
+   "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/50064070?Oem_Code=C1",
+   "company": "재단법인 승강기안전기술연구원",
+   "title": "승강기안전기술연구원 법정 승강기 정기검사 검사원 모집...",
+   "at": "2026-10-03T22:14:39.360Z"
+  },
+  {
+   "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/50073853?Oem_Code=C1",
+   "company": "케이엘텍㈜",
+   "title": "안전 점검, 토목, 시험 조사 업무 가능 직원을 모십니다.",
+   "at": "2026-10-03T22:14:39.700Z"
+  },
+  {
+   "url": "https://linkareer.com/activity/349810",
+   "company": "레인조모빌리티",
+   "title": "[선착순] TS한국교통안전공단과 함께하는 이륜차(스쿠터) 무료 교육!",
+   "at": "2026-10-03T22:14:40.106Z"
+  },
+  {
+   "url": "https://linkareer.com/activity/350590",
+   "company": "IT국비지원부트캠프",
+   "title": "정보보안국비지원학원 보안전문가 부터 화이트해커 모의해킹 취업대비 과정",
+   "at": "2026-10-03T22:14:40.446Z"
+  },
+  {
+   "url": "https://linkareer.com/activity/353302",
+   "company": "이음플러스파트너스",
+   "title": "2026 스포츠안전관리사 2급 특별차수 – 강원대학교 강릉권역 모집!",
+   "at": "2026-10-03T22:14:40.762Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55002054",
+   "company": "(주)다인맨파워",
+   "title": "[양주 현장] 안전관리자 채용",
+   "at": "2026-10-03T22:14:41.119Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54931643",
+   "company": "지에스건설(주)",
+   "title": "지에스건설(주) 안전 시설원 채용 공고",
+   "at": "2026-10-03T22:14:41.486Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55052676",
+   "company": "진흥기업(주)",
+   "title": "효성 진흥기업(주) 건축현장 보건관리자 모집",
+   "at": "2026-10-03T22:14:41.827Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55153981",
+   "company": "주식회사 케이에스산업안전협회",
+   "title": "산업안전관리 경력자 채용(산업안전기사 자격증소유자, 퇴직자가능)",
+   "at": "2026-10-03T22:14:42.173Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55175309",
+   "company": "(주)지엔씨에너지",
+   "title": "[상시모집] 데이터센터 비상발전기 설치현장 안전관리자",
+   "at": "2026-10-03T22:45:16.482Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55001928",
+   "company": "케이지모빌리티커머셜 주식회사",
+   "title": "[KG그룹] KGM커머셜 함양공장 안전환경(전기) 관리자 모집",
+   "at": "2026-10-03T22:45:16.838Z"
+  },
+  {
+   "url": "https://linkareer.com/activity/348238",
+   "company": "행정안전부",
+   "title": "2026년 안전교육 영상 공모전",
+   "at": "2026-10-03T22:45:17.227Z"
+  },
+  {
+   "url": "https://linkareer.com/activity/354339",
+   "company": "해양수산부",
+   "title": "[해양수산부] 2026년 제3차 해양안전심판원 청년인턴 채용 공고",
+   "at": "2026-10-03T22:45:17.588Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55126647",
+   "company": "(주)알에스인더스트리",
+   "title": "[RS INDUSTRY] 안전 관리 직원 채용(경력 우대)",
+   "at": "2026-10-03T22:45:17.931Z"
+  },
+  {
+   "url": "https://linkareer.com/activity/346402",
+   "company": "한국도로교통공단",
+   "title": "2026년도 제44회 교통안전 홍보작품 공모전",
+   "at": "2026-10-03T22:45:18.290Z"
+  },
+  {
+   "url": "https://linkareer.com/activity/348755",
+   "company": "한국해양교통안전공단",
+   "title": "2026 해양안전 콘텐츠 공모전",
+   "at": "2026-10-03T22:45:18.654Z"
+  },
+  {
+   "url": "https://linkareer.com/activity/349415",
+   "company": "한국아동단체협의회",
+   "title": "2026년 제7회 아동 안전사고예방 아이디어 공모전",
+   "at": "2026-10-03T22:45:19.009Z"
+  },
+  {
+   "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/50083739?Oem_Code=C1",
+   "company": "주식회사 에스제이엔지니어링",
+   "title": "에스제이엔지니어링 정규직 채용 공고(안전/시공)",
+   "at": "2026-10-03T22:45:19.377Z"
+  },
+  {
+   "url": "https://linkareer.com/activity/352807",
+   "company": "대한승강기협회",
+   "title": "[대한승강기협회] 2026 승강기산업 진흥 & 승강기 안전문화 확산 아이디어 공모전",
+   "at": "2026-10-03T22:45:19.742Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55188270",
+   "company": "(주)남일",
+   "title": "(주)남일 경영지원팀(안전·보건·ESG·총무) 정규직 채용 공고",
+   "at": "2026-10-03T22:45:20.113Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55187057",
+   "company": "(주)원일",
+   "title": "(주)원일 환경안전관리자 신입 채용 공고",
+   "at": "2026-10-03T22:45:20.452Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55184402",
+   "company": "(주)에이치에스바이오",
+   "title": "[에이치에스바이오] 환경안전부 신입(사원) 채용",
+   "at": "2026-10-03T22:45:20.778Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55197654",
+   "company": "(주)한국보건환경연구원",
+   "title": "환경안전보건 컨설팅 정규직 채용",
+   "at": "2026-10-03T22:45:21.112Z"
+  },
+  {
+   "url": "https://www.worker.co.kr/job/view.asp?jobid=all&no=1414648&urgent=yes&chk=yes&goodjob=",
+   "company": "(주)케이씨씨건설",
+   "title": "[KCC건설] 서울역 양동 11,12지구 업무시설 보건관리자 채용",
+   "at": "2026-10-03T22:45:21.466Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55031701",
+   "company": "신대한정유산업(주)",
+   "title": "신대한정유산업(주) 환경안전팀 환경부문 신입 및 경력직 채용",
+   "at": "2026-10-03T22:45:21.850Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55100290",
+   "company": "(주)씨앤제이플랜트",
+   "title": "[안전관리자] 안전관리자 신규 채용",
+   "at": "2026-10-03T22:45:22.215Z"
+  },
+  {
+   "url": "https://www.worker.co.kr/job/view.asp?jobid=all&no=1414753&urgent=yes&chk=yes&goodjob=",
+   "company": "(주)케이씨씨건설",
+   "title": "[KCC건설] 김포한강시네폴리스 일반산업단지 조성공사 안전관리자 채용",
+   "at": "2026-10-03T22:45:22.545Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54852329",
+   "company": "(주)일렉트로엠",
+   "title": "(주)일렉트로엠 안전·환경 신입/경력 직원 채용 공고",
+   "at": "2026-10-03T22:45:22.889Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54979176",
+   "company": "(주)유니온가스",
+   "title": "[삼성전자 1차협력사] (주)유니온가스 생산관리 제조팀 인원모집",
+   "at": "2026-10-03T22:45:23.251Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54943162",
+   "company": "강산개발(주)",
+   "title": "강산개발(주) 현장 안전 관리자 채용 공고",
+   "at": "2026-10-03T22:45:23.686Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55092212",
+   "company": "(주)제일공사",
+   "title": "2026년도 토목 시공/안전관리 모집공고",
+   "at": "2026-10-03T22:45:24.039Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54913649",
+   "company": "한국에스지에스(주)",
+   "title": "기계 안전평가 엔지니어 MD Engineer [신입]",
+   "at": "2026-10-03T22:45:24.396Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55109508",
+   "company": "(재)우체국금융개발원",
+   "title": "2026년 9차 공개채용(시설관리·안전관리)",
+   "at": "2026-10-03T22:45:24.785Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55112841",
+   "company": "(주)대경오앤티",
+   "title": "사업장별 생산관리직 및 인사총무팀 신입/경력 채용",
+   "at": "2026-10-03T22:45:25.158Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54963795",
+   "company": "상명홀딩스(주)",
+   "title": "[토목·건축] 전남광주광역시 본사 토목·건축직 모집",
+   "at": "2026-10-03T22:45:25.839Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54955483",
+   "company": "(주)해다움",
+   "title": "(주)해다움 안전관리자 신입 채용 공고입니다",
+   "at": "2026-10-03T22:45:26.222Z"
+  },
+  {
+   "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/49949126?Oem_Code=C1",
+   "company": "서울노보스병원",
+   "title": "2026년도 산업안전관리자 구인 [의료기관 경험자 우대]",
+   "at": "2026-10-03T22:45:26.575Z"
+  },
+  {
+   "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/49947187?Oem_Code=C1",
+   "company": "아주통신㈜",
+   "title": "SKT/SKB 현장관리 안전관리자 직원구함",
+   "at": "2026-10-03T22:45:26.943Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54975844",
+   "company": "(주)세원시스템",
+   "title": "[(주)세원시스템] 현장set-up / 설계 /안전관리자 채용공고",
+   "at": "2026-10-03T22:45:27.271Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54977285",
+   "company": "동화산업(주)",
+   "title": "동화산업(주) 직원모집(안전관리자)",
+   "at": "2026-10-03T22:45:27.774Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54973612",
+   "company": "(주)다은기술감리단",
+   "title": "전기감리회사 안전관리자 채용 (신입/경력)",
+   "at": "2026-10-03T22:45:28.151Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54973283",
+   "company": "철우테크(주)",
+   "title": "철우테크(주) 건설현장 시공·공무·안전관리 직원 모십니다",
+   "at": "2026-10-03T22:45:28.509Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54976345",
+   "company": "대선산업개발(주)",
+   "title": "대선산업개발(주) 현장 건설공무 채용",
+   "at": "2026-10-03T22:45:28.841Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55115183",
+   "company": "(의)신원의료재단",
+   "title": "(의)신원의료재단 안전보건팀 보건관리자 채용합니다",
+   "at": "2026-10-03T22:45:29.211Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54991185",
+   "company": "(주)대한창조안전원",
+   "title": "[정규직] 산업안전보건교육 강사 채용",
+   "at": "2026-10-03T22:45:29.540Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54892730",
+   "company": "모트렉스이에프엠(주)",
+   "title": "2026년 모트렉스이에프엠㈜ 신입/경력사원 공개채용",
+   "at": "2026-10-03T22:45:29.918Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54701123",
+   "company": "(주)디에이치아이 통영공장",
+   "title": "안전관리자 채용-조선업",
+   "at": "2026-10-03T22:45:30.261Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54990539",
+   "company": "(주)와이즈",
+   "title": "(주)와이즈 대전지사 - 안전진단 토목분야 신입 모집",
+   "at": "2026-10-03T22:45:30.655Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55000100",
+   "company": "(주)삼미기계",
+   "title": "(주)삼미기계 안전보건 업무(총무업무 병행 담당자 채용 공고",
+   "at": "2026-10-03T22:45:31.030Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54999925",
+   "company": "(주)티티엠",
+   "title": "안전관리자 경력무관 채용",
+   "at": "2026-10-03T22:45:31.352Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55011633",
+   "company": "(주)지엔에스엔지니어링",
+   "title": "지열냉난방 설비 엔지니어 채용공고",
+   "at": "2026-10-03T22:45:31.686Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55015404",
+   "company": "(주)에프엠에스코리아",
+   "title": "가스 안전 산업 기사 / 가스기사 / 가스안전관리원",
+   "at": "2026-10-03T22:45:32.031Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55014477",
+   "company": "주식회사 태양산업개발",
+   "title": "주식회사 태양산업개발 안전관리자 채용공고",
+   "at": "2026-10-03T22:45:32.349Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55148596",
+   "company": "코아사글로벌(주)",
+   "title": "총무(안전,소방겸)담당자 채용-일본어가능자 필수",
+   "at": "2026-10-03T22:45:32.718Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55051610",
+   "company": "(주)동일캔바스엔지니어링",
+   "title": "하반기 신입/경력 수시채용",
+   "at": "2026-10-03T22:45:33.099Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55124205",
+   "company": "동서식품(주)",
+   "title": "2026년 동서식품 대졸 신입/경력사원 채용(연구)",
+   "at": "2026-10-03T22:45:33.456Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54758333",
+   "company": "(주)울텍",
+   "title": "경영지원부서 인력모집",
+   "at": "2026-10-03T22:45:33.800Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55022809",
+   "company": "(주)한국이에스지인증협회(KEC)",
+   "title": "[한국ESG인증협회] ISO 인증 심사 지원팀 모집",
+   "at": "2026-10-03T22:45:34.152Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55053098",
+   "company": "(주)주윤",
+   "title": "[식품 제조] 안전관리자 정규직 채용",
+   "at": "2026-10-03T22:45:34.572Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55043533",
+   "company": "(주)태웅",
+   "title": "(주)태웅 안전환경보건부문 모집",
+   "at": "2026-10-03T22:45:34.938Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54845020",
+   "company": "(주)메트로씨앤씨",
+   "title": "건축기사/건설안전기사 채용",
+   "at": "2026-10-03T22:45:35.273Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55039745",
+   "company": "(주)대양이엔아이",
+   "title": "플랜트 제작 생산관리 (생산,품질,안전) 신입 및 경력 모집",
+   "at": "2026-10-03T22:45:35.608Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55041220",
+   "company": "천지개발(주)",
+   "title": "천지개발(주) 연곡~현북 도로건설현장 안전관리자 모집",
+   "at": "2026-10-03T22:45:35.933Z"
+  },
+  {
+   "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/50004733?Oem_Code=C1",
+   "company": "위호텔",
+   "title": "[위(WE)호텔] 기계설비유지관리자 · 소방안전관리자 · ...",
+   "at": "2026-10-03T22:45:36.419Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55050293",
+   "company": "(주)씨피에스연구소",
+   "title": "산업안전기사 신입사원 모집",
+   "at": "2026-10-03T22:45:36.743Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55051098",
+   "company": "(주)케이알피티",
+   "title": "(주)케이알피티 공사현장 안전관리자 채용",
+   "at": "2026-10-03T22:45:37.082Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55074344",
+   "company": "린노알미늄(주)",
+   "title": "공무팀 (전기안전관리자) 채용",
+   "at": "2026-10-03T22:45:37.448Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54766905",
+   "company": "(주)나우스넷",
+   "title": "통신공사 안전관리자 정규직 채용(경력무관)",
+   "at": "2026-10-03T22:45:37.775Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55077892",
+   "company": "부명엔프로엔지니어링(주)",
+   "title": "[울산/전국] 현장 기술인 모집(건축 공무/시공/품질/안전)",
+   "at": "2026-10-03T22:45:38.158Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55074043",
+   "company": "(주)티에스피",
+   "title": "(주)티에스피 경영지원팀 신입, 경력직 채용",
+   "at": "2026-10-03T22:45:38.480Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55091099",
+   "company": "대현기건(주)",
+   "title": "대현기건(주) 본사 안전관리자 채용 공고",
+   "at": "2026-10-03T22:45:38.844Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55092515",
+   "company": "주식회사 아이에스엠",
+   "title": "[아이에스엠] 품질 경영 및 글로벌 인증/허가 담당자(신입~경력)",
+   "at": "2026-10-03T22:45:39.186Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55098258",
+   "company": "(주)이피아이티",
+   "title": "기술직 및 현장 안전관리자 모집 (산업안전기사 소지자 우대)",
+   "at": "2026-10-03T22:45:39.547Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55098765",
+   "company": "동림기계(주)",
+   "title": "안전관리자 신입/경력 정규직 채용",
+   "at": "2026-10-03T22:45:39.890Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55108830",
+   "company": "주식회사더재월",
+   "title": "산업안전보건 전문인력 채용 (안전점검·컨설팅 업무/정규직)",
+   "at": "2026-10-03T22:45:40.240Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55113680",
+   "company": "(주)아이디에이",
+   "title": "경영지원팀 환경 안전 보건 노무 총무 담당 구합니다.",
+   "at": "2026-10-03T22:45:40.568Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55115944",
+   "company": "(주)아폴로산업",
+   "title": "경영지원팀 (소방/산업안전 담당자) 채용",
+   "at": "2026-10-03T22:45:41.219Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54831997",
+   "company": "솔루션안전",
+   "title": "안전 신입(경력)직 사원 모집-도약장려금",
+   "at": "2026-10-03T22:45:41.597Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55110991",
+   "company": "(주)이수",
+   "title": "입찰 행정 직무 채용 공고",
+   "at": "2026-10-03T22:45:41.943Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54854294",
+   "company": "(주)모란식품",
+   "title": "안전관리자 모집(신입가능)",
+   "at": "2026-10-03T22:45:42.292Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54857465",
+   "company": "지엘기술(주)",
+   "title": "[토목기술자] 지엘기술(주) 건설본부(도원사업부) 신입/경력채용",
+   "at": "2026-10-03T22:45:42.637Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55115611",
+   "company": "(주)거성에스디",
+   "title": "반도체 계측설비 SET-UP 엔지니어_신입",
+   "at": "2026-10-03T22:45:42.972Z"
+  },
+  {
+   "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/50060363?Oem_Code=C1",
+   "company": "퍼펙트기계정비㈜",
+   "title": "기계정비 안전관리자 신입 및 경력사원 모집",
+   "at": "2026-10-03T22:45:43.301Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55130044",
+   "company": "(주)오션엔지니어링",
+   "title": "건설 본사 및 현장 안전관리자 채용",
+   "at": "2026-10-03T22:45:43.639Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55132288",
+   "company": "(사)중대 안전보건 예방협회",
+   "title": "(사)중대안전보건예방협회 산업안전보건교육 강사 채용 공고",
+   "at": "2026-10-03T22:45:43.974Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55135169",
+   "company": "(주)성보",
+   "title": "산업안전기사 사무직 (공무 및 현장안전관리)",
+   "at": "2026-10-03T22:45:44.310Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55135568",
+   "company": "(주)태일씨앤티",
+   "title": "[철콘] 용인/평택현장 안전관리자 채용",
+   "at": "2026-10-03T22:45:44.663Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55126910",
+   "company": "(주)에어로코텍",
+   "title": "[(주)에어로코텍] 환경/소방안전관리자 정규직 채용",
+   "at": "2026-10-03T22:45:45.020Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55125593",
+   "company": "주식회사 디에이치중공업",
+   "title": "안전&환경 담당자 모집(철골, 강구조, 안전, 환경)",
+   "at": "2026-10-03T22:45:45.362Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55128372",
+   "company": "천지개발(주)",
+   "title": "천지개발(주) 전라도 광양시 건설현장 공사/공무/안전 모집",
+   "at": "2026-10-03T22:45:45.764Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55127752",
+   "company": "케이에스엠기술(주)",
+   "title": "케이에스엠기술(주) 안전진단 건축부 신입, 경력직 채용",
+   "at": "2026-10-03T22:45:46.140Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55131152",
+   "company": "(주)덕신이피씨",
+   "title": "[덕신이피씨] 공사관리팀 신입 및 경력직 채용",
+   "at": "2026-10-03T22:45:46.493Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55132825",
+   "company": "(주)신진건업",
+   "title": "용인 보라동 건설현장직/ 공무기사(1명) 모집합니다.",
+   "at": "2026-10-03T22:45:46.873Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54712098",
+   "company": "주식회사 가람",
+   "title": "[주식회사가람] 품질관리부 신입 및 경력 모집",
+   "at": "2026-10-03T22:45:47.222Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55134174",
+   "company": "(주)메젠",
+   "title": "(주)메젠 기업부설연구소 연구원 채용 공고",
+   "at": "2026-10-03T22:45:47.566Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55125251",
+   "company": "(주)스타리온성철",
+   "title": "고압가스안전관리자 채용",
+   "at": "2026-10-03T22:45:47.880Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55136837",
+   "company": "코코스팩(주)",
+   "title": "제조업 / 전기안전관리자 / 전기관련 자격증 소지자 / 신입",
+   "at": "2026-10-03T22:45:48.221Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55144259",
+   "company": "(주)산업전기",
+   "title": "안전관리자 채용",
+   "at": "2026-10-03T22:45:48.560Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55147596",
+   "company": "천지개발(주)",
+   "title": "천지개발(주)신안산선 복선전철 4-1공구 현장 안전관리자 모집",
+   "at": "2026-10-03T22:45:48.934Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55144793",
+   "company": "한국알엠에스(주)",
+   "title": "안전진단컨설팅 정규직 모집",
+   "at": "2026-10-03T22:45:49.270Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55150889",
+   "company": "디에이치(주)",
+   "title": "디에이치(주) 평택사업장 전기안전관리자 채용 공고",
+   "at": "2026-10-03T22:45:49.730Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55147792",
+   "company": "(주)한독크린텍",
+   "title": "상장사 (주)한독크린텍 환경/소방 담당자 모집(사원~대리)",
+   "at": "2026-10-03T22:45:50.069Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55148672",
+   "company": "(주)대양금속",
+   "title": "(주)대양금속 기계설비팀 기술엔지니어 관리직 채용",
+   "at": "2026-10-03T22:45:50.402Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55144721",
+   "company": "(주)한국산업안전",
+   "title": "건설기계장비 안전점검 및 비파괴검사 검사원 모집",
+   "at": "2026-10-03T22:45:50.742Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55142056",
+   "company": "(주)에스앤더블류",
+   "title": "(주)에스 앤 더블류 생산부(생산관리) 채용 공고",
+   "at": "2026-10-03T22:45:51.086Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55158923",
+   "company": "(주)한국카스코",
+   "title": "건설현장 안전관리자 채용",
+   "at": "2026-10-03T22:45:51.428Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54900392",
+   "company": "(주)훈엔지니어링",
+   "title": "2026년 (주)훈엔지니어링 안전점검전문기관 신입직원 모집",
+   "at": "2026-10-03T22:45:51.776Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55160065",
+   "company": "대창마린테크(주)진주공장",
+   "title": "관리부 업무보조 모집",
+   "at": "2026-10-03T22:45:52.133Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55165978",
+   "company": "(주)앰앰",
+   "title": "(주)앰앰 인테리어 시공관리 채용 (신입포함)",
+   "at": "2026-10-03T22:45:52.507Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55158964",
+   "company": "(재)한국승강기안전원",
+   "title": "승강기 안전검사자(서울, 전남광주, 부산, 전북) 모집 공고",
+   "at": "2026-10-03T22:45:52.843Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55160438",
+   "company": "건일바이오팜(주)",
+   "title": "건일바이오팜(주) 공무팀(생산) 정규직 채용합니다",
+   "at": "2026-10-03T22:45:53.200Z"
+  },
+  {
+   "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/50088529?Oem_Code=C1",
+   "company": "㈜문구조이엔지",
+   "title": "(주)문구조ENG 구조설계 및 구조안전진단 경력, 신입 모집",
+   "at": "2026-10-03T22:45:53.531Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55175522",
+   "company": "(주)에이치케이스페이스",
+   "title": "[인재채용] 안전관리자",
+   "at": "2026-10-03T22:45:53.854Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55174186",
+   "company": "(주)더베스트안전",
+   "title": "[종합안전법인] 안전보건컨설팅 분야 신입",
+   "at": "2026-10-03T22:45:54.195Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55172920",
+   "company": "(주)앰앰아이",
+   "title": "공동주택(아파트) 미화/경비원 현장관리자(산업안전산업기사 必)",
+   "at": "2026-10-03T22:45:54.548Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55171226",
+   "company": "(주)에코파워텍",
+   "title": "[정촌/뿌리산단] 현장 안전관리자 직원 채용",
+   "at": "2026-10-03T22:45:54.882Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55179337",
+   "company": "씨스존(주)",
+   "title": "씨스존(주) 신입 총무 담당자 모집",
+   "at": "2026-10-03T22:45:55.234Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55178241",
+   "company": "(주)액트로",
+   "title": "(주)액트로 전산 총무 직원 모집",
+   "at": "2026-10-03T22:45:55.594Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54938541",
+   "company": "에스티비이테크(주)",
+   "title": "[정규직] 화목보일러 생산 용접원 신입/경력 모집 공고",
+   "at": "2026-10-03T22:45:55.930Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54951778",
+   "company": "주식회사마음안전",
+   "title": "(주)마음안전 재해예방 기술지도 전문인력 채용",
+   "at": "2026-10-03T22:45:56.285Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54975270",
+   "company": "(주)트러스",
+   "title": "관리부 인사팀 인사·노무 채용 - 경력무관",
+   "at": "2026-10-03T22:45:56.650Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54997238",
+   "company": "(주)초록이노텍",
+   "title": "[초록이노텍] 본사 건설 안전관리자 채용",
+   "at": "2026-10-03T22:45:56.991Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54997326",
+   "company": "(주)산너머남촌",
+   "title": "[집반찬연구소] 공무 엔지니어 (설비/시설/안전관리)",
+   "at": "2026-10-03T22:45:57.436Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55031285",
+   "company": "(주)보미엔지니어링",
+   "title": "[건설 현장] 안전팀 안전관리자 신입/경력 정규직 직원 모집",
+   "at": "2026-10-03T22:45:57.761Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55026920",
+   "company": "코벨코머시너리코리아(주)",
+   "title": "2026하반기 KOBELCO MACHINERY KOREA 전기안전관리자 정규직채용",
+   "at": "2026-10-03T22:45:58.091Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55024280",
+   "company": "(주)익진엔지니어링",
+   "title": "파사드(커튼월,외장) 건축 공사관리자",
+   "at": "2026-10-03T22:45:58.422Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55049670",
+   "company": "(주)코아텍시스템즈",
+   "title": "(주)코아텍시스템즈 안전,환경(ESH) 관리자 모집",
+   "at": "2026-10-03T22:45:58.771Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55062138",
+   "company": "(주)하이푸드텍",
+   "title": "(주)하이푸드텍 안전보건관리 업무 담당자 채용",
+   "at": "2026-10-03T22:45:59.126Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55084947",
+   "company": "(주)상진",
+   "title": "공무팀 모집(1급소방안전관리자 및 전기산업기사 그외유지보수)",
+   "at": "2026-10-03T22:45:59.441Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55091752",
+   "company": "주식회사마음안전",
+   "title": "건설안전기술사 및 산업안전지도사 님을 모십니다.",
+   "at": "2026-10-03T22:45:59.800Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55109140",
+   "company": "(주)대신기공",
+   "title": "안전관리자 모집(건설회사 여수 전략사업부문)",
+   "at": "2026-10-03T22:46:00.199Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55116129",
+   "company": "주식회사대경안전센터",
+   "title": "산업안전기사·산업안전산업기사 모집 / 안전관리전문기관",
+   "at": "2026-10-03T22:46:00.588Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55112325",
+   "company": "(주)사람과 안전",
+   "title": "[신입&경력] 안전관리업무(계획서작성업무) 정규직 모집 공고",
+   "at": "2026-10-03T22:46:00.964Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55147578",
+   "company": "(주)원프랜트",
+   "title": "(주)원프랜트 본사 채용(안전)",
+   "at": "2026-10-03T22:46:01.291Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55148655",
+   "company": "(주)원파워택",
+   "title": "(주)원파워택 안전관리자 채용합니다",
+   "at": "2026-10-03T22:46:01.700Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55143175",
+   "company": "(주)엑스텍코리아",
+   "title": "(주)엑스텍코리아 - 필드서비스 엔지니어 모집",
+   "at": "2026-10-03T22:46:02.044Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55161758",
+   "company": "(주)엠이티",
+   "title": "(주)엠이티 총무(안전 보건) 담당 모집 공고",
+   "at": "2026-10-03T22:46:02.390Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55171159",
+   "company": "주식회사두선코퍼레이션",
+   "title": "주식회사두선코퍼레이션 현장근무 안전관리자 채용 공고입니다",
+   "at": "2026-10-03T22:46:02.715Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54876841",
+   "company": "(주)성풍이앤에이",
+   "title": "(주)성풍이앤에이 각 부문별 신입 및 경력 수시채용",
+   "at": "2026-10-03T22:46:03.075Z"
+  },
+  {
+   "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/49724357?Oem_Code=C1",
+   "company": "㈔중대안전보건예방협회",
+   "title": "[사단법인 중대안전보건예방협회] 퍼포먼스 마케터 채용",
+   "at": "2026-10-03T22:46:03.431Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55038237",
+   "company": "(주)유공이엔지",
+   "title": "(주)유공이엔지 안전관리자 채용",
+   "at": "2026-10-03T22:46:03.791Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54667935",
+   "company": "지앤엘(주)",
+   "title": "[GnL]현장 안전관리자 채용 (관련 기사자격 필수)",
+   "at": "2026-10-03T22:46:04.164Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55097819",
+   "company": "(주)윈텍글로비스",
+   "title": "(주)윈텍글로비스 환경에너지센터 안전관리자",
+   "at": "2026-10-03T22:46:04.482Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55049229",
+   "company": "새온길엔지니어링(주)",
+   "title": "새온길엔지니어링 주식회사 안전 및 보건 관리자 채용",
+   "at": "2026-10-03T22:46:04.861Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55091736",
+   "company": "(주)현우전력",
+   "title": "(주)현우전력 안전관리자 신입·경력 채용 공고",
+   "at": "2026-10-03T22:46:05.221Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54970715",
+   "company": "금광기업(주)",
+   "title": "군산(새만금) 현장 안전관리자 모집",
+   "at": "2026-10-03T22:46:05.590Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55176123",
+   "company": "인디켐(주)",
+   "title": "인디켐(주) - EHS 담당자 채용 (대기환경기사 자격증 필수)",
+   "at": "2026-10-03T22:46:05.955Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55125723",
+   "company": "(주)라우베",
+   "title": "총무 및 안전보건 담당자 모집",
+   "at": "2026-10-03T22:46:06.356Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54897784",
+   "company": "(주)청남",
+   "title": "(주)청남 풍력발전기 산업안전기사 채용",
+   "at": "2026-10-03T22:46:06.690Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54922406",
+   "company": "(주)대현엔지니어링",
+   "title": "(주)대현엔지니어링 현장 안전관리자 채용 (신입/경력)",
+   "at": "2026-10-03T22:46:07.808Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54794836",
+   "company": "제이엘중공업(주)",
+   "title": "산업안전관리자 채용",
+   "at": "2026-10-03T22:46:08.153Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54659423",
+   "company": "(주)파텍",
+   "title": "(주)파텍에서 산업안전관리자 경력자를 찾고 있어요",
+   "at": "2026-10-03T22:46:08.469Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55142229",
+   "company": "(주)지덕이엔지",
+   "title": "(강구조물)철골 현장 안전관리자 채용합니다",
+   "at": "2026-10-03T22:46:08.929Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55070223",
+   "company": "(주)에스에스티랩",
+   "title": "[SSTLabs] 안전관리 및 행정 문서관리 담당자 채용 (신입 가능)",
+   "at": "2026-10-03T22:46:09.277Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54664616",
+   "company": "유한회사 에스씨티",
+   "title": "정비직 사원 모집",
+   "at": "2026-10-03T22:46:09.634Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54647662",
+   "company": "이도에코제주(주)",
+   "title": "안전관리담당자 채용(신입직)",
+   "at": "2026-10-03T22:46:09.972Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55157997",
+   "company": "서진화학(주)",
+   "title": "생산 오페레이터 정규직 채용공고(석유화학&3교대)",
+   "at": "2026-10-03T22:46:10.318Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54638538",
+   "company": "(주)제트에프삭스코리아",
+   "title": "[생산팀] 신입사원 모집(사무직)",
+   "at": "2026-10-03T22:46:10.634Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54753537",
+   "company": "(주)중앙 안전보건 연구원",
+   "title": "작업환경측정 전문가 / 산업위생관리기사 채용안내(상시채용)",
+   "at": "2026-10-03T22:46:11.003Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55172574",
+   "company": "아시모리코리아(주)",
+   "title": "자동차 안전부품 수입검사원 채용",
+   "at": "2026-10-03T22:46:11.387Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54907983",
+   "company": "(주)수양켐텍",
+   "title": "화학제품 생산직 채용 (충남 예산군 예당산업단지)",
+   "at": "2026-10-03T22:46:11.740Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54830015",
+   "company": "(주)케어젠",
+   "title": "생산관리팀(운영팀) 신입/경력 채용 [코스닥 상장사]",
+   "at": "2026-10-03T22:46:12.104Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54776208",
+   "company": "주식회사 건화",
+   "title": "(주)건화 조선사업부 HSE혁신팀 신입 및 경력 사원 채용",
+   "at": "2026-10-03T22:46:12.466Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55117151",
+   "company": "한국재해방지(주)",
+   "title": "경력 산업안전기사 모집",
+   "at": "2026-10-03T22:46:12.773Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54965282",
+   "company": "(주)태광",
+   "title": "(주)태광 생산부 통합구매팀 신입사원 채용 공고",
+   "at": "2026-10-03T22:46:13.099Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55134367",
+   "company": "제일패션리테일(주)",
+   "title": "[제일패션리테일] 에잇세컨즈 스토어 보건관리자 모집",
+   "at": "2026-10-03T22:46:13.465Z"
+  },
+  {
+   "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/49987003?Oem_Code=C1",
+   "company": "두레시닝㈜",
+   "title": "[하나금융그룹통합데이터센터] 소방안전관리자(보조) 채용",
+   "at": "2026-10-03T22:46:13.844Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54632858",
+   "company": "은성산업개발",
+   "title": "은성산업개발 안전/화재 관리원 모집(평택삼성/용인sk 건설현장)",
+   "at": "2026-10-03T22:46:14.191Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55054782",
+   "company": "금호건설(주)",
+   "title": "금호건설(주) 의정부법조타운 A-3BL 보건관리자 채용 공고",
+   "at": "2026-10-03T22:46:14.522Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55075524",
+   "company": "코오롱글로벌(주)",
+   "title": "코오롱글로벌(주) 군산신역세권 A-1BL 소방안전관리자 채용",
+   "at": "2026-10-03T22:46:14.844Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55119239",
+   "company": "두산건설(주)",
+   "title": "건설현장 보건관리자 계약직 채용 ( 전국 현장 )",
+   "at": "2026-10-03T22:46:15.177Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55151813",
+   "company": "(주)포스코이앤씨",
+   "title": "[안전/보건] 플랜트건설 보건관리자 채용 공고(광양제철소 내)",
+   "at": "2026-10-03T22:46:15.511Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55158724",
+   "company": "(주)한화",
+   "title": "(주)한화 건설부문 예천비행시설대대 신축공사 안전관리자 채용",
+   "at": "2026-10-03T22:46:15.902Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55171134",
+   "company": "태영산업(주)",
+   "title": "건설·건축(안전관리자) 경력직 및 신입 채용",
+   "at": "2026-10-03T22:46:16.267Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54972649",
+   "company": "(주)한화",
+   "title": "(주)한화 서울역북부역세권 현장 안전관리자 채용 공고",
+   "at": "2026-10-03T22:46:16.599Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55037994",
+   "company": "(주)한화",
+   "title": "(주)한화 건설부문 횡성병영시설현장 채용공고 (소방안전관리자)",
+   "at": "2026-10-03T22:46:17.089Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54984138",
+   "company": "두산건설(주)",
+   "title": "두산건설(주) 성남 성지궁전APT 재건축현장 안전관리자 모집",
+   "at": "2026-10-03T22:46:17.424Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55007698",
+   "company": "에벨릭스코리아(주)",
+   "title": "[셰플러그룹/외국계] 품질 및 서비스 엔지니어 모집",
+   "at": "2026-10-03T22:46:17.784Z"
+  },
+  {
+   "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/49904815?Oem_Code=C1",
+   "company": "제주신화월드㈜",
+   "title": "제주신화월드 안전보건팀 의무실 안전보건 지원 부문 계...",
+   "at": "2026-10-03T22:46:18.108Z"
+  },
+  {
+   "url": "https://www.peoplenjob.com/jobs/6281257",
+   "company": "파인드뉴로드컨설팅",
+   "title": "글로벌 패션 기업 / 보건관리자 (계약직)",
+   "at": "2026-10-03T22:46:18.444Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54984700",
+   "company": "한성크린텍(주)",
+   "title": "각 부문 정규직/계약직 모집",
+   "at": "2026-10-03T22:46:18.774Z"
+  },
+  {
+   "url": "https://www.worker.co.kr/job/view.asp?jobid=all&no=1414344&urgent=yes&chk=yes&goodjob=",
+   "company": "씨제이대한통운(주)",
+   "title": "[LB가산동345-89 임대형기숙사 신축현장] 안전반장 현장채용직 채용",
+   "at": "2026-10-03T22:46:19.112Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55090898",
+   "company": "(주)템피드",
+   "title": "[아산근무/신입가능/정규전환] 고객사 안전관리자(보조) 채용",
+   "at": "2026-10-03T22:46:19.489Z"
+  },
+  {
+   "url": "https://www.worker.co.kr/job/view.asp?jobid=all&no=1412501&urgent=yes&chk=yes&goodjob=",
+   "company": "(주)케이씨씨건설",
+   "title": "[KCC건설] 케이스퀘어 성수 복합시설 신축공사 보건관리자(현장채용직)",
+   "at": "2026-10-03T22:46:19.843Z"
+  },
+  {
+   "url": "https://www.worker.co.kr/job/view.asp?jobid=all&no=1414323&urgent=yes&chk=yes&goodjob=",
+   "company": "씨제이대한통운(주)",
+   "title": "[건설부문] CJ대한통운 건설부문 보건관리(PJT계약직) 채용 안산 아워",
+   "at": "2026-10-03T22:46:20.193Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55037552",
+   "company": "(주)더 금영",
+   "title": "[더 금영] 안전보건실 안전관리자 채용",
+   "at": "2026-10-03T22:46:20.545Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55042610",
+   "company": "중원엔지니어링(주)",
+   "title": "중원엔지니어링(주) 안전관리자 채용 / 용인,청주 SK반도체 현장",
+   "at": "2026-10-03T22:46:20.953Z"
+  },
+  {
+   "url": "https://www.worker.co.kr/job/view.asp?jobid=all&no=1414105&urgent=yes&chk=yes&goodjob=",
+   "company": "IPARK현대산업개발",
+   "title": "2026년 IPARK현대산업개발 김해신문센트럴아이파크 소방안전관리자 채용",
+   "at": "2026-10-03T22:46:21.309Z"
+  },
+  {
+   "url": "https://www.worker.co.kr/job/view.asp?jobid=all&no=1414531&urgent=yes&chk=yes&goodjob=",
+   "company": "(주)HJ중공업",
+   "title": "[건설부문] 2026년도 계약직 채용공고 (토목, 안전 분야)",
+   "at": "2026-10-03T22:46:21.641Z"
+  },
+  {
+   "url": "https://www.worker.co.kr/job/view.asp?jobid=all&no=1414541&urgent=yes&chk=yes&goodjob=",
+   "company": "동부건설(주)",
+   "title": "토목 고양창릉 화랑로지하차도 안전관리자 채용",
+   "at": "2026-10-03T22:46:22.082Z"
+  },
+  {
+   "url": "https://www.worker.co.kr/job/view.asp?jobid=all&no=1414322&urgent=&chk=yes&goodjob=",
+   "company": "(주)동원개발",
+   "title": "건설 아파트현장 안전관리자",
+   "at": "2026-10-03T22:46:22.402Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55099605",
+   "company": "삼호개발(주)",
+   "title": "삼호개발(주) 춘천~속초 토목 현장 안전관리자 채용",
+   "at": "2026-10-03T22:46:22.851Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55179187",
+   "company": "에이치에스화성(주)",
+   "title": "[부산범천동주상복합] 건설현장 안전,보건관리자 계약직 채용",
+   "at": "2026-10-03T22:46:23.201Z"
+  },
+  {
+   "url": "https://www.worker.co.kr/job/view.asp?jobid=all&no=1414563&urgent=yes&chk=yes&goodjob=",
+   "company": "(주)케이씨씨건설",
+   "title": "[KCC건설] 용산 나진상가 12, 13동 복합시설 안전직 채용",
+   "at": "2026-10-03T22:46:23.556Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55009569",
+   "company": "(주)엠플러스",
+   "title": "자동화설비 안전관리 상주 계약직 채용",
+   "at": "2026-10-03T22:46:23.917Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55030993",
+   "company": "(주)케이씨씨건설",
+   "title": "[KCC건설] 평택 사무3동 신축공사 안전관리자 채용",
+   "at": "2026-10-03T22:46:24.301Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55041947",
+   "company": "중원엔지니어링(주)",
+   "title": "중원엔지니어링(주) 현장 안전관리자 채용",
+   "at": "2026-10-03T22:46:24.661Z"
+  },
+  {
+   "url": "https://www.worker.co.kr/job/view.asp?jobid=all&no=1413014&urgent=yes&chk=yes&goodjob=",
+   "company": "(주)케이씨씨건설",
+   "title": "[KCC건설] 향남역 그로브 스위첸 안전관리자(팀원) 채용",
+   "at": "2026-10-03T22:46:25.065Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55070722",
+   "company": "(주)영광YKMC",
+   "title": "(주)영광YKMC 설비 직무 채용",
+   "at": "2026-10-03T22:46:25.448Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55134859",
+   "company": "(주)백산이엔지",
+   "title": "(주)백산이엔지 본사 안전팀 채용공고",
+   "at": "2026-10-03T22:46:25.857Z"
+  },
+  {
+   "url": "https://www.worker.co.kr/job/view.asp?jobid=all&no=1414545&urgent=yes&chk=yes&goodjob=",
+   "company": "(주)케이씨씨건설",
+   "title": "[KCC건설] 아성다이소 양주허브센터 안전직 채용",
+   "at": "2026-10-03T22:46:26.197Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54955877",
+   "company": "한신공영(주)",
+   "title": "창원 한신더휴 메가센텀 안전관리자(건설업 경력증명서 첨부)",
+   "at": "2026-10-03T22:46:26.589Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55012834",
+   "company": "한신공영(주)",
+   "title": "한신공영(주) 행신 2-1구역 주택재건축정비사업 보건관리자 채용",
+   "at": "2026-10-03T22:46:26.913Z"
+  },
+  {
+   "url": "https://www.worker.co.kr/job/view.asp?jobid=all&no=1413714&urgent=yes&chk=yes&goodjob=",
+   "company": "계룡건설산업(주)",
+   "title": "계룡건설산업(주) 당진 석문국가산단 B-6BL 아파트 안전반장 모집",
+   "at": "2026-10-03T22:46:27.303Z"
+  },
+  {
+   "url": "https://www.worker.co.kr/job/view.asp?jobid=all&no=1414439&urgent=yes&chk=yes&goodjob=",
+   "company": "동부건설(주)",
+   "title": "[동부건설(주)] 25-A-00부대 시설공사 현장 안전직(프로젝트전문직)",
+   "at": "2026-10-03T22:46:27.671Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55088776",
+   "company": "(학)서강대학교",
+   "title": "2026년 서강대학교 정규직 신입직원 채용 공고",
+   "at": "2026-10-04T11:18:44.178Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55054256",
+   "company": "(주)옵투스제약",
+   "title": "(주)옵투스제약 2026년 하반기 부문별 채용",
+   "at": "2026-10-04T11:18:44.558Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55115145",
+   "company": "(주)에이앤지테크놀로지",
+   "title": "㈜에이앤지테크놀로지 2026년 하반기 신입 및 경력 채용",
+   "at": "2026-10-04T11:22:38.189Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54998463",
+   "company": "대운가스프랜트(주)",
+   "title": "현장 안전관리자 채용 (경력자 우대)",
+   "at": "2026-10-04T11:22:38.531Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54996496",
+   "company": "(주)인베스트",
+   "title": "[용인]반도체 현장 안전관리자 채용 공고",
+   "at": "2026-10-04T11:22:38.942Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55087813",
+   "company": "영광백수풍력발전(주)",
+   "title": "풍력발전소 전기 및 설비 안전관리자 채용",
+   "at": "2026-10-04T11:22:39.412Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55146923",
+   "company": "(주)참프레",
+   "title": "㈜참프레 2026년 신입/경력 공개채용",
+   "at": "2026-10-04T11:22:39.791Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54997568",
+   "company": "에프앤디홀딩스 유한책임회사",
+   "title": "(현장) 2026년 하반기 안전관리자 채용",
+   "at": "2026-10-04T11:22:40.142Z"
+  },
+  {
+   "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/49911434?Oem_Code=C1",
+   "company": "㈜씨텍메디칼",
+   "title": "방사선 안전관리자(RI면허자) 채용",
+   "at": "2026-10-04T11:22:40.502Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54972581",
+   "company": "㈜리치몬트코리아",
+   "title": "[리치몬트코리아] 총무 및 보건관리자 정규직 채용 (신입 가능)",
+   "at": "2026-10-04T11:22:40.850Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55109161",
+   "company": "(주)에이엠에스",
+   "title": "(주)에이엠에스 자동차 부품 산업안전 & 총무 담당자 채용",
+   "at": "2026-10-04T11:22:41.202Z"
+  },
+  {
+   "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54965501",
+   "company": "범우화학공업(주)",
+   "title": "안전환경팀 (화학안전관리업무 담당) 담당자 모집",
+   "at": "2026-10-04T11:22:41.850Z"
+  }
+ ]
+}
