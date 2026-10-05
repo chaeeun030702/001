@@ -896,8 +896,18 @@ def senior_rank(p: Posting) -> bool:
     return bool(SENIOR_RANK_RE.search(field_) and not JUNIOR_RANK_RE.search(field_))
 
 
+LINKEDIN_EXEC_RE = re.compile(r"(?<![A-Za-z])(?:Director|Head\s+of|VP|Vice\s+President|Chief)(?![A-Za-z])", re.I)
+
+
 def level_of(p: Posting, text):
     lv = p.level
+    if p.source == "LinkedIn":
+        # 브라우저 작업이 넘긴 값을 그대로 쓴다. 'Manager'는 외국계에서 실무 담당 직함이라 제외하지 않고,
+        # Director 이상만 경력으로 본다. 경력 요건을 아직 못 읽은 공고('경력 요건 확인 필요')는 싣는다.
+        if LINKEDIN_EXEC_RE.search(p.title):
+            p.extra["senior"] = True
+            return "경력"
+        return lv or "경력 요건 확인 필요"
     if senior_rank(p):
         p.extra["senior"] = True
         return "경력"
