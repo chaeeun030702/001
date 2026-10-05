@@ -236,7 +236,34 @@ def pay_of(m, postings):
     return " · ".join(x for x in (pay, starter or "신입 초봉 확인 못 함") if x)
 
 
-def render(drafts, today, now, excluded=(), postings=None):
+def foreign_section(foreign, excluded, postings):
+    """외국계 공고 목록 — 자동 작성하지 않고 '작성 요청' 단추로 요청한 공고만 다음 루틴에서 쓴다."""
+    rows = []
+    for f in foreign or []:
+        if f.get("id") in excluded:
+            continue
+        m = {"company": f.get("company", ""), "url": f.get("url", ""), "title": f.get("title", "")}
+        pst = postings["url"].get(m["url"])
+        emp = (pst or {}).get("employment") or "정규직"
+        chips = "".join(f'<span class="chip">{e(x)}</span>' for x in f.get("tags", []))
+        chips += f'<div class="emp"><span class="pill {"ok" if emp.startswith("정규직") else "mute"}">{e(emp)}</span></div>'
+        pay = pay_of(m, postings)
+        title = (f'<a class="jd" href="{e(m["url"])}" target="_blank" rel="noopener" title="공고 원문 열기">{e(m["title"])}</a>'
+                 + (f'<div class="pay">{e(pay)}</div>' if pay else ""))
+        rows.append(f'<tr data-id="{e(f["id"])}"><td>{e(m["company"])}</td><td>{chips}</td><td class="wrap">{title}</td>'
+                    f'<td class="num">{e(f.get("deadline_date", ""))}</td><td>{dpill(f.get("days_left"))}</td>'
+                    f'<td class="reqcell"><button type="button" class="req" data-id="{e(f["id"])}" data-company="{e(m["company"])}" '
+                    f'data-title="{e(m["title"])}" data-url="{e(m["url"])}" disabled>작성 요청</button></td></tr>')
+    if not rows:
+        return ""
+    return ('<section class="card" id="foreign"><h2>외국계 공고 · 요청 시 작성</h2>'
+            '<p class="hint" id="reqmsg">외국계 공고는 자동으로 쓰지 않고 목록만 보여 줍니다. <b>작성 요청</b>을 누르면 다음 20:30 리포트에서 초안을 씁니다(마감 5일 전이 아니어도 씀).</p>'
+            '<div class="scroll"><table><colgroup><col style="width:17%"><col style="width:14%"><col><col style="width:12%"><col style="width:9%"><col style="width:16%"></colgroup>'
+            '<thead><tr><th>업체</th><th>구분</th><th>공고</th><th>마감일</th><th>남은 기간</th><th>작성</th></tr></thead><tbody>'
+            + "".join(rows) + "</tbody></table></div></section>")
+
+
+def render(drafts, today, now, excluded=(), postings=None, foreign=None):
     postings = postings or {"url": {}, "starter": {}}
     live = [d for d in drafts if (d["left"] is None or d["left"] >= 0) and d["id"] not in excluded]
     new = [d for d in live if d["meta"].get("written") == today.isoformat()]
@@ -282,7 +309,7 @@ def render(drafts, today, now, excluded=(), postings=None):
 {draft_body(d)}
 </div></details>''')
 
-    return PAGE.format(style=STYLE, script=SCRIPT + EXCLUDE_SCRIPT, date=f"{today:%Y-%m-%d}", weekday="월화수목금토일"[today.weekday()], gen=f"{now:%Y-%m-%d %H:%M}",
+    return PAGE.format(style=STYLE, script=SCRIPT + EXCLUDE_SCRIPT + REQUEST_SCRIPT, foreign=foreign_section(foreign, excluded, postings), date=f"{today:%Y-%m-%d}", weekday="월화수목금토일"[today.weekday()], gen=f"{now:%Y-%m-%d %H:%M}",
                        tiles=tiles_html, table=table, cards="".join(cards) or "")
 
 
@@ -379,6 +406,9 @@ a.jd{color:var(--text);text-decoration:underline;text-decoration-color:var(--bor
 .xlist{margin:8px 0 0;font-size:13px;color:var(--sub)} .xlist summary{cursor:pointer;color:var(--cap);font-size:12px}
 .xlist ul{margin:6px 0 0;padding-left:18px} .xlist li{margin:2px 0} .xlist button{margin-left:6px;font:600 12px var(--font);border:1px solid var(--border-strong);background:var(--surface);color:var(--primary);border-radius:6px;padding:1px 8px;cursor:pointer}
 tr.gone,.draft.gone{display:none}
+button.req{font:600 12px var(--font);border-radius:8px;padding:6px 10px;min-height:32px;cursor:pointer;border:1px solid var(--primary);background:var(--surface);color:var(--primary);white-space:nowrap}
+button.req.on{background:var(--primary);color:var(--surface)} button.req:disabled{opacity:.45;cursor:not-allowed}
+@media print{#foreign{display:none!important}}
 @media print{.xbar,.xlist,.pickcell{display:none!important}}
 </style>"""
 
@@ -454,6 +484,30 @@ EXCLUDE_SCRIPT = r"""<script>
 })();
 </script>"""
 
+# 외국계 작성 요청은 아티팩트 db 의 requested 컬렉션(문서 id = 초안 id)에 둔다. 매일 루틴이 읽어
+# cover_letters.py --requested 로 넘기면 그 공고만 초안을 쓴다. 요청 취소는 문서 삭제.
+REQUEST_SCRIPT = r"""<script>
+(async function(){
+ var btns=Array.from(document.querySelectorAll("button.req"));
+ if(!btns.length||!window.claude||!claude.use)return;
+ var db=null;try{db=await claude.use("db")}catch(e){}
+ if(!db)return;
+ var col=db.collection("requested"),msg=document.getElementById("reqmsg"),hint=msg?msg.innerHTML:"",req={};
+ function paint(){btns.forEach(function(b){var on=!!req[b.dataset.id];b.disabled=false;
+  b.classList.toggle("on",on);b.textContent=on?"요청됨 · 취소":"작성 요청";
+  b.setAttribute("aria-pressed",on?"true":"false")})}
+ btns.forEach(function(b){b.addEventListener("click",async function(){
+  var id=b.dataset.id;b.disabled=true;
+  try{if(req[id]){await col.doc(id).delete()}
+   else{await col.doc(id).set({company:b.dataset.company,title:b.dataset.title,url:b.dataset.url,at:new Date().toISOString()})}
+   if(msg)msg.innerHTML=hint}
+  catch(e){if(msg)msg.textContent="저장하지 못했습니다("+(e&&(e.code||e.message)||"오류")+"). 편집 권한이 있는 계정으로 열었는지 확인해 주세요.";b.disabled=false}
+ })});
+ col.onSnapshot(function(snap){req={};snap.docs.forEach(function(d){req[d.id]=1});paint()},
+  function(){if(msg)msg.textContent="작성 요청 목록을 불러오지 못했습니다."});
+})();
+</script>"""
+
 PAGE = """<title>자기소개서 일일 브리핑</title>
 {style}
 <div class="sheet">
@@ -461,6 +515,7 @@ PAGE = """<title>자기소개서 일일 브리핑</title>
 <div class="gen">{date} ({weekday}) · 생성 {gen} KST</div></header>
 <div class="tiles">{tiles}</div>
 <section class="card"><h2>마감순 초안</h2>{table}</section>
+{foreign}
 <section class="card"><h2>제출 전 확인</h2><ul class="rules">
 <li><b>문항·글자수</b> 공고 원문과 대조 (추정 문항이면 교체)</li>
 <li><b>수상 표현 금지</b> 논문은 '제출'까지만</li>
@@ -474,6 +529,14 @@ PAGE = """<title>자기소개서 일일 브리핑</title>
 </div>
 {script}
 """
+
+
+def load_json_list(path):
+    try:
+        data = json.loads(Path(path).read_text(encoding="utf-8")) if path else []
+    except (OSError, ValueError):
+        return []
+    return data if isinstance(data, list) else []
 
 
 def load_excluded(path):
@@ -500,6 +563,7 @@ def main():
     ap.add_argument("--drafts", default="drafts")
     ap.add_argument("--out", default="index.html")
     ap.add_argument("--today")
+    ap.add_argument("--foreign", help="외국계 공고 목록 JSON(cover_letters.py --foreign-out) — 요청 시 작성 표")
     ap.add_argument("--briefing", action="append", help="채용 브리핑 latest.json(초봉·고용형태 조회용, 여러 번 가능)")
     ap.add_argument("--exclude", help="제외 목록 JSON(아티팩트 db excluded 컬렉션을 내려받은 것: id 목록 또는 {id,...} 목록)")
     args = ap.parse_args()
@@ -523,7 +587,7 @@ def main():
     postings = load_postings(args.briefing)
     for d in drafts:
         d["pay"] = pay_of(d["meta"], postings)
-    Path(args.out).write_text(render(drafts, today, now, excluded, postings), encoding="utf-8")
+    Path(args.out).write_text(render(drafts, today, now, excluded, postings, load_json_list(args.foreign)), encoding="utf-8")
     letters = Path(args.out).parent / "letters"
     letters.mkdir(exist_ok=True)
     for d in drafts:

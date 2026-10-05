@@ -11,6 +11,11 @@
     python3 safety_jobs/cover_letters.py --briefing briefings/latest.json [--briefing other/latest.json] --done drafts/index.json
 
 가장 최근(generated_at) 브리핑을 쓰고, 대상 목록을 JSON으로 출력한다.
+
+외국계 공고는 자동으로 쓰지 않고 목록(foreign)만 만든다. 브리핑 페이지의 '작성 요청' 단추로
+요청한 공고(--requested, 아티팩트 db requested 컬렉션, 초안 id 기준)만 마감 기간과 관계없이 대상에 넣는다.
+
+    ... --requested requested.json --foreign-out foreign.json
 """
 import argparse
 import datetime as dt
@@ -70,6 +75,8 @@ def main():
     ap.add_argument("--days", type=int, default=LEAD_DAYS)
     ap.add_argument("--today", help="YYYY-MM-DD (기본: 오늘 KST)")
     ap.add_argument("--exclude", help="제외 목록 JSON(브리핑 페이지에서 '선택 삭제'한 공고, 초안 id 기준)")
+    ap.add_argument("--requested", help="작성 요청 JSON(브리핑 페이지에서 '작성 요청'한 외국계 공고, 초안 id 기준)")
+    ap.add_argument("--foreign-out", help="요청 전 외국계 공고 목록을 저장할 JSON 경로(cover_brief.py --foreign)")
     args = ap.parse_args()
 
     d = load_latest(args.briefing or ["briefings/latest.json"])
@@ -79,8 +86,9 @@ def main():
     today = dt.date.fromisoformat(args.today) if args.today else dt.datetime.now(KST).date()
     done = drafted_urls(args.done)
     excluded = load_excluded(args.exclude)
+    requested = load_excluded(args.requested)
 
-    targets = []
+    targets, foreign = [], []
     for p in d.get("postings", []):
         if p.get("employment") != "정규직" or not p.get("deadline_date"):
             continue
@@ -88,7 +96,15 @@ def main():
         if not tags:
             continue
         left = (dt.date.fromisoformat(p["deadline_date"]) - today).days
-        if not 0 < left <= args.days or p["url"] in done or draft_id(p["url"]) in excluded:
+        pid = draft_id(p["url"])
+        if left <= 0 or p["url"] in done or pid in excluded:
+            continue
+        if "외국계" in tags and pid not in requested:
+            # 외국계는 목록만 — 요청 전에는 초안을 쓰지 않는다
+            foreign.append({"id": pid, "company": p["company"], "title": p["title"], "url": p["url"],
+                            "deadline_date": p["deadline_date"], "days_left": left, "tags": tags})
+            continue
+        if left > args.days and pid not in requested:
             continue
         targets.append({
             "company": p["company"], "title": p["title"], "url": p["url"], "source": p["source"],
@@ -96,11 +112,15 @@ def main():
             "industry": p.get("industry", ""), "level": p.get("level", ""),
             "qualification": p.get("qualification", ""), "preferred": p.get("preferred", ""),
             "detail_text": (p.get("detail_text") or "")[:1500],
-            "id": draft_id(p["url"]), "file": f"drafts/{p['deadline_date']}_{draft_id(p['url'])}.md",
+            "id": pid, "file": f"drafts/{p['deadline_date']}_{pid}.md", "requested": pid in requested,
         })
     targets.sort(key=lambda t: t["deadline_date"])
+    foreign.sort(key=lambda t: t["deadline_date"])
+    if args.foreign_out:
+        Path(args.foreign_out).write_text(json.dumps(foreign, ensure_ascii=False, indent=1), encoding="utf-8")
     print(json.dumps({"generated_at": d.get("generated_at"), "today": today.isoformat(),
-                      "already_drafted": len(done), "targets": targets}, ensure_ascii=False, indent=1))
+                      "already_drafted": len(done), "targets": targets,
+                      "foreign_listed": len(foreign)}, ensure_ascii=False, indent=1))
     return 0
 
 
