@@ -104,11 +104,11 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 <script>
 /* 작업 데이터 — 에이전트를 맡길 때마다 이 블록만 고친다 (progress: 0~100) */
 var JOB={
-  updated:"2026-10-05 09:27 KST",updatedISO:"2026-10-05T00:27:16Z",
+  updated:"2026-10-05 09:27 KST",updatedISO:"2026-10-05T00:27:51Z",
   main:{name:"메인 에이전트",task:"현재 시점 브리핑 — 제외 동기화 → 수집 → 브리핑 게시",note:"GitHub Actions 수집기에 하청을 주고, 끝나면 결과를 브리핑 아티팩트에 게시합니다."},
   subs:[
    {name:"제외 목록 동기화",order:"하청 1",status:"done",progress:100,task:"브리핑에서 체크·삭제한 공고를 excluded.json에 반영",result:"277건 반영"},
-   {name:"GitHub Actions 수집기",order:"하청 2",status:"run",progress:5,startedAt:"2026-10-05T00:27:16Z",etaMin:20,task:"잡코리아·사람인·워커넷·피플앤잡·링커리어·기업 채용페이지 등 수집"},
+   {name:"GitHub Actions 수집기",order:"하청 2",status:"run",progress:10,startedAt:"2026-10-05T00:27:18Z",etaMin:20,task:"[run #70 · 수집 단계 진행 중] 잡코리아·사람인·워커넷·피플앤잡·링커리어·기업 채용페이지 등 수집"},
    {name:"브리핑 게시",order:"하청 3",status:"wait",progress:0,task:"latest.html을 브리핑 아티팩트에 게시"}
   ]
 };
