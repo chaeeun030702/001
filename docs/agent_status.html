@@ -104,14 +104,13 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 <script>
 /* 작업 데이터 — 에이전트를 맡길 때마다 이 블록만 고친다 (progress: 0~100) */
 var JOB={
-  updated:"2026-10-05 11:27 KST",updatedISO:"2026-10-05T02:27:27Z",
-  main:{name:"메인 에이전트",task:"브리핑 묶음 정리 — 사람인 오늘 신규 → 신규 공고, 직무 확인 필요 검토 → 고용형태 묶음, 대기업 신입 공채 → 정규직",note:"대기업 신입 공채·직무 확인 필요 칸을 없애고 각 공고에 배지로 남겼습니다. 최종본을 게시했습니다."},
+  updated:"2026-10-05 11:56 KST",updatedISO:"2026-10-05T02:56:25Z",
+  main:{name:"메인 에이전트",task:"LinkedIn 안전 공고 19건을 브리핑 고용형태별 표에 싣고, 덮어써진 브리핑 바로잡기",note:"다른 세션이 DB에 넣은 LinkedIn 공고를 공고 목록 파일로 옮겨 정규직·계약직 표에 실었습니다."},
   subs:[
-   {name:"묶음 통합 (collect.py)",order:"하청 1",status:"done",progress:100,task:"[사람인 · 오늘 찾은 신규] → 신규 공고 · 대기업 신입 공채 → 정규직 · 직무 확인 필요 → 고용형태 묶음",result:"PR #31 병합"},
-   {name:"직무 확인 필요 검토",order:"하청 2",status:"done",progress:100,task:"28건 상세 본문을 다시 읽어 안전 직무 여부 판정",result:"17건 유지(배지) · 11건 제외 (안전 직무 아님 4 · 마감·경력 전용·공고 없음·중복 7)"},
-   {name:"브리핑 게시 (임시)",order:"하청 3",status:"done",progress:100,task:"10:07 수집 데이터로 다시 묶어 게시",result:"신규 45 · 정규직 71 · 계약직 35 · 인턴 1 · 미표기 8"},
-   {name:"GitHub Actions 수집기",order:"하청 4",status:"done",progress:100,task:"run #79 — 새 묶음·검토 결과로 전체 재수집 (11:12 수집)",result:"지운 직접 추가 7건이 이전 브리핑에서 되살아난 문제 발견 → PR #32로 수정"},
-   {name:"브리핑 게시 (최종)",order:"하청 5",status:"done",progress:100,task:"되살아난 7건을 빼고 최종본 게시",result:"전체 152 · 신규 42 · 정규직 70 · 계약직 35 · 인턴 1 · 미표기 8"}
+   {name:"LinkedIn 작업 실행 확인",order:"하청 1",status:"done",progress:100,task:"예약 작업·DB·브리핑·분석 보고서 상태 점검",result:"예약 LinkedIn 단계 미실행(첫 실행 10/6 09:03) · DB에 19건 있음 · 브리핑 0건"},
+   {name:"LinkedIn 19건 반영 (collect.py)",order:"하청 2",status:"done",progress:100,task:"DB manual의 linkedin-* → manual_postings.json (source LinkedIn, 외국계, 상세 조회 없음)",result:"PR #33 병합 · 정규직 16 · 계약직 3"},
+   {name:"브리핑 게시",order:"하청 3",status:"done",progress:100,task:"지운 7건 빼고 LinkedIn 19건 넣어 다시 게시",result:"전체 171 · 신규 61 · 정규직 86 · 계약직 38 · 인턴 1 · 미표기 8"},
+   {name:"GitHub Actions 수집기",order:"하청 4",status:"run",progress:5,startedAt:"2026-10-05T02:56:13Z",etaMin:22,task:"run #82 — 저장소 브리핑 데이터도 같은 내용으로 맞추기",result:""}
   ]
 };
 
