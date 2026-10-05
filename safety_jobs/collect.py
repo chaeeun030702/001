@@ -1050,6 +1050,49 @@ def relevant(p: Posting):
     return False
 
 
+# 담당 업무 항목에 '안전'이 있는지 (정보보안·안전하게·안전벨트 같은 말과 단순 '안전수칙 준수'는 빼고 본다)
+DUTY_SAFETY_RE = re.compile(r"(?<!보)안전(?![하한히]|벨트|유리|용품|장치|성\s*(?:평가|시험|정보))|보건\s*관리|산업\s*위생|유해\s*요인|근골격|작업\s*환경\s*측정|"
+                            r"(?<![A-Za-z])(?:HSE|EHS|EH&S|SHE|HSEQ|QHSE|HSSE|[Ss]afety|SAFETY)(?![A-Za-z])")
+DUTY_COMPLY_RE = re.compile(r"(?:안전|EHS|HSE)[^.\n·•\-]{0,20}(?:규정|수칙|규칙|요구\s*사항|정책)[^.\n·•\-]{0,20}(?:준수|기반|따라|따른)", re.I)
+DUTY_STOP_RE = re.compile(rf"{STOP}|{QUAL_HEAD}")
+
+
+def duty_text(t: str) -> str:
+    """본문의 모든 담당 업무(주요 업무·업무 내용·모집 분야) 항목을 이어 붙인다."""
+    out = []
+    for m in re.finditer(rf"(?:{DUTY_HEAD})\s*[:：]?", t):
+        body = t[m.end():m.end() + 800]
+        st = DUTY_STOP_RE.search(body, 5)
+        out.append(body[:st.start()] if st else body)
+    return clean(" ".join(out))
+
+
+def title_safe(p: Posting) -> bool:
+    title = PREF_IN_TITLE_RE.sub(" ", p.title)
+    return bool(SAFETY_RE.search(title) or CERT_KEY_RE.search(p.title))
+
+
+def duty_verdict(p: Posting):
+    """제목에 안전 직무가 없을 때 담당 업무로 판정. True(안전 있음) / False(없음) / None(본문·항목을 못 읽음)."""
+    if title_safe(p) or not p.detail_text:
+        return None
+    d = duty_text(p.detail_text[:12000])
+    if len(re.sub(r"\W", "", d)) < 10:
+        return None
+    return bool(DUTY_SAFETY_RE.search(DUTY_COMPLY_RE.sub(" ", d)))
+
+
+DUTY_CHECK_NOTE = "담당 업무 항목을 읽지 못함 — 안전 업무 포함 여부 확인 필요"
+
+
+def duty_gate(p: Posting) -> str:
+    """담당 업무 기준 판정: 'ok'(싣기) / 'drop'(제외) / 'check'(직무 확인 필요) / ''(제목으로 이미 안전 직무)."""
+    if p.extra.get("manual") or p.extra.get("posted") is not None or title_safe(p):
+        return ""
+    v = duty_verdict(p)
+    return "ok" if v else "drop" if v is False else "check"
+
+
 def relevant_after_detail(p: Posting) -> bool:
     r = relevant(p)
     if r is not None:
@@ -1149,12 +1192,21 @@ def keep(p: Posting, today) -> tuple[bool, str]:
             return False, "안전 직무 아님"
     elif p.extra.get("manual"):
         pass
-    elif not relevant_after_detail(p):
-        why = needs_check_reason(p)
-        if not why:
-            return False, "안전 직무 아님"
-        p.extra["needs_check"] = True
-        p.extra["check_note"] = why
+    else:
+        g = duty_gate(p)
+        if g == "drop":
+            return False, "담당 업무에 안전 없음"
+        if g == "ok":
+            pass  # 담당 업무에 '안전'이 있으면 안전 직무로 싣는다
+        elif not relevant_after_detail(p):
+            why = needs_check_reason(p)
+            if not why:
+                return False, "안전 직무 아님"
+            p.extra["needs_check"] = True
+            p.extra["check_note"] = why
+        elif g == "check":
+            p.extra["needs_check"] = True
+            p.extra["check_note"] = DUTY_CHECK_NOTE
     if NON_HSE_SAFETY_RE.search(p.title):
         return False, "안전 직무 아님"
     if p.extra.get("need_korea") and not KOREA_LOC_RE.search(p.extra.get("loc", "")):
@@ -2009,7 +2061,7 @@ def render_html(postings, failures, now, stats):
         agg.update(parse_stat(v))
     total = agg.get("목록", 0)
     steps = [("수집 목록", total, "")]
-    for lab, keys in (("안전 직무 외", ["안전 직무 아님", "채용 공고 아님"]), ("경력직·대리급 이상", ["경력직", "대리급 이상"]),
+    for lab, keys in (("안전 직무 외", ["안전 직무 아님", "담당 업무에 안전 없음", "채용 공고 아님"]), ("경력직·대리급 이상", ["경력직", "대리급 이상"]),
                       ("대상 기준 외", ["건설사(시평 100위 밖)", "계약직(관심 기업 외)", "영업직", "감시단", "한국 근무 아님"]),
                       ("마감·오래된 글", ["마감", "오래된 게시글"]), ("중복", ["중복(상위 사이트 우선)"])):
         c = sum(agg.get(k, 0) for k in keys)
@@ -2204,6 +2256,15 @@ def carry_over(prev_path, failed, kept, stats, today):
             continue
         if senior_rank(p) or NON_HSE_SAFETY_RE.search(p.title):  # 대리급 이상·비HSE 제외 재적용
             continue
+        g = duty_gate(p)  # 담당 업무 기준 재적용
+        if g == "drop":
+            continue
+        if g == "ok":
+            p.extra.pop("needs_check", None)
+            p.extra.pop("check_note", None)
+        elif g == "check" and not p.extra.get("needs_check"):
+            p.extra["needs_check"] = True
+            p.extra["check_note"] = DUTY_CHECK_NOTE
         yrs = [int(m.group(1) or m.group(2)) for m in TITLE_YEARS_RE.finditer(p.title)]
         if yrs and min(yrs) >= 2 and not NEWBIE_RE.search(p.title):
             continue
