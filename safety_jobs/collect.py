@@ -670,13 +670,20 @@ def src_manual(f: Fetcher):
     for it in items:
         if not it.get("company"):
             continue
-        p = Posting("직접 추가", clean(it.get("title") or f"{it['company']} 채용"), clean(it["company"]),
+        # source가 '사람인'이면 다른 세션이 사람인에서 직접 찾아 넘긴 공고 → 사람인 공고로 싣고 상세 본문도 읽는다
+        src = it.get("source") or "직접 추가"
+        p = Posting(src, clean(it.get("title") or f"{it['company']} 채용"), clean(it["company"]),
                     it.get("url") or f"manual:{it['company']}:{it.get('title', '')}", clean(it.get("title", "")))
         p.deadline = it.get("deadline") or "확인 필요"
         p.employment = it.get("employment") or ""
         p.level = it.get("level") or "신입"
         p.extra = {"manual": True, "needs_check": it.get("safety_job") != "yes",
                    "check_note": it.get("note", ""), "via": it.get("via", "")}
+        rec = re.search(r"rec_idx=(\d+)", p.url)
+        if src == "사람인" and rec:
+            p.extra["rec_idx"] = rec.group(1)
+        if it.get("added"):
+            p.extra["first_seen"] = it["added"]  # 처음 찾은 날 (오늘 찾은 신규 판정)
         out.append(p)
     return out
 
