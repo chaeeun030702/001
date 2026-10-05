@@ -132,7 +132,7 @@ def draft_body(d, analysis_cls="facts"):
 <div class="ans" contenteditable="true" spellcheck="false" data-limit="{q["limit"]}">{paras}</div>
 <div class="qfoot"><div class="meter"><i style="width:{min(100, n * 100 // max(q["limit"], 1))}%"></i></div>
 <span class="cnt"><b>{n:,}</b> / {q["limit"]:,}자</span><span class="state"></span>
-<button type="button" class="copy">답변 복사</button></div></div>''')
+<button type="button" class="save" hidden>답변 저장</button><button type="button" class="copy">답변 복사</button></div></div>''')
     def ana(a):
         # 신입 연봉 줄은 채용현황 브리핑 값으로 통일하고, 초안 조사 내용은 굵게 하지 않고 참고로만 남긴다
         if d.get("pay") and a.startswith("신입 연봉:"):
@@ -309,7 +309,7 @@ def render(drafts, today, now, excluded=(), postings=None, foreign=None):
 {draft_body(d)}
 </div></details>''')
 
-    return PAGE.format(style=STYLE, script=SCRIPT + EXCLUDE_SCRIPT + REQUEST_SCRIPT, foreign=foreign_section(foreign, excluded, postings), date=f"{today:%Y-%m-%d}", weekday="월화수목금토일"[today.weekday()], gen=f"{now:%Y-%m-%d %H:%M}",
+    return PAGE.format(style=STYLE, script=SCRIPT + SAVE_SCRIPT + EXCLUDE_SCRIPT + REQUEST_SCRIPT, foreign=foreign_section(foreign, excluded, postings), date=f"{today:%Y-%m-%d}", weekday="월화수목금토일"[today.weekday()], gen=f"{now:%Y-%m-%d %H:%M}",
                        tiles=tiles_html, table=table, cards="".join(cards) or "")
 
 
@@ -384,6 +384,8 @@ thead th{font-size:12px;font-weight:600;color:var(--cap);background:var(--alt1)}
 .state{font-size:12px;font-weight:600} .q.ok .state{color:var(--ok)} .q.over .state{color:var(--err)} .q.low .state{color:var(--warn)}
 button.copy{font:600 13px var(--font);color:var(--surface);background:var(--primary);border:0;border-radius:8px;padding:7px 14px;cursor:pointer;min-height:36px}
 button.copy:hover{background:var(--primary-hover)}
+button.save{font:600 13px var(--font);color:var(--primary);background:var(--surface);border:1px solid var(--border-strong);border-radius:8px;padding:7px 14px;cursor:pointer;min-height:36px}
+button.save:hover{border-color:var(--primary)} button.save.clean{color:var(--ok)} button.save:disabled{opacity:.6;cursor:wait} button.save[hidden]{display:none}
 footer{font-size:12px;color:var(--cap)}
 @media (max-width:640px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.rules{grid-template-columns:1fr}h1{font-size:24px}.kv th{width:88px}}
 .doc-actions{display:flex;flex-wrap:wrap;gap:8px}
@@ -393,7 +395,7 @@ footer{font-size:12px;color:var(--cap)}
 .chips{margin-top:6px}
 a.jd{color:var(--text);text-decoration:underline;text-decoration-color:var(--border-strong);text-underline-offset:3px} a.jd:hover{color:var(--primary);text-decoration-color:var(--primary)} a.jd::after{content:" ↗";font-size:11px;color:var(--cap)}
 .emp{margin-top:4px} td .chip,.emp .pill{white-space:normal;max-width:100%} .pay{margin-top:4px;font-size:12px;color:var(--cap);font-variant-numeric:tabular-nums}
-@media print{@page{size:A4 portrait;margin:14mm}body{background:#fff;padding:0}.ref,.doc-actions,button.copy,.state,.meter,.hint{display:none!important}
+@media print{@page{size:A4 portrait;margin:14mm}body{background:#fff;padding:0}.ref,.doc-actions,button.copy,button.save,.state,.meter,.hint{display:none!important}
 .q{break-inside:avoid;border-color:#ccc}.sheet{max-width:none}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 .xbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:0 0 10px}
@@ -423,12 +425,48 @@ SCRIPT = r"""<script>
   function upd(){var n=len(text(a)),r=n/lim;q.querySelector(".cnt b").textContent=n.toLocaleString();
    q.querySelector(".meter i").style.width=Math.min(100,r*100)+"%";q.classList.remove("ok","low","over");
    var st=q.querySelector(".state");if(r>1){q.classList.add("over");st.textContent="초과 "+(n-lim)+"자"}else if(r>=.8){q.classList.add("ok");st.textContent="적정"}else{q.classList.add("low");st.textContent="부족"}}
-  a.addEventListener("input",function(){upd();try{localStorage.setItem(key,a.innerHTML)}catch(e){}});upd();
+  a.addEventListener("input",function(){upd();try{localStorage.setItem(key,a.innerHTML)}catch(e){}});upd();q._upd=upd;
   var dd=q.closest("details");if(dd)dd.addEventListener("toggle",function(){if(dd.open)upd()});
   var b=q.querySelector("button.copy");b.addEventListener("click",function(){var t=text(a);
    function done(){b.textContent="복사됨";setTimeout(function(){b.textContent="답변 복사"},1500)}
    function sel(){var r=document.createRange();r.selectNodeContents(a);var s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent="선택됨 · Ctrl+C"}
    try{navigator.clipboard.writeText(t).then(done,sel)}catch(e){sel()}});
+ });
+})();
+</script>"""
+
+# 답변 저장은 아티팩트 db 의 answers 컬렉션(문서 id = 초안id_문항순번)에 둔다. 페이지를 열 때 저장본을
+# 생성된 답변 위에 덮어 보여 주므로, 루틴이 페이지를 다시 만들어도 사용자가 고친 답변이 유지된다.
+# 저장하지 않은 수정(localStorage)이 있으면 그것을 먼저 보여 주고 단추에 '저장 안 됨'을 표시한다.
+SAVE_SCRIPT = r"""<script>
+(async function(){
+ if(!window.claude||!claude.use)return;
+ var db=null;try{db=await claude.use("db")}catch(e){}
+ if(!db)return;
+ var col=db.collection("answers"),saved={};
+ try{(await col.get()).docs.forEach(function(d){saved[d.id]=d.data()||{}})}catch(e){}
+ function stamp(t){var d=new Date(t);if(isNaN(d))return"";function z(n){return(n<10?"0":"")+n}return(d.getMonth()+1)+"/"+d.getDate()+" "+z(d.getHours())+":"+z(d.getMinutes())}
+ document.querySelectorAll("details.draft").forEach(function(dd){
+  dd.querySelectorAll(".q").forEach(function(q,i){
+   var a=q.querySelector(".ans"),h=q.querySelector("h4"),b=q.querySelector("button.save"),id=dd.id+"_"+i,key="cl:"+dd.id+":"+i,v=saved[id];
+   if(!b)return;
+   var local=null;try{local=localStorage.getItem(key)}catch(e){}
+   function clean(t){b.classList.add("clean");b.textContent="저장됨"+(t?" · "+stamp(t):"");b.title="다시 고치면 '답변 저장'으로 바뀝니다"}
+   function dirty(){b.classList.remove("clean");b.textContent="답변 저장";b.title="고친 답변을 이 페이지에 저장"}
+   if(v&&v.html&&local==null){a.innerHTML=v.html;if(v.sub)h.innerHTML=v.sub;if(q._upd)q._upd();clean(v.at)}
+   else if(local!=null){dirty();b.textContent="답변 저장 · 저장 안 됨"}
+   else dirty();
+   b.hidden=false;
+   a.addEventListener("input",dirty);h.addEventListener("input",dirty);
+   b.addEventListener("click",async function(){
+    b.disabled=true;b.textContent="저장 중…";var at=new Date().toISOString();
+    try{await col.doc(id).set({draft:dd.id,q:i,sub:h.innerHTML,html:a.innerHTML,at:at});
+     try{localStorage.removeItem(key)}catch(e){}
+     clean(at);
+    }catch(e){b.classList.remove("clean");b.textContent="저장 실패 · 다시 시도";b.title=String(e&&(e.code||e.message)||"오류")}
+    b.disabled=false;
+   });
+  });
  });
 })();
 </script>"""
@@ -527,7 +565,7 @@ PAGE = """<title>자기소개서 일일 브리핑</title>
 <li><b>기업 개요·분석</b> DART 사업보고서 · 최근 1년 안전·AI 기사(없으면 주요 기사)</li>
 </ul></section>
 {cards}
-<footer>답변은 바로 고칠 수 있고, 글자수(줄바꿈 제외·공백 포함)는 입력하면서 다시 셉니다. 고친 내용은 이 브라우저에만 남으니 제출 전 '답변 복사'로 옮겨 두세요.</footer>
+<footer>답변은 바로 고칠 수 있고, 글자수(줄바꿈 제외·공백 포함)는 입력하면서 다시 셉니다. 고친 뒤 '답변 저장'을 누르면 이 페이지에 저장돼 다른 기기와 다음 리포트에서도 그대로 보입니다(누르기 전에는 이 브라우저에만 임시로 남음).</footer>
 </div>
 {script}
 """
