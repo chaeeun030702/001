@@ -104,13 +104,14 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 <script>
 /* 작업 데이터 — 에이전트를 맡길 때마다 이 블록만 고친다 (progress: 0~100) */
 var JOB={
-  updated:"2026-10-05 11:13 KST",updatedISO:"2026-10-05T02:13:07Z",
-  main:{name:"메인 에이전트",task:"브리핑 묶음 정리 — 사람인 오늘 신규 → 신규 공고, 직무 확인 필요 검토 → 고용형태 묶음, 대기업 신입 공채 → 정규직",note:"대기업 신입 공채·직무 확인 필요 칸을 없애고 각 공고에 배지로 남겼습니다."},
+  updated:"2026-10-05 11:27 KST",updatedISO:"2026-10-05T02:27:27Z",
+  main:{name:"메인 에이전트",task:"브리핑 묶음 정리 — 사람인 오늘 신규 → 신규 공고, 직무 확인 필요 검토 → 고용형태 묶음, 대기업 신입 공채 → 정규직",note:"대기업 신입 공채·직무 확인 필요 칸을 없애고 각 공고에 배지로 남겼습니다. 최종본을 게시했습니다."},
   subs:[
    {name:"묶음 통합 (collect.py)",order:"하청 1",status:"done",progress:100,task:"[사람인 · 오늘 찾은 신규] → 신규 공고 · 대기업 신입 공채 → 정규직 · 직무 확인 필요 → 고용형태 묶음",result:"PR #31 병합"},
    {name:"직무 확인 필요 검토",order:"하청 2",status:"done",progress:100,task:"28건 상세 본문을 다시 읽어 안전 직무 여부 판정",result:"17건 유지(배지) · 11건 제외 (안전 직무 아님 4 · 마감·경력 전용·공고 없음·중복 7)"},
    {name:"브리핑 게시 (임시)",order:"하청 3",status:"done",progress:100,task:"10:07 수집 데이터로 다시 묶어 게시",result:"신규 45 · 정규직 71 · 계약직 35 · 인턴 1 · 미표기 8"},
-   {name:"GitHub Actions 수집기",order:"하청 4",status:"run",progress:5,startedAt:"2026-10-05T02:11:59Z",etaMin:22,task:"run #79 — 새 묶음·검토 결과로 전체 재수집",result:""}
+   {name:"GitHub Actions 수집기",order:"하청 4",status:"done",progress:100,task:"run #79 — 새 묶음·검토 결과로 전체 재수집 (11:12 수집)",result:"지운 직접 추가 7건이 이전 브리핑에서 되살아난 문제 발견 → PR #32로 수정"},
+   {name:"브리핑 게시 (최종)",order:"하청 5",status:"done",progress:100,task:"되살아난 7건을 빼고 최종본 게시",result:"전체 152 · 신규 42 · 정규직 70 · 계약직 35 · 인턴 1 · 미표기 8"}
   ]
 };
 
