@@ -1415,18 +1415,50 @@ def is_bigcorp_entry(p):
 
 BADGE = {"A": "🔴 ", "B": "🔵 ", "F": "🌐 ", "": ""}
 GROUPS = [("정규직", "[정규직]"), ("계약직", "[계약직]"), ("인턴", "[인턴]"), ("기타/미표기", "[고용형태 미표기]")]
-SARAMIN_TODAY = ("사람인 오늘", "[사람인 · 오늘 찾은 신규]")
+def saramin_today(p, today):
+    """사람인에서 오늘 처음 찾은 공고 → '신규 공고'에만 싣는다."""
+    return p.source == "사람인" and p.extra.get("first_seen") == today.isoformat()
+
+
+def group_key(p):
+    """공고 표 묶음 키. 대기업 신입 공채는 계약직·인턴이 아니면 정규직에 넣는다."""
+    if is_bigcorp_entry(p) and p.employment not in ("계약직", "인턴"):
+        return "정규직"
+    return p.employment if p.employment in dict(GROUPS) else "기타/미표기"
+
+
+def md_check(p):
+    if not p.extra.get("needs_check"):
+        return ""
+    return " ⚠️ **[직무 확인 필요]** " + md_cell(p.extra.get("check_note", ""))
+
+
+def md_src(p):
+    return p.source if p.url.startswith("manual:") else f"[{p.source}]({p.url})"
 
 
 def employment_groups(postings, today):
-    """공고 표 묶음. 사람인은 오늘 처음 찾은 공고를 따로 모으고, 나머지는 정규직·계약직·(인턴)·고용형태 미표기로 나눈다."""
-    t = today.isoformat()
-    fresh = [p for p in postings if p.source == "사람인" and p.extra.get("first_seen") == t]
-    ids = {id(p) for p in fresh}
-    rest = [p for p in postings if id(p) not in ids]
-    out = [(SARAMIN_TODAY[0], SARAMIN_TODAY[1], sorted(fresh, key=sort_key))]
-    out += [(key, tag, sorted([p for p in rest if p.employment == key], key=sort_key)) for key, tag in GROUPS]
+    """공고 표 묶음: 정규직·계약직·(인턴)·고용형태 미표기. 직무 확인 필요 공고도 여기에 표시와 함께 싣고,
+    사람인에서 오늘 처음 찾은 공고는 '신규 공고'에만 싣는다."""
+    rest = [p for p in postings if not saramin_today(p, today)]
+    out = [(key, tag, sorted([p for p in rest if group_key(p) == key], key=sort_key)) for key, tag in GROUPS]
     return [g for g in out if g[2]]
+
+
+def check_pill(p):
+    if not p.extra.get("needs_check"):
+        return ""
+    e = html.escape
+    note = p.extra.get("check_note", "")
+    return '<span class="pill pck">직무 확인 필요</span>' + (f'<small class="ckn">{e(note)}</small>' if note else "")
+
+
+def big_pill(p):
+    return '<span class="pill pb">대기업 신입 공채</span>' if is_bigcorp_entry(p) else ""
+
+
+def href(p):
+    return "" if p.url.startswith("manual:") else p.url
 LEGEND = ("🔴 데이터센터·하이테크·삼성·하이닉스 관련 · 🔵 대기업 계열사 · 🌐 외국계 회사 (여럿 해당하면 🔴 > 🔵 > 🌐, 업체명 옆에 [대기업 계열]/[외국계] 표기) · "
           "🟣 외국어·영어 능통 / NEBOSH / IOSH / CSP 우대 (🔴·🔵와 함께 표시될 수 있음) · [코스피]/[코스닥] 상장사 · 🤖 AI 역량 우대")
 
@@ -1458,30 +1490,11 @@ def render_md(postings, failures, now, stats):
              f"🟣 외국어·NEBOSH·IOSH·CSP 우대 {n_pref}건")
     L += ["", "건설사는 2026년 시공능력평가 상위 100개사(토목건축)만 싣습니다."]
     L += ["", f"범례: {LEGEND} · 🆕 지난 보고({last_report_date(now.date()):%m/%d}) 이후 추가", ""]
-    big = sorted([p for p in postings if is_bigcorp_entry(p)], key=sort_key)
-    L += [f"## 🏢 대기업 신입 공채 {len(big)}건", ""]
-    if big:
-        L += ["| 업체명 | 공고명 | 고용형태 · 연봉 | 접수기한 | 출처 |", "|---|---|---|---|---|"]
-        L += [f"| {('🆕 ' if is_new(p, now.date()) else '') + BADGE[p.hilite]}{md_cell(p.company)} | {md_cell(p.title)} | {p.employment}<br>{md_cell(pay_text(p))} "
-              f"| {deadline_md(p, now.date())} | [{p.source}]({p.url}) |" for p in big]
-    else:
-        L.append("_대기업 신입 공채 공고가 없습니다._")
-    L.append("")
-    chk = sorted([p for p in postings if p.extra.get("needs_check")], key=sort_key)
-    postings = [p for p in postings if not p.extra.get("needs_check")]
-    L += [f"## ⚠️ 직무 확인 필요 {len(chk)}건 (안전 키워드는 걸렸지만 안전 직무인지 원문 확인 필요)", ""]
-    if chk:
-        L += ["| 업체명 | 공고명 | 확인 사유 | 접수기한 | 출처 |", "|---|---|---|---|---|"]
-        L += [f"| {BADGE[p.hilite]}{md_cell(p.company)} | {md_cell(p.title)} | {md_cell(p.extra.get('check_note', ''))} | {deadline_md(p, now.date())} | "
-              + (f"[{p.source}]({p.url})" if not p.url.startswith("manual:") else p.source) + " |" for p in chk]
-    else:
-        L.append("_확인이 필요한 공고가 없습니다._")
-    L.append("")
     new = sorted([p for p in postings if is_new(p, now.date())], key=sort_key)
     L += [f"## 🆕 신규 공고 {len(new)}건 (지난 보고 {last_report_date(now.date()):%m/%d} 이후)", ""]
     if new:
         L += ["| 업체명 | 공고명 | 고용형태 · 연봉 | 접수기한 | 출처 |", "|---|---|---|---|---|"]
-        L += [f"| {BADGE[p.hilite]}{md_cell(p.company)} | {md_cell(p.title)} | {p.employment}<br>{md_cell(pay_text(p))} | {deadline_md(p, now.date())} | [{p.source}]({p.url}) |" for p in new]
+        L += [f"| {BADGE[p.hilite]}{md_cell(p.company)}{' [대기업 신입 공채]' if is_bigcorp_entry(p) else ''} | {md_cell(p.title)}{md_check(p)} | {p.employment}<br>{md_cell(pay_text(p))} | {deadline_md(p, now.date())} | {md_src(p)} |" for p in new]
     else:
         L.append("_새로 추가된 공고가 없습니다._")
     L.append("")
@@ -1492,6 +1505,7 @@ def render_md(postings, failures, now, stats):
         for p in rows:
             corp = ("🆕 " if is_new(p, now.date()) else "") + BADGE[p.hilite] + (f"**{md_cell(p.company)}**" if p.hilite else md_cell(p.company))
             corp += "".join(f" [{g}]" for g in p.extra.get("groups", []))
+            corp += " [대기업 신입 공채]" if is_bigcorp_entry(p) else ""
             corp += f" [{p.extra['listed']}]" if p.extra.get("listed") else ""
             if p.industry == "건설" and p.extra.get("top100"):
                 corp += f" (시평 {p.extra['top100']}위)"
@@ -1499,8 +1513,8 @@ def render_md(postings, failures, now, stats):
             cert += f"🟣 **[{'·'.join(p.prefs)} 우대]** " if p.prefs else ""
             cert += "🤖 **[AI 우대]** " if p.extra.get("ai") else ""
             cert += f"🏠 **[복지: {'·'.join(p.extra['benefits'])}]** " if p.extra.get("benefits") else ""
-            L.append(f"| {md_cell(p.level)} · {md_cell(p.industry)}<br>{md_cell(pay_text(p))} | {corp} | {md_cell(p.title)} | {cert}{md_cell(p.qualification)} "
-                     f"| {md_cell(p.preferred)} | {deadline_md(p, now.date())} | [{p.source}]({p.url}){' (이전 수집)' if p.extra.get('carried') else ''} |")
+            L.append(f"| {md_cell(p.level)} · {md_cell(p.industry)}<br>{md_cell(pay_text(p))} | {corp} | {md_cell(p.title)}{md_check(p)} | {cert}{md_cell(p.qualification)} "
+                     f"| {md_cell(p.preferred)} | {deadline_md(p, now.date())} | {md_src(p)}{' (이전 수집)' if p.extra.get('carried') else ''} |")
         L.append("")
     L += ["---", "", "**사이트별 수집 현황**", ""]
     for name, st in stats.items():
@@ -1999,17 +2013,15 @@ def render_html(postings, failures, now, stats):
         return (dt.date.fromisoformat(p.deadline_date) - today).days if p.deadline_date else None
 
     soon = {id(p) for p in postings if days_left(p) is not None and days_left(p) <= 3}
-    check_rows = sorted([p for p in postings if p.extra.get("needs_check")], key=sort_key)
-    postings_all, postings = postings, [p for p in postings if not p.extra.get("needs_check")]
+    postings_all = postings  # 직무 확인 필요 공고도 고용형태 묶음에 표시와 함께 싣는다
     groups = employment_groups(postings, today)
-    sid = {SARAMIN_TODAY[0]: "saramin-today", "정규직": "regular", "계약직": "contract", "인턴": "intern"}
+    sid = {"정규직": "regular", "계약직": "contract", "인턴": "intern"}
     n_a = sum(p.hilite == "A" for p in postings)
     n_b = sum("대기업 계열" in p.extra.get("groups", []) for p in postings)
     n_f = sum("외국계" in p.extra.get("groups", []) for p in postings)
     n_ks = sum(p.extra.get("listed") == "코스피" for p in postings)
     n_kq = sum(p.extra.get("listed") == "코스닥" for p in postings)
     new_rows = sorted([p for p in postings if is_new(p, today)], key=sort_key)
-    big_rows = sorted([p for p in postings if is_bigcorp_entry(p)], key=sort_key)
     n_new = len(new_rows)
     failed = {n for n, _ in failures}
     ok_sites = len(SOURCES) - len(failed)
@@ -2094,6 +2106,17 @@ def render_html(postings, failures, now, stats):
         link = (f'<a class="starter" href="{e(p.extra.get("starter_url", ""))}" target="_blank" rel="noopener">{e(st)}</a>' if st else "")
         return f'<small class="sal">{e(salary_of(p))}</small>' + (f'<small class="sal">{link}</small>' if link else "")
 
+    def co_link(p):
+        if not href(p):
+            return e(p.company or "-")
+        return f'<a class="co" href="{e(p.url)}" target="_blank" rel="noopener">{e(p.company or "-")}</a>'
+
+    def src_link(p):
+        via = f'<small>{e(p.extra["via"])}</small>' if p.extra.get("via") else ""
+        if not href(p):
+            return e(p.source) + via
+        return f'<a href="{e(p.url)}" target="_blank" rel="noopener">{e(p.source)}</a>' + via
+
     # 공고 표
     pill = {"A": '<span class="pill pa">데이터센터·하이테크·삼성·하이닉스</span>', "B": "", "F": "", "": ""}
     secs, nav = [], []
@@ -2102,10 +2125,10 @@ def render_html(postings, failures, now, stats):
         nav.append((i, tag, len(rows)))
         trs = "".join(
             f'<tr class="h{p.hilite}" data-url="{e(p.url)}" data-ind="{e(p.industry)}" data-cert="{1 if p.certs else 0}" data-pref="{1 if p.prefs else 0}" data-ai="{1 if p.extra.get("ai") else 0}" data-grp="{e(" ".join(p.extra.get("groups", [])))}" data-listed="{e(p.extra.get("listed", ""))}" data-new="{1 if is_new(p, today) else 0}" data-bnf="{1 if p.extra.get("benefits") else 0}">{xsel(p)}<td class="lv">{e(p.level)}<small>{e(p.industry)}</small>{sal_small(p)}</td>'
-            f'<td class="corp"><strong><a class="co" href="{e(p.url)}" target="_blank" rel="noopener">{e(p.company or "-")}</a></strong>{new_pill(p, today)}{pill[p.hilite]}{group_pills(p)}{rank_pill(p)}</td>'
-            f"<td class=\"ttl\">{e(p.title)}{pref_pills(p)}{ai_pill(p)}{benefit_pills(p)}</td><td>{cert_pills(p)}{e(p.qualification or '-')}</td><td>{e(p.preferred or '-')}</td>"
+            f'<td class="corp"><strong>{co_link(p)}</strong>{new_pill(p, today)}{big_pill(p)}{pill[p.hilite]}{group_pills(p)}{rank_pill(p)}</td>'
+            f"<td class=\"ttl\">{e(p.title)}{check_pill(p)}{pref_pills(p)}{ai_pill(p)}{benefit_pills(p)}</td><td>{cert_pills(p)}{e(p.qualification or '-')}</td><td>{e(p.preferred or '-')}</td>"
             f'<td class="dl{" soon" if id(p) in soon else ""}">{e(p.deadline)}</td>'
-            f'<td class="src"><a href="{e(p.url)}" target="_blank" rel="noopener">{e(p.source)}</a>'
+            f'<td class="src">{src_link(p)}'
             f'{"<small>이전 수집</small>" if p.extra.get("carried") else ""}</td></tr>'
             for p in rows)
         secs.append(
@@ -2145,35 +2168,19 @@ def render_html(postings, failures, now, stats):
                f'<tbody>{"".join(crows)}</tbody></table></div></section>') if crows else ""
     def rows5(rows, pill_new=False):
         return "".join(
-            f'<tr class="h{p.hilite}" data-url="{e(p.url)}">{xsel(p)}<td class="corp"><strong><a class="co" href="{e(p.url)}" target="_blank" rel="noopener">{e(p.company or "-")}</a></strong>'
-            f'{new_pill(p, today) if pill_new else ""}{group_pills(p)}</td><td>{e(p.title)}{benefit_pills(p)}</td><td class="lv">{e(p.employment)}<small>{e(p.level)}</small>{sal_small(p)}</td>'
-            f'<td class="dl{" soon" if id(p) in soon else ""}">{e(p.deadline)}</td><td class="src"><a href="{e(p.url)}" target="_blank" rel="noopener">{e(p.source)}</a></td></tr>'
+            f'<tr class="h{p.hilite}" data-url="{e(p.url)}">{xsel(p)}<td class="corp"><strong>{co_link(p)}</strong>'
+            f'{new_pill(p, today) if pill_new else ""}{big_pill(p)}{group_pills(p)}</td><td>{e(p.title)}{check_pill(p)}{benefit_pills(p)}</td><td class="lv">{e(p.employment)}<small>{e(p.level)}</small>{sal_small(p)}</td>'
+            f'<td class="dl{" soon" if id(p) in soon else ""}">{e(p.deadline)}</td><td class="src">{src_link(p)}</td></tr>'
             for p in rows)
     head5 = '<div class="scroll"><table class="t5"><thead><tr>' + PICK_TH + '<th>업체명</th><th>공고명</th><th>고용형태 · 연봉</th><th>접수기한</th><th>출처</th></tr></thead>'
     newsec = (f'<section class="card" id="new"><h2>신규 공고<span class="n">{n_new}건 · 지난 보고({last_report_date(today):%m/%d}) 이후 추가</span></h2>'
               + (f'{head5}<tbody>{rows5(new_rows)}</tbody></table></div>' if new_rows else '<p class="empty">새로 추가된 공고가 없습니다.</p>')
               + '</section>')
-    bigsec = (f'<section class="card" id="bigcorp"><h2>대기업 신입 공채<span class="n">{len(big_rows)}건</span></h2>'
-              + (f'{head5}<tbody>{rows5(big_rows, True)}</tbody></table></div>' if big_rows else '<p class="empty">대기업 신입 공채 공고가 없습니다.</p>')
-              + '</section>')
-    crow = "".join(
-        f'<tr class="h{p.hilite}" data-url="{e(p.url)}">{xsel(p)}<td class="corp"><strong>'
-        + (f'<a class="co" href="{e(p.url)}" target="_blank" rel="noopener">{e(p.company or "-")}</a>' if not p.url.startswith("manual:") else e(p.company or "-"))
-        + f'</strong>{new_pill(p, today)}{group_pills(p)}</td><td>{e(p.title)}{benefit_pills(p)}</td>'
-        f'<td><span class="pill pck">직무 확인 필요</span><small class="ckn">{e(p.extra.get("check_note", ""))}</small></td>'
-        f'<td class="dl{" soon" if id(p) in soon else ""}">{e(p.deadline)}</td>'
-        + (f'<td class="src"><a href="{e(p.url)}" target="_blank" rel="noopener">{e(p.source)}</a>' if not p.url.startswith("manual:") else f'<td class="src">{e(p.source)}')
-        + (f'<small>{e(p.extra.get("via", ""))}</small>' if p.extra.get("via") else "") + '</td></tr>'
-        for p in check_rows)
-    checksec = (f'<section class="card" id="check"><h2>직무 확인 필요<span class="n">{len(check_rows)}건 · 안전 키워드는 걸렸지만 안전 직무인지 공고 원문 확인 필요</span></h2>'
-                + ('<div class="scroll"><table class="t5"><thead><tr>' + PICK_TH + '<th>업체명</th><th>공고명</th><th>확인 사유</th><th>접수기한</th><th>출처</th></tr></thead>'
-                   f'<tbody>{crow}</tbody></table></div>' if check_rows else '<p class="empty">확인이 필요한 공고가 없습니다.</p>')
-                + '</section>')
-    side = ('<div class="sec">요약</div><a href="#bigcorp">대기업 신입 공채 <b>' + str(len(big_rows)) + '</b></a><a href="#check">직무 확인 필요 <b>' + str(len(check_rows)) + '</b></a><a href="#new">신규 공고 <b>' + str(n_new) + '</b></a><a href="#summary">지표·차트</a><a href="#calendar">채용 달력</a><a href="#flow">수집 흐름</a>'
+    side = ('<div class="sec">요약</div><a href="#new">신규 공고 <b>' + str(n_new) + '</b></a><a href="#summary">지표·차트</a><a href="#calendar">채용 달력</a><a href="#flow">수집 흐름</a>'
             '<div class="sec">공고</div>' + "".join(f'<a href="#{i}">{e(t)} <b>{c}</b></a>' for i, t, c in nav)
             + '<div class="sec">수집</div><a href="#status">사이트 현황</a>'
             + ('<a href="#careers">기업 채용 페이지</a>' if crows else ""))
-    chipnav = f'<a href="#bigcorp">대기업 신입 공채 {len(big_rows)}</a><a href="#new">신규 {n_new}</a><a href="#calendar">채용 달력</a>' + "".join(f'<a href="#{i}">{e(t)} {c}</a>' for i, t, c in nav)
+    chipnav = f'<a href="#new">신규 {n_new}</a><a href="#calendar">채용 달력</a>' + "".join(f'<a href="#{i}">{e(t)} {c}</a>' for i, t, c in nav)
 
     return f"""<title>안전관리자 채용 브리핑</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2202,9 +2209,7 @@ def render_html(postings, failures, now, stats):
 <main>
 <nav class="chipnav" aria-label="섹션">{chipnav}<a href="#status">사이트 현황</a></nav>
 <div class="kpis" id="summary">{kpis}</div>
-{bigsec}
 {newsec}
-{checksec}
 {render_calendar(postings_all, today)}
 <div class="charts">{charts}</div>
 <div class="card" id="flow"><h2>수집에서 채택까지</h2><div class="flow">{flow}</div></div>
