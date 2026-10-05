@@ -688,6 +688,10 @@ def src_manual(f: Fetcher):
         p.level = it.get("level") or "신입"
         p.extra = {"manual": True, "needs_check": it.get("safety_job") != "yes",
                    "check_note": it.get("note", ""), "via": it.get("via", "")}
+        if src == "LinkedIn":
+            p.listing_text = clean(f"{p.title} {it.get('note', '')}")
+            p.extra["check_note"] = ""
+            p.company_type = it.get("company_type") or "외국계"  # LinkedIn 한국 HSE 공고는 대부분 외국계 기업·헤드헌팅
         rec = re.search(r"rec_idx=(\d+)", p.url)
         if src == "사람인" and rec:
             p.extra["rec_idx"] = rec.group(1)
@@ -698,7 +702,7 @@ def src_manual(f: Fetcher):
 
 
 def fetch_detail(f: Fetcher, p: Posting) -> str:
-    if p.url.startswith("manual:"):
+    if p.url.startswith("manual:") or p.source == "LinkedIn":  # LinkedIn은 자동 접속하지 않는다 (브라우저 작업이 DB에 넣은 값만 씀)
         return ""
     if p.extra.get("detail_api"):  # Workday: JSON 상세
         r = f.c.get(p.extra["detail_api"], headers={"Accept": "application/json"})
