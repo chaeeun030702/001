@@ -28,7 +28,10 @@ drafts/index.json 과 drafts/*.md 초안을 읽어 아티팩트용 index.html �
     본문 문단...
 
     python3 safety_jobs/cover_brief.py --drafts drafts --out index.html [--today YYYY-MM-DD]
-        [--briefing briefings/latest.json ...] [--exclude excluded.json]
+        [--briefing briefings/latest.json ...] [--exclude excluded.json] [--answers answers/]
+
+--answers 로 저장된 답변(페이지의 '답변 저장', 아티팩트 db answers 컬렉션)을 주면 그 문항은 저장본으로 보여 주고
+당초 초안과 바뀐 곳을 '당초 초안과 비교'에 표시한다. 수정 경향 정리는 cover_edits.py.
 
 표의 '구분' 아래에는 고용형태(머리말 employment), '공고' 아래에는 공고 기재 연봉 · 신입 초봉을 적는다.
 초봉은 --briefing 으로 준 채용현황 브리핑의 extra.starter(잡코리아 기업 연봉정보 '신입 초봉 N만원 (연도)')로만
@@ -126,13 +129,15 @@ def draft_body(d, analysis_cls="facts"):
     for q in d["questions"]:
         n = count(q["answer"])
         paras = "".join(f"<p>{inline(p)}</p>" for p in q["answer"].split("\n\n") if p.strip())
-        qs.append(f'''<div class="q">
+        orig, osub = q.get("orig", q["answer"]), q.get("orig_sub", q["sub"])
+        qs.append(f'''<div class="q" data-orig="{e(orig)}" data-osub="{e(osub)}">
 <div class="qhead"><span class="qid">{e(q["id"])}</span><p class="qtext">{e(q["question"]) or "문항 확인 필요"}</p></div>
 <h4 contenteditable="true" spellcheck="false">[{e(q["sub"])}]</h4>
 <div class="ans" contenteditable="true" spellcheck="false" data-limit="{q["limit"]}">{paras}</div>
 <div class="qfoot"><div class="meter"><i style="width:{min(100, n * 100 // max(q["limit"], 1))}%"></i></div>
 <span class="cnt"><b>{n:,}</b> / {q["limit"]:,}자</span><span class="state"></span>
-<button type="button" class="save" hidden>답변 저장</button><button type="button" class="copy">답변 복사</button></div></div>''')
+<button type="button" class="save" hidden>답변 저장</button><button type="button" class="copy">답변 복사</button></div>
+<details class="diff" hidden><summary>당초 초안과 비교 · <b>0</b>곳 변경</summary><div class="dsub"></div><div class="dbody"></div></details></div>''')
     def ana(a):
         # 신입 연봉 줄은 채용현황 브리핑 값으로 통일하고, 초안 조사 내용은 굵게 하지 않고 참고로만 남긴다
         if d.get("pay") and a.startswith("신입 연봉:"):
@@ -384,6 +389,10 @@ thead th{font-size:12px;font-weight:600;color:var(--cap);background:var(--alt1)}
 .state{font-size:12px;font-weight:600} .q.ok .state{color:var(--ok)} .q.over .state{color:var(--err)} .q.low .state{color:var(--warn)}
 button.copy{font:600 13px var(--font);color:var(--surface);background:var(--primary);border:0;border-radius:8px;padding:7px 14px;cursor:pointer;min-height:36px}
 button.copy:hover{background:var(--primary-hover)}
+details.diff{border-top:1px solid var(--divider);padding:8px 14px 12px;font-size:14px} details.diff[hidden]{display:none}
+details.diff summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--primary)} details.diff .dsub{margin:8px 0 4px;font-size:13px;color:var(--cap)}
+details.diff .dbody{line-height:1.8;color:var(--text);max-width:68ch} details.diff del{background:color-mix(in srgb,var(--err) 14%,transparent);color:var(--err);text-decoration:line-through}
+details.diff ins{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--strong);text-decoration:none;font-weight:600}
 button.save{font:600 13px var(--font);color:var(--primary);background:var(--surface);border:1px solid var(--border-strong);border-radius:8px;padding:7px 14px;cursor:pointer;min-height:36px}
 button.save:hover{border-color:var(--primary)} button.save.clean{color:var(--ok)} button.save:disabled{opacity:.6;cursor:wait} button.save[hidden]{display:none}
 footer{font-size:12px;color:var(--cap)}
@@ -395,7 +404,7 @@ footer{font-size:12px;color:var(--cap)}
 .chips{margin-top:6px}
 a.jd{color:var(--text);text-decoration:underline;text-decoration-color:var(--border-strong);text-underline-offset:3px} a.jd:hover{color:var(--primary);text-decoration-color:var(--primary)} a.jd::after{content:" ↗";font-size:11px;color:var(--cap)}
 .emp{margin-top:4px} td .chip,.emp .pill{white-space:normal;max-width:100%} .pay{margin-top:4px;font-size:12px;color:var(--cap);font-variant-numeric:tabular-nums}
-@media print{@page{size:A4 portrait;margin:14mm}body{background:#fff;padding:0}.ref,.doc-actions,button.copy,button.save,.state,.meter,.hint{display:none!important}
+@media print{@page{size:A4 portrait;margin:14mm}body{background:#fff;padding:0}.ref,.doc-actions,button.copy,button.save,details.diff,.state,.meter,.hint{display:none!important}
 .q{break-inside:avoid;border-color:#ccc}.sheet{max-width:none}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 .xbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:0 0 10px}
@@ -417,16 +426,32 @@ button.req.on{background:var(--primary);color:var(--surface)} button.req:disable
 SCRIPT = r"""<script>
 (function(){
  function len(t){return t.replace(/\n/g,"").length}
+ // 당초 초안(data-orig)과 지금 답변을 어절 단위로 비교해 지운 말은 취소선, 새로 쓴 말은 굵게
+ function toks(t){return t.split(/(\s+)/).filter(function(x){return x!==""})}
+ function esc(t){return t.replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+ function diff(q,a){var box=q.querySelector("details.diff");if(!box)return;
+  var o=(q.dataset.orig||"").trim(),n=text(a),h=q.querySelector("h4"),os=q.dataset.osub||"",ns=raw(h).trim().replace(/^\[|\]$/g,"");
+  if(o===n&&os===ns){box.hidden=true;return}
+  var A=toks(o),B=toks(n),la=A.length,lb=B.length,L=[];for(var i=0;i<=la;i++){L.push(new Uint16Array(lb+1))}
+  for(i=la-1;i>=0;i--)for(var j=lb-1;j>=0;j--)L[i][j]=A[i]===B[j]?L[i+1][j+1]+1:Math.max(L[i+1][j],L[i][j+1]);
+  var out=[],cnt=0,mode="",buf="",last="";function flush(){if(buf){out.push(mode?"<"+mode+">"+esc(buf)+"</"+mode+">":esc(buf));if(mode&&!(mode==="ins"&&last==="del"))cnt++;last=mode}buf=""}
+  function put(m,t){if(m!==mode&&!(/^\s+$/.test(t)&&mode)){flush();mode=m}buf+=t}
+  i=0;j=0;while(i<la||j<lb){if(i<la&&j<lb&&A[i]===B[j]){put("",A[i]);i++;j++}else if(j<lb&&(i>=la||L[i][j+1]>L[i+1][j])){put("ins",B[j]);j++}else{put("del",A[i]);i++}}
+  flush();
+  box.querySelector(".dbody").innerHTML=out.join("").replace(/\n\n/g,"<br><br>");
+  box.querySelector(".dsub").textContent=os===ns?"":"소제목: ["+os+"] → ["+ns+"]";
+  box.querySelector("summary b").textContent=cnt+(os===ns?0:1);box.hidden=false}
  function raw(e){return e.innerText||e.textContent||""}  // 접힌 <details> 안에서는 innerText 가 빈 문자열
  function text(el){return Array.from(el.querySelectorAll("p")).map(function(p){return raw(p).trim()}).filter(Boolean).join("\n\n")||raw(el).trim()}
  document.querySelectorAll(".q").forEach(function(q,i){
   var a=q.querySelector(".ans"),lim=+a.dataset.limit,key="cl:"+(q.closest(".draft")||{}).id+":"+i;
   try{var s=localStorage.getItem(key);if(s)a.innerHTML=s}catch(e){}
-  function upd(){var n=len(text(a)),r=n/lim;q.querySelector(".cnt b").textContent=n.toLocaleString();
+  function upd(){diff(q,a);var n=len(text(a)),r=n/lim;q.querySelector(".cnt b").textContent=n.toLocaleString();
    q.querySelector(".meter i").style.width=Math.min(100,r*100)+"%";q.classList.remove("ok","low","over");
    var st=q.querySelector(".state");if(r>1){q.classList.add("over");st.textContent="초과 "+(n-lim)+"자"}else if(r>=.8){q.classList.add("ok");st.textContent="적정"}else{q.classList.add("low");st.textContent="부족"}}
   a.addEventListener("input",function(){upd();try{localStorage.setItem(key,a.innerHTML)}catch(e){}});upd();q._upd=upd;
   var dd=q.closest("details");if(dd)dd.addEventListener("toggle",function(){if(dd.open)upd()});
+  q.querySelector("h4").addEventListener("input",function(){diff(q,a)});
   var b=q.querySelector("button.copy");b.addEventListener("click",function(){var t=text(a);
    function done(){b.textContent="복사됨";setTimeout(function(){b.textContent="답변 복사"},1500)}
    function sel(){var r=document.createRange();r.selectNodeContents(a);var s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent="선택됨 · Ctrl+C"}
@@ -565,7 +590,7 @@ PAGE = """<title>자기소개서 일일 브리핑</title>
 <li><b>기업 개요·분석</b> DART 사업보고서 · 최근 1년 안전·AI 기사(없으면 주요 기사)</li>
 </ul></section>
 {cards}
-<footer>답변은 바로 고칠 수 있고, 글자수(줄바꿈 제외·공백 포함)는 입력하면서 다시 셉니다. 고친 뒤 '답변 저장'을 누르면 이 페이지에 저장돼 다른 기기와 다음 리포트에서도 그대로 보입니다(누르기 전에는 이 브라우저에만 임시로 남음).</footer>
+<footer>답변은 바로 고칠 수 있고, 글자수(줄바꿈 제외·공백 포함)는 입력하면서 다시 셉니다. 고친 뒤 '답변 저장'을 누르면 이 페이지에 저장돼 다른 기기와 다음 리포트에서도 그대로 보입니다(누르기 전에는 이 브라우저에만 임시로 남음). 저장한 답변은 '당초 초안과 비교'로 바뀐 곳을 보여 주고, 다음 리포트부터 다른 회사 초안을 쓸 때 고친 경향을 반영합니다.</footer>
 </div>
 {script}
 """
@@ -577,6 +602,54 @@ def load_json_list(path):
     except (OSError, ValueError):
         return []
     return data if isinstance(data, list) else []
+
+
+def html_text(h):
+    """저장된 답변 HTML → 문단 텍스트(문단 사이 빈 줄)."""
+    h = re.sub(r"(?i)<br\s*/?>", "\n", h or "")
+    h = re.sub(r"(?i)</(p|div)>", "\n\n", h)
+    t = html.unescape(re.sub(r"<[^>]+>", "", h)).replace("\xa0", " ")
+    paras = [re.sub(r"[ \t]+", " ", p).strip() for p in re.split(r"\n\s*\n", t)]
+    return "\n\n".join(p for p in paras if p)
+
+
+def load_answers(path):
+    """아티팩트 db answers 컬렉션 → {초안id_문항순번: {sub, text, at}}.
+    JSON 파일(목록) 또는 ArtifactData list out_dir 로 받은 폴더(<문서id>.json)를 읽는다."""
+    if not path:
+        return {}
+    p = Path(path)
+    items = []
+    try:
+        if p.is_dir():
+            for f in sorted(p.glob("*.json")):
+                d = json.loads(f.read_text(encoding="utf-8"))
+                items.append((d.get("id") or f.stem, d))
+        else:
+            data = json.loads(p.read_text(encoding="utf-8"))
+            for d in data if isinstance(data, list) else []:
+                items.append((d.get("id") or d.get("doc_id"), d))
+    except (OSError, ValueError):
+        return {}
+    out = {}
+    for k, d in items:
+        v = d.get("data") if isinstance(d.get("data"), dict) else d
+        if k and v.get("html"):
+            out[k] = {"sub": html_text(v.get("sub", "")).strip("[] "), "text": html_text(v["html"]), "at": v.get("at", "")}
+    return out
+
+
+def apply_answers(drafts, answers):
+    """저장된 답변으로 문항을 바꾸고 당초 초안은 orig/orig_sub 로 남긴다. 바꾼 문항 수를 돌려준다."""
+    n = 0
+    for d in drafts:
+        for i, q in enumerate(d["questions"]):
+            v = answers.get(f"{d['id']}_{i}")
+            if v and v["text"]:
+                q["orig"], q["orig_sub"] = q["answer"], q["sub"]
+                q["answer"], q["sub"] = v["text"], v["sub"] or q["sub"]
+                n += 1
+    return n
 
 
 def load_excluded(path):
@@ -606,6 +679,7 @@ def main():
     ap.add_argument("--foreign", help="외국계 공고 목록 JSON(cover_letters.py --foreign-out) — 요청 시 작성 표")
     ap.add_argument("--briefing", action="append", help="채용 브리핑 latest.json(초봉·고용형태 조회용, 여러 번 가능)")
     ap.add_argument("--exclude", help="제외 목록 JSON(아티팩트 db excluded 컬렉션을 내려받은 것: id 목록 또는 {id,...} 목록)")
+    ap.add_argument("--answers", help="저장된 답변(아티팩트 db answers 컬렉션: JSON 목록 또는 문서별 JSON 폴더) — 당초 초안과 비교해 표시")
     args = ap.parse_args()
     now = dt.datetime.now(KST)
     today = dt.date.fromisoformat(args.today) if args.today else now.date()
@@ -624,6 +698,7 @@ def main():
         drafts.append({"id": Path(item["file"]).stem.split("_")[-1], "meta": meta, "analysis": analysis,
                        "questions": questions, "left": d_left(meta.get("deadline", ""), today)})
     excluded = load_excluded(args.exclude)
+    edited = apply_answers(drafts, load_answers(args.answers))
     postings = load_postings(args.briefing)
     for d in drafts:
         d["pay"] = pay_of(d["meta"], postings)
@@ -633,7 +708,7 @@ def main():
     for d in drafts:
         (letters / f"{d['id']}.html").write_text(render_letter(d, today), encoding="utf-8")
     shown = sum(1 for d in drafts if d["id"] not in excluded)
-    print(f"{args.out}: 초안 {len(drafts)}건(제외 {len(drafts) - shown}건), letters/*.html {len(drafts)}개")
+    print(f"{args.out}: 초안 {len(drafts)}건(제외 {len(drafts) - shown}건), letters/*.html {len(drafts)}개, 저장 답변 반영 {edited}문항")
     return 0
 
 
