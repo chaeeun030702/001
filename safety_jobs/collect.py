@@ -660,6 +660,15 @@ def src_catch(f: Fetcher):
 MANUAL_POSTINGS_PATH = Path(__file__).with_name("manual_postings.json")
 
 
+def manual_urls() -> set:
+    """지금 manual_postings.json에 남아 있는 공고 주소 (지운 공고는 이전 브리핑에서 이어 싣지 않는다)."""
+    try:
+        items = json.loads(MANUAL_POSTINGS_PATH.read_text(encoding="utf-8")).get("items", [])
+    except (OSError, ValueError):
+        return set()
+    return {it.get("url") or f"manual:{it['company']}:{it.get('title', '')}" for it in items if it.get("company")}
+
+
 def src_manual(f: Fetcher):
     """다른 브리핑·채용 달력에서 넘겨받은 공고 (safety_jobs/manual_postings.json). 직무 확인이 필요하면 표시."""
     try:
@@ -2273,6 +2282,8 @@ def carry_over(prev_path, failed, kept, stats, today):
         if p.industry == "건설" and not p.extra.get("top100"):
             continue
         if user_excluded(p):  # 브리핑에서 삭제한 공고
+            continue
+        if p.extra.get("manual") and p.url not in manual_urls():  # 직접 추가 목록에서 지운 공고
             continue
         if senior_rank(p) or NON_HSE_SAFETY_RE.search(p.title):  # 대리급 이상·비HSE 제외 재적용
             continue
