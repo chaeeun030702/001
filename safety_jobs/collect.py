@@ -1701,6 +1701,10 @@ td.src{white-space:nowrap}
 .day .dn{font-size:12px;font-weight:600;color:var(--text-sub);font-variant-numeric:tabular-nums;display:flex;justify-content:space-between;gap:4px}
 .day .dn .mo{color:var(--primary)} .day .dn .cnt{color:var(--caption);font-weight:600}
 .day.out{background:var(--alt1)} .day.out .dn{color:var(--caption);opacity:.6}
+.day.m1{background:color-mix(in srgb,var(--primary) 3.5%,var(--surface))}
+.day.mstart{box-shadow:inset 3px 0 0 color-mix(in srgb,var(--primary) 30%,transparent)}
+.day.past .dn{color:var(--caption)} .ev.closed{opacity:.5} .ev.closed span{text-decoration:line-through}
+.cal-legend .lc::before{background:none;border:1px solid var(--border-strong)}
 .day.today{box-shadow:inset 0 0 0 2px var(--primary)} .day.soon .dn{color:var(--error)}
 .day.sun .dn{color:var(--error)}
 .ev{display:flex;align-items:center;gap:4px;font-size:12px;line-height:1.35;color:var(--text);text-decoration:none;min-width:0;border-radius:4px;padding:1px 2px}
@@ -1903,9 +1907,62 @@ def contract_ok(p):
     return calendar_eligible(p) or (p.industry == "건설" and bool(rank) and rank <= CONTRACT_TOP_RANK)
 
 
-def render_calendar(postings, today, months=2, show=5):
-    """접수기한 달력: 오늘부터 2개월, 주 단위. 업체명을 누르면 공고로 이동."""
+CLOSED_RECENT: list = []  # 지난주 일요일 ~ 어제 마감된 관심 기업 공고 (달력에 흐리게 표시)
+
+
+def cal_start(today):
+    """달력 시작일: 지난주 일요일."""
+    return today - dt.timedelta(days=(today.weekday() + 1) % 7 + 7)
+
+
+def load_recent_closed(hist_dir: Path, today, kept):
+    """날짜별 보관본(history/*.json.gz)에서 지난주부터 어제까지 마감된 공고를 모은다."""
+    start = cal_start(today)
+    live = {p.url for p in kept}
+    mu = manual_urls()
+    found = {}
+    for f in sorted(hist_dir.glob("*.json.gz")):
+        try:
+            day = dt.date.fromisoformat(f.name[:10])
+        except ValueError:
+            continue
+        if day < start - dt.timedelta(days=60) or day >= today:
+            continue
+        try:
+            with gzip.open(f, "rt", encoding="utf-8") as fh:
+                rows = json.load(fh).get("postings", [])
+        except (OSError, ValueError):
+            continue
+        for d in rows:
+            try:
+                p = Posting(**d)
+            except TypeError:
+                continue
+            if not p.deadline_date or p.url in live:
+                continue
+            dd = dt.date.fromisoformat(p.deadline_date)
+            if not (start <= dd < today) or user_excluded(p) or (p.extra.get("manual") and p.url not in mu):
+                continue
+            if not calendar_eligible(p) or p.extra.get("needs_check"):
+                continue
+            # 지금 규칙(담당 업무·대리급 이상·비HSE·건설사 시평·계약직)을 다시 적용
+            if (duty_gate(p) == "drop" or senior_rank(p) or NON_HSE_SAFETY_RE.search(p.title)
+                    or (p.industry == "건설" and not p.extra.get("top100"))
+                    or (p.employment == "계약직" and not contract_ok(p))):
+                continue
+            found[p.url] = p  # 뒤 날짜 보관본이 덮어씀 (최신 정보)
+    out = []
+    for p in sorted(found.values(), key=lambda p: p.deadline_date):
+        if not is_dup(p, out):
+            out.append(p)
+    return out
+
+
+def render_calendar(postings, today, months=2, show=5, closed=None):
+    """접수기한 달력: 지난주 일요일부터 2개월 뒤까지, 주 단위. 지난 날짜(마감)는 흐리게, 달은 배경색으로 약하게 구분.
+    업체명을 누르면 공고로 이동."""
     e = html.escape
+    closed = CLOSED_RECENT if closed is None else closed
     end_m, end_y = today.month + months, today.year
     while end_m > 12:
         end_m, end_y = end_m - 12, end_y + 1
@@ -1916,21 +1973,31 @@ def render_calendar(postings, today, months=2, show=5):
             d = dt.date.fromisoformat(p.deadline_date)
             if today <= d <= end:
                 by_day[d].append(p)
-    start = today - dt.timedelta(days=(today.weekday() + 1) % 7)  # 일요일 시작
+    start = cal_start(today)  # 지난주 일요일 시작
+    n_closed = 0
+    for p in closed:
+        d = dt.date.fromisoformat(p.deadline_date)
+        if start <= d < today:
+            by_day[d].append(p)
+            n_closed += 1
     last = end + dt.timedelta(days=(5 - end.weekday()) % 7)        # 토요일 끝
     wd = "".join(f'<div class="wd{" sun" if i == 0 else ""}">{w}</div>' for i, w in enumerate("일월화수목금토"))
     cells = []
     d = start
     while d <= last:
         items = sorted(by_day.get(d, []), key=lambda p: ({"A": 0, "B": 1, "F": 2}.get(p.hilite, 3 if not p.prefs else 2.5), p.company))
-        cls = ["day"]
-        if d < today or d > end:
+        cls = ["day", f"m{d.month % 2}"]  # 달마다 배경을 번갈아 약하게
+        if d > end:
             cls.append("out")
+        if d < today:
+            cls.append("past")
+        if d.day == 1:
+            cls.append("mstart")
         if not items:
             cls.append("empty")
         if d == today:
             cls.append("today")
-        if items and (d - today).days <= 3:
+        if items and 0 <= (d - today).days <= 3:
             cls.append("soon")
         if d.weekday() == 6:
             cls.append("sun")
@@ -1946,8 +2013,11 @@ def render_calendar(postings, today, months=2, show=5):
                 tags += f'<i class="tg k" title="{e(p.extra["listed"])} 상장">{ab}</i>'
             if p.extra.get("ai"):
                 tags += '<i class="tg ai" title="AI 우대">AI</i>'
-            if is_new(p, today):
+            if is_new(p, today) and d >= today:
                 tags += '<i class="tg n" title="지난 보고 이후 신규">N</i>'
+            if d < today:
+                c += " closed"
+                tip += " · 마감"
             return (f'<a class="{c}" href="{e(p.url)}" target="_blank" rel="noopener" title="{e(tip)}">'
                     f'<span>{e(p.company or p.title)}</span>{tags}</a>')
         body = "".join(ev(p) for p in items[:show])
@@ -1959,11 +2029,11 @@ def render_calendar(postings, today, months=2, show=5):
         mo2 = f'<span class="mo2">{d.month}월 </span>'
         cells.append(f'<div class="{" ".join(cls)}"><div class="dn"><span>{mo}{mo2}{d.day}일{wdn}</span>{cnt}</div>{body}</div>')
         d += dt.timedelta(days=1)
-    n = sum(len(v) for v in by_day.values())
-    return (f'<section class="card" id="calendar"><div class="cal-head"><h2>채용 달력<span class="n">{n}건</span></h2>'
-            f'<span class="range">{today:%Y-%m-%d} ~ {end:%Y-%m-%d} 접수 마감 · 대기업 계열·외국계·코스피/코스닥 상장·데이터센터/반도체 관련만</span></div>'
+    n = sum(len(v) for v in by_day.values()) - n_closed
+    return (f'<section class="card" id="calendar"><div class="cal-head"><h2>채용 달력<span class="n">접수 중 {n}건 · 지난주부터 마감 {n_closed}건</span></h2>'
+            f'<span class="range">{start:%Y-%m-%d} ~ {end:%Y-%m-%d} 접수 마감 · 지난 날짜(마감)는 흐리게 · 대기업 계열·외국계·코스피/코스닥 상장·데이터센터/반도체 관련만</span></div>'
             '<div class="cal-legend"><span class="la">데이터센터·하이테크·삼성·하이닉스</span><span class="lb">대기업 계열</span><span class="lf">외국계</span>'
-            '<span class="lp">외국어·NEBOSH·IOSH·CSP 우대</span><span>상장사·반도체 관련</span>'
+            '<span class="lp">외국어·NEBOSH·IOSH·CSP 우대</span><span>상장사·반도체 관련</span><span class="lc"><s>흐린 취소선</s> 마감</span>'
             '<em class="tgl"><i class="tg b">대</i> 대기업 계열 <i class="tg f">외</i> 외국계 '
             '<i class="tg k">KS</i> 코스피 <i class="tg k">KQ</i> 코스닥 <i class="tg ai">AI</i> AI 우대 <i class="tg n">N</i> 신규</em></div>'
             f'<div class="cal">{wd}{"".join(cells)}</div></section>')
@@ -2515,6 +2585,7 @@ def main():
     md = render_md(kept, failures, now, stats)
     (out / f"{today:%Y-%m-%d}.md").write_text(md, encoding="utf-8")
     (out / "latest.md").write_text(md, encoding="utf-8")
+    CLOSED_RECENT[:] = load_recent_closed(out / "history", today, kept)  # 달력: 지난주 마감 공고
     page = render_html(kept, failures, now, stats)
     (out / "latest.html").write_text(page, encoding="utf-8")
     # 내려받아 편집기·브라우저에서 고칠 수 있는 완전한 HTML 문서
