@@ -14,6 +14,7 @@ drafts/index.json 과 drafts/*.md 초안을 읽어 아티팩트용 index.html �
     tags: 코스피
     starter: 신입 초봉 4,500만원 (2025)   (선택: 사용자가 확인한 초봉, 채용현황 브리핑 값보다 우선)
     written: 2026-10-01
+    techniques: Q2 CPSBS, Q3 STAR   (경험 문항 STAR·직무역량 문항 CPSBS로 쓴 문항 — 페이지에서 질문 아래에 기법 표시)
     questions: 자소설닷컴 2026 하반기 문항        (문항 출처, 양식이 없으면 '홈페이지 채용 정보 기준 구성')
     ---
     ## 기업 개요
@@ -145,9 +146,20 @@ def chips_of(m):
     return "".join(f'<span class="chip">{e(t.strip())}</span>' for t in m.get("tags", "").split(",") if t.strip())
 
 
+TECH = {"STAR": "STAR 기법 · 상황(Situation) → 과제(Task) → 행동(Action) → 결과(Result)",
+        "CPSBS": "CPSBS 기법 · 핵심(Core) → 요점(Point) → 상황(Situation) → 행동(Behavior) → 요약(Summary)"}
+
+
+def tech_note(method):
+    """머리말 techniques 에 적힌 작성 기법을 질문 아래에 표시(복사·글자수·인쇄에는 들어가지 않음)."""
+    return f'<p class="tech">{e(TECH[method])}</p>' if method in TECH else ""
+
+
 def draft_body(d, analysis_cls="facts"):
     """공고 정보 표 + 기업 개요 + 기업 분석 + 문항 카드(편집·글자수·복사)."""
     m = d["meta"]
+    tech = {k: v for k, v in re.findall(r"(Q\d+)\s*(STAR|CPSBS)", m.get("techniques", ""))}
+
     def card(q, key=None):
         n = count(q["answer"])
         labels = q.get("labels") or []
@@ -157,7 +169,7 @@ def draft_body(d, analysis_cls="facts"):
         tag = f' · {q["method"]}' if q.get("method") else ""
         attrs = f' data-key="{key}"' if key else ""
         return f'''<div class="q{" v" if key else ""}"{attrs} data-orig="{e(orig)}" data-osub="{e(osub)}">
-<div class="qhead"><span class="qid">{e(q["id"])}{tag}</span><p class="qtext">{e(q["question"]) or "문항 확인 필요"}</p></div>
+<div class="qhead"><span class="qid">{e(q["id"])}{tag}</span><p class="qtext">{e(q["question"]) or "문항 확인 필요"}</p></div>{tech_note(tech.get(q["id"])) if not key else ""}
 <h4 contenteditable="true" spellcheck="false">[{e(q["sub"])}]</h4>
 <div class="ans" contenteditable="true" spellcheck="false" data-limit="{q["limit"]}">{paras}</div>
 <div class="qfoot"><div class="meter"><i style="width:{min(100, n * 100 // max(q["limit"], 1))}%"></i></div>
@@ -413,6 +425,7 @@ thead th{font-size:12px;font-weight:600;color:var(--cap);background:var(--alt1)}
 .q h4{margin:12px 14px 4px;font-size:16px;font-weight:700;color:var(--strong)}
 .ans{padding:4px 14px 8px;font-size:15px;color:var(--text);max-width:68ch}
 .ans p{margin:0 0 10px}
+.tech{margin:0;padding:6px 12px;font-size:12px;font-weight:600;color:var(--primary);background:var(--pri-bg);border-bottom:1px solid var(--divider)}
 .vhead{margin-top:28px;padding-top:14px;border-top:2px solid var(--border)} .vhead h3{margin:0 0 4px}
 .q.v .qid{background:var(--sub)}
 .q.v .ans p[data-k]::before{content:attr(data-k);display:inline-block;margin-right:6px;padding:0 6px;border-radius:6px;font-size:11px;font-weight:700;line-height:18px;color:var(--primary);border:1px solid var(--border-strong);vertical-align:1px}
@@ -439,7 +452,7 @@ footer{font-size:12px;color:var(--cap)}
 .chips{margin-top:6px}
 a.jd{color:var(--text);text-decoration:underline;text-decoration-color:var(--border-strong);text-underline-offset:3px} a.jd:hover{color:var(--primary);text-decoration-color:var(--primary)} a.jd::after{content:" ↗";font-size:11px;color:var(--cap)}
 .emp{margin-top:4px} td .chip,.emp .pill{white-space:normal;max-width:100%} .pay{margin-top:4px;font-size:12px;color:var(--cap);font-variant-numeric:tabular-nums}
-@media print{@page{size:A4 portrait;margin:14mm}body{background:#fff;padding:0}.ref,.doc-actions,button.copy,button.save,details.diff,.state,.meter,.hint{display:none!important}
+@media print{@page{size:A4 portrait;margin:14mm}body{background:#fff;padding:0}.ref,.doc-actions,button.copy,button.save,details.diff,.state,.meter,.hint,.tech{display:none!important}
 .q{break-inside:avoid;border-color:#ccc}.sheet{max-width:none}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 .xbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:0 0 10px}
