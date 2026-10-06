@@ -2651,7 +2651,7 @@ def main():
     carry_over(out / "latest.json", [n for n, _ in failures], kept, stats, today)
     # 본문 없이 실린 공고(이전 수집 포함)는 남은 한도 안에서 상세를 다시 읽어 복지·연봉·자격을 채운다
     for p in kept:
-        if n_detail >= args.max_detail or time.time() > t_detail_end + 4 * 60:
+        if n_detail >= args.max_detail or time.time() > t_detail_end + 12 * 60:  # 이전 공고 재조회 한도
             break
         stale_bnf = p.extra.get("bnf_v") != BNF_V and p.source != "LinkedIn"  # 복지 규칙이 바뀐 뒤 처음 → 본문 전체로 다시 판정
         if (len(p.detail_text or "") >= 600 and not stale_bnf) or p.url.startswith("manual:") or p.extra.get("posted") is not None:
