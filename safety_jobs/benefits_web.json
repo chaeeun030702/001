@@ -1,0 +1,488 @@
+{
+ "note": "공고에 복지가 안 적힌 회사의 복리후생을 인터넷(잡플래닛·사람인·잡코리아 기업정보, 뉴스 등 검색 결과)으로 확인한 값. 브리핑에는 점선 배지와 출처 링크로 표시한다. 공고 본문에 같은 복지가 있으면 공고 값이 우선.",
+ "items": [
+  {
+   "company": "현대로템",
+   "labels": [
+    "자녀학자금",
+    "기숙사",
+    "노조"
+   ],
+   "evidence": {
+    "자녀학자금": "잡플래닛 복지: 자녀 학자금 지원",
+    "기숙사": "잡플래닛 복지: 사택/기숙사 운영 및 지원(직원 15% 이용)",
+    "노조": "현대로템 노조, 2026 임단협 결렬로 쟁의권 확보(SBS Biz)"
+   },
+   "source": "https://www.jobplanet.co.kr/companies/1426/benefits/현대로템",
+   "checked": "2026-10-06"
+  },
+  {
+   "company": "현대엘리베이터",
+   "labels": [
+    "자녀학자금",
+    "기숙사",
+    "주택지원",
+    "노조"
+   ],
+   "evidence": {
+    "자녀학자금": "잡플래닛 복지: 자녀 학자금 지원",
+    "기숙사": "잡플래닛 복지: 기숙사 및 사택 운영",
+    "주택지원": "잡플래닛 복지: 주택 지원 대출",
+    "노조": "현대엘리베이터 노동조합, 40년간 35차례 무분규 단체교섭"
+   },
+   "source": "https://www.smarttoday.co.kr/ko-kr/articles/80247",
+   "checked": "2026-10-06"
+  },
+  {
+   "company": "㈜까뮤이앤씨",
+   "labels": [
+    "기숙사"
+   ],
+   "evidence": {
+    "기숙사": "잡플래닛 복지: 사택/기숙사 운영 및 지원"
+   },
+   "source": "https://www.jobplanet.co.kr/companies/315171/benefits/까뮤이앤씨",
+   "checked": "2026-10-06"
+  },
+  {
+   "company": "넥센타이어㈜",
+   "labels": [
+    "자녀학자금",
+    "기숙사"
+   ],
+   "evidence": {
+    "자녀학자금": "잡플래닛 복지: 자녀 학자금 지원",
+    "기숙사": "잡플래닛 복지: 사택/기숙사 운영 및 지원"
+   },
+   "source": "https://www.jobplanet.co.kr/companies/42183/benefits/넥센타이어",
+   "checked": "2026-10-06"
+  },
+  {
+   "company": "성신양회㈜",
+   "labels": [
+    "자녀학자금",
+    "기숙사",
+    "주택지원"
+   ],
+   "evidence": {
+    "자녀학자금": "잡플래닛 복지: 자녀 학자금 지원",
+    "기숙사": "잡플래닛 복지: 사택/기숙사 운영 및 지원",
+    "주택지원": "잡플래닛 복지: 주택 지원 대출"
+   },
+   "source": "https://www.jobplanet.co.kr/companies/27488/benefits/성신양회",
+   "checked": "2026-10-06"
+  },
+  {
+   "company": "한국승강기안전공단",
+   "labels": [
+    "기숙사",
+    "노조"
+   ],
+   "evidence": {
+    "기숙사": "잡플래닛 복지: 사택/기숙사 운영 및 지원",
+    "노조": "한국승강기안전공단 노동조합, 안전공공기관노조협의회 소속"
+   },
+   "source": "https://www.jobplanet.co.kr/companies/319966/benefits/한국승강기안전공단",
+   "checked": "2026-10-06"
+  },
+  {
+   "company": "삼성물산 (주)",
+   "labels": [
+    "노조"
+   ],
+   "evidence": {
+    "노조": "삼성물산 건설부문 노조, 2026 임단협 결렬로 쟁의권 확보(SBS Biz)"
+   },
+   "source": "https://biz.sbs.co.kr/amp/article/20000306542",
+   "checked": "2026-10-06"
+  },
+  {
+   "company": "엠이엠씨코리아(주)",
+   "labels": [
+    "기숙사"
+   ],
+   "evidence": {
+    "기숙사": "잡플래닛/사람인 복지: 기숙사 관련 지원"
+   },
+   "source": "https://www.jobplanet.co.kr/companies/19267/benefits/엠이엠씨코리아",
+   "checked": "2026-10-06"
+  },
+  {
+   "company": "현대건설(주)",
+   "labels": [
+    "자녀학자금",
+    "기숙사",
+    "노조"
+   ],
+   "evidence": {
+    "자녀학자금": "잡플래닛 복지: 자녀 학자금 지원",
+    "기숙사": "잡플래닛 복지: 사택/기숙사 운영 및 지원",
+    "노조": "현대건설 노동조합(위원장 임동진), 2014 노사 정년연장 합의"
+   },
+   "source": "https://www.jobplanet.co.kr/companies/1463/benefits/현대건설",
+   "checked": "2026-10-06"
+  },
+  {
+   "company": "코오롱글로벌(주)",
+   "labels": [
+    "기숙사"
+   ],
+   "evidence": {
+    "기숙사": "잡플래닛 복지: 기숙사 및 사택 운영"
+   },
+   "source": "https://www.jobplanet.co.kr/companies/7152/benefits/코오롱글로벌",
+   "checked": "2026-10-06"
+  },
+  {
+   "company": "(주)제닉",
+   "labels": [
+    "자녀학자금",
+    "기숙사"
+   ],
+   "evidence": {
+    "자녀학자금": "잡플래닛/채용공고 복지: 자녀 학자금 지원",
+    "기숙사": "타지역 거주자 기숙사 제공(논산공장 채용공고)"
+   },
+   "source": "https://www.jobplanet.co.kr/companies/56824/benefits/제닉",
+   "checked": "2026-10-06"
+  },
+  {
+   "company": "S-OIL(주)",
+   "labels": [
+    "자녀학자금",
+    "주택지원",
+    "기숙사",
+    "노조"
+   ],
+   "evidence": {
+    "자녀학자금": "잡플래닛 복지: 자녀 학자금 지원",
+    "주택지원": "잡플래닛 복지: 주택 지원 대출",
+    "기숙사": "잡플래닛 복지: 사택/기숙사 운영 및 지원",
+    "노조": "에쓰오일 노동조합(위원장 백승우) 상경투쟁·성과급 교섭"
+   },
+   "source": "https://www.jobplanet.co.kr/companies/20456/benefits/에쓰오일",
+   "checked": "2026-10-06"
+  },
+  {
+   "company": "대덕전자(주)",
+   "labels": [
+    "자녀학자금",
+    "주택지원",
+    "기숙사"
+   ],
+   "evidence": {
+    "자녀학자금": "잡플래닛 복리후생: 자녀 학자금 지원",
+    "주택지원": "잡플래닛 복리후생: 주택 지원 대출",
+    "기숙사": "잡플래닛 복리후생: 사택/기숙사 운영 및 지원"
+   },
+   "source": "https://www.jobplanet.co.kr/companies/40492/benefits/%EB%8C%80%EB%8D%95%EC%A0%84%EC%9E%90",
+   "checked": "2026-10-06"
+  },
+  {
+   "company": "대한전선(주)",
+   "labels": [
+    "노조",
+    "주택지원",
+    "기숙사"
+   ],
+   "evidence": {
+    "노조": "전국금속노조 대한전선지부 존재(프레시안 2023)",
+    "주택지원": "잡플래닛 복리후생: 사택/기숙사 운영 및 지원(사택)",
+    "기숙사": "잡플래닛 복리후생: 사택/기숙사 운영 및 지원"
+   },
+   "source": "https://www.jobplanet.co.kr/companies/38947/benefits/%EB%8C%80%ED%95%9C%EC%A0%84%EC%84%A0",
+   "checked": "2026-10-06"
+  },
+  {
+   "company": "동원산업(주)",
+   "labels": [
+    "자녀학자금",
+    "주택지원",
+    "기숙사"
+   ],
+   "evidence": {
+    "자녀학자금": "잡플래닛 복리후생: 자녀 학자금 지원",
+    "주택지원": "잡플래닛: 사택/기숙사 운영 및 지원(사택)",
+    "기숙사": "잡플래닛: 사택/기숙사 운영 및 지원"
+   },
+   "source": "https://www.jobplanet.co.kr/companies/37351/benefits/%EB%8F%99%EC%9B%90%EC%82%B0%EC%97%85",
+   "checked": "2026-10-06"
+  },
+  {
+   "company": "(주)이수화학",
+   "labels": [
+    "주택지원",
+    "기숙사"
+   ],
+   "evidence": {
+    "주택지원": "잡플래닛 복리후생: 주택 지원 대출",
+    "기숙사": "잡플래닛 복리후생: 사택/기숙사 운영 및 지원"
+   },
+   "source": "https://www.jobplanet.co.kr/companies/13981/benefits/%EC%9D%B4%EC%88%98%ED%99%94%ED%95%99",
+   "checked": "2026-10-06"
+  },
+  {
+   "company": "리뉴어스(주)",
+   "labels": [
+    "자녀학자금"
+   ],
+   "evidence": {
+    "자녀학자금": "사람인 기업정보 복리후생: 자녀학자금 지원"
+   },
+   "source": "https://www.saramin.co.kr/zf_user/company-info/view/csn/eG8rTCtnelJab3JOaG5hMlR1ZTRCZz09/company_nm/%EB%A6%AC%EB%89%B4%EC%96%B4%EC%8A%A4(%EC%A3%BC)",
+   "checked": "2026-10-06"
+  },
+  {
+   "company": "(주)더금영",
+   "labels": [
+    "기숙사"
+   ],
+   "evidence": {
+    "기숙사": "사람인 기업정보 출퇴근 복지: 기숙사 운영"
+   },
+   "source": "https://www.saramin.co.kr/zf_user/company-info/view/csn/U2RwMnI4UnZHQkFxNGRxQStCZ2NRdz09",
+   "checked": "2026-10-06"
+  },
+  {
+   "company": "도쿄일렉트론코리아(주)",
+   "labels": [
+    "자녀학자금",
+    "기숙사"
+   ],
+   "evidence": {
+    "자녀학자금": "잡플래닛 복리후생: 자녀 학자금 지원",
+    "기숙사": "잡플래닛: 기숙사 및 사택 운영(필드엔지니어 사택 제공)"
+   },
+   "source": "https://www.jobplanet.co.kr/companies/38274/benefits/%EB%8F%84%EC%BF%84%EC%9D%BC%EB%A0%89%ED%8A%B8%EB%A1%A0%EC%BD%94%EB%A6%AC%EC%95%84",
+   "checked": "2026-10-06"
+  },
+  {
+   "company": "자이에스앤디(주)",
+   "labels": [
+    "자녀학자금"
+   ],
+   "evidence": {
+    "자녀학자금": "사람인 기업정보 복리후생: 자녀학자금"
+   },
+   "source": "https://www.saramin.co.kr/zf_user/company-info/view/csn/bGU5aEt2M0dBcjBPbmpOS3gzYktTUT09/company_nm/%EC%9E%90%EC%9D%B4%EC%97%90%EC%8A%A4%EC%95%A4%EB%94%94(%EC%A3%BC)",
+   "checked": "2026-10-06"
+  },
+  {
+   "company": "디아이티(주)",
+   "labels": [
+    "자녀학자금",
+    "주택지원"
+   ],
+   "evidence": {
+    "자녀학자금": "사람인/잡플래닛 복리후생: 자녀 학자금 지원",
+    "주택지원": "복리후생: 주택 지원 대출, 사택/기숙사 운영"
+   },
+   "source": "https://www.saramin.co.kr/zf_user/company-info/view/csn/U3pLNjZ0WnBxME9oa1FxYmsramY0Zz09/company_nm/%EB%94%94%EC%95%84%EC%9D%B4%ED%8B%B0(%EC%A3%BC)",
+   "checked": "2026-10-06"
+  },
+  {
+   "company": "(주)제이티",
+   "labels": [
+    "기숙사"
+   ],
+   "evidence": {
+    "기숙사": "사람인 기업정보 출퇴근 복지: 기숙사 운영"
+   },
+   "source": "https://www.saramin.co.kr/zf_user/company-info/view/csn/anoydTFsQ2RlclJJVGhQVWt3cU1rQT09/company_nm/(%EC%A3%BC)%EC%A0%9C%EC%9D%B4%ED%8B%B0",
+   "checked": "2026-10-06"
+  },
+  {
+   "company": "DS단석 평택1공장",
+   "labels": [
+    "자녀학자금",
+    "기숙사"
+   ],
+   "evidence": {
+    "자녀학자금": "(주)디에스단석 기업정보: 자녀학자금/자녀교육비 지원",
+    "기숙사": "(주)디에스단석 기업정보: 기숙사 지원"
+   },
+   "source": "https://www.saramin.co.kr/zf_user/company-info/view/csn/SHJaSHJTVlVIbm5xV0JpdFVYSFIzdz09/company_nm/(%EC%A3%BC)%EB%94%94%EC%97%90%EC%8A%A4%EB%8B%A8%EC%84%9D",
+   "checked": "2026-10-06"
+  },
+  {
+   "company": "(주)포스코",
+   "labels": [
+    "자녀학자금",
+    "노조",
+    "주택지원",
+    "기숙사"
+   ],
+   "evidence": {
+    "자녀학자금": "잡플래닛(포스코) 복리후생: 자녀 학자금 지원",
+    "노조": "포스코 노조, 사내 주택대출 주체 변경 비판(뉴스토마토)",
+    "주택지원": "사내근로복지기금 직원 주택자금대출 운영(뉴스토마토)",
+    "기숙사": "포항·광양 생활관 1,100여 실, 희망자 전원 숙소 제공(포스코)"
+   },
+   "source": "https://newstomato.com/ReadNews.aspx?no=1231876",
+   "checked": "2026-10-06"
+  },
+  {
+   "company": "콜마비앤에이치(주)",
+   "labels": [
+    "자녀학자금",
+    "기숙사"
+   ],
+   "evidence": {
+    "자녀학자금": "사람인 기업정보 복리후생: 자녀학자금",
+    "기숙사": "사람인 기업정보 출퇴근 복지: 기숙사 운영"
+   },
+   "source": "https://www.saramin.co.kr/zf_user/company-info/view/csn/OVFiK0l3QkFJVDQzZmRGWVhLWFo3Zz09/company_nm/%EC%BD%9C%EB%A7%88%EB%B9%84%EC%95%A4%EC%97%90%EC%9D%B4%EC%B9%98(%EC%A3%BC)",
+   "checked": "2026-10-06"
+  },
+  {
+   "company": "대우건설",
+   "labels": [
+    "자녀학자금",
+    "노조",
+    "주택지원"
+   ],
+   "evidence": {
+    "자녀학자금": "선택적복리후생 기본항목: 중고교/대학 학자금 지원",
+    "노조": "노동조합과 협약 체결 후 출산·육아 복지 개선 시행(시대일보 2024)",
+    "주택지원": "사내근로복지기금 통한 주택 임차/구입 대부"
+   },
+   "source": "http://erecruit.daewooenc.com/info/web/info005_l_p01.jsp",
+   "checked": "2026-10-06"
+  },
+  {
+   "company": "유엘코리아",
+   "labels": [
+    "자녀학자금"
+   ],
+   "evidence": {
+    "자녀학자금": "사람인/잡코리아: 유치원·고교·대학 자녀학자금 지원"
+   },
+   "source": "https://www.saramin.co.kr/zf_user/company-info/view/csn/NzJpMjdrbzBVbE4xQmVHaEw5QVZFUT09/company_nm/%EC%9C%A0%EC%97%98%EC%BD%94%EB%A6%AC%EC%95%84(%EC%A3%BC)",
+   "checked": "2026-10-06"
+  },
+  {
+   "company": "이케아 코리아",
+   "labels": [
+    "노조"
+   ],
+   "evidence": {
+    "노조": "마트산업노동조합 이케아지회 존재·활동(경기일보 2021)"
+   },
+   "source": "https://kyeonggi.com/article/202101261154454",
+   "checked": "2026-10-06"
+  },
+  {
+   "company": "신세계그룹",
+   "labels": [
+    "자녀학자금",
+    "노조"
+   ],
+   "evidence": {
+    "자녀학자금": "신세계푸드·인터내셔날 등 계열사 자녀 학자금 지원(잡플래닛) (계열사 기준)",
+    "노조": "신세계백화점 창립 60년 만에 첫 노조 설립(세계일보 2023) (계열사 기준)"
+   },
+   "source": "https://www.segye.com/newsView/20230315522517",
+   "checked": "2026-10-06"
+  },
+  {
+   "company": "성우하이텍",
+   "labels": [
+    "자녀학자금"
+   ],
+   "evidence": {
+    "자녀학자금": "사람인 기업정보 복리후생: 자녀학자금"
+   },
+   "source": "https://www.saramin.co.kr/zf_user/company-info/view/csn/R1BBY0hvUy82SHlqcUJTUzBGZG8vdz09/company_nm/(%EC%A3%BC)%EC%84%B1%EC%9A%B0%ED%95%98%EC%9D%B4%ED%85%8D",
+   "checked": "2026-10-06"
+  },
+  {
+   "company": "(주)켐트로스 진천공장",
+   "labels": [
+    "자녀학자금",
+    "기숙사",
+    "주택지원"
+   ],
+   "evidence": {
+    "자녀학자금": "잡플래닛 복리후생: 자녀 학자금 지원",
+    "기숙사": "잡플래닛 복리후생: 사택/기숙사 운영 및 지원",
+    "주택지원": "잡플래닛 복리후생: 주택 지원 대출"
+   },
+   "source": "https://www.jobplanet.co.kr/companies/53083/benefits/%EC%BC%90%ED%8A%B8%EB%A1%9C%EC%8A%A4",
+   "checked": "2026-10-06"
+  },
+  {
+   "company": "에스엠스틸(주)",
+   "labels": [
+    "자녀학자금",
+    "기숙사"
+   ],
+   "evidence": {
+    "자녀학자금": "잡플래닛 복리후생: 자녀 학자금 지원",
+    "기숙사": "잡플래닛 복리후생: 사택/기숙사 운영 및 지원"
+   },
+   "source": "https://www.jobplanet.co.kr/companies/347224/benefits/에스엠스틸",
+   "checked": "2026-10-06"
+  },
+  {
+   "company": "INEOS Styrolution",
+   "labels": [
+    "자녀학자금",
+    "기숙사",
+    "주택지원"
+   ],
+   "evidence": {
+    "자녀학자금": "잡플래닛(한국이네오스스티롤루션): 자녀 학자금 지원",
+    "기숙사": "잡플래닛: 사택/기숙사 운영 및 지원",
+    "주택지원": "잡플래닛: 주택 지원 대출"
+   },
+   "source": "https://www.jobplanet.co.kr/companies/360851/benefits/%ED%95%9C%EA%B5%AD%EC%9D%B4%EB%84%A4%EC%98%A4%EC%8A%A4%EC%8A%A4%ED%8B%B0%EB%A1%A4%EB%A3%A8%EC%85%98",
+   "checked": "2026-10-06"
+  },
+  {
+   "company": "(주)에이치케이금속",
+   "labels": [
+    "자녀학자금"
+   ],
+   "evidence": {
+    "자녀학자금": "김해 소재 (주)에이치케이금속 채용공고 복리후생: 차량유지비, 교육비, 자녀 학자금 지원"
+   },
+   "source": "https://www.invione.com/jobs/recruitment/all/detail/K131312608050022",
+   "checked": "2026-10-06"
+  },
+  {
+   "company": "현대알루미늄(주)",
+   "labels": [
+    "기숙사",
+    "주택지원"
+   ],
+   "evidence": {
+    "기숙사": "잡플래닛 현대알루미늄 복리후생: 기숙사 및 사택 운영",
+    "주택지원": "잡플래닛 현대알루미늄 복리후생: 사택 운영, 직원 대출 지원"
+   },
+   "source": "https://www.jobplanet.co.kr/companies/91781/benefits/%ED%98%84%EB%8C%80%EC%95%8C%EB%A3%A8%EB%AF%B8%EB%8A%84",
+   "checked": "2026-10-06"
+  },
+  {
+   "company": "(주)노루페인트",
+   "labels": [
+    "노조"
+   ],
+   "evidence": {
+    "노조": "뉴스토마토: 홍순철 노루페인트 노조위원장 인터뷰(안양공장)"
+   },
+   "source": "https://newstomato.com/ReadNews.aspx?no=1245219",
+   "checked": "2026-10-06"
+  },
+  {
+   "company": "엘에스일렉트릭(주)",
+   "labels": [
+    "노조"
+   ],
+   "evidence": {
+    "노조": "LS ELECTRIC 2026 임단협 무교섭 타결; 생산직 노조 + 사무직 노조 설립"
+   },
+   "source": "https://www.fnnews.com/news/202607121335564122",
+   "checked": "2026-10-06"
+  }
+ ]
+}
