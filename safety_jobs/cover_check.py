@@ -12,6 +12,9 @@
   [오류] 글자수 한도 초과 / [경고] 한도의 80% 미만 또는 98% 초과
   [오류] 확정 문안(아카이브 01_guide.md 의 '### 확정 문안' 블록) — (아버지·진로 변경) 필수. 졸업연구는
          요약(졸업연구) 또는 긴 서술(졸업연구 동기·연결) 중 하나만 — 둘 다 있으면 중복
+  [오류] 기법별 버전(## STAR Qn / ## CPSBS Qn) — 문단 표시 순서(STAR: S·상황→T·과제→A·행동→R·결과,
+         CPSBS: C·핵심→P·요점→S·상황→B·행동→S·요약)와 위 문항별 검사(타사·표현·글자수). 원 문항의 같은 이야기를
+         다시 쓰는 버전이라 반복·확정 문안 검사에서는 빼고 본다
   [오류] 논문 이야기 반복 — 졸업연구 세부 내용이 두 문항 이상에 나오거나, 고유 사실(30,896건·7.1%·78.6%·
          2022년 7월 사고·사전작업허가서·e-safety 등)이 두 문항 이상에 나옴
 
@@ -26,7 +29,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from cover_brief import count, parse_draft  # noqa: E402
+from cover_brief import METHODS, count, parse_draft  # noqa: E402
 
 HERE = Path(__file__).parent
 # 교육·학회·기관 이름은 타사로 보지 않는다
@@ -124,8 +127,15 @@ def check(path, names, canon):
                 found.add(s)
         return found
 
-    for q in qs:
+    variants = meta.get("variants") or []
+    for q in qs + variants:
         text = f"{q['sub']}\n{q['answer']}"
+        if q.get("method"):
+            q = dict(q, id=f"{q['method']} {q['id']}")
+            want = METHODS[q["method"]]
+            got = [x for x in q.get("labels", []) if x]
+            if got != want:
+                errs.append(f"{q['id']}: 문단 표시 {'·'.join(got) or '없음'} — {' → '.join(want)} 순서로 문단마다 붙일 것")
         for n in sorted(hits(text)):
             i = text.find(n)
             errs.append(f"{q['id']}: 타사/다른 자소서 문구 '{n}' — …{text[max(0, i - 25):i + len(n) + 25]}…".replace("\n", " "))

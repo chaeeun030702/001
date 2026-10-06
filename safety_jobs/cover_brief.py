@@ -26,6 +26,13 @@ drafts/index.json 과 drafts/*.md 초안을 읽어 아티팩트용 index.html �
     > 문항 원문
     **[소제목]**
     본문 문단...
+    ## STAR Q3 | 800          (선택: 기법별 별도 버전 — 경험 문항은 STAR, 직무역량 문항은 CPSBS)
+    > 문항 원문
+    **[소제목]**
+    [S·상황] 문단... [T·과제] … [A·행동] … [R·결과] …   (CPSBS: [C·핵심] [P·요점] [S·상황] [B·행동] [S·요약])
+
+기법별 버전은 원 문항 아래 'STAR·CPSBS 버전'으로 따로 보여 준다. 문단 앞 [X·이름] 표시는 화면에만 붙고
+글자수·복사에는 들어가지 않는다. 저장 키는 초안id_v순번(원 문항은 초안id_문항순번).
 
     python3 safety_jobs/cover_brief.py --drafts drafts --out index.html [--today YYYY-MM-DD]
         [--briefing briefings/latest.json ...] [--exclude excluded.json] [--answers answers/]
@@ -49,6 +56,15 @@ KST = dt.timezone(dt.timedelta(hours=9))
 e = html.escape
 
 
+LABEL = re.compile(r"\[([A-Z]·[가-힣]+)\]\s*")
+METHODS = {"STAR": ["S·상황", "T·과제", "A·행동", "R·결과"], "CPSBS": ["C·핵심", "P·요점", "S·상황", "B·행동", "S·요약"]}
+
+
+def strip_labels(answer):
+    """기법 버전 문단 앞 [S·상황] 같은 표시를 뗀 제출용 본문."""
+    return "\n\n".join(LABEL.sub("", p, count=1) if LABEL.match(p) else p for p in answer.split("\n\n"))
+
+
 def parse_draft(text):
     meta, body = {}, text
     m = re.match(r"---\n(.*?)\n---\n?(.*)", text, re.S)
@@ -61,7 +77,7 @@ def parse_draft(text):
     analysis, questions, cur = [], [], None
     for block in re.split(r"^## ", body, flags=re.M)[1:]:
         head, _, rest = block.partition("\n")
-        qm = re.match(r"(Q\d+)\s*\|\s*([\d,]+)", head)
+        qm = re.match(r"(?:(STAR|CPSBS)\s+)?(Q\d+)\s*\|\s*([\d,]+)", head)
         if qm:
             quote = "\n".join(l[1:].strip() for l in rest.splitlines() if l.startswith(">"))
             lines = [l for l in rest.splitlines() if not l.startswith(">")]
@@ -74,8 +90,15 @@ def parse_draft(text):
                 else:
                     text_lines.append(l)
             answer = re.sub(r"\n{3,}", "\n\n", "\n".join(text_lines)).strip()
-            cur = {"id": qm.group(1), "limit": int(qm.group(2).replace(",", "")), "question": quote, "sub": sub, "answer": answer}
-            questions.append(cur)
+            cur = {"id": qm.group(2), "limit": int(qm.group(3).replace(",", "")), "question": quote, "sub": sub, "answer": answer}
+            if qm.group(1):
+                # 기법별 버전은 반환 형태를 바꾸지 않도록 머리말에 담는다(검사·비교 대상 문항 목록과 분리)
+                cur["method"] = qm.group(1)
+                cur["labels"] = [lm.group(1) if lm else "" for lm in (LABEL.match(p) for p in answer.split("\n\n") if p.strip())]
+                cur["answer"] = strip_labels(answer)
+                meta.setdefault("variants", []).append(cur)
+            else:
+                questions.append(cur)
         elif head.strip().startswith("기업 분석"):
             analysis = [l[2:].strip() for l in rest.splitlines() if l.startswith("- ")]
         elif head.strip().startswith("기업 개요"):
@@ -125,19 +148,28 @@ def chips_of(m):
 def draft_body(d, analysis_cls="facts"):
     """공고 정보 표 + 기업 개요 + 기업 분석 + 문항 카드(편집·글자수·복사)."""
     m = d["meta"]
-    qs = []
-    for q in d["questions"]:
+    def card(q, key=None):
         n = count(q["answer"])
-        paras = "".join(f"<p>{inline(p)}</p>" for p in q["answer"].split("\n\n") if p.strip())
+        labels = q.get("labels") or []
+        ps = [p for p in q["answer"].split("\n\n") if p.strip()]
+        paras = "".join((f'<p data-k="{e(labels[i])}">' if i < len(labels) and labels[i] else "<p>") + f"{inline(p)}</p>" for i, p in enumerate(ps))
         orig, osub = q.get("orig", q["answer"]), q.get("orig_sub", q["sub"])
-        qs.append(f'''<div class="q" data-orig="{e(orig)}" data-osub="{e(osub)}">
-<div class="qhead"><span class="qid">{e(q["id"])}</span><p class="qtext">{e(q["question"]) or "문항 확인 필요"}</p></div>
+        tag = f' · {q["method"]}' if q.get("method") else ""
+        attrs = f' data-key="{key}"' if key else ""
+        return f'''<div class="q{" v" if key else ""}"{attrs} data-orig="{e(orig)}" data-osub="{e(osub)}">
+<div class="qhead"><span class="qid">{e(q["id"])}{tag}</span><p class="qtext">{e(q["question"]) or "문항 확인 필요"}</p></div>
 <h4 contenteditable="true" spellcheck="false">[{e(q["sub"])}]</h4>
 <div class="ans" contenteditable="true" spellcheck="false" data-limit="{q["limit"]}">{paras}</div>
 <div class="qfoot"><div class="meter"><i style="width:{min(100, n * 100 // max(q["limit"], 1))}%"></i></div>
 <span class="cnt"><b>{n:,}</b> / {q["limit"]:,}자</span><span class="state"></span>
 <button type="button" class="save" hidden>답변 저장</button><button type="button" class="copy">답변 복사</button></div>
-<details class="diff" hidden><summary>당초 초안과 비교 · <b>0</b>곳 변경</summary><div class="dsub"></div><div class="dbody"></div></details></div>''')
+<details class="diff" hidden><summary>당초 초안과 비교 · <b>0</b>곳 변경</summary><div class="dsub"></div><div class="dbody"></div></details></div>'''
+    qs = [card(q) for q in d["questions"]]
+    vs = m.get("variants") or []
+    if vs:
+        qs.append('<div class="vhead"><h3>STAR·CPSBS 버전</h3><p class="hint">위 자기소개서와 별도로, 경험 문항은 STAR(상황-과제-행동-결과), '
+                  '직무역량 문항은 CPSBS(핵심-요점-상황-행동-요약) 구조로 다시 쓴 버전입니다. 문단 앞 표시는 글자수·복사에 들어가지 않습니다.</p></div>')
+        qs += [card(v, f"v{k}") for k, v in enumerate(vs)]
     def ana(a):
         # 신입 연봉 줄은 채용현황 브리핑 값으로 통일하고, 초안 조사 내용은 굵게 하지 않고 참고로만 남긴다
         if d.get("pay") and a.startswith("신입 연봉:"):
@@ -182,7 +214,7 @@ def render_letter(d, today):
 <script>
 document.querySelector("button.print").addEventListener("click",function(){{window.print()}});
 document.querySelector("button.copy-all").addEventListener("click",function(){{
- var b=this,t=Array.from(document.querySelectorAll(".q")).map(function(q){{return q.querySelector(".qid").innerText+" "+q.querySelector(".qtext").innerText+"\\n"+q.querySelector("h4").innerText+"\\n"+q.querySelector(".ans").innerText.trim()}}).join("\\n\\n");
+ var b=this,t=Array.from(document.querySelectorAll(".q:not(.v)")).map(function(q){{return q.querySelector(".qid").innerText+" "+q.querySelector(".qtext").innerText+"\\n"+q.querySelector("h4").innerText+"\\n"+q.querySelector(".ans").innerText.trim()}}).join("\\n\\n");
  try{{navigator.clipboard.writeText(t).then(function(){{b.textContent="복사됨"}},function(){{b.textContent="복사 실패"}})}}catch(x){{b.textContent="복사 실패"}}
 }});
 </script>
@@ -381,6 +413,9 @@ thead th{font-size:12px;font-weight:600;color:var(--cap);background:var(--alt1)}
 .q h4{margin:12px 14px 4px;font-size:16px;font-weight:700;color:var(--strong)}
 .ans{padding:4px 14px 8px;font-size:15px;color:var(--text);max-width:68ch}
 .ans p{margin:0 0 10px}
+.vhead{margin-top:28px;padding-top:14px;border-top:2px solid var(--border)} .vhead h3{margin:0 0 4px}
+.q.v .qid{background:var(--sub)}
+.q.v .ans p[data-k]::before{content:attr(data-k);display:inline-block;margin-right:6px;padding:0 6px;border-radius:6px;font-size:11px;font-weight:700;line-height:18px;color:var(--primary);border:1px solid var(--border-strong);vertical-align:1px}
 .qfoot{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 14px;border-top:1px solid var(--divider)}
 .meter{flex:1 1 120px;height:6px;background:var(--alt2);border-radius:9999px;overflow:hidden}
 .meter i{display:block;height:100%;background:var(--primary)}
@@ -473,7 +508,7 @@ SAVE_SCRIPT = r"""<script>
  function stamp(t){var d=new Date(t);if(isNaN(d))return"";function z(n){return(n<10?"0":"")+n}return(d.getMonth()+1)+"/"+d.getDate()+" "+z(d.getHours())+":"+z(d.getMinutes())}
  document.querySelectorAll("details.draft").forEach(function(dd){
   dd.querySelectorAll(".q").forEach(function(q,i){
-   var a=q.querySelector(".ans"),h=q.querySelector("h4"),b=q.querySelector("button.save"),id=dd.id+"_"+i,key="cl:"+dd.id+":"+i,v=saved[id];
+   var a=q.querySelector(".ans"),h=q.querySelector("h4"),b=q.querySelector("button.save"),id=dd.id+"_"+(q.dataset.key||i),key="cl:"+dd.id+":"+i,v=saved[id];
    if(!b)return;
    var local=null;try{local=localStorage.getItem(key)}catch(e){}
    function clean(t){b.classList.add("clean");b.textContent="저장됨"+(t?" · "+stamp(t):"");b.title="다시 고치면 '답변 저장'으로 바뀝니다"}
@@ -485,7 +520,7 @@ SAVE_SCRIPT = r"""<script>
    a.addEventListener("input",dirty);h.addEventListener("input",dirty);
    b.addEventListener("click",async function(){
     b.disabled=true;b.textContent="저장 중…";var at=new Date().toISOString();
-    try{await col.doc(id).set({draft:dd.id,q:i,sub:h.innerHTML,html:a.innerHTML,at:at});
+    try{await col.doc(id).set({draft:dd.id,q:q.dataset.key||i,sub:h.innerHTML,html:a.innerHTML,at:at});
      try{localStorage.removeItem(key)}catch(e){}
      clean(at);
     }catch(e){b.classList.remove("clean");b.textContent="저장 실패 · 다시 시도";b.title=String(e&&(e.code||e.message)||"오류")}
@@ -646,6 +681,13 @@ def apply_answers(drafts, answers):
         for i, q in enumerate(d["questions"]):
             v = answers.get(f"{d['id']}_{i}")
             if v and v["text"]:
+                q["orig"], q["orig_sub"] = q["answer"], q["sub"]
+                q["answer"], q["sub"] = v["text"], v["sub"] or q["sub"]
+                n += 1
+        for k, q in enumerate(d["meta"].get("variants") or []):
+            v = answers.get(f"{d['id']}_v{k}")
+            if v and v["text"]:
+                # 저장본 HTML 에서 문단 표시(data-k)는 빠지므로 문단 순서대로 다시 붙인다
                 q["orig"], q["orig_sub"] = q["answer"], q["sub"]
                 q["answer"], q["sub"] = v["text"], v["sub"] or q["sub"]
                 n += 1

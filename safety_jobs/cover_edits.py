@@ -73,9 +73,13 @@ def main():
     for key, v in sorted(answers.items(), key=lambda kv: kv[1]["at"]):
         did, _, qi = key.rpartition("_")
         f = files.get(did)
-        if not f or not qi.isdigit():
+        if not f or not (qi.isdigit() or qi[:1] == "v" and qi[1:].isdigit()):
             continue
         meta, _, questions = parse_draft(f.read_text(encoding="utf-8"))
+        if qi[:1] == "v":
+            # 기법별 버전(STAR·CPSBS)을 고친 경우
+            questions = meta.get("variants") or []
+            qi = qi[1:]
         if int(qi) >= len(questions):
             continue
         q = questions[int(qi)]
@@ -95,7 +99,7 @@ def main():
              "- 사용자가 새로 쓴 문장의 경험·사실은 사용자 확인 자료로 보고 맞는 문항에 쓸 수 있다. 단 그 회사에만 해당하는 회사명·사업·현장 내용은 다른 회사 초안에 옮기지 않는다.",
              "- [절대 규칙]·확정 문안 규칙과 부딪치면 그 규칙이 우선이고, 부딪친 점을 보고에 적는다.", ""]
     for meta, q, v, ops, sub_changed in cases:
-        lines.append(f"## {meta.get('company', '')} · {q['id']} ({v['at'][:10]} 저장, {count(q['answer']):,}→{count(v['text']):,}자 / {q['limit']:,}자)")
+        lines.append(f"## {meta.get('company', '')} · {(q['method'] + ' ') if q.get('method') else ''}{q['id']} ({v['at'][:10]} 저장, {count(q['answer']):,}→{count(v['text']):,}자 / {q['limit']:,}자)")
         if q["question"]:
             lines.append(f"> {q['question']}")
         if sub_changed:
