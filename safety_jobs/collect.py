@@ -722,24 +722,53 @@ def fetch_detail(f: Fetcher, p: Posting) -> str:
 
 
 def saramin_benefits(f: Fetcher, p: Posting) -> str:
-    """사람인 공고 화면의 '복리후생' 칸 (상세 본문(view-detail)에는 들어 있지 않음)."""
+    """사람인 공고의 '복리후생' 칸. 상세 본문(view-detail)과 공고 화면 HTML에는 없고,
+    화면이 열린 뒤 view-ajax 요청으로 불러오는 본문 묶음 안에 들어 있다."""
+    rec = p.extra.get("rec_idx")
+    view = f"https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx={rec}&view_type=list"
+    h = ""
     try:
-        h = f.get(f"https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx={p.extra['rec_idx']}&view_type=list", tries=1)
+        r = f.c.post("https://www.saramin.co.kr/zf_user/jobs/relay/view-ajax",
+                     data={"rec_idx": rec, "rec_seq": "0", "view_type": "list", "t_ref": "", "t_ref_content": ""},
+                     headers={"X-Requested-With": "XMLHttpRequest", "Referer": view,
+                              "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"})
+        if r.status_code == 200:
+            h = r.text
+        else:
+            SR_BNF[f"ajax {r.status_code}"] += 1
     except Exception as e:  # 복리후생 칸을 못 읽어도 본문은 쓴다
         print(f"[saramin-benefit] {p.url}: {e}", file=sys.stderr)
-        return ""
-    soup = BeautifulSoup(h, "html.parser")
-    el = soup.select_one(".jv_benefit") or soup.select_one("[class*=benefit]")
-    if el:
-        txt = clean(el.get_text(" "))[:3000]
-        SR_BNF["칸"] += 1
-    else:
-        m = re.search(r"복리\s*후생(.{0,1500})", soup_text(h))
-        txt = m.group(1) if m else ""
-        SR_BNF["본문검색" if txt else "없음"] += 1
+        SR_BNF["ajax 오류"] += 1
+    txt, how = "", "없음"
+    if h:
+        soup = BeautifulSoup(h, "html.parser")
+        el = soup.select_one(".jv_benefit") or soup.select_one("[class*=benefit]")
+        if el:
+            txt, how = clean(el.get_text(" "))[:3000], "칸"
+        else:
+            m = re.search(r"복리\s*후생(.{0,1500})", soup_text(h))
+            if m:
+                txt, how = m.group(1), "본문검색"
+    if not txt:  # 예비: 공고 화면 HTML 원문(스크립트 포함)에서 찾기
+        try:
+            raw = f.get(view, tries=1)
+            i = raw.find("jv_benefit")
+            if i < 0:
+                i = raw.find("복리후생")
+            if i >= 0:
+                seg = clean(re.sub(r"<[^>]+>", " ", raw[i:i + 6000]))
+                if re.search(r"[가-힣]{2}", seg):
+                    txt, how = seg[:3000], "화면원문"
+            if not txt:
+                p.extra["bnf_html"] = f"view {len(raw)}B, 복리후생 {raw.count('복리후생')}회, jv_benefit {raw.count('jv_benefit')}회, view-ajax {raw.count('view-ajax')}회"
+        except Exception as e:
+            print(f"[saramin-benefit-view] {p.url}: {e}", file=sys.stderr)
+    SR_BNF[how] += 1
     p.extra["bnf_raw"] = txt[:400]  # 확인용: 복리후생 칸 앞부분
-    if not txt:
-        p.extra["bnf_html"] = f"{len(h)}B " + clean(re.sub(r"<[^>]+>", " ", h))[:200]
+    if not txt and h:
+        p.extra["bnf_html"] = (p.extra.get("bnf_html", "") + f" | ajax {len(h)}B " + clean(re.sub(r"<[^>]+>", " ", h))[:300]).strip(" |")
+    elif txt:
+        p.extra.pop("bnf_html", None)
     return ("복리후생 " + txt) if txt else ""
 
 
@@ -2105,7 +2134,7 @@ BENEFIT_RES = [
                         r"임차\s*(?:보증금|지원)|월세\s*지원|사원\s*(?:아파트|임대)|이주\s*(?:비|정착)\s*지원")),
     ("기숙사", re.compile(r"기숙사|숙소\s*(?:제공|지원|운영|무상)|숙식\s*(?:제공|지원)|합숙소|원룸\s*(?:제공|지원)|숙박\s*(?:시설\s*)?(?:제공|지원)")),
 ]
-BNF_V = 3  # 복지 판정 규칙 버전 — 올라가면 이전 수집 공고도 본문 전체를 다시 읽어 판정한다
+BNF_V = 4  # 복지 판정 규칙 버전 — 올라가면 이전 수집 공고도 본문 전체를 다시 읽어 판정한다
 
 
 def benefits_of(text):
