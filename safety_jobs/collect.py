@@ -716,7 +716,24 @@ def fetch_detail(f: Fetcher, p: Posting) -> str:
     url = p.url
     if p.source == "사람인":
         url = f"https://www.saramin.co.kr/zf_user/jobs/relay/view-detail?rec_idx={p.extra['rec_idx']}&rec_seq=0"
+        body = soup_text(f.get(url))
+        return f"{body} {saramin_benefits(f, p)}".strip()
     return soup_text(f.get(url, encoding="cp949" if p.source == "워커" else None))
+
+
+def saramin_benefits(f: Fetcher, p: Posting) -> str:
+    """사람인 공고 화면의 '복리후생' 칸 (상세 본문(view-detail)에는 들어 있지 않음)."""
+    try:
+        h = f.get(f"https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx={p.extra['rec_idx']}&view_type=list", tries=1)
+    except Exception as e:  # 복리후생 칸을 못 읽어도 본문은 쓴다
+        print(f"[saramin-benefit] {p.url}: {e}", file=sys.stderr)
+        return ""
+    soup = BeautifulSoup(h, "html.parser")
+    el = soup.select_one(".jv_benefit") or soup.select_one("[class*=benefit]")
+    if el:
+        return "복리후생 " + clean(el.get_text(" "))[:3000]
+    m = re.search(r"복리\s*후생(.{0,1500})", soup_text(h))
+    return ("복리후생 " + m.group(1)) if m else ""
 
 
 EN_YEARS_RE = re.compile(r"(\d{1,2})\s*\+?\s*(?:or\s+more\s+|\+\s*)?years?(?:'|’)?\s*(?:of\s+)?(?:\w+\s+){0,4}?(?:experience|exp\.)", re.I)
@@ -1038,6 +1055,7 @@ def analyze(p: Posting, today):
     pref_sec = section(text, PREF_HEAD, 600)
     p.extra["ai"] = bool(AI_RE.search(pref_sec) or AI_NEAR_PREF_RE.search(text))
     p.extra["benefits"] = benefits_of(f"{p.listing_text} {text}")
+    p.extra["bnf_v"] = BNF_V
     rank = top100_rank(p.company)
     p.extra["top100"] = rank
     sector = f"{p.listing_text[:12]} {p.extra.get('biz', '')}"
@@ -1536,6 +1554,7 @@ def render_md(postings, failures, now, stats):
             cert += f"🟣 **[{'·'.join(p.prefs)} 우대]** " if p.prefs else ""
             cert += "🤖 **[AI 우대]** " if p.extra.get("ai") else ""
             cert += f"🏠 **[복지: {'·'.join(p.extra['benefits'])}]** " if p.extra.get("benefits") else ""
+            cert += f"🌐 [복지(인터넷 조사): {'·'.join(web_benefits(p)[0])}] " if web_benefits(p)[0] else ""
             L.append(f"| {md_cell(p.level)} · {md_cell(p.industry)}<br>{md_cell(pay_text(p))} | {corp} | {md_cell(p.title)}{md_check(p)} | {cert}{md_cell(p.qualification)} "
                      f"| {md_cell(p.preferred)} | {deadline_md(p, now.date())} | {md_src(p)}{' (이전 수집)' if p.extra.get('carried') else ''} |")
         L.append("")
@@ -1718,6 +1737,7 @@ td.src{white-space:nowrap}
 .ev .tg.n,.cal-legend .tgl .tg.n{color:var(--success)}
 .bnf{display:flex;flex-wrap:wrap;gap:0 4px;margin-top:2px}
 .pill.pw{margin:4px 0 0;border-color:var(--warning);background:color-mix(in srgb,var(--warning) 14%,transparent);color:var(--text-strong)} .pill.pw::before{background:var(--warning)}
+.pill.pw.web{border-style:dashed;background:transparent} a.bnfsrc{text-decoration:none;color:inherit}
 .pill.pck{margin:0 0 4px;border-color:var(--warning);color:var(--text-strong)} .pill.pck::before{background:var(--warning)}
 small.ckn{display:block;font-size:12px;color:var(--caption)}
 .pill.pai{margin:4px 4px 0 0;border-color:var(--orange);background:color-mix(in srgb,var(--orange) 12%,transparent);color:var(--text-strong)} .pill.pai::before{background:var(--orange)}
@@ -2068,20 +2088,60 @@ def rank_pill(p):
 
 # 복지 표시: 공고 본문에 명시된 경우만 (자녀학자금 · 노조 · 주택지원 · 기숙사)
 BENEFIT_RES = [
-    ("자녀학자금", re.compile(r"자녀\s*(?:대학\s*)?(?:학자금|학비|교육비|장학금?|등록금)|학자금\s*(?:지원|보조|대출|지급)?|학비\s*(?:지원|보조)|(?:대학\s*)?등록금\s*지원|장학금\s*지원")),
-    ("노조", re.compile(r"노동\s*조합|노조(?!\s*(?:없|미가입))")),
-    ("주택지원", re.compile(r"주택\s*(?:자금|구입|지원|대출|임차)|주거\s*(?:비\s*)?지원|주거비|사택|관사|전세\s*(?:자금|대출|지원)|임차\s*지원|월세\s*지원")),
-    ("기숙사", re.compile(r"기숙사|숙소\s*(?:제공|지원)|숙식\s*(?:제공|지원)")),
+    ("자녀학자금", re.compile(r"자녀\s*(?:대학\s*|중\s*[·,]?\s*고\s*등?\s*)?(?:학자금|학비|교육비|교육\s*지원|장학금?|등록금)|학자금\s*(?:지원|보조|대출|지급)?|"
+                         r"학비\s*(?:지원|보조)|(?:대학\s*)?등록금\s*지원|장학금\s*지원|유치원\s*(?:비|학비)\s*지원|(?:중|고|대)\s*학\s*자녀")),
+    ("노조", re.compile(r"노동\s*조합|노조(?!\s*(?:없|미가입))|노사\s*협의회?\s*(?:및|/)?\s*노조")),
+    ("주택지원", re.compile(r"주택\s*(?:자금|구입|지원|대출|임차|융자)|주거\s*(?:비\s*)?지원|주거\s*안정|주거비|사택|관사|전세\s*(?:자금|대출|지원|보증)|"
+                        r"임차\s*(?:보증금|지원)|월세\s*지원|사원\s*(?:아파트|임대)|이주\s*(?:비|정착)\s*지원")),
+    ("기숙사", re.compile(r"기숙사|숙소\s*(?:제공|지원|운영|무상)|숙식\s*(?:제공|지원)|합숙소|원룸\s*(?:제공|지원)|숙박\s*(?:시설\s*)?(?:제공|지원)")),
 ]
+BNF_V = 2  # 복지 판정 규칙 버전 — 올라가면 이전 수집 공고도 본문 전체를 다시 읽어 판정한다
 
 
 def benefits_of(text):
     return [lab for lab, rx in BENEFIT_RES if rx.search(text or "")]
 
 
+# 공고에 복지가 안 적힌 회사는 인터넷으로 조사한 결과를 쓴다 (safety_jobs/benefits_web.json)
+BENEFITS_WEB_PATH = Path(__file__).with_name("benefits_web.json")
+BENEFITS_WEB: dict = {}
+
+
+def load_benefits_web():
+    try:
+        items = json.loads(BENEFITS_WEB_PATH.read_text(encoding="utf-8")).get("items", [])
+    except (OSError, ValueError):
+        return 0
+    for it in items:
+        labs = [x for x in it.get("labels", []) if x in dict(BENEFIT_RES)]
+        if it.get("company") and labs:
+            BENEFITS_WEB[norm_company(it["company"])] = {"labels": labs, "evidence": it.get("evidence", {}), "source": it.get("source", "")}
+    return len(BENEFITS_WEB)
+
+
+def web_benefits(p):
+    """공고에 없는 복지 중 인터넷 조사로 확인한 것: (라벨 목록, 근거, 출처)."""
+    w = BENEFITS_WEB.get(norm_company(p.company))
+    if not w:
+        return [], {}, ""
+    have = set(p.extra.get("benefits") or [])
+    return [x for x in w["labels"] if x not in have], w["evidence"], w["source"]
+
+
+def has_benefit(p):
+    return bool(p.extra.get("benefits") or web_benefits(p)[0])
+
+
 def benefit_pills(p):
+    e = html.escape
     b = p.extra.get("benefits") or []
-    return ('<span class="bnf">' + "".join(f'<span class="pill pw">{x}</span>' for x in b) + "</span>") if b else ""
+    out = "".join(f'<span class="pill pw" title="공고에 명시">{x}</span>' for x in b)
+    wl, ev, src = web_benefits(p)
+    for x in wl:
+        tip = f"인터넷 조사: {ev.get(x, '')}".strip()
+        pill = f'<span class="pill pw web" title="{e(tip)}">{x}</span>'
+        out += f'<a class="bnfsrc" href="{e(src)}" target="_blank" rel="noopener">{pill}</a>' if src else pill
+    return f'<span class="bnf">{out}</span>' if out else ""
 
 
 def ai_pill(p):
@@ -2137,7 +2197,8 @@ def render_html(postings, failures, now, stats):
         kpi("일반 산업체", sum(p.industry == "일반 산업" for p in postings), "건설 외 제조·서비스 등"),
         kpi("산업·건설안전기사·ISO 45001 명시", sum(bool(p.certs) for p in postings), "공고에 자격·인증 기재"),
         kpi("외국어·NEBOSH·IOSH·CSP 우대", sum(bool(p.prefs) for p in postings), "우대 조건 기재", "--purple"),
-        kpi("복지 명시", sum(bool(p.extra.get("benefits")) for p in postings), "자녀학자금·노조·주택지원·기숙사", "--warning"),
+        kpi("복지 확인", sum(has_benefit(p) for p in postings),
+            f"공고 명시 {sum(bool(p.extra.get('benefits')) for p in postings)} · 인터넷 조사 점선", "--warning"),
         kpi("AI 우대", sum(bool(p.extra.get("ai")) for p in postings), "우대 조건에 AI 역량", "--orange"),
         kpi("3일 내 마감", len(soon), "접수 서두름", "--error"),
         kpi("데이터센터·하이테크·삼성·하이닉스", n_a, "집중 관심", "--error"),
@@ -2217,7 +2278,7 @@ def render_html(postings, failures, now, stats):
         i = sid.get(key, "other")
         nav.append((i, tag, len(rows)))
         trs = "".join(
-            f'<tr class="h{p.hilite}" data-url="{e(p.url)}" data-ind="{e(p.industry)}" data-cert="{1 if p.certs else 0}" data-pref="{1 if p.prefs else 0}" data-ai="{1 if p.extra.get("ai") else 0}" data-grp="{e(" ".join(p.extra.get("groups", [])))}" data-listed="{e(p.extra.get("listed", ""))}" data-new="{1 if is_new(p, today) else 0}" data-bnf="{1 if p.extra.get("benefits") else 0}">{xsel(p)}<td class="lv">{e(p.level)}<small>{e(p.industry)}</small>{sal_small(p)}</td>'
+            f'<tr class="h{p.hilite}" data-url="{e(p.url)}" data-ind="{e(p.industry)}" data-cert="{1 if p.certs else 0}" data-pref="{1 if p.prefs else 0}" data-ai="{1 if p.extra.get("ai") else 0}" data-grp="{e(" ".join(p.extra.get("groups", [])))}" data-listed="{e(p.extra.get("listed", ""))}" data-new="{1 if is_new(p, today) else 0}" data-bnf="{1 if has_benefit(p) else 0}">{xsel(p)}<td class="lv">{e(p.level)}<small>{e(p.industry)}</small>{sal_small(p)}</td>'
             f'<td class="corp"><strong>{co_link(p)}</strong>{new_pill(p, today)}{big_pill(p)}{pill[p.hilite]}{group_pills(p)}{rank_pill(p)}</td>'
             f"<td class=\"ttl\">{e(p.title)}{check_pill(p)}{pref_pills(p)}{ai_pill(p)}{benefit_pills(p)}</td><td>{cert_pills(p)}{e(p.qualification or '-')}</td><td>{e(p.preferred or '-')}</td>"
             f'<td class="dl{" soon" if id(p) in soon else ""}">{e(p.deadline)}</td>'
@@ -2471,6 +2532,7 @@ def main():
     except (OSError, ValueError, KeyError):
         pass
     n_ex = load_excluded()
+    load_benefits_web()  # 인터넷 조사 복지
     if n_ex:
         print(f"[excluded] 사용자 삭제 {n_ex}건 적용", file=sys.stderr)
     raw, failures, stats = [], [], {}
@@ -2552,7 +2614,8 @@ def main():
     for p in kept:
         if n_detail >= args.max_detail or time.time() > t_detail_end + 4 * 60:
             break
-        if len(p.detail_text or "") >= 600 or p.url.startswith("manual:") or p.extra.get("posted") is not None:
+        stale_bnf = p.extra.get("bnf_v") != BNF_V and p.source != "LinkedIn"  # 복지 규칙이 바뀐 뒤 처음 → 본문 전체로 다시 판정
+        if (len(p.detail_text or "") >= 600 and not stale_bnf) or p.url.startswith("manual:") or p.extra.get("posted") is not None:
             continue
         try:
             t = fetch_detail(f, p)
@@ -2560,10 +2623,14 @@ def main():
             print(f"[detail-refill] {p.url}: {e}", file=sys.stderr)
             continue
         n_detail += 1
+        if stale_bnf and t:
+            p.extra["benefits"] = benefits_of(f"{p.listing_text} {t}")
+            p.extra["bnf_v"] = BNF_V
         if len(t) <= len(p.detail_text or ""):
             continue
         p.detail_text = t[:15000]
         p.extra["benefits"] = benefits_of(f"{p.listing_text} {t}")
+        p.extra["bnf_v"] = BNF_V
         p.extra.pop("salary", None)
         sal = salary_of(p)
         p.extra["salary"] = "" if sal == NO_SALARY else sal
