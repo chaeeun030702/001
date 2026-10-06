@@ -1234,11 +1234,45 @@ def load_excluded():
             EXCLUDED_URLS.add(it["url"])
         if it.get("company") or it.get("title"):
             EXCLUDED_KEYS.add(_ex_key(it.get("company"), it.get("title")))
+            c = norm_company(it.get("company") or "")
+            if c:
+                EXCLUDED_FUZZY.append((c, it.get("title") or ""))
     return len(items)
 
 
+EXCLUDED_FUZZY: list = []  # (회사, 공고명) — 다른 사이트에 같은 공고가 다시 올라와도 제외하기 위한 비교용
+
+
+def _ex_title(t):
+    return re.sub(r"\.{2,}|…", "", t or "")  # 목록에서 잘린 공고명(…)
+
+
 def user_excluded(p: Posting) -> bool:
-    return p.url in EXCLUDED_URLS or _ex_key(p.company, p.title) in EXCLUDED_KEYS
+    """브리핑에서 삭제한 공고. 같은 주소·같은 회사+공고명은 물론, 다른 사이트에 올라온 같은 공고
+    (회사가 같고 공고명이 비슷함)도 제외한다."""
+    if p.url in EXCLUDED_URLS or _ex_key(p.company, p.title) in EXCLUDED_KEYS:
+        return True
+    c = norm_company(p.company)
+    if not c:
+        return False
+    for qc, qt0 in EXCLUDED_FUZZY:
+        if not (c in qc or qc in c):
+            continue
+        short = c if len(c) <= len(qc) else qc  # 공고명 속 회사명(짧은 쪽)도 지우고 비교
+        t, qt = _ex_norm(p.title, short), _ex_norm(qt0, short)
+        if not t or not qt or _ROLE_RE.findall(t) and set(_ROLE_RE.findall(t)) != set(_ROLE_RE.findall(qt)):
+            continue  # 안전·보건·환경·소방 등 직무가 다르면 다른 공고
+        if t in qt or qt in t or difflib.SequenceMatcher(None, t, qt).ratio() >= 0.85:  # 지역만 다른 공고는 살린다
+            return True
+    return False
+
+
+_ROLE_RE = re.compile(r"안전|보건|환경|소방|전기|가스|품질|시설")
+
+
+def _ex_norm(title, corp):
+    t = re.sub(r"[—–―]|\(공고링크\s*수정\)|모집합니다|합니다|선생님", "", _ex_title(title))
+    return norm_title(t, corp)
 
 
 PUBLIC_NAME_RE = re.compile(r"(?:공사|공단|발전|공기업|진흥원|기술원)(?:\(주\)|㈜)?$|^한국")
