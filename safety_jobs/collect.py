@@ -1830,6 +1830,24 @@ td.corp a.co{color:var(--text-strong);text-decoration:none} td.corp a.co:hover{c
 
 HTML_JS = """
 (function(){
+  /* KPI: 페이지에서 삭제(제외)한 공고는 빼고 숫자를 다시 센다 */
+  var el=document.getElementById('kpi-data'); if(!el) return;
+  var rows; try{rows=JSON.parse(el.textContent)}catch(e){return}
+  function recount(){
+    var gone={};
+    document.querySelectorAll('tr.xd[data-url]').forEach(function(tr){gone[tr.dataset.url]=1});
+    var c={};
+    rows.forEach(function(r){ if(gone[r.u]) return; r.k.forEach(function(k){c[k]=(c[k]||0)+1}); });
+    var tot=c.all||0;
+    document.querySelectorAll('.kpi .v[data-k]').forEach(function(v){
+      v.textContent=v.dataset.k.split('+').reduce(function(a,k){return a+(c[k]||0)},0);
+      var sub=v.parentNode.querySelector('.s[data-sub]'); if(!sub) return;
+      sub.textContent=sub.dataset.sub.replace(/\{(\w+)(%?)\}/g,function(_,k,pc){var n=c[k]||0;return pc?Math.floor(n*100/Math.max(tot,1))+'%':n});
+    });
+  }
+  document.addEventListener('brief-refilter',recount);
+})();
+(function(){
   /* 테마 전환: 다크 토큰을 직접 쓰는 data-theme 전환, 선택은 이 브라우저에만 기억 */
   var b=document.getElementById('theme-toggle'), r=document.documentElement; if(!b) return;
   try{var t=localStorage.getItem('brief-theme'); if(t) r.dataset.theme=t;}catch(e){}
@@ -2258,28 +2276,56 @@ def render_html(postings, failures, now, stats):
     else:
         dv = len(postings) - PREV_TOTAL
         delta_txt = f"직전 대비 {'▲' if dv > 0 else '▼' if dv < 0 else '–'}{abs(dv) if dv else ''} (경력직·마감 제외)"
-    def kpi(label, value, sub="", dot=""):
+    def kpi(label, value, sub="", dot="", key="", subt=""):
         d = f'<span class="dot" style="background:var({dot})"></span>' if dot else ""
-        return f'<div class="kpi"><span class="l">{d}{e(label)}</span><span class="v">{value}</span><span class="s">{e(sub)}</span></div>'
-    by = {k: len(r) for k, _, r in groups}
+        dk = f' data-k="{key}"' if key else ""
+        ds = f' data-sub="{e(subt)}"' if subt else ""
+        return f'<div class="kpi"><span class="l">{d}{e(label)}</span><span class="v"{dk}>{value}</span><span class="s"{ds}>{e(sub)}</span></div>'
+    # 공고별 KPI 해당 여부 — 페이지에서 공고를 삭제하면 숫자를 다시 센다
+    flags = []
+    for p in postings:
+        g = group_key(p)
+        f = ["all"]
+        f += ["new"] if is_new(p, today) else []
+        f += ["reg"] if g == "정규직" else []
+        f += ["con"] if g == "계약직" else []
+        f += ["ind"] if p.industry == "일반 산업" else []
+        f += ["cert"] if p.certs else []
+        f += ["pref"] if p.prefs else []
+        f += ["bnf"] if has_benefit(p) else []
+        f += ["bnfp"] if p.extra.get("benefits") else []
+        f += ["ai"] if p.extra.get("ai") else []
+        f += ["soon"] if id(p) in soon else []
+        f += ["a"] if p.hilite == "A" else []
+        f += ["b"] if "대기업 계열" in p.extra.get("groups", []) else []
+        f += ["f"] if "외국계" in p.extra.get("groups", []) else []
+        f += ["fch"] if p.source in ("피플앤잡", "기업 채용 페이지") else []
+        f += ["ks"] if p.extra.get("listed") == "코스피" else []
+        f += ["kq"] if p.extra.get("listed") == "코스닥" else []
+        flags.append({"u": p.url, "k": f})
+    cnt = collections.Counter(k for x in flags for k in x["k"])
+    tot = max(len(postings), 1)
     kpis = "".join([
-        kpi("전체 공고", len(postings), delta_txt),
-        kpi("신규", n_new, f"지난 보고({last_report_date(today):%m/%d}) 이후 추가", "--success"),
-        kpi("정규직", by.get("정규직", 0), f"{by.get('정규직', 0) * 100 // max(len(postings), 1)}%"),
-        kpi("계약직", by.get("계약직", 0), f"{by.get('계약직', 0) * 100 // max(len(postings), 1)}%"),
-        kpi("일반 산업체", sum(p.industry == "일반 산업" for p in postings), "건설 외 제조·서비스 등"),
-        kpi("산업·건설안전기사·ISO 45001 명시", sum(bool(p.certs) for p in postings), "공고에 자격·인증 기재"),
-        kpi("외국어·NEBOSH·IOSH·CSP 우대", sum(bool(p.prefs) for p in postings), "우대 조건 기재", "--purple"),
-        kpi("복지 확인", sum(has_benefit(p) for p in postings),
-            f"공고 명시 {sum(bool(p.extra.get('benefits')) for p in postings)} · 인터넷 조사 점선", "--warning"),
-        kpi("AI 우대", sum(bool(p.extra.get("ai")) for p in postings), "우대 조건에 AI 역량", "--orange"),
-        kpi("3일 내 마감", len(soon), "접수 서두름", "--error"),
-        kpi("데이터센터·하이테크·삼성·하이닉스", n_a, "집중 관심", "--error"),
-        kpi("대기업 계열", n_b, "그룹 계열사", "--primary"),
-        kpi("외국계", n_f, "외국계 기업", "--sky"),
-        kpi("외국계 채널", sum(p.source in ("피플앤잡", "기업 채용 페이지") for p in postings), "피플앤잡·기업 채용 페이지", "--sky"),
-        kpi("코스피·코스닥 상장", n_ks + n_kq, f"코스피 {n_ks} · 코스닥 {n_kq}", "--text-strong"),
+        kpi("전체 공고", len(postings), delta_txt, key="all"),
+        kpi("신규", cnt["new"], f"지난 보고({last_report_date(today):%m/%d}) 이후 추가", "--success", key="new"),
+        kpi("정규직", cnt["reg"], f"{cnt['reg'] * 100 // tot}%", key="reg", subt="{reg%}"),
+        kpi("계약직", cnt["con"], f"{cnt['con'] * 100 // tot}%", key="con", subt="{con%}"),
+        kpi("일반 산업체", cnt["ind"], "건설 외 제조·서비스 등", key="ind"),
+        kpi("산업·건설안전기사·ISO 45001 명시", cnt["cert"], "공고에 자격·인증 기재", key="cert"),
+        kpi("외국어·NEBOSH·IOSH·CSP 우대", cnt["pref"], "우대 조건 기재", "--purple", key="pref"),
+        kpi("복지 확인", cnt["bnf"], f"공고 명시 {cnt['bnfp']} · 인터넷 조사 점선", "--warning", key="bnf",
+            subt="공고 명시 {bnfp} · 인터넷 조사 점선"),
+        kpi("AI 우대", cnt["ai"], "우대 조건에 AI 역량", "--orange", key="ai"),
+        kpi("3일 내 마감", cnt["soon"], "접수 서두름", "--error", key="soon"),
+        kpi("데이터센터·하이테크·삼성·하이닉스", cnt["a"], "집중 관심", "--error", key="a"),
+        kpi("대기업 계열", cnt["b"], "그룹 계열사", "--primary", key="b"),
+        kpi("외국계", cnt["f"], "외국계 기업", "--sky", key="f"),
+        kpi("외국계 채널", cnt["fch"], "피플앤잡·기업 채용 페이지", "--sky", key="fch"),
+        kpi("코스피·코스닥 상장", cnt["ks"] + cnt["kq"], f"코스피 {cnt['ks']} · 코스닥 {cnt['kq']}", "--text-strong", key="ks+kq",
+            subt="코스피 {ks} · 코스닥 {kq}"),
     ])
+    kpi_json = json.dumps(flags, ensure_ascii=False).replace("</", "<\\/")
+    kpis += f'<script type="application/json" id="kpi-data">{kpi_json}</script>'
 
     # 막대 차트(단일 계열, primary 한 색)
     def bars(items, cls=lambda k: ""):
