@@ -2018,13 +2018,15 @@ def calendar_eligible(p):
     return bool(SEMI_DC_RE.search(f"{p.company} {p.title} {p.listing_text} {p.extra.get('sector', '')} {(p.detail_text or '')[:4000]}"))
 
 
-CONTRACT_TOP_RANK = 15  # 계약직 건설사는 시공능력평가(도급순위) 15위 이내도 인정
+CONTRACT_TOP_RANK = 20  # 건설사 계약직은 시공능력평가 20위 이내 종합건설사만 싣는다
 
 
 def contract_ok(p):
-    """계약직 유지 조건: 관심 기업이거나, 도급순위 15위 이내 건설사."""
+    """계약직 유지 조건: 건설사는 시평 20위 이내만, 그 밖의 업체는 관심 기업만."""
     rank = p.extra.get("top100")
-    return calendar_eligible(p) or (p.industry == "건설" and bool(rank) and rank <= CONTRACT_TOP_RANK)
+    if p.industry == "건설":
+        return bool(rank) and rank <= CONTRACT_TOP_RANK
+    return calendar_eligible(p)
 
 
 CLOSED_RECENT: list = []  # 지난주 일요일 ~ 어제 마감된 관심 기업 공고 (달력에 흐리게 표시)

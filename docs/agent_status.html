@@ -104,12 +104,13 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 <script>
 /* 작업 데이터 — 에이전트를 맡길 때마다 이 블록만 고친다 (progress: 0~100) */
 var JOB={
-  updated:"2026-10-07 08:42 KST",updatedISO:"2026-10-06T23:42:42Z",
-  main:{name:"메인 에이전트",task:"브리핑에서 감시단 · 주업무 비안전(안전 자격만 요구) · 배차사무원 · 방사선안전 · 소방안전 공고 제외",note:"수집기 규칙과 사람인 메일 루틴에 같은 제외 기준을 넣었습니다. 다음 브리핑부터 적용됩니다."},
+  updated:"2026-10-07 08:43 KST",updatedISO:"2026-10-06T23:43:29Z",
+  main:{name:"메인 에이전트",task:"브리핑 제외 규칙 추가: 감시단·주업무 비안전·배차·방사선안전·소방안전 + 시평 20위 밖 건설사 계약직",note:"규칙은 작업 브랜치에 올렸습니다. 수집기 기본 브랜치에 병합하면 다음 브리핑부터 적용됩니다."},
   subs:[
-   {name:"제외 규칙 (collect.py)",order:"하청 1",status:"done",progress:100,task:"제목에 배차·방사선안전·소방안전 → 제외 · 감시원 추가 · 자격증 이름뿐인 제목은 담당 업무로 판정",result:"최근 6일 공고 시험: 다른 직무 15건 · 자격증만 제목 11건 재판정"},
-   {name:"사람인 메일 루틴 (19:05)",order:"하청 2",status:"done",progress:100,task:"메일 공고 고르는 기준에 같은 제외 항목 추가",result:"루틴 지시문 갱신 · Gmail 연결은 아직 필요"},
-   {name:"README · PR",order:"하청 3",status:"done",progress:100,task:"규칙 문서화 후 병합",result:"병합 완료"}
+   {name:"다른 직무 제외 (collect.py)",order:"하청 1",status:"done",progress:100,task:"제목에 배차·방사선안전·소방안전 → 제외 · 감시원 추가 · 자격증 이름뿐인 제목은 담당 업무로 판정",result:"최근 6일 시험: 다른 직무 15건 제외 · 11건 재판정"},
+   {name:"건설사 계약직 (collect.py)",order:"하청 2",status:"done",progress:100,task:"건설사 계약직은 시평 20위 이내만 (기존: 15위 이내 또는 관심 기업)",result:"최근 3일 시험: 28건 제외 (KCC건설 21위·코오롱글로벌 23위 등) · 20위 이내 유지"},
+   {name:"사람인 메일 루틴 (19:05)",order:"하청 3",status:"done",progress:100,task:"메일 공고 고르는 기준에 같은 제외 항목 추가",result:"지시문 갱신 · Gmail 연결은 아직 필요"},
+   {name:"병합 (PR)",order:"하청 4",status:"wait",progress:0,task:"작업 브랜치 → 수집기 기본 브랜치 병합",result:"사용자 확인 대기"}
   ]
 };
 
