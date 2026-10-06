@@ -299,7 +299,9 @@ def foreign_section(foreign, excluded, postings):
         pay = pay_of(m, postings)
         title = (f'<a class="jd" href="{e(m["url"])}" target="_blank" rel="noopener" title="공고 원문 열기">{e(m["title"])}</a>'
                  + (f'<div class="pay">{e(pay)}</div>' if pay else ""))
-        rows.append(f'<tr data-id="{e(f["id"])}"><td>{e(m["company"])}</td><td>{chips}</td><td class="wrap">{title}</td>'
+        rows.append(f'<tr data-id="{e(f["id"])}"><td class="pickcell"><input type="checkbox" class="pick" data-id="{e(f["id"])}" '
+                    f'data-company="{e(m["company"])}" data-title="{e(m["title"])}" data-url="{e(m["url"])}" aria-label="{e(m["company"])} 선택"></td>'
+                    f'<td>{e(m["company"])}</td><td>{chips}</td><td class="wrap">{title}</td>'
                     f'<td class="num">{e(f.get("deadline_date", ""))}</td><td>{dpill(f.get("days_left"))}</td>'
                     f'<td class="reqcell"><button type="button" class="req" data-id="{e(f["id"])}" data-company="{e(m["company"])}" '
                     f'data-title="{e(m["title"])}" data-url="{e(m["url"])}" disabled>작성 요청</button></td></tr>')
@@ -307,8 +309,9 @@ def foreign_section(foreign, excluded, postings):
         return ""
     return ('<section class="card" id="foreign"><h2>외국계 공고 · 요청 시 작성</h2>'
             '<p class="hint" id="reqmsg">외국계 공고는 자동으로 쓰지 않고 목록만 보여 줍니다. <b>작성 요청</b>을 누르면 다음 20:30 리포트에서 초안을 씁니다(마감 5일 전이 아니어도 씀).</p>'
-            '<div class="scroll"><table><colgroup><col style="width:17%"><col style="width:14%"><col><col style="width:12%"><col style="width:9%"><col style="width:16%"></colgroup>'
-            '<thead><tr><th>업체</th><th>구분</th><th>공고</th><th>마감일</th><th>남은 기간</th><th>작성</th></tr></thead><tbody>'
+            + FOREIGN_BAR +
+            '<div class="scroll"><table><colgroup><col style="width:36px"><col style="width:16%"><col style="width:13%"><col><col style="width:12%"><col style="width:9%"><col style="width:15%"></colgroup>'
+            '<thead><tr><th class="pickcell"><input type="checkbox" class="pickall" aria-label="외국계 공고 전체 선택"></th><th>업체</th><th>구분</th><th>공고</th><th>마감일</th><th>남은 기간</th><th>작성</th></tr></thead><tbody>'
             + "".join(rows) + "</tbody></table></div></section>")
 
 
@@ -544,7 +547,11 @@ SAVE_SCRIPT = r"""<script>
 })();
 </script>"""
 
-EXCLUDE_BAR = ('<div class="xbar" hidden><button type="button" class="danger" id="xdel" disabled>선택 삭제</button>'
+FOREIGN_BAR = ('<div class="xbar" id="fbar" hidden><button type="button" class="danger" id="fdel" disabled>선택 삭제</button>'
+               '<span id="fask" hidden><button type="button" class="danger" id="fok">제외 확정</button> <button type="button" id="fno">취소</button></span>'
+               '<span class="msg" id="fmsg">체크한 외국계 공고는 이 목록에서 빠지고 다음 리포트부터 나오지 않습니다(되돌리기는 위 \'제외한 공고\'에서).</span></div>')
+
+EXCLUDE_BAR = ('<div class="xbar" id="xbar" hidden><button type="button" class="danger" id="xdel" disabled>선택 삭제</button>'
                '<span id="xask" hidden><button type="button" class="danger" id="xok">제외 확정</button> <button type="button" id="xno">취소</button></span>'
                '<span class="msg" id="xmsg">체크한 공고는 이 목록에서 빠지고 다음 리포트부터 제외됩니다.</span></div>'
                '<details class="xlist" id="xlist" hidden><summary>제외한 공고 <b id="xcnt">0</b>건 · 되돌리기</summary><ul id="xul"></ul></details>')
@@ -556,32 +563,37 @@ EXCLUDE_SCRIPT = r"""<script>
  if(!window.claude||!claude.use)return;
  var db=null;try{db=await claude.use("db")}catch(e){}
  if(!db)return;
- var bar=document.querySelector(".xbar"),del=document.getElementById("xdel"),msg=document.getElementById("xmsg"),
-     list=document.getElementById("xlist"),ul=document.getElementById("xul"),cnt=document.getElementById("xcnt"),
-     all=document.querySelector(".pickall"),col=db.collection("excluded"),ask=document.getElementById("xask"),ok=document.getElementById("xok"),no=document.getElementById("xno"),hint=msg.textContent,pending=[];
- if(!bar)return; bar.hidden=false;
- function picks(){return Array.from(document.querySelectorAll("input.pick"))}
- function sync(){var n=picks().filter(function(c){return c.checked&&!c.closest("tr").classList.contains("gone")}).length;
-  del.disabled=!n; del.textContent=n?"선택 삭제 ("+n+")":"선택 삭제"}
- document.addEventListener("change",function(ev){
-  if(ev.target===all){picks().forEach(function(c){if(!c.closest("tr").classList.contains("gone"))c.checked=all.checked})}
-  if(ev.target.classList&&(ev.target.classList.contains("pick")||ev.target===all))sync()});
- del.addEventListener("click",async function(){
-  var sel=picks().filter(function(c){return c.checked&&!c.closest("tr").classList.contains("gone")});
-  if(!sel.length)return;
-  pending=sel;del.hidden=true;ask.hidden=false;
-  msg.textContent=sel.length+"건을 다음 리포트부터 제외할까요?";
- });
- no.addEventListener("click",function(){pending=[];ask.hidden=true;del.hidden=false;msg.textContent=hint;sync()});
- ok.addEventListener("click",async function(){
-  var sel=pending;pending=[];if(!sel.length)return;
-  ok.disabled=no.disabled=true;msg.textContent="저장 중…";
-  try{for(var i=0;i<sel.length;i++){var c=sel[i];
-    await col.doc(c.dataset.id).set({company:c.dataset.company,title:c.dataset.title,url:c.dataset.url,at:new Date().toISOString()})}
-   msg.textContent=sel.length+"건을 제외했습니다. 다음 리포트부터 나오지 않습니다.";
-  }catch(e){msg.textContent="저장하지 못했습니다("+(e&&(e.code||e.message)||"오류")+"). 편집 권한이 있는 계정으로 열었는지 확인해 주세요."}
-  ok.disabled=no.disabled=false;ask.hidden=true;del.hidden=false;sync();
- });
+ var col=db.collection("excluded"),ul=document.getElementById("xul"),list=document.getElementById("xlist"),cnt=document.getElementById("xcnt");
+ // 마감순 초안 표(x)와 외국계 공고 표(f)가 같은 제외 목록을 쓴다 — 표마다 체크박스·선택 삭제 단추가 따로 있다
+ var groups=[];
+ function group(p,scope,boxSel){
+  var bar=document.getElementById(p+"bar");if(!bar)return null;
+  var g={bar:bar,del:document.getElementById(p+"del"),msg:document.getElementById(p+"msg"),ask:document.getElementById(p+"ask"),
+   ok:document.getElementById(p+"ok"),no:document.getElementById(p+"no"),all:scope.querySelector(".pickall"),pending:[]};
+  g.hint=g.msg.textContent;g.picks=function(){return Array.from(scope.querySelectorAll(boxSel))};
+  g.live=function(){return g.picks().filter(function(c){return c.checked&&!c.closest("tr").classList.contains("gone")})};
+  g.sync=function(){var n=g.live().length;g.del.disabled=!n;g.del.textContent=n?"선택 삭제 ("+n+")":"선택 삭제"};
+  bar.hidden=false;
+  scope.addEventListener("change",function(ev){
+   if(ev.target===g.all){g.picks().forEach(function(c){if(!c.closest("tr").classList.contains("gone"))c.checked=g.all.checked})}
+   if(ev.target===g.all||ev.target.matches&&ev.target.matches(boxSel))g.sync()});
+  g.del.addEventListener("click",function(){var sel=g.live();if(!sel.length)return;
+   g.pending=sel;g.del.hidden=true;g.ask.hidden=false;g.msg.textContent=sel.length+"건을 다음 리포트부터 제외할까요?"});
+  g.no.addEventListener("click",function(){g.pending=[];g.ask.hidden=true;g.del.hidden=false;g.msg.textContent=g.hint;g.sync()});
+  g.ok.addEventListener("click",async function(){
+   var sel=g.pending;g.pending=[];if(!sel.length)return;
+   g.ok.disabled=g.no.disabled=true;g.msg.textContent="저장 중…";
+   try{for(var i=0;i<sel.length;i++){var c=sel[i];
+     await col.doc(c.dataset.id).set({company:c.dataset.company,title:c.dataset.title,url:c.dataset.url,at:new Date().toISOString()})}
+    g.msg.textContent=sel.length+"건을 제외했습니다. 다음 리포트부터 나오지 않습니다.";
+   }catch(e){g.msg.textContent="저장하지 못했습니다("+(e&&(e.code||e.message)||"오류")+"). 편집 권한이 있는 계정으로 열었는지 확인해 주세요."}
+   g.ok.disabled=g.no.disabled=false;g.ask.hidden=true;g.del.hidden=false;g.sync()});
+  groups.push(g);return g}
+ var main=document.getElementById("xbar");
+ if(main)group("x",main.closest("section"),"input.pick");
+ var fs=document.getElementById("foreign");
+ if(fs)group("f",fs,"input.pick");
+ if(!groups.length)return;
  col.onSnapshot(function(snap){
   var ids={};ul.textContent="";
   snap.docs.forEach(function(d){var v=d.data()||{};ids[d.id]=1;
@@ -592,8 +604,8 @@ EXCLUDE_SCRIPT = r"""<script>
   document.querySelectorAll("tr[data-id]").forEach(function(tr){tr.classList.toggle("gone",!!ids[tr.dataset.id]);
    if(ids[tr.dataset.id]){var c=tr.querySelector("input.pick");if(c)c.checked=false}});
   document.querySelectorAll("details.draft").forEach(function(dd){dd.classList.toggle("gone",!!ids[dd.id])});
-  var n=snap.docs.length;cnt.textContent=n;list.hidden=!n;sync();
- },function(){msg.textContent="제외 목록을 불러오지 못했습니다."});
+  var n=snap.docs.length;cnt.textContent=n;list.hidden=!n;groups.forEach(function(g){g.sync()});
+ },function(){groups.forEach(function(g){g.msg.textContent="제외 목록을 불러오지 못했습니다."})});
 })();
 </script>"""
 
