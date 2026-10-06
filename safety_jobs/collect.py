@@ -56,7 +56,10 @@ DUTY_HEAD = r"담당\s*업무|주요\s*업무|업무\s*내용|직무\s*내용|�
 PREF_IN_TITLE_RE = re.compile(r"[\(\[【][^\)\]】]*우대[^\)\]】]*[\)\]】]|[^\s/,]*\s*우대")
 NON_HSE_SAFETY_RE = re.compile(r"Functional\s*Safety|안전\s*인증|Drug\s*Safety|Pharmacovigilance|Patient\s*Safety|Food\s*Safety|Product\s*Safety|Clinical|"
                                r"약물\s*감시|의약품\s*안전|식품\s*안전|안전성\s*(?:평가|정보)", re.I)
-WATCH_RE = re.compile(r"감시\s*단")  # 안전감시단 등 감시 인력 모집은 제외
+WATCH_RE = re.compile(r"감시\s*(?:단|원)")  # 안전감시단 등 감시 인력 모집은 제외
+# 안전관리자가 아닌 직무는 제목에 있으면 제외 (배차사무원·방사선안전·소방안전). '…우대' 괄호는 보지 않는다
+CERT_NAME_RE = re.compile(r"(?:산업|건설|가스|전기|소방|화공|기계)?안전(?:관리)?(?:산업기사|기사|기술사|지도사)|소방안전관리자\s*\d급|산업위생관리(?:산업)?기사|산업보건지도사")
+OTHER_ROLE_RE = re.compile(r"배차|방사선\s*안전|소방\s*안전")
 # 회사명에 이 용어가 있으면 제외 (안전·소방 전문 용역사, 학원·교육기관 등). 공백은 무시하고 비교한다
 EXCLUDE_CORP_TERMS = ("소방", "조경", "구조엔지니어링", "감시단", "재해예방", "구조안전", "세이프티", "안전관리", "학원",
                       "소방기술단", "교육원", "안전시스템", "방재", "무사퇴근", "보건안전", "호남산업")
@@ -1159,8 +1162,13 @@ def duty_text(t: str) -> str:
 
 
 def title_safe(p: Posting) -> bool:
-    title = PREF_IN_TITLE_RE.sub(" ", p.title)
-    return bool(SAFETY_RE.search(title) or CERT_KEY_RE.search(p.title))
+    """제목에 안전 직무가 있는지. 자격증 이름(산업안전기사 등)만 있으면 직무가 아니므로 담당 업무로 다시 판정한다."""
+    title = CERT_NAME_RE.sub(" ", PREF_IN_TITLE_RE.sub(" ", p.title))
+    return bool(SAFETY_RE.search(title))
+
+
+def other_role(p: Posting) -> bool:
+    return bool(OTHER_ROLE_RE.search(PREF_IN_TITLE_RE.sub(" ", p.title)))
 
 
 def duty_verdict(p: Posting):
@@ -1338,6 +1346,8 @@ def keep(p: Posting, today) -> tuple[bool, str]:
         return False, "한국 근무 아님"
     if SALES_RE.search(p.title):
         return False, "영업직"
+    if other_role(p):
+        return False, "다른 직무(배차·방사선·소방안전)"
     if WATCH_RE.search(f"{p.title} {p.listing_text} {p.detail_text}"):
         return False, "감시단"
     if p.industry == "건설" and not p.extra.get("top100"):
@@ -2008,13 +2018,15 @@ def calendar_eligible(p):
     return bool(SEMI_DC_RE.search(f"{p.company} {p.title} {p.listing_text} {p.extra.get('sector', '')} {(p.detail_text or '')[:4000]}"))
 
 
-CONTRACT_TOP_RANK = 15  # 계약직 건설사는 시공능력평가(도급순위) 15위 이내도 인정
+CONTRACT_TOP_RANK = 20  # 건설사 계약직은 시공능력평가 20위 이내 종합건설사만 싣는다
 
 
 def contract_ok(p):
-    """계약직 유지 조건: 관심 기업이거나, 도급순위 15위 이내 건설사."""
+    """계약직 유지 조건: 건설사는 시평 20위 이내만, 그 밖의 업체는 관심 기업만."""
     rank = p.extra.get("top100")
-    return calendar_eligible(p) or (p.industry == "건설" and bool(rank) and rank <= CONTRACT_TOP_RANK)
+    if p.industry == "건설":
+        return bool(rank) and rank <= CONTRACT_TOP_RANK
+    return calendar_eligible(p)
 
 
 CLOSED_RECENT: list = []  # 지난주 일요일 ~ 어제 마감된 관심 기업 공고 (달력에 흐리게 표시)
@@ -2361,7 +2373,7 @@ def render_html(postings, failures, now, stats):
     total = agg.get("목록", 0)
     steps = [("수집 목록", total, "")]
     for lab, keys in (("안전 직무 외", ["안전 직무 아님", "담당 업무에 안전 없음", "채용 공고 아님"]), ("경력직·대리급 이상", ["경력직", "대리급 이상"]),
-                      ("대상 기준 외", ["건설사(시평 100위 밖)", "계약직(관심 기업 외)", "영업직", "감시단", "한국 근무 아님"]),
+                      ("대상 기준 외", ["건설사(시평 100위 밖)", "계약직(관심 기업 외)", "영업직", "다른 직무(배차·방사선·소방안전)", "감시단", "한국 근무 아님"]),
                       ("마감·오래된 글", ["마감", "오래된 게시글"]), ("중복", ["중복(상위 사이트 우선)"])):
         c = sum(agg.get(k, 0) for k in keys)
         if c:
@@ -2562,7 +2574,7 @@ def carry_over(prev_path, failed, kept, stats, today):
         yrs = [int(m.group(1) or m.group(2)) for m in TITLE_YEARS_RE.finditer(p.title)]
         if yrs and min(yrs) >= 2 and not NEWBIE_RE.search(p.title):
             continue
-        if SALES_RE.search(p.title) or WATCH_RE.search(f"{p.title} {p.detail_text}"):  # 영업직·감시단 제외 재적용
+        if SALES_RE.search(p.title) or other_role(p) or WATCH_RE.search(f"{p.title} {p.detail_text}"):  # 영업직·다른 직무·감시단 제외 재적용
             continue
         if any(q.url == p.url for q in kept) or is_dup(p, kept):
             continue
