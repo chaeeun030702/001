@@ -731,9 +731,19 @@ def saramin_benefits(f: Fetcher, p: Posting) -> str:
     soup = BeautifulSoup(h, "html.parser")
     el = soup.select_one(".jv_benefit") or soup.select_one("[class*=benefit]")
     if el:
-        return "복리후생 " + clean(el.get_text(" "))[:3000]
-    m = re.search(r"복리\s*후생(.{0,1500})", soup_text(h))
-    return ("복리후생 " + m.group(1)) if m else ""
+        txt = clean(el.get_text(" "))[:3000]
+        SR_BNF["칸"] += 1
+    else:
+        m = re.search(r"복리\s*후생(.{0,1500})", soup_text(h))
+        txt = m.group(1) if m else ""
+        SR_BNF["본문검색" if txt else "없음"] += 1
+    p.extra["bnf_raw"] = txt[:400]  # 확인용: 복리후생 칸 앞부분
+    if not txt:
+        p.extra["bnf_html"] = f"{len(h)}B " + clean(re.sub(r"<[^>]+>", " ", h))[:200]
+    return ("복리후생 " + txt) if txt else ""
+
+
+SR_BNF = collections.Counter()  # 사람인 복리후생 칸을 찾은 방법별 건수 (수집 현황에 표시)
 
 
 EN_YEARS_RE = re.compile(r"(\d{1,2})\s*\+?\s*(?:or\s+more\s+|\+\s*)?years?(?:'|’)?\s*(?:of\s+)?(?:\w+\s+){0,4}?(?:experience|exp\.)", re.I)
@@ -2095,7 +2105,7 @@ BENEFIT_RES = [
                         r"임차\s*(?:보증금|지원)|월세\s*지원|사원\s*(?:아파트|임대)|이주\s*(?:비|정착)\s*지원")),
     ("기숙사", re.compile(r"기숙사|숙소\s*(?:제공|지원|운영|무상)|숙식\s*(?:제공|지원)|합숙소|원룸\s*(?:제공|지원)|숙박\s*(?:시설\s*)?(?:제공|지원)")),
 ]
-BNF_V = 2  # 복지 판정 규칙 버전 — 올라가면 이전 수집 공고도 본문 전체를 다시 읽어 판정한다
+BNF_V = 3  # 복지 판정 규칙 버전 — 올라가면 이전 수집 공고도 본문 전체를 다시 읽어 판정한다
 
 
 def benefits_of(text):
@@ -2652,6 +2662,8 @@ def main():
     md = render_md(kept, failures, now, stats)
     (out / f"{today:%Y-%m-%d}.md").write_text(md, encoding="utf-8")
     (out / "latest.md").write_text(md, encoding="utf-8")
+    if SR_BNF:
+        stats["사람인"] = stats.get("사람인", "") + ", " + ", ".join(f"복리후생 {k} {v}" for k, v in SR_BNF.items())
     CLOSED_RECENT[:] = load_recent_closed(out / "history", today, kept)  # 달력: 지난주 마감 공고
     page = render_html(kept, failures, now, stats)
     (out / "latest.html").write_text(page, encoding="utf-8")
