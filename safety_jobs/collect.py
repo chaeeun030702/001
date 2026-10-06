@@ -518,8 +518,8 @@ def last_report_date(today):
 
 
 def is_new(p, today):
-    fs = p.extra.get("first_seen")
-    return bool(fs) and fs > last_report_date(today).isoformat()
+    """오늘 처음 찾은 공고 → '신규 공고'에만 싣고, 삭제하지 않으면 다음 날 고용형태 묶음으로 옮긴다."""
+    return p.extra.get("first_seen") == today.isoformat()
 PREV_TOTAL = None   # 직전 브리핑 공고 수 (KPI 변화량)
 
 
@@ -1529,11 +1529,6 @@ def is_bigcorp_entry(p):
 
 BADGE = {"A": "🔴 ", "B": "🔵 ", "F": "🌐 ", "": ""}
 GROUPS = [("정규직", "[정규직]"), ("계약직", "[계약직]"), ("인턴", "[인턴]"), ("기타/미표기", "[고용형태 미표기]")]
-def saramin_today(p, today):
-    """사람인에서 오늘 처음 찾은 공고 → '신규 공고'에만 싣는다."""
-    return p.source == "사람인" and p.extra.get("first_seen") == today.isoformat()
-
-
 def group_key(p):
     """공고 표 묶음 키. 대기업 신입 공채는 계약직·인턴이 아니면 정규직에 넣는다."""
     if is_bigcorp_entry(p) and p.employment not in ("계약직", "인턴"):
@@ -1553,8 +1548,8 @@ def md_src(p):
 
 def employment_groups(postings, today):
     """공고 표 묶음: 정규직·계약직·(인턴)·고용형태 미표기. 직무 확인 필요 공고도 여기에 표시와 함께 싣고,
-    사람인에서 오늘 처음 찾은 공고는 '신규 공고'에만 싣는다."""
-    rest = [p for p in postings if not saramin_today(p, today)]
+    오늘 처음 찾은 공고는 '신규 공고'에만 싣는다 (삭제하지 않으면 다음 날 이 묶음으로 옮겨진다)."""
+    rest = [p for p in postings if not is_new(p, today)]
     out = [(key, tag, sorted([p for p in rest if group_key(p) == key], key=sort_key)) for key, tag in GROUPS]
     return [g for g in out if g[2]]
 
@@ -1603,9 +1598,9 @@ def render_md(postings, failures, now, stats):
              f"일반 산업체 {n_gen}건 · 건설 {len(postings) - n_gen}건 · 산업/건설안전기사·ISO 45001 명시 {n_cert}건 · "
              f"🟣 외국어·NEBOSH·IOSH·CSP 우대 {n_pref}건")
     L += ["", "건설사는 2026년 시공능력평가 상위 100개사(토목건축)만 싣습니다."]
-    L += ["", f"범례: {LEGEND} · 🆕 지난 보고({last_report_date(now.date()):%m/%d}) 이후 추가", ""]
+    L += ["", f"범례: {LEGEND} · 🆕 오늘({now:%m/%d}) 새로 찾은 공고 (다음 날 고용형태 묶음으로 이동)", ""]
     new = sorted([p for p in postings if is_new(p, now.date())], key=sort_key)
-    L += [f"## 🆕 신규 공고 {len(new)}건 (지난 보고 {last_report_date(now.date()):%m/%d} 이후)", ""]
+    L += [f"## 🆕 신규 공고 {len(new)}건 (오늘 {now:%m/%d} 새로 찾음 · 삭제하지 않으면 내일 고용형태 묶음으로 이동)", ""]
     if new:
         L += ["| 업체명 | 공고명 | 고용형태 · 연봉 | 접수기한 | 출처 |", "|---|---|---|---|---|"]
         L += [f"| {BADGE[p.hilite]}{md_cell(p.company)}{' [대기업 신입 공채]' if is_bigcorp_entry(p) else ''} | {md_cell(p.title)}{md_check(p)} | {p.employment}<br>{md_cell(pay_text(p))} | {deadline_md(p, now.date())} | {md_src(p)} |" for p in new]
@@ -2125,7 +2120,7 @@ def render_calendar(postings, today, months=2, show=5, closed=None):
             if p.extra.get("ai"):
                 tags += '<i class="tg ai" title="AI 우대">AI</i>'
             if is_new(p, today) and d >= today:
-                tags += '<i class="tg n" title="지난 보고 이후 신규">N</i>'
+                tags += '<i class="tg n" title="오늘 새로 찾은 공고">N</i>'
             if d < today:
                 c += " closed"
                 tip += " · 마감"
@@ -2307,7 +2302,7 @@ def render_html(postings, failures, now, stats):
     tot = max(len(postings), 1)
     kpis = "".join([
         kpi("전체 공고", len(postings), delta_txt, key="all"),
-        kpi("신규", cnt["new"], f"지난 보고({last_report_date(today):%m/%d}) 이후 추가", "--success", key="new"),
+        kpi("신규", cnt["new"], f"오늘({today:%m/%d}) 새로 찾음", "--success", key="new"),
         kpi("정규직", cnt["reg"], f"{cnt['reg'] * 100 // tot}%", key="reg", subt="{reg%}"),
         kpi("계약직", cnt["con"], f"{cnt['con'] * 100 // tot}%", key="con", subt="{con%}"),
         kpi("일반 산업체", cnt["ind"], "건설 외 제조·서비스 등", key="ind"),
@@ -2446,7 +2441,7 @@ def render_html(postings, failures, now, stats):
             f'<td class="dl{" soon" if id(p) in soon else ""}">{e(p.deadline)}</td><td class="src">{src_link(p)}</td></tr>'
             for p in rows)
     head5 = '<div class="scroll"><table class="t5"><thead><tr>' + PICK_TH + '<th>업체명</th><th>공고명</th><th>고용형태 · 연봉</th><th>접수기한</th><th>출처</th></tr></thead>'
-    newsec = (f'<section class="card" id="new"><h2>신규 공고<span class="n">{n_new}건 · 지난 보고({last_report_date(today):%m/%d}) 이후 추가</span></h2>'
+    newsec = (f'<section class="card" id="new"><h2>신규 공고<span class="n">{n_new}건 · 오늘({today:%m/%d}) 새로 찾음 · 삭제하지 않으면 내일 정규직·계약직 등으로 이동</span></h2>'
               + (f'{head5}<tbody>{rows5(new_rows)}</tbody></table></div>' if new_rows else '<p class="empty">새로 추가된 공고가 없습니다.</p>')
               + '</section>')
     side = ('<div class="sec">요약</div><a href="#new">신규 공고 <b>' + str(n_new) + '</b></a><a href="#summary">지표·차트</a><a href="#calendar">채용 달력</a><a href="#flow">수집 흐름</a>'
