@@ -680,7 +680,11 @@ def src_manual(f: Fetcher):
         if not it.get("company"):
             continue
         # source가 '사람인'이면 다른 세션이 사람인에서 직접 찾아 넘긴 공고 → 사람인 공고로 싣고 상세 본문도 읽는다
-        src = it.get("source") or "직접 추가"
+        src = it.get("source") or ""
+        if not src:  # DB(manual)에서 옮겨 온 항목은 source가 없을 수 있다 → 주소로 판단
+            u = it.get("url") or ""
+            src = ("사람인" if re.search(r"saramin\.co\.kr/.*rec_idx=\d+", u)
+                   else "LinkedIn" if "linkedin.com/jobs/" in u else "직접 추가")
         p = Posting(src, clean(it.get("title") or f"{it['company']} 채용"), clean(it["company"]),
                     it.get("url") or f"manual:{it['company']}:{it.get('title', '')}", clean(it.get("title", "")))
         p.deadline = it.get("deadline") or "확인 필요"
