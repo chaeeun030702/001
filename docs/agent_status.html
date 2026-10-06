@@ -104,15 +104,15 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 <script>
 /* 작업 데이터 — 에이전트를 맡길 때마다 이 블록만 고친다 (progress: 0~100) */
 var JOB={
-  updated:"2026-10-06 17:30 KST",updatedISO:"2026-10-06T08:30:09Z",
+  updated:"2026-10-06 17:33 KST",updatedISO:"2026-10-06T08:33:00Z",
   main:{name:"메인 에이전트",task:"공고별 복지(자녀학자금·노조·주택지원·기숙사) 다시 찾기 — 공고 본문 전체 재확인, 없으면 인터넷 조사",note:"이 환경에서는 채용 사이트가 403으로 막혀, 본문 재확인은 GitHub Actions 수집기에 맡기고 인터넷 조사는 서브에이전트 4개에 나눠 맡깁니다."},
   subs:[
-   {name:"인터넷 조사 A",order:"하청 1",status:"run",progress:5,startedAt:"2026-10-06T08:27:06Z",etaMin:15,task:"기업 33곳 복리후생 웹 조사",result:""},
-   {name:"인터넷 조사 B",order:"하청 2",status:"run",progress:5,startedAt:"2026-10-06T08:27:06Z",etaMin:15,task:"기업 34곳 복리후생 웹 조사",result:""},
-   {name:"인터넷 조사 C",order:"하청 3",status:"run",progress:5,startedAt:"2026-10-06T08:27:06Z",etaMin:15,task:"기업 34곳 복리후생 웹 조사",result:""},
-   {name:"인터넷 조사 D",order:"하청 4",status:"run",progress:5,startedAt:"2026-10-06T08:27:06Z",etaMin:15,task:"기업 34곳 복리후생 웹 조사",result:""},
+   {name:"인터넷 조사 A",order:"하청 1",status:"done",progress:100,task:"기업 복리후생 웹 조사",result:"33곳 중 12곳 확인 (기숙사 11·자녀학자금 7·노조 7·주택지원 3)"},
+   {name:"인터넷 조사 B",order:"하청 2",status:"done",progress:100,task:"기업 복리후생 웹 조사",result:"34곳 중 18곳 확인 (자녀학자금 13·기숙사 10·주택지원 7·노조 5)"},
+   {name:"인터넷 조사 C",order:"하청 3",status:"done",progress:100,task:"기업 복리후생 웹 조사",result:"34곳 중 4곳 확인 (자녀학자금·기숙사·주택지원 각 3)"},
+   {name:"인터넷 조사 D",order:"하청 4",status:"done",progress:100,task:"기업 복리후생 웹 조사",result:"34곳 중 4곳 확인 (노조 2·자녀학자금 1·기숙사 1·주택지원 1)"},
    {name:"수집기 수정 (collect.py)",order:"하청 5",status:"done",progress:100,task:"공고 본문 전체로 복지 다시 판정 · 인터넷 조사 결과 표시",result:"사람인 복리후생 칸 추가 조회 · 판정 표현 확대 · 이전 공고 재판정 · 인터넷 조사 점선 배지"},
-   {name:"GitHub Actions 수집기",order:"하청 6",status:"wait",progress:0,task:"수정 반영해 재수집 후 브리핑 게시",result:""}
+   {name:"GitHub Actions 수집기",order:"하청 6",status:"run",progress:5,startedAt:"2026-10-06T08:32:41Z",etaMin:25,task:"run #92 — 공고 본문 전체·사람인 복리후생 칸으로 복지 재판정 + 인터넷 조사 37개사 반영",result:""}
   ]
 };
 
