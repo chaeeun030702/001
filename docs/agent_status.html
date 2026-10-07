@@ -104,12 +104,12 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 <script>
 /* 작업 데이터 — 에이전트를 맡길 때마다 이 블록만 고친다 (progress: 0~100) */
 var JOB={
-  updated:"2026-10-07 09:12 KST",updatedISO:"2026-10-07T00:12:43Z",
-  main:{name:"메인 에이전트",task:"사람인 메일 루틴의 Gmail 연결 다시 확인",note:"루틴 설정과 실제 실행 모두 Gmail이 없습니다. claude.ai 화면에서 Gmail을 넣어 루틴을 새로 만드는 방법을 안내했습니다."},
+  updated:"2026-10-07 09:15 KST",updatedISO:"2026-10-07T00:15:20Z",
+  main:{name:"메인 에이전트",task:"사람인 메일 루틴의 Gmail 연결 재확인",note:"루틴에 Gmail이 연결됐습니다(00:13). 매일 17:55 메일 → 브리핑 DB → 19:20 브리핑 순서로 돕니다."},
   subs:[
-   {name:"루틴 설정 재확인",order:"하청 1",status:"done",progress:100,task:"루틴의 연결 커넥터 확인",result:"여전히 Gmail 없음 (커넥터 0개)"},
-   {name:"시험 실행 2회",order:"하청 2",status:"done",progress:100,task:"00:09(사용자 실행)·00:12(재확인) 실행의 도구 목록 확인",result:"두 번 모두 Gmail 도구 없음"},
-   {name:"새 루틴용 지시문",order:"하청 3",status:"done",progress:100,task:"화면에서 새로 만들 때 붙여 넣을 지시문 정리",result:"saramin_mail_routine.txt 전달"}
+   {name:"루틴 설정 확인",order:"하청 1",status:"done",progress:100,task:"루틴의 연결 커넥터 확인",result:"Gmail 연결됨"},
+   {name:"시험 실행",order:"하청 2",status:"done",progress:100,task:"00:13 수동 실행 (메일 읽기 → 기준 적용 → DB 기록)",result:"정상 종료 · 새로 넣은 공고 0건"},
+   {name:"브리핑 DB 확인",order:"하청 3",status:"done",progress:100,task:"manual 컬렉션의 '사람인 메일' 문서 확인",result:"0건 (기준에 맞는 새 공고 없음)"}
   ]
 };
 
