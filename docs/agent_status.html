@@ -104,11 +104,12 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 <script>
 /* 작업 데이터 — 에이전트를 맡길 때마다 이 블록만 고친다 (progress: 0~100) */
 var JOB={
-  updated:"2026-10-07 09:07 KST",updatedISO:"2026-10-07T00:07:23Z",
-  main:{name:"메인 에이전트",task:"사람인 메일(Gmail) 루틴을 매일 18:00 무렵으로 변경",note:"메일 → 브리핑 DB(17:55) → ⚡ 브리핑(19:20) 순서입니다. 루틴에 Gmail 커넥터 연결이 아직 필요합니다."},
+  updated:"2026-10-07 09:09 KST",updatedISO:"2026-10-07T00:09:49Z",
+  main:{name:"메인 에이전트",task:"사람인 메일 루틴에 Gmail 연결 확인",note:"계정에는 Gmail이 연결됐지만, 루틴에는 여기서 커넥터를 붙일 수 없습니다(조직 설정). claude.ai 루틴 화면에서 추가해야 합니다."},
   subs:[
-   {name:"메일 → DB 루틴",order:"하청 1",status:"done",progress:100,task:"실행 시각 19:05 → 17:55 (정각 혼잡을 피해 5분 앞당김)",result:"다음 실행 10/7 17:55 · Gmail 커넥터 미연결"},
-   {name:"README",order:"하청 2",status:"done",progress:100,task:"루틴 시각 문서 갱신",result:"작업 브랜치에 커밋"}
+   {name:"루틴 설정 확인",order:"하청 1",status:"done",progress:100,task:"루틴의 연결 커넥터 확인",result:"Gmail 없음 (연결 커넥터 0개)"},
+   {name:"시험 실행",order:"하청 2",status:"done",progress:100,task:"루틴을 한 번 수동 실행해 Gmail 도구가 있는지 확인",result:"Gmail 도구 없이 실행됨"},
+   {name:"Gmail 붙인 루틴 만들기",order:"하청 3",status:"fail",progress:100,task:"Gmail을 넣은 루틴 새로 만들기 시도",result:"거절: 이 조직에서는 커넥터 지정 불가 → 루틴 화면에서 직접 추가 필요"}
   ]
 };
 
