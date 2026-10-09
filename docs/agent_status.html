@@ -104,12 +104,12 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 <script>
 /* 작업 데이터 — 에이전트를 맡길 때마다 이 블록만 고친다 (progress: 0~100) */
 var JOB={
-  updated:"2026-10-07 09:15 KST",updatedISO:"2026-10-07T00:15:20Z",
-  main:{name:"메인 에이전트",task:"사람인 메일 루틴의 Gmail 연결 재확인",note:"루틴에 Gmail이 연결됐습니다(00:13). 매일 17:55 메일 → 브리핑 DB → 19:20 브리핑 순서로 돕니다."},
+  updated:"2026-10-09 20:44 KST",updatedISO:"2026-10-09T11:44:34Z",
+  main:{name:"메인 에이전트",task:"Gmail 사람인 추천 채용공고 확인",note:"최근 7일 사람인 메일 5통을 확인했고, 메일 루틴이 10/8·10/9에 안전관리자 공고 12건을 브리핑 DB에 넣었습니다."},
   subs:[
-   {name:"루틴 설정 확인",order:"하청 1",status:"done",progress:100,task:"루틴의 연결 커넥터 확인",result:"Gmail 연결됨"},
-   {name:"시험 실행",order:"하청 2",status:"done",progress:100,task:"00:13 수동 실행 (메일 읽기 → 기준 적용 → DB 기록)",result:"정상 종료 · 새로 넣은 공고 0건"},
-   {name:"브리핑 DB 확인",order:"하청 3",status:"done",progress:100,task:"manual 컬렉션의 '사람인 메일' 문서 확인",result:"0건 (기준에 맞는 새 공고 없음)"}
+   {name:"사람인 메일 확인 (Gmail)",order:"하청 1",status:"done",progress:100,task:"최근 7일 사람인 메일 (맞춤공고 3 · 추천 1 · 공채 일정 1)",result:"[사람인 추천] 10/7 메일 10건 — 안전 직무 0건"},
+   {name:"메일 → DB 루틴 결과",order:"하청 2",status:"done",progress:100,task:"브리핑 DB의 '사람인 메일' 공고 확인",result:"12건 (10/8 1건 · 10/9 11건)"},
+   {name:"루틴 지시문 보완",order:"하청 3",status:"done",progress:100,task:"추천 메일 형식('마감 N일 전')·팀장급 제외 추가",result:"갱신 완료 · 다음 실행 10/10 17:55"}
   ]
 };
 
