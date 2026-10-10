@@ -17,6 +17,8 @@
          다시 쓰는 버전이라 반복·확정 문안 검사에서는 빼고 본다
   [오류] 논문 이야기 반복 — 졸업연구 세부 내용이 두 문항 이상에 나오거나, 고유 사실(30,896건·7.1%·78.6%·
          2022년 7월 사고·사전작업허가서·e-safety 등)이 두 문항 이상에 나옴
+  영문 자기소개서(외국계 공고, 문항 원문에 'English' 또는 '영문'이 든 문항)는 한국어 답변을 영어로 다시 쓰는
+  별도 서류라 반복·확정 문안·한국어 표현 검사에서 빼고, 타사 문구·글자수·영문 수상/자격 표현만 본다
 
     python3 safety_jobs/cover_check.py drafts/2026-10-01_xxxx.md [...] --guide archive/01_guide.md [--briefing briefings/latest.json]
 
@@ -108,8 +110,20 @@ def canon_blocks(guide):
     return out
 
 
+def is_english(q):
+    return bool(re.search(r"English|영문", q.get("question", "")))
+
+
+EN_PATS = [(r"\b(won|awarded|award-winning|prize)\b", "영문 논문 수상 표현(submitted까지만)"),
+           (r"\b(hold|holds|obtained|earned|certified)\b[^.]{0,40}(Industrial Safety Engineer|Construction Safety Engineer|NEBOSH|Internal Auditor)",
+            "영문 자격 취득·보유 표현('preparing for')"),
+           (r"\bcertificate of completion\b|\bgraduated\b", "영문 '수료/졸업' 표현 확인('completed' 과정·'expected to graduate')")]
+
+
 def check(path, names, canon):
     meta, _analysis, qs = parse_draft(Path(path).read_text(encoding="utf-8"))
+    english = [q for q in qs if is_english(q)]
+    qs = [q for q in qs if not is_english(q)]
     company = meta.get("company", "")
     own = own_tokens(company)
     errs, warns = [], []
@@ -180,6 +194,19 @@ def check(path, names, canon):
         qids = [q["id"] for q in qs if re.search(t, f"{q['sub']}\n{q['answer']}")]
         if len(qids) > 1:
             warns.append(f"같은 경험 반복 '{t}': {', '.join(qids)} — 한 문항에서만 쓰는 것이 좋음")
+    for q in english:
+        text = f"{q['sub']}\n{q['answer']}"
+        n, lim = count(q["answer"]), q["limit"]
+        if n > lim:
+            errs.append(f"{q['id']}(영문): 글자수 초과 {n}/{lim}")
+        elif n < lim * 0.6:
+            warns.append(f"{q['id']}(영문): 글자수 {n}/{lim} — 커버레터는 한도의 60~98%")
+        for pat, msg in EN_PATS:
+            if re.search(pat, text, re.I):
+                errs.append(f"{q['id']}(영문): {msg}")
+        for s in SLOGANS:
+            if s in text:
+                errs.append(f"{q['id']}(영문): 다른 자소서 문구 '{s}'")
     if company and not any(o in whole for o in own):
         warns.append(f"답변에 지원 회사명('{core(company)}')이 한 번도 없음")
     return company, errs, warns
