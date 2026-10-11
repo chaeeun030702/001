@@ -73,9 +73,17 @@ def main():
     for key, v in sorted(answers.items(), key=lambda kv: kv[1]["at"]):
         did, _, qi = key.rpartition("_")
         f = files.get(did)
-        if not f or not (qi.isdigit() or qi[:1] == "v" and qi[1:].isdigit()):
+        if not f:
             continue
         meta, _, questions = parse_draft(f.read_text(encoding="utf-8"))
+        aset = meta.get("answer_set", "")
+        if aset:
+            # 문항을 새로 바꾼 초안: 새 문항의 저장 답변(초안id_<세트>순번)만 비교하고 옛 문항 답변은 건너뛴다
+            if not qi.startswith(aset):
+                continue
+            qi = qi[len(aset):]
+        if not (qi.isdigit() or qi[:1] == "v" and qi[1:].isdigit()):
+            continue
         if qi[:1] == "v":
             # 기법별 버전(STAR·CPSBS)을 고친 경우
             questions = meta.get("variants") or []

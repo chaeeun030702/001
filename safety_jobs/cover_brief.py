@@ -14,6 +14,7 @@ drafts/index.json 과 drafts/*.md 초안을 읽어 아티팩트용 index.html �
     tags: 코스피
     starter: 신입 초봉 4,500만원 (2025)   (선택: 사용자가 확인한 초봉, 채용현황 브리핑 값보다 우선)
     written: 2026-10-01
+    answer_set: r2   (선택: 문항을 새로 바꿔 다시 쓴 초안 — 저장 키가 초안id_r2문항순번이 되어 옛 문항의 저장 답변과 섞이지 않음)
     techniques: Q2 CPSBS, Q3 STAR   (경험 문항 STAR·직무역량 문항 CPSBS로 쓴 문항 — 페이지에서 질문 아래에 기법 표시)
     questions: 자소설닷컴 2026 하반기 문항        (문항 출처, 양식이 없으면 '홈페이지 채용 정보 기준 구성')
     ---
@@ -160,14 +161,16 @@ def draft_body(d, analysis_cls="facts"):
     m = d["meta"]
     tech = {k: v for k, v in re.findall(r"(Q\d+)\s*(STAR|CPSBS)", m.get("techniques", ""))}
 
-    def card(q, key=None):
+    aset = m.get("answer_set", "")
+
+    def card(q, key=None, skey=None):
         n = count(q["answer"])
         labels = q.get("labels") or []
         ps = [p for p in q["answer"].split("\n\n") if p.strip()]
         paras = "".join((f'<p data-k="{e(labels[i])}">' if i < len(labels) and labels[i] else "<p>") + f"{inline(p)}</p>" for i, p in enumerate(ps))
         orig, osub = q.get("orig", q["answer"]), q.get("orig_sub", q["sub"])
         tag = f' · {q["method"]}' if q.get("method") else ""
-        attrs = f' data-key="{key}"' if key else ""
+        attrs = f' data-key="{key or skey}"' if key or skey else ""
         return f'''<div class="q{" v" if key else ""}"{attrs} data-orig="{e(orig)}" data-osub="{e(osub)}">
 <div class="qhead"><span class="qid">{e(q["id"])}{tag}</span><p class="qtext">{e(q["question"]) or "문항 확인 필요"}</p></div>{tech_note(tech.get(q["id"])) if not key else ""}
 <h4 contenteditable="true" spellcheck="false">[{e(q["sub"])}]</h4>
@@ -176,7 +179,7 @@ def draft_body(d, analysis_cls="facts"):
 <span class="cnt"><b>{n:,}</b> / {q["limit"]:,}자</span><span class="state"></span>
 <button type="button" class="save" hidden>답변 저장</button><button type="button" class="copy">답변 복사</button></div>
 <details class="diff" hidden><summary>당초 초안과 비교 · <b>0</b>곳 변경</summary><div class="dsub"></div><div class="dbody"></div></details></div>'''
-    qs = [card(q) for q in d["questions"]]
+    qs = [card(q, skey=f"{aset}{i}" if aset else None) for i, q in enumerate(d["questions"])]
     vs = m.get("variants") or []
     if vs:
         qs.append('<div class="vhead"><h3>STAR·CPSBS 버전</h3><p class="hint">위 자기소개서와 별도로, 경험 문항은 STAR(상황-과제-행동-결과), '
@@ -704,7 +707,7 @@ def apply_answers(drafts, answers):
     n = 0
     for d in drafts:
         for i, q in enumerate(d["questions"]):
-            v = answers.get(f"{d['id']}_{i}")
+            v = answers.get(f"{d['id']}_{d['meta'].get('answer_set', '')}{i}")
             if v and v["text"]:
                 q["orig"], q["orig_sub"] = q["answer"], q["sub"]
                 q["answer"], q["sub"] = v["text"], v["sub"] or q["sub"]
