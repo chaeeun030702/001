@@ -2024,7 +2024,7 @@ def calendar_eligible(p):
     return bool(SEMI_DC_RE.search(f"{p.company} {p.title} {p.listing_text} {p.extra.get('sector', '')} {(p.detail_text or '')[:4000]}"))
 
 
-# 브리핑 대상 기업 (사용자 지정 2026-10-13): 대기업·대기업 계열사, 외국계, 코스피·코스닥 상장사,
+# 브리핑 대상 기업 (사용자 지정 2026-10-13): 대기업·대기업 계열사, 외국계, 코스피·코스닥 상장사, 공기업·공공기관,
 # 시공능력평가 15위 이내 종합건설사, 국내 엔지니어링(설계·감리) 수주 상위 15개사
 TARGET_CONSTR_RANK = 15
 ENGINEERING_TOP15 = ("도화엔지니어링", "유신", "한국종합기술", "건화", "동명기술공단", "삼안", "이산", "다산컨설턴트",
@@ -2033,9 +2033,29 @@ ENGINEERING_TOP15 = ("도화엔지니어링", "유신", "한국종합기술", "�
 ENGINEERING_TOP15_RE = re.compile("|".join(re.escape(re.sub(r"\s", "", n)) for n in ENGINEERING_TOP15))
 
 
+# 공기업·공공기관 (사용자 추가 2026-10-13)
+PUBLIC_HOST_RE = re.compile(r"중소벤처기업진흥공단|중소기업진흥공단|워크넷")  # 민간 공고를 대신 올리는 공공 채용 게시판
+PUBLIC_TARGET_RE = re.compile(r"^(?:한국|국가|국립|국민|서울|부산|인천|대구|대전|광주|울산|경기|강원|충북|충남|전북|전남|경북|경남|제주|세종)"
+                              r"[가-힣]*(?:공사|공단|발전|원자력|기술원|진흥원|공기업)$|^[가-힣]+(?:공사|공단)$|코레일|^에스알$|한국전력|한국수력원자력|국민연금")
+PUBLIC_TEXT_RE = re.compile(r"기업\s*(?:구분|형태)\s*[:：]?\s*(?:공기업|공공기관)")
+
+
+def public_company(p) -> bool:
+    raw = p.company or ""
+    name = re.sub(r"\(주\)|㈜|주식회사|\s", "", raw)
+    if PUBLIC_HOST_RE.search(name):
+        return False
+    if re.search(r"\(주\)|㈜|주식회사", raw) and not re.match(r"(?:한국|코레일)", name):
+        return bool(PUBLIC_TEXT_RE.search((p.detail_text or "")[:6000]))  # (주)○○공사 같은 민간 업체
+    return bool(p.company_type in ("공기업", "공공기관") or PUBLIC_TARGET_RE.search(name)
+                or PUBLIC_TEXT_RE.search((p.detail_text or "")[:6000]))
+
+
 def target_company(p) -> bool:
-    """대기업·계열사·외국계·상장사·시평 15위 건설사·엔지니어링 상위 15개사인지."""
+    """대기업·계열사·외국계·상장사·공기업·시평 15위 건설사·엔지니어링 상위 15개사인지."""
     if p.extra.get("groups") or p.extra.get("listed") or p.company_type in ("대기업", "외국계"):
+        return True
+    if public_company(p):
         return True
     rank = p.extra.get("top100")
     if rank and rank <= TARGET_CONSTR_RANK:
@@ -2048,13 +2068,18 @@ HEALTH_ONLY_RE = re.compile(r"보건\s*(?:관리자?|관리|직|담당|PJT)|(?<!
 SAFETY_ROLE_RE = re.compile(r"(?<![보])안전(?!\s*(?:진단|지원|용품|장치|인증|요원))|(?<![A-Za-z])(?:HSE|EHS|EH&S|SHE|HSEQ|QHSE|HSSE|[Ss]afety|SAFETY)(?![A-Za-z])")
 MIXED_ROLE = r"총무|생산|품질|공사|공무|시설|설비|기계|물류|공정|사무|행정|보전|시공|정비|유지보수|구매|인사|경영지원"
 MIXED_ROLE_RE = re.compile(rf"(?:{MIXED_ROLE})\s*(?:관리자?|담당자?|팀|직)?\s*(?:/|및|,|·|&|와|과)\s*안전|안전\s*(?:관리자?|담당자?)?\s*(?:/|및|,|·|&)\s*(?:{MIXED_ROLE})")
-NOT_SAFETY_JOB_RE = re.compile(r"공모전|사진\s*공모|경진\s*대회|설명회|안전\s*(?:관리\s*)?요원|안전\s*진단|개발자|개발\s*(?:연구)?직|연구원|연구직|설치\s*파트너|강사")
+NOT_SAFETY_JOB_RE = re.compile(r"공모전|선착순|무료\s*교육|교육생|사진\s*공모|경진\s*대회|설명회|안전\s*(?:관리\s*)?요원|안전\s*진단|개발자|개발\s*(?:연구)?직|연구원|연구직|설치\s*파트너|강사")
+AGENCY_SAFETY_RE = re.compile(r"[가-힣]*안전[가-힣]*(?:교육원|심판원|진흥원|연구원|공단|공사|체험장|체험관|센터|본부|청|부)(?![가-힣])")
 OPEN_CALL_RE = re.compile(r"공채|공개\s*채용|신입\s*사원|각\s*부문|인재\s*(?:pool|풀)|상시\s*채용", re.I)
 
 
 def safety_main_reason(p) -> str:
     """안전이 주업무가 아니면 제외 사유, 아니면 ''."""
     t = PREF_IN_TITLE_RE.sub(" ", p.title)
+    core = re.sub(r"\(주\)|㈜|주식회사|\(.*?\)|\s", "", p.company or "")
+    if len(core) >= 3:  # 제목에 들어간 회사 이름(○○안전공단 등)의 '안전'은 직무로 보지 않는다
+        t = re.sub(r"\s*".join(map(re.escape, core)), " ", t)
+    t = AGENCY_SAFETY_RE.sub(" ", t)  # 국가재난안전교육원·해양안전심판원 같은 기관 이름
     if NOT_SAFETY_JOB_RE.search(t):
         return "안전 주업무 아님"
     if MIXED_ROLE_RE.search(t):
