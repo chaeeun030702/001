@@ -104,13 +104,13 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 <script>
 /* 작업 데이터 — 에이전트를 맡길 때마다 이 블록만 고친다 (progress: 0~100) */
 var JOB={
-  updated:"2026-10-07 08:43 KST",updatedISO:"2026-10-06T23:43:29Z",
-  main:{name:"메인 에이전트",task:"브리핑 제외 규칙 추가: 감시단·주업무 비안전·배차·방사선안전·소방안전 + 시평 20위 밖 건설사 계약직",note:"규칙은 작업 브랜치에 올렸습니다. 수집기 기본 브랜치에 병합하면 다음 브리핑부터 적용됩니다."},
+  updated:"2026-10-13 08:16 KST",updatedISO:"2026-10-12T23:16:47Z",
+  main:{name:"메인 에이전트",task:"현 시점으로 안전관리자 채용 브리핑 새로 작성",note:"삭제 목록·직접 추가 공고를 저장소에 맞춘 뒤 GitHub Actions 수집기로 다시 모으고 브리핑을 게시합니다."},
   subs:[
-   {name:"다른 직무 제외 (collect.py)",order:"하청 1",status:"done",progress:100,task:"제목에 배차·방사선안전·소방안전 → 제외 · 감시원 추가 · 자격증 이름뿐인 제목은 담당 업무로 판정",result:"최근 6일 시험: 다른 직무 15건 제외 · 11건 재판정"},
-   {name:"건설사 계약직 (collect.py)",order:"하청 2",status:"done",progress:100,task:"건설사 계약직은 시평 20위 이내만 (기존: 15위 이내 또는 관심 기업)",result:"최근 3일 시험: 28건 제외 (KCC건설 21위·코오롱글로벌 23위 등) · 20위 이내 유지"},
-   {name:"사람인 메일 루틴 (19:05)",order:"하청 3",status:"done",progress:100,task:"메일 공고 고르는 기준에 같은 제외 항목 추가",result:"지시문 갱신 · Gmail 연결은 아직 필요"},
-   {name:"병합 (PR)",order:"하청 4",status:"wait",progress:0,task:"작업 브랜치 → 수집기 기본 브랜치 병합",result:"사용자 확인 대기"}
+   {name:"삭제 목록 동기화 (DB → excluded.json)",order:"하청 1",status:"run",progress:10,task:"브리핑에서 삭제한 공고를 수집기에 반영",result:""},
+   {name:"직접 추가 공고 동기화 (DB → manual_postings.json)",order:"하청 2",status:"wait",progress:0,task:"사람인 메일·공채 모음·LinkedIn 공고 반영",result:""},
+   {name:"GitHub Actions 수집기",order:"하청 3",status:"wait",progress:0,task:"safety-jobs-briefing 실행 · 재수집",result:"",etaMin:14},
+   {name:"브리핑 게시",order:"하청 4",status:"wait",progress:0,task:"latest.html 을 브리핑 아티팩트에 게시",result:""}
   ]
 };
 
