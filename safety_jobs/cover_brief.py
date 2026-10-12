@@ -39,6 +39,10 @@ drafts/index.json 과 drafts/*.md 초안을 읽어 아티팩트용 index.html �
     python3 safety_jobs/cover_brief.py --drafts drafts --out index.html [--today YYYY-MM-DD]
         [--briefing briefings/latest.json ...] [--exclude excluded.json] [--answers answers/]
 
+편집용 HTML 은 letters/<id>_YYYY.MM.DD.html(--stamp, 기본 오늘 KST)로 날짜를 붙여 새로 쓰고, 이전 날짜 파일은
+지우지 않는다(게시할 때 보내지 않으면 아티팩트에 그대로 남음). --history 로 아티팩트의 기존 파일 목록을 주면
+초안 카드에 '이전 버전' 링크를 단다.
+
 --answers 로 저장된 답변(페이지의 '답변 저장', 아티팩트 db answers 컬렉션)을 주면 그 문항은 저장본으로 보여 주고
 당초 초안과 바뀐 곳을 '당초 초안과 비교'에 표시한다. 수정 경향 정리는 cover_edits.py.
 
@@ -318,6 +322,33 @@ def foreign_section(foreign, excluded, postings):
             + "".join(rows) + "</tbody></table></div></section>")
 
 
+def older_links(d):
+    """이전 날짜의 편집용 HTML(지우지 않고 남겨 둔 letters/<id>_YYYY.MM.DD.html) 링크."""
+    olds = d.get("older") or []
+    if not olds:
+        return ""
+    def label(p):
+        m = re.search(r"_(\d{4}\.\d{2}\.\d{2})\.html$", p)
+        return m.group(1) if m else "날짜 없는 이전본"
+    links = " · ".join(f'<a href="{e(p)}" target="_blank" rel="noopener">{label(p)}</a>' for p in olds)
+    return f'<span class="hint" style="align-self:center">이전 버전: {links}</span>'
+
+
+def load_history(path):
+    """아티팩트에 이미 게시된 파일 경로 목록(한 줄에 하나, 또는 JSON 목록)."""
+    if not path:
+        return []
+    try:
+        t = Path(path).read_text(encoding="utf-8")
+    except OSError:
+        return []
+    try:
+        v = json.loads(t)
+        return [x if isinstance(x, str) else x.get("path", "") for x in v]
+    except ValueError:
+        return [x.strip() for x in t.splitlines() if x.strip()]
+
+
 def render(drafts, today, now, excluded=(), postings=None, foreign=None):
     postings = postings or {"url": {}, "starter": {}}
     live = [d for d in drafts if (d["left"] is None or d["left"] >= 0) and d["id"] not in excluded]
@@ -360,7 +391,7 @@ def render(drafts, today, now, excluded=(), postings=None, foreign=None):
         cards.append(f'''<details class="draft" id="{d["id"]}"{open_attr}>
 <summary><span class="co">{e(m.get("company", ""))}</span>{chips_of(m)}{dpill(d["left"])}<span class="ttl">{e(m.get("title", ""))}</span></summary>
 <div class="body">
-<div class="doc-actions" style="margin-top:12px"><a class="btn-ghost" href="letters/{d["id"]}.html" target="_blank" rel="noopener">편집용 HTML 열기</a></div>
+<div class="doc-actions" style="margin-top:12px"><a class="btn-ghost" href="{d.get("letter") or f"letters/{d['id']}.html"}" target="_blank" rel="noopener">편집용 HTML 열기</a>{older_links(d)}</div>
 {draft_body(d)}
 </div></details>''')
 
@@ -749,6 +780,8 @@ def main():
     ap.add_argument("--foreign", help="외국계 공고 목록 JSON(cover_letters.py --foreign-out) — 요청 시 작성 표")
     ap.add_argument("--briefing", action="append", help="채용 브리핑 latest.json(초봉·고용형태 조회용, 여러 번 가능)")
     ap.add_argument("--exclude", help="제외 목록 JSON(아티팩트 db excluded 컬렉션을 내려받은 것: id 목록 또는 {id,...} 목록)")
+    ap.add_argument("--stamp", help="편집용 HTML 파일명 날짜(기본 오늘 KST, YYYY.MM.DD) — letters/<id>_<stamp>.html")
+    ap.add_argument("--history", help="아티팩트에 이미 있는 파일 경로 목록(줄마다 하나 또는 JSON) — 이전 날짜 편집용 HTML 링크 표시")
     ap.add_argument("--answers", help="저장된 답변(아티팩트 db answers 컬렉션: JSON 목록 또는 문서별 JSON 폴더) — 당초 초안과 비교해 표시")
     args = ap.parse_args()
     now = dt.datetime.now(KST)
@@ -767,6 +800,12 @@ def main():
         meta, analysis, questions = parse_draft(f.read_text(encoding="utf-8"))
         drafts.append({"id": Path(item["file"]).stem.split("_")[-1], "meta": meta, "analysis": analysis,
                        "questions": questions, "left": d_left(meta.get("deadline", ""), today)})
+    stamp = args.stamp or f"{today:%Y.%m.%d}"
+    history = load_history(args.history)
+    for d in drafts:
+        d["letter"] = f"letters/{d['id']}_{stamp}.html"
+        olds = [p for p in history if p != d["letter"] and re.fullmatch(rf"letters/{d['id']}(_\d{{4}}\.\d{{2}}\.\d{{2}})?\.html", p)]
+        d["older"] = sorted(olds, key=lambda p: (len(p) > len(f"letters/{d['id']}.html"), p), reverse=True)
     excluded = load_excluded(args.exclude)
     edited = apply_answers(drafts, load_answers(args.answers))
     postings = load_postings(args.briefing)
@@ -776,9 +815,9 @@ def main():
     letters = Path(args.out).parent / "letters"
     letters.mkdir(exist_ok=True)
     for d in drafts:
-        (letters / f"{d['id']}.html").write_text(render_letter(d, today), encoding="utf-8")
+        (letters / Path(d["letter"]).name).write_text(render_letter(d, today), encoding="utf-8")
     shown = sum(1 for d in drafts if d["id"] not in excluded)
-    print(f"{args.out}: 초안 {len(drafts)}건(제외 {len(drafts) - shown}건), letters/*.html {len(drafts)}개, 저장 답변 반영 {edited}문항")
+    print(f"{args.out}: 초안 {len(drafts)}건(제외 {len(drafts) - shown}건), letters/*_{stamp}.html {len(drafts)}개, 저장 답변 반영 {edited}문항")
     return 0
 
 
