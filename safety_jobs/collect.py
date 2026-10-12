@@ -1346,6 +1346,12 @@ def keep(p: Posting, today) -> tuple[bool, str]:
         return False, "한국 근무 아님"
     if SALES_RE.search(p.title):
         return False, "영업직"
+    if p.extra.get("posted") is None:
+        why = safety_main_reason(p)
+        if why:
+            return False, why
+        if not target_company(p):
+            return False, "대상 기업 아님"
     if other_role(p):
         return False, "다른 직무(배차·방사선·소방안전)"
     if WATCH_RE.search(f"{p.title} {p.listing_text} {p.detail_text}"):
@@ -2018,6 +2024,54 @@ def calendar_eligible(p):
     return bool(SEMI_DC_RE.search(f"{p.company} {p.title} {p.listing_text} {p.extra.get('sector', '')} {(p.detail_text or '')[:4000]}"))
 
 
+# 브리핑 대상 기업 (사용자 지정 2026-10-13): 대기업·대기업 계열사, 외국계, 코스피·코스닥 상장사,
+# 시공능력평가 15위 이내 종합건설사, 국내 엔지니어링(설계·감리) 수주 상위 15개사
+TARGET_CONSTR_RANK = 15
+ENGINEERING_TOP15 = ("도화엔지니어링", "유신", "한국종합기술", "건화", "동명기술공단", "삼안", "이산", "다산컨설턴트",
+                     "경동엔지니어링", "평화엔지니어링", "수성엔지니어링", "동부엔지니어링", "서영엔지니어링",
+                     "선진엔지니어링", "삼성이앤에이", "삼성E&A", "현대엔지니어링")
+ENGINEERING_TOP15_RE = re.compile("|".join(re.escape(re.sub(r"\s", "", n)) for n in ENGINEERING_TOP15))
+
+
+def target_company(p) -> bool:
+    """대기업·계열사·외국계·상장사·시평 15위 건설사·엔지니어링 상위 15개사인지."""
+    if p.extra.get("groups") or p.extra.get("listed") or p.company_type in ("대기업", "외국계"):
+        return True
+    rank = p.extra.get("top100")
+    if rank and rank <= TARGET_CONSTR_RANK:
+        return True
+    return bool(ENGINEERING_TOP15_RE.search(re.sub(r"\(주\)|㈜|주식회사|\s", "", p.company or "")))
+
+
+# 안전(건설안전·산업안전)이 주업무가 아닌 공고: 보건관리자 단독, 다른 직무와 겸하는 공고, 채용이 아닌 글
+HEALTH_ONLY_RE = re.compile(r"보건\s*(?:관리자?|관리|직|담당|PJT)|(?<![A-Za-z])(?:Nurse|Industrial\s*Hygien\w*)(?![A-Za-z])|간호", re.I)
+SAFETY_ROLE_RE = re.compile(r"(?<![보])안전(?!\s*(?:진단|지원|용품|장치|인증|요원))|(?<![A-Za-z])(?:HSE|EHS|EH&S|SHE|HSEQ|QHSE|HSSE|[Ss]afety|SAFETY)(?![A-Za-z])")
+MIXED_ROLE = r"총무|생산|품질|공사|공무|시설|설비|기계|물류|공정|사무|행정|보전|시공|정비|유지보수|구매|인사|경영지원"
+MIXED_ROLE_RE = re.compile(rf"(?:{MIXED_ROLE})\s*(?:관리자?|담당자?|팀|직)?\s*(?:/|및|,|·|&|와|과)\s*안전|안전\s*(?:관리자?|담당자?)?\s*(?:/|및|,|·|&)\s*(?:{MIXED_ROLE})")
+NOT_SAFETY_JOB_RE = re.compile(r"공모전|사진\s*공모|경진\s*대회|설명회|안전\s*(?:관리\s*)?요원|안전\s*진단|개발자|개발\s*(?:연구)?직|연구원|연구직|설치\s*파트너|강사")
+OPEN_CALL_RE = re.compile(r"공채|공개\s*채용|신입\s*사원|각\s*부문|인재\s*(?:pool|풀)|상시\s*채용", re.I)
+
+
+def safety_main_reason(p) -> str:
+    """안전이 주업무가 아니면 제외 사유, 아니면 ''."""
+    t = PREF_IN_TITLE_RE.sub(" ", p.title)
+    if NOT_SAFETY_JOB_RE.search(t):
+        return "안전 주업무 아님"
+    if MIXED_ROLE_RE.search(t):
+        return "안전 주업무 아님(겸직)"
+    has_safety = SAFETY_ROLE_RE.search(CERT_NAME_RE.sub(" ", t))
+    if not has_safety and HEALTH_ONLY_RE.search(t):
+        return "보건관리자"
+    if not has_safety:
+        # 대기업 공채처럼 직무가 여러 개인 공고는 담당 업무에 안전 직무가 있을 때만 남긴다
+        # (제목에 생산·항만운영 같은 다른 직무를 지정한 공채는 제외)
+        if (OPEN_CALL_RE.search(t) and not re.search(rf"\([^)]*\)\s*$|-\s*\S+\s*$|{MIXED_ROLE}", t)
+                and (duty_verdict(p) or SAFETY_DUTY_RE.search(p.detail_text or ""))):
+            return ""
+        return "안전 주업무 아님"
+    return ""
+
+
 CONTRACT_TOP_RANK = 20  # 건설사 계약직은 시공능력평가 20위 이내 종합건설사만 싣는다
 
 
@@ -2574,7 +2628,7 @@ def carry_over(prev_path, failed, kept, stats, today):
         yrs = [int(m.group(1) or m.group(2)) for m in TITLE_YEARS_RE.finditer(p.title)]
         if yrs and min(yrs) >= 2 and not NEWBIE_RE.search(p.title):
             continue
-        if SALES_RE.search(p.title) or other_role(p) or WATCH_RE.search(f"{p.title} {p.detail_text}"):  # 영업직·다른 직무·감시단 제외 재적용
+        if SALES_RE.search(p.title) or other_role(p) or WATCH_RE.search(f"{p.title} {p.detail_text}") or safety_main_reason(p) or not target_company(p):  # 영업직·다른 직무·감시단 제외 재적용
             continue
         if any(q.url == p.url for q in kept) or is_dup(p, kept):
             continue

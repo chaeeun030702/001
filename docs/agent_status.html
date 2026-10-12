@@ -104,13 +104,13 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 <script>
 /* 작업 데이터 — 에이전트를 맡길 때마다 이 블록만 고친다 (progress: 0~100) */
 var JOB={
-  updated:"2026-10-13 08:16 KST",updatedISO:"2026-10-12T23:16:47Z",
+  updated:"2026-10-13 08:41 KST",updatedISO:"2026-10-12T23:41:16Z",
   main:{name:"메인 에이전트",task:"현 시점으로 안전관리자 채용 브리핑 새로 작성",note:"삭제 목록·직접 추가 공고를 저장소에 맞춘 뒤 GitHub Actions 수집기로 다시 모으고 브리핑을 게시합니다."},
   subs:[
-   {name:"삭제 목록 동기화 (DB → excluded.json)",order:"하청 1",status:"run",progress:10,task:"브리핑에서 삭제한 공고를 수집기에 반영",result:""},
-   {name:"직접 추가 공고 동기화 (DB → manual_postings.json)",order:"하청 2",status:"wait",progress:0,task:"사람인 메일·공채 모음·LinkedIn 공고 반영",result:""},
-   {name:"GitHub Actions 수집기",order:"하청 3",status:"wait",progress:0,task:"safety-jobs-briefing 실행 · 재수집",result:"",etaMin:14},
-   {name:"브리핑 게시",order:"하청 4",status:"wait",progress:0,task:"latest.html 을 브리핑 아티팩트에 게시",result:""}
+   {name:"삭제 목록 동기화 (DB → excluded.json)",order:"하청 1",status:"done",progress:100,task:"브리핑에서 삭제한 공고를 수집기에 반영",result:"414 → 544건 (PR #51 병합)"},
+   {name:"직접 추가 공고 동기화 (DB → manual_postings.json)",order:"하청 2",status:"done",progress:100,task:"사람인 메일·공채 모음·LinkedIn 공고 반영",result:"84건 (신규 28 · 갱신 26 · 마감·경력직 등 13건 제외)"},
+   {name:"GitHub Actions 수집기",order:"하청 3",status:"done",progress:100,task:"safety-jobs-briefing 실행 · 재수집 (run #123)",result:"전체 96 · 신규 39 · 정규직 58 · 계약직 24 · 미표기 12 · 인턴 2"},
+   {name:"브리핑 게시",order:"하청 4",status:"done",progress:100,task:"latest.html 을 브리핑 아티팩트에 게시",result:"게시 완료 (version 56)"}
   ]
 };
 
