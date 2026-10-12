@@ -55,3 +55,13 @@ uv run safety_jobs/collect.py --out briefings   # latest.md / latest.html / late
   HTML(`latest.html`)은 행 배경색으로 구분한다.
 
 지원 자격·우대 사항은 상세 페이지 본문에서 자동 추출한 요약이므로 지원 전 원문 확인이 필요하다.
+
+## 신규 공고 이메일 알림
+
+수집 직후 `safety_jobs/notify.py`가 **오늘 처음 찾은 신규 공고**를 이메일 한 통으로 보낸다(🔴·🔵·🌐 순, 공고 링크 + 웹 브리핑 링크). 신규가 0건이면 보내지 않는다.
+
+- 저장소 **Settings → Secrets and variables → Actions**에 등록: `MAIL_USER`(보내는 Gmail), `MAIL_APP_PASSWORD`(Gmail 앱 비밀번호 — Google 계정 2단계 인증 후 발급), `MAIL_TO`(받는 주소, 쉼표로 여러 개. 비우면 `MAIL_USER`).
+- 웹 주소는 변수 `SITE_URL`(기본 `https://e-safety.vercel.app/`).
+- 시크릿이 없으면 단계를 건너뛰고, 발송에 실패해도 브리핑 커밋은 계속한다(`continue-on-error`).
+- 하루 두 번(19:07·19:27) 돌아도 `briefings/notified.json`에 보낸 주소를 기록해 중복 발송하지 않는다.
+- 미리보기: `python3 safety_jobs/notify.py --dry-run` (메일을 보내지 않고 내용만 출력).

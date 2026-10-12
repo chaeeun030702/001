@@ -28,6 +28,15 @@ jobs:
           git fetch -q origin "${GITHUB_REF_NAME}" && git checkout "origin/${GITHUB_REF_NAME}" -- briefings || true
       - name: Collect
         run: uv run safety_jobs/collect.py --out briefings
+      - name: Notify (신규 공고 이메일)
+        # MAIL_* 시크릿이 없으면 건너뛰고, 실패해도 브리핑 커밋은 계속한다. 보낸 공고는 briefings/notified.json 에 기록
+        continue-on-error: true
+        env:
+          MAIL_USER: ${{ secrets.MAIL_USER }}
+          MAIL_APP_PASSWORD: ${{ secrets.MAIL_APP_PASSWORD }}
+          MAIL_TO: ${{ secrets.MAIL_TO }}
+          SITE_URL: ${{ vars.SITE_URL || 'https://e-safety.vercel.app/' }}
+        run: python3 safety_jobs/notify.py --briefings briefings
       - name: Commit briefing
         run: |
           git config user.name github-actions

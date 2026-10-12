@@ -104,12 +104,13 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 <script>
 /* 작업 데이터 — 에이전트를 맡길 때마다 이 블록만 고친다 (progress: 0~100) */
 var JOB={
-  updated:"2026-10-09 20:44 KST",updatedISO:"2026-10-09T11:44:34Z",
-  main:{name:"메인 에이전트",task:"Gmail 사람인 추천 채용공고 확인",note:"최근 7일 사람인 메일 5통을 확인했고, 메일 루틴이 10/8·10/9에 안전관리자 공고 12건을 브리핑 DB에 넣었습니다."},
+  updated:"2026-10-13 08:16 KST",updatedISO:"2026-10-12T23:16:47Z",
+  main:{name:"메인 에이전트",task:"현 시점으로 안전관리자 채용 브리핑 새로 작성",note:"삭제 목록·직접 추가 공고를 저장소에 맞춘 뒤 GitHub Actions 수집기로 다시 모으고 브리핑을 게시합니다."},
   subs:[
-   {name:"사람인 메일 확인 (Gmail)",order:"하청 1",status:"done",progress:100,task:"최근 7일 사람인 메일 (맞춤공고 3 · 추천 1 · 공채 일정 1)",result:"[사람인 추천] 10/7 메일 10건 — 안전 직무 0건"},
-   {name:"메일 → DB 루틴 결과",order:"하청 2",status:"done",progress:100,task:"브리핑 DB의 '사람인 메일' 공고 확인",result:"12건 (10/8 1건 · 10/9 11건)"},
-   {name:"루틴 지시문 보완",order:"하청 3",status:"done",progress:100,task:"추천 메일 형식('마감 N일 전')·팀장급 제외 추가",result:"갱신 완료 · 다음 실행 10/10 17:55"}
+   {name:"삭제 목록 동기화 (DB → excluded.json)",order:"하청 1",status:"run",progress:10,task:"브리핑에서 삭제한 공고를 수집기에 반영",result:""},
+   {name:"직접 추가 공고 동기화 (DB → manual_postings.json)",order:"하청 2",status:"wait",progress:0,task:"사람인 메일·공채 모음·LinkedIn 공고 반영",result:""},
+   {name:"GitHub Actions 수집기",order:"하청 3",status:"wait",progress:0,task:"safety-jobs-briefing 실행 · 재수집",result:"",etaMin:14},
+   {name:"브리핑 게시",order:"하청 4",status:"wait",progress:0,task:"latest.html 을 브리핑 아티팩트에 게시",result:""}
   ]
 };
 
