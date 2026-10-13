@@ -329,9 +329,11 @@ def src_saramin_gongchae(f: Fetcher):
     url = GONGCHAE_NOTICE
     try:  # 다음 시즌 글로 바뀌었으면 공지 목록에서 최신 '공채 일정 모음'을 찾는다
         lst = BeautifulSoup(f.get(GONGCHAE_LIST, tries=1), "html.parser")
+        base_idx = int(re.search(r"idx=(\d+)", GONGCHAE_NOTICE).group(1))
         for a in lst.find_all("a", href=True):
-            if re.search(r"공채\s*일정\s*모음", a.get_text(" ")) and "idx=" in a["href"]:
-                url = urljoin("https://www.saramin.co.kr", a["href"])
+            m = re.search(r"[?&]idx=(\d+)", a["href"])
+            if m and int(m.group(1)) > base_idx and re.search(r"공채\s*일정\s*모음", a.get_text(" ")):
+                url = urljoin("https://www.saramin.co.kr", a["href"])  # 더 새 시즌 글
                 break
     except Exception as e:
         GONGCHAE_STATUS["목록"] = f"공지 목록 실패({type(e).__name__}) — 기본 글 사용"
@@ -743,6 +745,7 @@ def src_manual(f: Fetcher):
         if not src:  # DB(manual)에서 옮겨 온 항목은 source가 없을 수 있다 → 주소로 판단
             u = it.get("url") or ""
             src = ("사람인" if re.search(r"saramin\.co\.kr/.*rec_idx=\d+", u)
+                   else "잡코리아" if re.search(r"jobkorea\.co\.kr/Recruit/GI_Read/\d+", u)
                    else "LinkedIn" if "linkedin.com/jobs/" in u else "직접 추가")
         p = Posting(src, clean(it.get("title") or f"{it['company']} 채용"), clean(it["company"]),
                     it.get("url") or f"manual:{it['company']}:{it.get('title', '')}", clean(it.get("title", "")))
@@ -862,9 +865,9 @@ def foreign_level(p: Posting):
 
 # (이름, 수집 함수, 게시판 여부) — 순서 = 중복 시 우선순위
 SOURCES = [
+    ("사람인 공채 모음", src_saramin_gongchae, False),  # 상세 조회 시간 한도 안에 들도록 맨 앞에 둔다 (공고 수 100여 건)
     ("잡코리아", src_jobkorea, False),
     ("사람인", src_saramin, False),
-    ("사람인 공채 모음", src_saramin_gongchae, False),
     ("링커리어", src_linkareer, False),
     ("워커", src_worker, False),
     ("서울과기대 안전공학과", make_board_source(
@@ -2130,7 +2133,7 @@ NOT_SAFETY_JOB_RE = re.compile(r"공모전|선착순|무료\s*교육|교육생|�
 AGENCY_SAFETY_RE = re.compile(r"[가-힣]*안전[가-힣]*(?:교육원|심판원|진흥원|연구원|공단|공사|체험장|체험관)(?![가-힣])")
 # 공고 내용(제목·담당 업무)이 총무+안전, 전기+안전처럼 복합업무인 공고 (사용자 요청 2026-10-13, 환경안전은 포함)
 COMPOSITE_RE = re.compile(r"총무\s*(?:업무\s*)?(?:[/·,&]|및|겸)?\s*안전|안전\s*(?:관리\s*)?(?:[/·,&]|및|겸)\s*총무|"
-                          r"전기\s*(?:[/·,&]|및|겸)?\s*안전|안전\s*(?:관리\s*)?(?:[/·,&]|및|겸)\s*전기")
+                          r"전기\s*(?:[/·,&]|및|겸)?\s*안전|안전\s*(?:관리\s*)?(?:[/·,&]|및|겸)\s*전기|전기\s*[·/,]\s*[가-힣]{1,6}\s*안전\s*관리")
 OPEN_CALL_RE = re.compile(r"공채|공개\s*채용|신입\s*사원|각\s*부문|인재\s*(?:pool|풀)|상시\s*채용", re.I)
 
 
