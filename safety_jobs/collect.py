@@ -742,7 +742,7 @@ def src_manual(f: Fetcher):
         return []
     out = []
     for it in items:
-        if not it.get("company"):
+        if not it.get("company") and not it.get("fill_from_detail"):  # 회사명은 상세에서 채우는 공고만 비워 둘 수 있다
             continue
         # source가 '사람인'이면 다른 세션이 사람인에서 직접 찾아 넘긴 공고 → 사람인 공고로 싣고 상세 본문도 읽는다
         src = it.get("source") or ""
