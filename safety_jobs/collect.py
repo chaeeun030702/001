@@ -757,7 +757,8 @@ def src_manual(f: Fetcher):
         p.employment = it.get("employment") or ""
         p.level = it.get("level") or "신입"
         p.extra = {"manual": True, "needs_check": it.get("safety_job") != "yes",
-                   "check_note": it.get("note", ""), "via": it.get("via", "")}
+                   "check_note": it.get("note", ""), "via": it.get("via", ""),
+                   "user_pick": bool(it.get("user_pick")), "fill_from_detail": bool(it.get("fill_from_detail"))}
         if src == "LinkedIn":
             p.listing_text = clean(f"{p.title} {it.get('note', '')}")
             p.extra["check_note"] = ""
@@ -933,6 +934,11 @@ def summarize_qual(qual_txt, whole):
 
 def detail_fields(p: Posting):
     t = p.detail_text
+    if p.source == "잡코리아" and p.extra.get("fill_from_detail"):  # 주소만 받은 공고: 상세 머리의 '회사 채용 - 공고명'으로 채운다
+        m = re.match(r"\s*(.{2,40}?)\s*채용\s*-\s*(.{4,120}?)\s*(?:\||잡코리아)", t)
+        if m:
+            p.company, p.title = clean(m.group(1)), clean(m.group(2))
+            p.extra["fill_from_detail"] = False
     if p.source == "잡코리아":
         m = re.search(r"고용형태\s*([가-힣·,/ ]{2,20}?)\s*(?:직급|급여|근무)", t)
         if m:
@@ -1374,6 +1380,10 @@ def needs_check_reason(p: Posting) -> str:
 def keep(p: Posting, today) -> tuple[bool, str]:
     if user_excluded(p):
         return False, "사용자 삭제"
+    if p.extra.get("user_pick"):  # 사용자가 직접 골라 넣은 공고는 마감만 본다
+        if p.deadline_date and p.deadline_date < today.isoformat():
+            return False, "마감"
+        return True, ""
     if excluded_corp(p):
         return False, "제외 업체명"
     blob = f"{p.title} {p.listing_text} {p.extra.get('sector', '')}"
@@ -2116,9 +2126,23 @@ def public_company(p) -> bool:
                 or PUBLIC_TEXT_RE.search((p.detail_text or "")[:6000]))
 
 
+# 빅테크 (사용자 추가 2026-10-14): 국내 IT 플랫폼·게임사와 글로벌 빅테크
+BIG_TECH = ("네이버", "NAVER", "카카오", "쿠팡", "우아한형제들", "배달의민족", "비바리퍼블리카", "토스", "라인", "LINE", "당근",
+            "크래프톤", "넥슨", "엔씨소프트", "NC소프트", "넷마블", "스마일게이트", "구글", "Google", "마이크로소프트", "Microsoft",
+            "아마존", "Amazon", "AWS", "메타플랫폼", "Meta Platforms", "페이스북", "애플", "Apple", "엔비디아", "NVIDIA", "오라클", "Oracle", "테슬라", "Tesla")
+BIG_TECH_RE = re.compile("|".join(rf"(?<![가-힣A-Za-z]){re.escape(n)}" for n in BIG_TECH))
+
+
+def is_bigtech(p) -> bool:
+    name = re.sub(r"\(주\)|㈜|주식회사|\(유\)|유한회사|\s", "", p.company or "")
+    return bool(BIG_TECH_RE.match(name) or re.match(r"\s*\[(?:" + "|".join(map(re.escape, BIG_TECH)) + r")", p.title or ""))
+
+
 def target_company(p) -> bool:
     """대기업·계열사·외국계·상장사·공기업·시평 15위 건설사·엔지니어링 상위 15개사인지."""
     if p.extra.get("groups") or p.extra.get("listed") or p.company_type in ("대기업", "외국계"):
+        return True
+    if is_bigtech(p):
         return True
     if public_company(p):
         return True
@@ -2340,6 +2364,8 @@ def new_pill(p, today):
 def group_pills(p):
     cls = {"대기업 계열": "pb", "외국계": "pf"}
     out = "".join(f'<span class="pill {cls[g]}">{g}</span>' for g in p.extra.get("groups", []))
+    if is_bigtech(p):
+        out += '<span class="pill pb">빅테크</span>'
     if p.extra.get("overseas") or OVERSEAS_TITLE_RE.search(p.title):
         loc = p.extra.get("loc", "") if p.extra.get("overseas") else ""
         out += f'<span class="pill pf" title="{html.escape(loc)}">해외 근무{(" · " + html.escape(loc[:24])) if loc else ""}</span>'
