@@ -104,12 +104,12 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 <script>
 /* 작업 데이터 — 에이전트를 맡길 때마다 이 블록만 고친다 (progress: 0~100) */
 var JOB={
-  updated:"2026-10-13 09:50 KST",updatedISO:"2026-10-13T00:50:12Z",
-  main:{name:"메인 에이전트",task:"대상 기업(대기업·계열사·외국계·상장사·시평 15위·엔지니어링 15위)의 해외 채용공고 포함",note:"수집기에 해외 공고 수집을 추가하고 GitHub Actions로 다시 모은 뒤 브리핑을 게시합니다."},
+  updated:"2026-10-13 10:16 KST",updatedISO:"2026-10-13T01:16:49Z",
+  main:{name:"메인 에이전트",task:"외국계 회사의 해외 근무 공고 제외 후 브리핑 재작성",note:"외국계 기업 채용 페이지는 한국 근무만 받도록 되돌리고, 국내 기업 해외현장 공고는 유지합니다."},
   subs:[
-   {name:"해외 공고 수집 (collect.py)",order:"하청 1",status:"done",progress:100,task:"해외 검색어 3개 · Workday 해외 공고(경력 직급 제외, 회사당 15건) · 해외 근무 배지",result:"PR #60 병합"},
-   {name:"GitHub Actions 수집기",order:"하청 2",status:"done",progress:100,task:"safety-jobs-briefing 재수집 (run #129)",result:"전체 60 · 신규 31 · 해외 근무 16 (3M·Applied Materials·Micron·Air Liquide·Air Products)"},
-   {name:"브리핑 게시",order:"하청 3",status:"done",progress:100,task:"latest.html 을 브리핑 아티팩트에 게시",result:"게시 완료 (version 58)"}
+   {name:"수집 규칙 (collect.py)",order:"하청 1",status:"done",progress:100,task:"외국계 해외 근무 공고 제외 (신규·이월 모두)",result:"PR #61 병합"},
+   {name:"GitHub Actions 수집기",order:"하청 2",status:"run",progress:0,task:"safety-jobs-briefing 재수집",result:"",startedAt:"2026-10-13T01:16:49Z",etaMin:15},
+   {name:"브리핑 게시",order:"하청 3",status:"wait",progress:0,task:"latest.html 을 브리핑 아티팩트에 게시",result:""}
   ]
 };
 
