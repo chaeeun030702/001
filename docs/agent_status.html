@@ -104,11 +104,12 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 <script>
 /* 작업 데이터 — 에이전트를 맡길 때마다 이 블록만 고친다 (progress: 0~100) */
 var JOB={
-  updated:"2026-10-14 07:11 KST",updatedISO:"2026-10-13T22:11:31Z",
-  main:{name:"메인 에이전트",task:"사용자 지정 잡코리아 공고 4건 추가 · 빅테크 분야 추가",note:"이 환경에서는 잡코리아가 막혀 있어 GitHub Actions 수집기가 상세를 읽어 회사·공고명을 채웁니다."},
+  updated:"2026-10-14 07:17 KST",updatedISO:"2026-10-13T22:17:25Z",
+  main:{name:"메인 에이전트",task:"사용자 지정 잡코리아 공고 4건 · 빅테크 · 시평 50위 내 정규직 안전관리자 추가",note:"이 환경에서는 잡코리아가 막혀 있어 GitHub Actions 수집기가 상세를 읽어 회사·공고명을 채웁니다."},
   subs:[
    {name:"수집 규칙 (collect.py)",order:"하청 1",status:"done",progress:100,task:"빅테크 대상·배지 · 사용자 지정 공고는 마감만 보고 싣기 · 잡코리아 상세로 회사·공고명 채우기",result:"PR #69 병합"},
-   {name:"GitHub Actions 수집기",order:"하청 2",status:"run",progress:0,task:"safety-jobs-briefing 재수집 (잡코리아 4건 상세 읽기)",result:"",startedAt:"2026-10-13T22:11:31Z",etaMin:20},
+   {name:"시평 50위 정규직 (collect.py)",order:"하청 1-2",status:"done",progress:100,task:"16~50위 종합건설사도 정규직 안전관리자 모집이면 싣기",result:"PR #70 병합 · 예: 라인건설(42위) 정규직 안전관리자"},
+   {name:"GitHub Actions 수집기",order:"하청 2",status:"run",progress:0,task:"safety-jobs-briefing 재수집 (run #150 — 잡코리아 4건·빅테크·시평 50위)",result:"",startedAt:"2026-10-13T22:17:25Z",etaMin:20},
    {name:"브리핑 게시",order:"하청 3",status:"wait",progress:0,task:"latest.html 을 브리핑 아티팩트에 게시",result:""},
    {name:"잡코리아 메일 루틴 확장",order:"하청 4",status:"wait",progress:10,task:"메일 루틴이 잡코리아 메일도 읽도록",result:"오늘 08:30 예약 알림 후 진행"}
   ]
