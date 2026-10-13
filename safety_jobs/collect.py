@@ -2102,6 +2102,7 @@ def calendar_eligible(p):
 # 브리핑 대상 기업 (사용자 지정 2026-10-13): 대기업·대기업 계열사, 외국계, 코스피·코스닥 상장사, 공기업·공공기관,
 # 시공능력평가 15위 이내 종합건설사, 국내 엔지니어링(설계·감리) 수주 상위 15개사
 TARGET_CONSTR_RANK = 15
+TARGET_CONSTR_RANK_REGULAR = 50  # 사용자 추가 2026-10-14: 16~50위 종합건설사는 정규직 공고만
 ENGINEERING_TOP15 = ("도화엔지니어링", "유신", "한국종합기술", "건화", "동명기술공단", "삼안", "이산", "다산컨설턴트",
                      "경동엔지니어링", "평화엔지니어링", "수성엔지니어링", "동부엔지니어링", "서영엔지니어링",
                      "선진엔지니어링", "삼성이앤에이", "삼성E&A", "현대엔지니어링")
@@ -2148,6 +2149,8 @@ def target_company(p) -> bool:
         return True
     rank = p.extra.get("top100")
     if rank and rank <= TARGET_CONSTR_RANK:
+        return True
+    if rank and rank <= TARGET_CONSTR_RANK_REGULAR and p.employment == "정규직":  # 시평 50위 내는 정규직 안전관리자 모집이면 싣는다
         return True
     return bool(ENGINEERING_TOP15_RE.search(re.sub(r"\(주\)|㈜|주식회사|\s", "", p.company or "")))
 
