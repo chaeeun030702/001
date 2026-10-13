@@ -2652,6 +2652,8 @@ def carry_over(prev_path, failed, kept, stats, today):
             continue
         if user_excluded(p):  # 브리핑에서 삭제한 공고
             continue
+        if p.extra.get("overseas") and not CAREERS_OVERSEAS:  # 외국계 해외 근무 공고
+            continue
         if p.extra.get("manual") and p.url not in manual_urls():  # 직접 추가 목록에서 지운 공고
             continue
         if senior_rank(p) or NON_HSE_SAFETY_RE.search(p.title):  # 대리급 이상·비HSE 제외 재적용
