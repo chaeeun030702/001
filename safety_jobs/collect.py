@@ -37,7 +37,7 @@ KST = dt.timezone(dt.timedelta(hours=9))
 Q = quote("안전관리자")
 # 검색어: 안전관리자 + 업종 무관 HSE/EHS 직무 + 자격증 명시 공고
 KEYWORDS = ["안전관리자", "HSE", "EHS", "안전보건", "산업안전기사", "건설안전기사", "NEBOSH", "IOSH", "ISO45001", "안전공학", "안전",
-            "해외 안전관리자", "해외현장 안전", "해외 HSE"]  # 해외 근무 공고도 찾는다 (사용자 요청 2026-10-13)
+            "해외 안전관리자", "해외현장 안전", "해외 HSE", "해외현장", "해외 상시채용", "하이테크 해외"]  # 해외 근무 공고도 찾는다 (사용자 요청 2026-10-13)
 # 우대 강조(보라색): 외국어·영어 능통 / NEBOSH / IOSH / CSP
 LANG_RE = re.compile(r"(?:영어|외국어|어학|English|중국어|일본어|베트남어|스페인어)\s*(?:회화\s*)?(?:능통|능숙|우수|가능|원활|비즈니스|원어민|fluent|business)"
                      r"|(?:TOEIC|토익|OPIc|오픽|TEPS|텝스|TOEIC\s*Speaking|토익\s*스피킹)\s*[:：]?\s*(?:\d{2,3}|IM|IH|AL|Lv|Level)"
@@ -2105,6 +2105,9 @@ def safety_main_reason(p) -> str:
         # (제목에 생산·항만운영 같은 다른 직무를 지정한 공채는 제외)
         if (OPEN_CALL_RE.search(t) and not re.search(rf"\([^)]*\)\s*$|-\s*\S+\s*$|{MIXED_ROLE}", t)
                 and (duty_verdict(p) or SAFETY_DUTY_RE.search(p.detail_text or ""))):
+            return ""
+        # '하이테크 해외현장 채용의건'처럼 제목에 직무가 없어도 담당 업무가 안전(안전기획·안전관리)이면 싣는다
+        if not re.search(rf"{MIXED_ROLE}|(?<![A-Za-z])(?:Production|Process|Quality|Maintenance|Technician|Operator|Developer|Sales)(?![A-Za-z])", t, re.I) and duty_verdict(p):
             return ""
         return "안전 주업무 아님"
     return ""
