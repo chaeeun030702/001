@@ -104,13 +104,14 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 <script>
 /* 작업 데이터 — 에이전트를 맡길 때마다 이 블록만 고친다 (progress: 0~100) */
 var JOB={
-  updated:"2026-10-13 08:48 KST",updatedISO:"2026-10-12T23:48:55Z",
-  main:{name:"메인 에이전트",task:"새 기준으로 브리핑 재작성 — 대상 기업만 · 안전 주업무 아닌 공고·보건관리자 제외",note:"수집기 규칙을 바꾼 뒤 GitHub Actions로 다시 모으고 브리핑을 게시합니다."},
+  updated:"2026-10-13 09:15 KST",updatedISO:"2026-10-13T00:15:58Z",
+  main:{name:"메인 에이전트",task:"새 기준으로 브리핑 재작성 — 대상 기업(공기업 포함)만 · 안전 주업무 아닌 공고·보건관리자 제외",note:"수집기 규칙을 바꾼 뒤 GitHub Actions로 다시 모으고 브리핑을 게시합니다."},
   subs:[
    {name:"수집 규칙 (collect.py)",order:"하청 1",status:"done",progress:100,task:"대기업·계열사·외국계·상장사·시평 15위·엔지니어링 15위만 · 겸직·비안전·보건관리자 제외",result:"PR #54 병합 · 10/13 96건 시험 → 36건 유지"},
+   {name:"공기업 추가 (collect.py)",order:"하청 1-2",status:"done",progress:100,task:"공기업·공공기관 대상 추가 · 기관명 속 안전은 직무로 보지 않음",result:"PR #56 병합"},
    {name:"엔지니어링 순위 조사",order:"하청 2",status:"done",progress:100,task:"국내 엔지니어링 수주 상위사 확인 (웹 검색)",result:"도화·유신·한국종합기술·건화·동명 등 15개사"},
-   {name:"GitHub Actions 수집기",order:"하청 3",status:"run",progress:0,task:"safety-jobs-briefing 재수집",result:"",startedAt:"2026-10-12T23:48:55Z",etaMin:14},
-   {name:"브리핑 게시",order:"하청 4",status:"wait",progress:0,task:"latest.html 을 브리핑 아티팩트에 게시",result:""}
+   {name:"GitHub Actions 수집기",order:"하청 3",status:"done",progress:100,task:"safety-jobs-briefing 재수집 (run #127, 공기업 포함 기준)",result:"전체 37 · 신규 7 · 정규직 15 · 계약직 15 · 미표기 5 · 인턴 2"},
+   {name:"브리핑 게시",order:"하청 4",status:"done",progress:100,task:"latest.html 을 브리핑 아티팩트에 게시",result:"게시 완료 (version 57)"}
   ]
 };
 
