@@ -1845,6 +1845,7 @@ small.ckn{display:block;font-size:12px;color:var(--caption)}
 .day details summary{font-size:12px;color:var(--primary);cursor:pointer;list-style:none} .day details summary::-webkit-details-marker{display:none}
 .day details[open] summary{margin-bottom:2px}
 td.corp a.co{color:var(--text-strong);text-decoration:none} td.corp a.co:hover{color:var(--primary);text-decoration:underline}
+a.tl{color:var(--text);text-decoration:none;font-weight:600} a.tl:hover{color:var(--primary);text-decoration:underline} a.tl:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
 @media (max-width:719px){
   .cal{display:block;border:0}.cal .wd,.day.empty,.day.out{display:none}
   .day{min-height:0;border:1px solid var(--border);border-radius:var(--r-sm);margin-bottom:8px;padding:10px}
@@ -2489,6 +2490,11 @@ def render_html(postings, failures, now, stats):
             return e(p.company or "-")
         return f'<a class="co" href="{e(p.url)}" target="_blank" rel="noopener">{e(p.company or "-")}</a>'
 
+    def ttl_link(p):  # 공고명을 누르면 채용 사이트의 공고가 새 탭으로 열린다
+        if not href(p):
+            return e(p.title)
+        return f'<a class="tl" href="{e(p.url)}" target="_blank" rel="noopener" title="채용 사이트에서 공고 열기">{e(p.title)}</a>'
+
     def src_link(p):
         via = f'<small>{e(p.extra["via"])}</small>' if p.extra.get("via") else ""
         if not href(p):
@@ -2504,7 +2510,7 @@ def render_html(postings, failures, now, stats):
         trs = "".join(
             f'<tr class="h{p.hilite}" data-url="{e(p.url)}" data-ind="{e(p.industry)}" data-cert="{1 if p.certs else 0}" data-pref="{1 if p.prefs else 0}" data-ai="{1 if p.extra.get("ai") else 0}" data-grp="{e(" ".join(p.extra.get("groups", [])))}" data-listed="{e(p.extra.get("listed", ""))}" data-new="{1 if is_new(p, today) else 0}" data-bnf="{1 if has_benefit(p) else 0}">{xsel(p)}<td class="lv">{e(p.level)}<small>{e(p.industry)}</small>{sal_small(p)}</td>'
             f'<td class="corp"><strong>{co_link(p)}</strong>{new_pill(p, today)}{big_pill(p)}{pill[p.hilite]}{group_pills(p)}{rank_pill(p)}</td>'
-            f"<td class=\"ttl\">{e(p.title)}{check_pill(p)}{pref_pills(p)}{ai_pill(p)}{benefit_pills(p)}</td><td>{cert_pills(p)}{e(p.qualification or '-')}</td><td>{e(p.preferred or '-')}</td>"
+            f"<td class=\"ttl\">{ttl_link(p)}{check_pill(p)}{pref_pills(p)}{ai_pill(p)}{benefit_pills(p)}</td><td>{cert_pills(p)}{e(p.qualification or '-')}</td><td>{e(p.preferred or '-')}</td>"
             f'<td class="dl{" soon" if id(p) in soon else ""}">{e(p.deadline)}</td>'
             f'<td class="src">{src_link(p)}'
             f'{"<small>이전 수집</small>" if p.extra.get("carried") else ""}</td></tr>'
@@ -2547,7 +2553,7 @@ def render_html(postings, failures, now, stats):
     def rows5(rows, pill_new=False):
         return "".join(
             f'<tr class="h{p.hilite}" data-url="{e(p.url)}">{xsel(p)}<td class="corp"><strong>{co_link(p)}</strong>'
-            f'{new_pill(p, today) if pill_new else ""}{big_pill(p)}{group_pills(p)}</td><td>{e(p.title)}{check_pill(p)}{benefit_pills(p)}</td><td class="lv">{e(p.employment)}<small>{e(p.level)}</small>{sal_small(p)}</td>'
+            f'{new_pill(p, today) if pill_new else ""}{big_pill(p)}{group_pills(p)}</td><td class="ttl">{ttl_link(p)}{check_pill(p)}{benefit_pills(p)}</td><td class="lv">{e(p.employment)}<small>{e(p.level)}</small>{sal_small(p)}</td>'
             f'<td class="dl{" soon" if id(p) in soon else ""}">{e(p.deadline)}</td><td class="src">{src_link(p)}</td></tr>'
             for p in rows)
     head5 = '<div class="scroll"><table class="t5"><thead><tr>' + PICK_TH + '<th>업체명</th><th>공고명</th><th>고용형태 · 연봉</th><th>접수기한</th><th>출처</th></tr></thead>'
