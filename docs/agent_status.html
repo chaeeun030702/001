@@ -104,15 +104,13 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 <script>
 /* 작업 데이터 — 에이전트를 맡길 때마다 이 블록만 고친다 (progress: 0~100) */
 var JOB={
-  updated:"2026-10-13 11:40 KST",updatedISO:"2026-10-13T02:40:58Z",
-  main:{name:"메인 에이전트",task:"사람인 대기업 공채 모음 상시 조사 · 해외현장 상시채용 · 복합업무(총무안전·전기안전) 제외 기준 조정",note:"복합업무 기준까지 반영해 다시 모읍니다 (run #139)."},
+  updated:"2026-10-14 06:36 KST",updatedISO:"2026-10-13T21:36:01Z",
+  main:{name:"메인 에이전트",task:"Gmail 잡코리아 메일 분석 · 한미약품 공채 검색해 브리핑 추가",note:"한미그룹 하반기 공채를 '직무 확인 필요'로 브리핑에 바로 넣었습니다. Gmail에는 잡코리아 메일이 없습니다."},
   subs:[
-   {name:"해외현장 상시채용 (collect.py)",order:"하청 1",status:"done",progress:100,task:"담당 업무가 안전이면 싣기 · 해외현장 검색어",result:"PR #63 병합"},
-   {name:"사람인 공채 모음 수집원 (collect.py)",order:"하청 2",status:"done",progress:100,task:"공채 일정 모음 글의 공고 링크 → 상세 본문으로 안전 직무 판정",result:"PR #64 병합"},
-   {name:"GitHub Actions 수집기",order:"하청 3",status:"done",progress:100,task:"safety-jobs-briefing 재수집 (run #142 — 공채 모음 상세 조회 보장)",result:"전체 49 · 신규 21 · 공채 모음 128건 상세 판정 → 안전 직무 3건 (이수그룹 환경안전·코오롱 인턴(안전관리)·CJ대한통운)"},
-   {name:"복합업무 제외 기준 (collect.py)",order:"하청 4",status:"done",progress:100,task:"제목의 다른 직무로 빼지 않고, 공고 내용이 총무안전·전기안전 같은 복합업무면 제외 · 환경안전은 포함",result:"PR #65 병합 · 담당 업무 중 안전 비중 50% 초과만 주업무"},
-   {name:"잡코리아 메일 분류",order:"하청 6",status:"wait",progress:10,task:"Gmail 잡코리아 채용 메일 → 브리핑 DB (메일 루틴 확장)",result:"내일(10/14) 08:30 KST 시작 예약 · 수집기 주소 인식 커밋만 준비"},
-   {name:"브리핑 게시",order:"하청 5",status:"done",progress:100,task:"latest.html 을 브리핑 아티팩트에 게시",result:"게시 완료 (version 61) · 회사명 수정(PR #67)은 다음 수집부터"}
+   {name:"Gmail 잡코리아 메일 분석",order:"하청 1",status:"done",progress:100,task:"받은편지함 잡코리아 메일 검색 (최근 7일·전체)",result:"잡코리아에서 온 채용 메일 0통 — 넣을 공고 없음"},
+   {name:"한미약품 공채 조사 (웹 검색)",order:"하청 2",status:"done",progress:100,task:"한미그룹 2026 하반기 공채 모집 부문·EHS 직무 확인",result:"접수 9/28~10/18 · 생산·품질·연구 등 · EHS 모집 여부 불명확 → 직무 확인 필요"},
+   {name:"브리핑 반영",order:"하청 3",status:"done",progress:100,task:"브리핑 DB·manual_postings.json 추가 · 브리핑 다시 게시",result:"게시 완료 (version 62) · PR #68 병합"},
+   {name:"잡코리아 메일 루틴 확장",order:"하청 4",status:"wait",progress:10,task:"메일 루틴이 잡코리아 메일도 읽도록",result:"내일(10/14) 08:30 시작 예약"}
   ]
 };
 
