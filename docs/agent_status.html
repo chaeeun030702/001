@@ -104,13 +104,13 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 <script>
 /* 작업 데이터 — 에이전트를 맡길 때마다 이 블록만 고친다 (progress: 0~100) */
 var JOB={
-  updated:"2026-10-14 06:36 KST",updatedISO:"2026-10-13T21:36:01Z",
-  main:{name:"메인 에이전트",task:"Gmail 잡코리아 메일 분석 · 한미약품 공채 검색해 브리핑 추가",note:"한미그룹 하반기 공채를 '직무 확인 필요'로 브리핑에 바로 넣었습니다. Gmail에는 잡코리아 메일이 없습니다."},
+  updated:"2026-10-14 07:11 KST",updatedISO:"2026-10-13T22:11:31Z",
+  main:{name:"메인 에이전트",task:"사용자 지정 잡코리아 공고 4건 추가 · 빅테크 분야 추가",note:"이 환경에서는 잡코리아가 막혀 있어 GitHub Actions 수집기가 상세를 읽어 회사·공고명을 채웁니다."},
   subs:[
-   {name:"Gmail 잡코리아 메일 분석",order:"하청 1",status:"done",progress:100,task:"받은편지함 잡코리아 메일 검색 (최근 7일·전체)",result:"잡코리아에서 온 채용 메일 0통 — 넣을 공고 없음"},
-   {name:"한미약품 공채 조사 (웹 검색)",order:"하청 2",status:"done",progress:100,task:"한미그룹 2026 하반기 공채 모집 부문·EHS 직무 확인",result:"접수 9/28~10/18 · 생산·품질·연구 등 · EHS 모집 여부 불명확 → 직무 확인 필요"},
-   {name:"브리핑 반영",order:"하청 3",status:"done",progress:100,task:"브리핑 DB·manual_postings.json 추가 · 브리핑 다시 게시",result:"게시 완료 (version 62) · PR #68 병합"},
-   {name:"잡코리아 메일 루틴 확장",order:"하청 4",status:"wait",progress:10,task:"메일 루틴이 잡코리아 메일도 읽도록",result:"내일(10/14) 08:30 시작 예약"}
+   {name:"수집 규칙 (collect.py)",order:"하청 1",status:"done",progress:100,task:"빅테크 대상·배지 · 사용자 지정 공고는 마감만 보고 싣기 · 잡코리아 상세로 회사·공고명 채우기",result:"PR #69 병합"},
+   {name:"GitHub Actions 수집기",order:"하청 2",status:"run",progress:0,task:"safety-jobs-briefing 재수집 (잡코리아 4건 상세 읽기)",result:"",startedAt:"2026-10-13T22:11:31Z",etaMin:20},
+   {name:"브리핑 게시",order:"하청 3",status:"wait",progress:0,task:"latest.html 을 브리핑 아티팩트에 게시",result:""},
+   {name:"잡코리아 메일 루틴 확장",order:"하청 4",status:"wait",progress:10,task:"메일 루틴이 잡코리아 메일도 읽도록",result:"오늘 08:30 예약 알림 후 진행"}
   ]
 };
 
