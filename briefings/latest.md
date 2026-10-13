@@ -1,24 +1,48 @@
-# 안전관리자 채용 브리핑 — 2026-10-13 (Tue) 08:52 KST
+# 안전관리자 채용 브리핑 — 2026-10-13 (Tue) 09:22 KST
 
-신입·경력무관·인턴 공고 **37건** (경력직·마감 제외, 중복은 상위 사이트 우선) · 일반 산업체 34건 · 건설 3건 · 산업/건설안전기사·ISO 45001 명시 12건 · 🟣 외국어·NEBOSH·IOSH·CSP 우대 5건
+신입·경력무관·인턴 공고 **60건** (경력직·마감 제외, 중복은 상위 사이트 우선) · 일반 산업체 57건 · 건설 3건 · 산업/건설안전기사·ISO 45001 명시 13건 · 🟣 외국어·NEBOSH·IOSH·CSP 우대 10건
 
 건설사는 2026년 시공능력평가 상위 100개사(토목건축)만 싣습니다.
 
 범례: 🔴 데이터센터·하이테크·삼성·하이닉스 관련 · 🔵 대기업 계열사 · 🌐 외국계 회사 (여럿 해당하면 🔴 > 🔵 > 🌐, 업체명 옆에 [대기업 계열]/[외국계] 표기) · 🟣 외국어·영어 능통 / NEBOSH / IOSH / CSP 우대 (🔴·🔵와 함께 표시될 수 있음) · [코스피]/[코스닥] 상장사 · 🤖 AI 역량 우대 · 🆕 오늘(10/13) 새로 찾은 공고 (다음 날 고용형태 묶음으로 이동)
 
-## 🆕 신규 공고 7건 (오늘 10/13 새로 찾음 · 삭제하지 않으면 내일 고용형태 묶음으로 이동)
+## 🆕 신규 공고 31건 (오늘 10/13 새로 찾음 · 삭제하지 않으면 내일 고용형태 묶음으로 이동)
 
 | 업체명 | 공고명 | 고용형태 · 연봉 | 접수기한 | 출처 |
 |---|---|---|---|---|
-| 🔵 현대자동차 [대기업 신입 공채] | [현대자동차] 수소충전소 안전관리 계약직 채용 | 계약직<br>면접 후 협의 · 신입 초봉 4,852만원 (2025) | 2026-10-26 | [피플앤잡](https://www.peoplenjob.com/jobs/6298008) |
+| 🔴 Applied Materials | EHS Engineer | 정규직<br>연봉 미기재 · 신입 초봉 4,761만원 (2026, 자소설닷컴) | 채용 시 마감 | [기업 채용 페이지](https://amat.wd1.myworkdayjobs.com/External/job/BangaloreIND/EHS-Engineer_R2630070) |
+| 🔴 Applied Materials | EHS/ Facilities Specialist | 정규직<br>연봉 미기재 · 신입 초봉 4,761만원 (2026, 자소설닷컴) | 채용 시 마감 | [기업 채용 페이지](https://amat.wd1.myworkdayjobs.com/External/job/BeniciaCA/EHS--Facilities-Specialist_R2629285-1) |
+| 🔴 Applied Materials | EHS Engineer / Industrial Hygienist | 정규직<br>연봉 미기재 · 신입 초봉 4,761만원 (2026, 자소설닷컴) | 채용 시 마감 | [기업 채용 페이지](https://amat.wd1.myworkdayjobs.com/External/job/Santa-ClaraCA/EHS-Engineer---Industrial-Hygienist_R2627189-1) |
+| 🔴 Micron | Environmental Engineer, EHS | 정규직<br>연봉 미기재 | 채용 시 마감 | [기업 채용 페이지](https://micron.wd1.myworkdayjobs.com/External/job/Hiroshima---Fab-15-Japan/Environmental-Engineer--EHS_JR90156) |
+| 🔴 Micron | EHS Safety Engineer - Equipment | 정규직<br>연봉 미기재 | 채용 시 마감 | [기업 채용 페이지](https://micron.wd1.myworkdayjobs.com/External/job/Hiroshima---Fab-15-Japan/EHS-Safety-Engineer---Equipment_JR98734-23) |
+| 🔵 현대자동차 (주) [대기업 신입 공채] | [현대자동차] 수소충전소 안전관리 계약직 채용 | 계약직<br>회사 내규에 따름 · 신입 초봉 4,852만원 (2025) | 2026-10-26 | [링커리어](https://linkareer.com/activity/356342) |
+| 🌐 3M | Japan EHS | 정규직<br>연봉 미기재 | 채용 시 마감 | [기업 채용 페이지](https://3m.wd1.myworkdayjobs.com/Search/job/JP-Yamagata-Higashine/Japan-EHS_R01159458-1) |
+| 🌐 3M | EHS Engineer | 정규직<br>연봉 미기재 | 채용 시 마감 | [기업 채용 페이지](https://3m.wd1.myworkdayjobs.com/Search/job/CA-Ontario-London/EHS-Engineer_R01171237-1) |
+| 🌐 3M | EHS Analytical Laboratory Technician (m/f/*) | 정규직<br>연봉 미기재 | 채용 시 마감 | [기업 채용 페이지](https://3m.wd1.myworkdayjobs.com/Search/job/BE-Zwijndrecht/EHS-Analytical-Laboratory-Technician--m-f---_R01171604-1) |
+| 🌐 3M | Environmental, Health and Safety (EHS) Engineer – Greenville, SC | 정규직<br>연봉 미기재 | 채용 시 마감 | [기업 채용 페이지](https://3m.wd1.myworkdayjobs.com/Search/job/US-South-Carolina-Greenville/Environmental--Health-and-Safety--EHS--Engineer---Greenville--SC_R01169034) |
+| 🌐 3M | Corporate Process Safety Specialist | 정규직<br>연봉 미기재 | 채용 시 마감 | [기업 채용 페이지](https://3m.wd1.myworkdayjobs.com/Search/job/US-Minnesota-Maplewood/Corporate-Process-Safety-Specialist_R01169727) |
+| 🌐 3M | Process Safety Management Engineer | 정규직<br>연봉 미기재 | 채용 시 마감 | [기업 채용 페이지](https://3m.wd1.myworkdayjobs.com/Search/job/US-Texas-Brownwood/Process-Safety-Management-Engineer_R01168386) |
+| 🌐 3M | Health and Safety Coordinator | 정규직<br>연봉 미기재 | 채용 시 마감 | [기업 채용 페이지](https://3m.wd1.myworkdayjobs.com/Search/job/CA-Ontario-Brockville/Health-and-Safety-Coordinator_R01168978) |
+| 🌐 3M | Application Development Specialist - Personal Safety Division | 정규직<br>연봉 미기재 | 채용 시 마감 | [기업 채용 페이지](https://3m.wd1.myworkdayjobs.com/Search/job/BR-So-Paulo-Sumare/Application-Development-Specialist---Personal-Safety-Division_R01170725) |
+| 🌐 3M | Occupational/Industrial Hygienist - Application Engineer in Personal Safety Division/ New Zealand | 정규직<br>연봉 미기재 | 채용 시 마감 | [기업 채용 페이지](https://3m.wd1.myworkdayjobs.com/Search/job/NZ-North-Shore-City-Auk/Application-Engineer-in-Personal-Safety-Division--New-Zealand_R01170718) |
+| 🌐 3M | Internship - 2027 Undergraduate 3M Industrial Design Intern - Safety & Industrial Business Group (SIBG) | 정규직<br>연봉 미기재 | 채용 시 마감 | [기업 채용 페이지](https://3m.wd1.myworkdayjobs.com/Search/job/US-Minnesota-Maplewood/Internship---2027-Undergraduate-3M-Industrial-Design-Intern---Safety---Industrial-Business-Group--SIBG-_R01172241) |
+| 🌐 Air Liquide | HSE Engineer (Talent Pool Registration) | 기타/미표기<br>연봉 미기재 | 채용 시 마감 | [기업 채용 페이지](https://airliquidehr.wd3.myworkdayjobs.com/AirLiquideExternalCareer/job/Taiwan-Zhubei-City/HSE-Engineer--Talent-Pool-Registration-_R10052829) |
+| 🌐 Air Liquide | HSE Engineer (環安衛工程師) | 기타/미표기<br>연봉 미기재 | 채용 시 마감 | [기업 채용 페이지](https://airliquidehr.wd3.myworkdayjobs.com/AirLiquideExternalCareer/job/Taiwan-Nanzi-District/HSE-Engineer---_R10036340) |
+| 🌐 Air Liquide | HSEQ SPECIALIST H/F | 기타/미표기<br>연봉 미기재 | 채용 시 마감 | [기업 채용 페이지](https://airliquidehr.wd3.myworkdayjobs.com/AirLiquideExternalCareer/job/France-Denain/HSEQ-SPECIALIST-H-F_R10100618-1) |
+| 🌐 Air Liquide | HSEQリーダー（熊本） | 기타/미표기<br>연봉 미기재 | 채용 시 마감 | [기업 채용 페이지](https://airliquidehr.wd3.myworkdayjobs.com/AirLiquideExternalCareer/job/Japan-Koshi-shi/HSEQ--_R10094248) |
+| 🌐 Air Liquide | Alternant(e) HSEQ Douai/Limay F/H | 기타/미표기<br>연봉 미기재 | 채용 시 마감 | [기업 채용 페이지](https://airliquidehr.wd3.myworkdayjobs.com/AirLiquideExternalCareer/job/France-Limay-Porcheville/Alternant-e--HSEQ-Douai-Limay-F-H_R10100858) |
+| 🌐 Air Liquide | Fire Safety Engineer / Fire Fighting Engineer | 기타/미표기<br>연봉 미기재 | 채용 시 마감 | [기업 채용 페이지](https://airliquidehr.wd3.myworkdayjobs.com/AirLiquideExternalCareer/job/Poland-Krakw/Fire-Fighting-Engineer_R10082122) |
+| 🌐 Air Products | Environmental, Health & Safety (EHS) Specialist | 정규직<br>연봉 미기재 | 채용 시 마감 | [기업 채용 페이지](https://airproducts.wd5.myworkdayjobs.com/AP0001/job/St-Louis-Missouri/Environmental--Health---Safety--EHS--Specialist_JR-2026-21481) |
+| 🌐 Air Products | PPO Safety Engineer | 정규직<br>연봉 미기재 | 채용 시 마감 | [기업 채용 페이지](https://airproducts.wd5.myworkdayjobs.com/AP0001/job/Taichung-Taichung-City/PPO-Safety-Engineer_JR-2026-21197) |
 | 🌐 에이피써치 | EHS 위험물안전관리 환경안전 사원대리급 울산공장 외국계화학회사 | 정규직<br>면접 후 협의 | 채용 시 마감 | [피플앤잡](https://www.peoplenjob.com/jobs/6290493) |
 | 🌐 유엘코리아 | 산업보건안전관리 (EHS) 담당자 채용 | 정규직<br>면접 후 협의 · 신입 초봉 3,700만원 (2025, 잡코리아) | 채용 시 마감 | [피플앤잡](https://www.peoplenjob.com/jobs/6273022) |
+| (주)네패스 | (주)네패스EM 전자재료 인원 모집(개발/자재관리/환경안전/제조) | 계약직<br>면접 후 결정 | ⏰ **2026-10-16 (D-3)** | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55053571) |
 | 넥센타이어㈜ | 상시채용 (인재Pool) - 생산(안전환경보건) | 기타/미표기<br>회사 내규에 따름 · 신입 초봉 4,800만원 (2025) | 채용 시 마감 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50100942?Oem_Code=C1) |
 | 성신양회㈜ | 상시 인재 POOL (일반직군) - 안전보건 | 기타/미표기<br>회사 내규에 따름 · 신입 초봉 4,950만원 (2025) | 채용 시 마감 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50047415?Oem_Code=C1) |
 | 환인제약 | 상시 인재pool 등록(환경안전관리) | 기타/미표기<br>회사 내규에 따름 · 신입 초봉 4,240만원 (2025) | 채용 시 마감 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50148214?Oem_Code=C1) |
 | (주)신성이엔지 | [신성이엔지] 공사현장 안전관리자 채용 | 정규직<br>연봉 미기재 · 신입 초봉 3,105만원 (2024) | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55262423) |
 
-## [정규직] 12건
+## [정규직] 11건
 
 | 구분 · 연봉 | 업체명 | 공고명 | 지원 자격 (학과·자격·영어·학력) | 우대 사항 | 접수기한 | 출처 |
 |---|---|---|---|---|---|---|
@@ -27,8 +51,7 @@
 | 신입·경력 · 일반 산업<br>면접 후 결정 · 신입 초봉 4,445만원 (캐치) | 🌐 **엠이엠씨코리아(주)** [외국계] | [비상장/외국계법인] 산업안전&위험물 관리자 | **[산업안전기사 명시]** 🟣 **[외국어·영어 우대]** 🤖 **[AI 우대]** 🏠 **[복지: 자녀학자금·노조·주택지원]** 🌐 [복지(인터넷 조사): 기숙사] 학과: 소방/화학 / 자격: 산업안전기사, 위험물산업기사 / 영어: 토익 700점 / 학력: 대졸↑ | • 기타 안전/보건/소방/가스 관련 자격증 소지자 • PSM 사업장 경력/경험 • 영어활용 역량 (토익 700점 또는 회화 IM2 이상의 수준) • Data 기반 문제해결 및 AI 활용 역량 🏠 | 2026-10-21 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55163336) |
 | 경력무관 · 일반 산업<br>면접 후 결정 | 🌐 **국제커리어센터** [외국계] | [외국계 배터리 제조업체]안전,환경,환경안전 부문 채용 | **[ISO 45001 명시]** 학력: 대졸 이상 | • 안전 - PSM, 유해화학물질 취급시설 안전관리 경험자 - 영어 사용 가능자 • 환경 - 제조업 환경관리 업무 1년 이상 경험자 - 영어 사용 가능자 • 환경안전 - PSM, 화학사고예방계획서 | 2026-10-21 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55093659) (이전 수집) |
 | 신입·경력 · 일반 산업<br>협의 | 🌐 **(주)피플렙** [외국계] | 외국계 케미칼 플랜트 EHS 엔지니어(신입-5년, 영어 필수) | 학과: 화학공학, 환경공학, 안전공학 / 학력: 대졸↑ | - | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55222871) |
-| 신입 · 일반 산업<br>면접 후 협의 · 신입 초봉 4,800만원 (잡코리아) | 🌐 **한국드레가(주)** [외국계] | [외국계 산업안전] Safety Service & RSS Technician(부산) | . Information 커리어 수준 사원.5년이내 경력여부 경력 고용형태 정규직 | - | 채용 시 마감 | [피플앤잡](https://www.peoplenjob.com/jobs/6292112) |
-| 경력 요건 확인 필요 · 일반 산업<br>연봉 미기재 | 🌐 **Applied Materials Korea** [외국계] | EHS Manager, Safety Engineer | - | - | 채용 시 마감 | [LinkedIn](https://www.linkedin.com/jobs/view/4460722818/) |
+| 신입 · 일반 산업<br>면접 후 협의 · 신입 초봉 4,800만원 (잡코리아) | 🌐 **한국드레가(주)** [외국계] | [외국계 산업안전] Safety Service & RSS Technician(부산) | . Information 커리어 수준 사원.5년이내 경력여부 경력 고용형태 정규직 | - | 채용 시 마감 | [피플앤잡](https://www.peoplenjob.com/jobs/6292112) (이전 수집) |
 | 신입·경력 · 일반 산업<br>면접 후 결정 | (주)레몬 [코스닥] | (주)레몬 환경안전파트 안전분야 인재채용 | **[산업안전기사 명시]** 🏠 **[복지: 자녀학자금·기숙사]** 자격: 위험물산업기사, 산업안전기사 / 학력: 대졸↑ | • 전공: 산업공학 🏠 | 2026-10-22 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55104359) |
 | 경력무관 · 건설<br>면접 후 결정 · 신입 초봉 4,608만원 (2025) | (주)성도이엔지 [코스닥] (시평 44위) | (주)성도이엔지 건설현장 안전관리자 채용 | **[건설안전기사·산업안전기사 명시]** 🏠 **[복지: 기숙사]** 자격: 건설안전기사, 산업안전기사 / 학력: 초대졸 이상 | - 안전 관련 학과 전공자 우대 - 건설현장 안전관리 경력자 우대 - 건설현장 소방안전관리자 자격증 소지자 우대 7. | 2026-10-23 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55222267) |
 | 경력무관 · 일반 산업<br>연봉 미기재 | 엘비세미콘(주) [코스닥] | LB세미콘 구미 환경관리팀 안전관리자 모집 | **[산업안전기사·ISO 45001 명시]** 🏠 **[복지: 자녀학자금·기숙사]** 자격: 산업안전기사, 소방설비기사 / 학력: 4년제) 졸업 이상 ㆍ | 위험물산업기사 · ㆍ위험물산업기사 등 유관 자격증 보유자 ㆍ사업장(공장) 안전관리, 소방안전관리 경력자 | 2026-10-25 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55260779) |
@@ -43,22 +66,22 @@
 | 경력무관 · 일반 산업<br>면접 후 결정 · 신입 초봉 4,465만원 (2022) | 🔴 **삼성물산 (주)** [대기업 계열] [코스피] | [삼성물산] 하이테크 현장 안전관리자 채용의건 | **[건설안전기사 명시]** 🌐 [복지(인터넷 조사): 노조] 학과: 안전관련학과 / 자격: 건설안전기사 / 학력: 학력무관 | • 관련 자격증 소지자 • 관련 직무 3년이상 • 하이테크현장 유경험자 🏠 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55161218) |
 | 경력무관 · 일반 산업<br>면접 후 결정 · 신입 초봉 4,465만원 (2022) | 🔴 **삼성물산 (주)** [대기업 계열] [코스피] | 삼성물산 구미 데이터센터 신축공사 안전관리자 채용 | 🌐 [복지(인터넷 조사): 노조] • 경력 무관 • 고등학교졸업이상 • 건설현장 안전관리 수행 가능자 • 산업안전 관련 자격 보유자 • 안전보건 법규 이해 있는자 • 현장 점검 및 문서화 가능한 자 📋 / 학력: 고졸↑ | • 건축공사 현장 안전관리 경험자 • 대형 건설현장 안전관리 경험자 • 위험성평가 운영 경험 • 협력사 안전관리 경험자 • 안전보건 시스템 운영 경험자 🏠 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55219167) |
 | 경력 요건 확인 필요 · 일반 산업<br>연봉 미기재 | 🔴 **Digital Edge DC** [외국계] | 안전관리자 | - | - | 채용 시 마감 | [LinkedIn](https://www.linkedin.com/jobs/view/4467167374/) |
-| 경력무관 · 일반 산업<br>면접 후 결정 · 신입 초봉 약 4,622만원 (자소설닷컴 추정) | 🔵 **두산로지스틱스솔루션(주)** [대기업 계열] | 두산로지스틱스솔루션 현장안전관리 계약직 채용 | **[건설안전기사 명시]** 자격: 건설안전기사 / 학력: 대졸↑ | 보건관리자 · - 현장안전관리 선임 경력 3년 이상 우대 - 보건관리자 자격 보유자 우대 - 물류자동화 업계(동종업계) 경험자 우대 🏠 | ⏰ **2026-10-16 (D-3)** | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55032055) |
+| 경력무관 · 일반 산업<br>면접 후 결정 · 신입 초봉 약 4,622만원 (자소설닷컴 추정) | 🔵 **두산로지스틱스솔루션(주)** [대기업 계열] | 두산로지스틱스솔루션 현장안전관리 계약직 채용 | **[건설안전기사 명시]** 자격: 건설안전기사 / 학력: 대졸↑ | 보건관리자 · - 현장안전관리 선임 경력 3년 이상 우대 - 보건관리자 자격 보유자 우대 - 물류자동화 업계(동종업계) 경험자 우대 🏠 | ⏰ **2026-10-13 (오늘 마감)** | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55032055) |
 | 경력무관 · 일반 산업<br>연봉 미기재 · 신입 초봉 4,500만원 (2025) | 🔵 **현대로템(주)** [대기업 계열] [코스피] | [현대로템] 현장 안전관리 담당 계약직 채용 | 🌐 [복지(인터넷 조사): 자녀학자금·기숙사·노조] 학력: 초대졸↑ | - | 2026-10-17 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55061453) (이전 수집) |
 | 신입 · 일반 산업<br>연봉 미기재 | 🔵 **하이브** [대기업 계열] [대기업 신입 공채] [코스피] | [하이브] 안전관리지원* (중대재해처벌법 전담) | **[산업안전기사 명시]** 🟣 **[외국어·영어 우대]** 자격: 산업안전기사 / 영어: 토익, 오픽 | ] -산업안전 관련 전공자 -중대재해처벌법 전담 조직 초기 구축 경험을 보유한 분 -안전 기획 업무 경험을 보유한 분 -글로벌 기업에서 HQ로써 안전관리 업무 경험을 보유한 분 -공연장, 촬영현장 | 2026-11-23 | [링커리어](https://linkareer.com/activity/345763) |
-| 경력무관 · 건설<br>6,185,953원 · 신입 초봉 3,515만원 (2025) | 🔵 **포스코이앤씨** [대기업 계열] (시평 8위) | [포스코이앤씨] 검단 레이크파크 안전 관리자 채용 | 🏠 **[복지: 기숙사]** 경력 무관 6. / 학력: 학력무관 | - | 2026-12-30 | [워커](https://www.worker.co.kr/job/view.asp?jobid=all&no=1414989&urgent=&chk=yes&goodjob=) |
+| 경력무관 · 건설<br>6,185,953원 · 신입 초봉 3,515만원 (2025) | 🔵 **포스코이앤씨** [대기업 계열] (시평 8위) | [포스코이앤씨] 검단 레이크파크 안전 관리자 채용 | 🏠 **[복지: 기숙사]** 경력 무관 6. / 학력: 학력무관 | - | 2026-12-30 | [워커](https://www.worker.co.kr/job/view.asp?jobid=all&no=1414989&urgent=&chk=yes&goodjob=) (이전 수집) |
 | 신입·경력 · 일반 산업<br>회사 내규에 따름 · 신입 초봉 5,600만원 (2025) | 🔵 **현대엘리베이터** [대기업 계열] [코스피] | 현장안전관리자 계약직 채용 | 🌐 [복지(인터넷 조사): 자녀학자금·기숙사·주택지원·노조] 학력: 고졸이상 | - | 채용 시 마감 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50125435?Oem_Code=C1) |
 | 확인 필요 · 일반 산업<br>회사 내규에 따름 · 신입 초봉 4,500만원 (2025) | 🔵 **현대로템** [대기업 계열] [코스피] | 안전관리자 상시인재 Pool | 🌐 [복지(인터넷 조사): 자녀학자금·기숙사·노조] 경력 신입·경력 | - | 채용 시 마감 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50077074?Oem_Code=C1) |
 | 경력무관 · 일반 산업<br>면접 후 결정 | 🔵 **효성중공업(주) 창원1공장** [대기업 계열] | 효성중공업(주) 사외 설치현장 안전관리자 채용 | **[건설안전기사·산업안전기사 명시]** 자격: 산업안전산업기사, 건설안전산업기사 / 학력: 학력무관 | • 안전 관련 전공 전문학사(2년제) 이상 학위 소지자 • 안전관리 실무 경력자 🏠 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55247335) (이전 수집) |
 | 경력무관 · 일반 산업<br>연봉 미기재 · 신입 초봉 3,100만원 (캐치) | 🔵 **(주)이터널그룹** [대기업 계열] | [보끄레/이터널그룹] 안전·보건 관리자 | 학력: 초대졸↑ | - | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55162888) (이전 수집) |
-| 신입 · 일반 산업<br>면접 후 협의 · 신입 초봉 3,840만원 (2022) | 🌐 **프라다코리아** [외국계] | [PRADA Korea] Safety Officer 안전관리자 (Contract) | **[산업안전기사 명시]** 자격: 산업안전지도사, 산업안전산업기사 | - | 채용 시 마감 | [피플앤잡](https://www.peoplenjob.com/jobs/6294220) |
+| 신입 · 일반 산업<br>면접 후 협의 · 신입 초봉 3,840만원 (2022) | 🌐 **프라다코리아** [외국계] | [PRADA Korea] Safety Officer 안전관리자 (Contract) | **[산업안전기사 명시]** 자격: 산업안전지도사, 산업안전산업기사 | - | 채용 시 마감 | [피플앤잡](https://www.peoplenjob.com/jobs/6294220) (이전 수집) |
 | 경력무관 · 일반 산업<br>면접 후 결정 · 신입 초봉 3,780만원 (2019) | 삼호개발(주) [코스피] | 삼호개발(주) 강남 빗물배수터널 건설공사 현장 안전관리자 채용 | **[건설안전기사·산업안전기사 명시]** 학력: 학력무관 | 건설안전기사, 건설안전산업기사, 산업안전기사 · • 전공: 건축/토목/조경/도시공학, 산업공학, 공학계열 • 보유역량: 해당직무 근무경험, 문서작성 우수자 • 자격증: 건설안전기사, 건설안전산업기사, 산업안전기사 🏠 | 2026-11-07 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55237670) |
 
 ## [인턴] 2건
 
 | 구분 · 연봉 | 업체명 | 공고명 | 지원 자격 (학과·자격·영어·학력) | 우대 사항 | 접수기한 | 출처 |
 |---|---|---|---|---|---|---|
-| 신입 · 일반 산업<br>면접 후 결정 | 🔵 **코오롱인더스트리(주)** [대기업 계열] [대기업 신입 공채] | 채용전환형 인턴 모집(안전관리) | 🟣 **[외국어·영어 우대]** 🏠 **[복지: 자녀학자금·주택지원]** 학력: 4년제 정규대학 기졸업자 | - | 2026-10-19 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55220287) (이전 수집) |
+| 신입 · 일반 산업<br>면접 후 결정 | 🔵 **코오롱인더스트리(주)** [대기업 계열] [대기업 신입 공채] | 채용전환형 인턴 모집(안전관리) | 🟣 **[외국어·영어 우대]** 🏠 **[복지: 자녀학자금·주택지원]** 학력: 4년제 정규대학 기졸업자 | - | 2026-10-19 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55220287) |
 | 신입 · 일반 산업<br>연봉 미기재 · 신입 초봉 4,720만원 (2022) | 🌐 **도쿄일렉트론코리아(주)** [외국계] | 도쿄일렉트론코리아 2026년 하반기 채용 (전기·전력제어 안전관리자, 채용연계형 인턴) | 🟣 **[외국어·영어 우대]** 🤖 **[AI 우대]** 🏠 **[복지: 주택지원]** 🌐 [복지(인터넷 조사): 자녀학자금·기숙사] 영어: TOEIC 800점 이상, OPIc IM3 이상 | ㆍ일본어 가능자 우대 (JLPT N3 이상 또는 JPT 500점 이상) Process Engineer (채용연계형 학사/석사 인턴사원) 00명 / 화성, 평택, 이천, 청주, 발안, 용인 주요 업무 | 2026-10-18 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55173611) |
 
 ## [고용형태 미표기] 2건
@@ -73,22 +96,23 @@
 **사이트별 수집 현황**
 
 - 충북대 안전공학과: 수집 실패
+- 피플앤잡: 수집 실패 → 직전 브리핑에서 접수 중 공고 4건 유지
 - 원티드: 수집 실패
 - 캐치: 수집 실패
 - 잡코리아: 목록 139, 채택 7, 사용자 삭제 41, 대상 기업 아님 56, 계약직(관심 기업 외) 3, 영업직 4, 중복(상위 사이트 우선) 1, 경력직 1, 안전 직무 아님 2, 건설사(시평 100위 밖) 3, 담당 업무에 안전 없음 1, 제외 업체명 8, 안전 주업무 아님 11, 안전 주업무 아님(겸직) 1
-- 사람인: 목록 539, 채택 8, 영업직 6, 대상 기업 아님 114, 사용자 삭제 167, 경력직 17, 계약직(관심 기업 외) 3, 제외 업체명 10, 건설사(시평 100위 밖) 10, 안전 주업무 아님(겸직) 8, 담당 업무에 안전 없음 100, 안전 직무 아님 63, 안전 주업무 아님 26, 대리급 이상 3, 보건관리자 4, 직전 브리핑에서 접수 중 공고 7건 유지
-- 링커리어: 목록 34, 채택 1, 사용자 삭제 15, 경력직 2, 담당 업무에 안전 없음 4, 건설사(시평 100위 밖) 2, 안전 직무 아님 4, 안전 주업무 아님 4, 대상 기업 아님 2
-- 워커: 목록 237, 채택 1, 사용자 삭제 12, 안전 직무 아님 188, 대상 기업 아님 3, 경력직 30, 계약직(관심 기업 외) 1, 안전 주업무 아님(겸직) 2
+- 사람인: 목록 623, 채택 10, 영업직 6, 대상 기업 아님 125, 사용자 삭제 167, 경력직 16, 계약직(관심 기업 외) 3, 제외 업체명 13, 건설사(시평 100위 밖) 8, 안전 주업무 아님(겸직) 9, 담당 업무에 안전 없음 127, 안전 직무 아님 78, 안전 주업무 아님 52, 대리급 이상 5, 보건관리자 4, 직전 브리핑에서 접수 중 공고 6건 유지
+- 링커리어: 목록 35, 채택 2, 사용자 삭제 14, 경력직 2, 담당 업무에 안전 없음 4, 건설사(시평 100위 밖) 2, 안전 직무 아님 4, 안전 주업무 아님 5, 대상 기업 아님 2
+- 워커: 목록 239, 채택 0, 안전 직무 아님 193, 사용자 삭제 12, 대상 기업 아님 1, 경력직 30, 계약직(관심 기업 외) 1, 안전 주업무 아님(겸직) 2, 직전 브리핑에서 접수 중 공고 1건 유지
 - 서울과기대 안전공학과: 목록 10, 채택 0, 마감 1, 오래된 게시글 9
 - 인천대 안전공학과: 목록 11, 채택 0, 사용자 삭제 4, 마감 3, 채용 공고 아님 1, 경력직 2, 오래된 게시글 1
 - 부경대 안전공학과: 목록 20, 채택 0, 채용 공고 아님 1, 오래된 게시글 19
-- 피플앤잡: 목록 114, 채택 5, 경력직 75, 안전 직무 아님 14, 사용자 삭제 10, 중복(상위 사이트 우선) 1, 대리급 이상 1, 담당 업무에 안전 없음 3, 안전 주업무 아님 3, 영업직 2
-- 기업 채용 페이지: 목록 25, 채택 0, 한국 근무 아님 23, 대리급 이상 1, 사용자 삭제 1
-- 직접 추가: 목록 84, 채택 8, 사용자 삭제 51, 안전 주업무 아님 4, 중복(상위 사이트 우선) 4, 대상 기업 아님 7, 대리급 이상 2, 건설사(시평 100위 밖) 1, 안전 주업무 아님(겸직) 4, 제외 업체명 1, 계약직(관심 기업 외) 1, 다른 직무(배차·방사선·소방안전) 1
+- 기업 채용 페이지: 목록 59, 채택 23, 경력직 15, 중복(상위 사이트 우선) 9, 보건관리자 1, 대리급 이상 5, 영업직 4, 안전 직무 아님 1, 사용자 삭제 1
+- 직접 추가: 목록 84, 채택 7, 사용자 삭제 51, 안전 주업무 아님 4, 중복(상위 사이트 우선) 5, 대상 기업 아님 7, 대리급 이상 2, 건설사(시평 100위 밖) 1, 안전 주업무 아님(겸직) 4, 제외 업체명 1, 계약직(관심 기업 외) 1, 다른 직무(배차·방사선·소방안전) 1
 
 **수집 실패**
 
 - 충북대 안전공학과: 학과 서버가 해외 접속(GitHub Actions)에 404를 반환 — 국내 IP에서만 열림 (학교 본 사이트는 정상)
+- 피플앤잡: ConnectTimeout: timed out
 - 원티드: 사이트가 해외·자동 접속(GitHub Actions)을 403으로 차단 — 수집 불가
 - 캐치: 사이트가 해외·자동 접속(GitHub Actions)을 403으로 차단 — 수집 불가
 
@@ -102,12 +126,12 @@
 | Corning | 채용 홈 접속 실패(HTTPStatusError) |
 | Dow | 채용 홈 접속 실패(HTTPStatusError) |
 | Honeywell | Workday 등 공개 API 없음 — 자체 검색(스크립트 렌더링)이라 수집 불가 |
-| 3M | 한국 HSE 12건 |
-| Applied Materials | 한국 HSE 2건 |
-| Micron | 한국 HSE 1건 |
-| Equinix | 한국 HSE 0건 |
-| Air Liquide | 한국 HSE 8건 |
-| Air Products | 한국 HSE 2건 |
+| 3M | HSE 23건 (해외 11건) |
+| Applied Materials | HSE 7건 (해외 5건) |
+| Micron | HSE 5건 (해외 4건) |
+| Equinix | HSE 0건 (해외 0건) |
+| Air Liquide | HSE 15건 (해외 7건) |
+| Air Products | HSE 9건 (해외 7건) |
 | BASF | 한국 HSE 0건 |
 
 _지원 자격·우대 사항은 상세 페이지에서 자동 추출한 요약입니다. 지원 전 원문을 확인하세요._
