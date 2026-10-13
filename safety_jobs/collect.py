@@ -743,6 +743,7 @@ def src_manual(f: Fetcher):
         if not src:  # DB(manual)에서 옮겨 온 항목은 source가 없을 수 있다 → 주소로 판단
             u = it.get("url") or ""
             src = ("사람인" if re.search(r"saramin\.co\.kr/.*rec_idx=\d+", u)
+                   else "잡코리아" if re.search(r"jobkorea\.co\.kr/Recruit/GI_Read/\d+", u)
                    else "LinkedIn" if "linkedin.com/jobs/" in u else "직접 추가")
         p = Posting(src, clean(it.get("title") or f"{it['company']} 채용"), clean(it["company"]),
                     it.get("url") or f"manual:{it['company']}:{it.get('title', '')}", clean(it.get("title", "")))
