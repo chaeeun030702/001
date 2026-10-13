@@ -317,6 +317,50 @@ def src_saramin(f: Fetcher):
     return out
 
 
+GONGCHAE_NOTICE = "https://www.saramin.co.kr/zf_user/help/live/view?idx=109953&listType=notice"  # [NOW] 2026 하반기 대기업 신입·인턴 공채 일정 모음
+GONGCHAE_LIST = "https://www.saramin.co.kr/zf_user/help/live?listType=notice"
+GONGCHAE_PICK_RE = re.compile(r"안전|보건|환경|HSE|EHS|SHE|공채|공개\s*채용|신입\s*사원|신입\s*직원|대졸|채용형\s*인턴|채용연계|인턴|각\s*부문|부문별|수시\s*채용", re.I)
+GONGCHAE_STATUS = {}
+
+
+def src_saramin_gongchae(f: Fetcher):
+    """사람인 「하반기 대기업 신입·인턴 공채 일정 모음」(사용자 요청 2026-10-13: 항상 조사).
+    공고 링크를 모아 상세 본문으로 안전 직무 여부를 판정한다(제목에 안전이 없는 공채는 담당 업무로 판정)."""
+    url = GONGCHAE_NOTICE
+    try:  # 다음 시즌 글로 바뀌었으면 공지 목록에서 최신 '공채 일정 모음'을 찾는다
+        lst = BeautifulSoup(f.get(GONGCHAE_LIST, tries=1), "html.parser")
+        for a in lst.find_all("a", href=True):
+            if re.search(r"공채\s*일정\s*모음", a.get_text(" ")) and "idx=" in a["href"]:
+                url = urljoin("https://www.saramin.co.kr", a["href"])
+                break
+    except Exception as e:
+        GONGCHAE_STATUS["목록"] = f"공지 목록 실패({type(e).__name__}) — 기본 글 사용"
+    s = BeautifulSoup(f.get(url), "html.parser")
+    out, seen, n_link = [], set(), 0
+    for a in s.find_all("a", href=re.compile(r"rec_idx(?:=|%3D)\d+")):
+        rec = re.search(r"rec_idx(?:=|%3D)(\d+)", a["href"]).group(1)
+        n_link += 1
+        if rec in seen:
+            continue
+        seen.add(rec)
+        box = a.find_parent(["li", "tr"]) or a.find_parent("div") or a
+        texts = [t for t in (clean(x) for x in box.stripped_strings) if t]
+        title = clean(a.get("title") or a.get_text(" ")) or (texts[1] if len(texts) > 1 else "")
+        company = next((t for t in texts if t != title and not re.search(r"^D-|마감|~|\d{1,2}[./]\d{1,2}|지원하기|더보기|채용\s*중", t)), "")
+        if len(title) < 4 or not GONGCHAE_PICK_RE.search(title):
+            continue
+        p = Posting("사람인", title, company, f"https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx={rec}", " ".join(texts)[:400])
+        p.company_type = "대기업"  # 대기업 신입·인턴 공채 모음에 실린 공고
+        dl = next((t for t in texts if re.search(r"~\s*\d{1,2}[./]\d{1,2}|\d{1,2}[./]\d{1,2}\s*\(|마감", t)), "")
+        p.deadline = dl
+        p.extra = {"rec_idx": rec, "query": "공채 모음", "via": "사람인 공채 모음"}
+        out.append(p)
+    GONGCHAE_STATUS["공채 모음"] = f"글 {url.split('idx=')[-1].split('&')[0]} · 링크 {n_link} · 후보 {len(out)}"
+    if not n_link:
+        raise RuntimeError("공채 모음 글에서 공고 링크를 찾지 못함(페이지 구조 변경 가능)")
+    return out
+
+
 def src_linkareer(f: Fetcher):
     acts = {}
     for kw in ("안전관리자", "HSE", "EHS", "산업안전기사", "안전"):
@@ -820,6 +864,7 @@ def foreign_level(p: Posting):
 SOURCES = [
     ("잡코리아", src_jobkorea, False),
     ("사람인", src_saramin, False),
+    ("사람인 공채 모음", src_saramin_gongchae, False),
     ("링커리어", src_linkareer, False),
     ("워커", src_worker, False),
     ("서울과기대 안전공학과", make_board_source(
@@ -2836,6 +2881,8 @@ def main():
                                      or p.extra.get("first_seen") or today.isoformat())
             kept.append(p)
         stats[name] = ", ".join(f"{k} {v}" for k, v in counts.items())
+        if name == "사람인 공채 모음" and GONGCHAE_STATUS:
+            stats[name] = " · ".join(GONGCHAE_STATUS.values()) + ", " + stats[name]
 
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
