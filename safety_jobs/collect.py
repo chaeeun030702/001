@@ -36,7 +36,8 @@ from bs4 import BeautifulSoup
 KST = dt.timezone(dt.timedelta(hours=9))
 Q = quote("안전관리자")
 # 검색어: 안전관리자 + 업종 무관 HSE/EHS 직무 + 자격증 명시 공고
-KEYWORDS = ["안전관리자", "HSE", "EHS", "안전보건", "산업안전기사", "건설안전기사", "NEBOSH", "IOSH", "ISO45001", "안전공학", "안전"]
+KEYWORDS = ["안전관리자", "HSE", "EHS", "안전보건", "산업안전기사", "건설안전기사", "NEBOSH", "IOSH", "ISO45001", "안전공학", "안전",
+            "해외 안전관리자", "해외현장 안전", "해외 HSE"]  # 해외 근무 공고도 찾는다 (사용자 요청 2026-10-13)
 # 우대 강조(보라색): 외국어·영어 능통 / NEBOSH / IOSH / CSP
 LANG_RE = re.compile(r"(?:영어|외국어|어학|English|중국어|일본어|베트남어|스페인어)\s*(?:회화\s*)?(?:능통|능숙|우수|가능|원활|비즈니스|원어민|fluent|business)"
                      r"|(?:TOEIC|토익|OPIc|오픽|TEPS|텝스|TOEIC\s*Speaking|토익\s*스피킹)\s*[:：]?\s*(?:\d{2,3}|IM|IH|AL|Lv|Level)"
@@ -530,6 +531,11 @@ def _html_text(h):
     return clean(BeautifulSoup(h or "", "html.parser").get_text(" "))
 
 
+EN_SENIOR_RE = re.compile(r"(?<![A-Za-z])(?:Senior|Sr\.?|Manager|Lead|Principal|Director|Head|Supervisor|Superintendent|Expert|Chief|VP|Staff|III|IV)(?![A-Za-z])", re.I)
+OVERSEAS_PER_COMPANY = 15  # 기업 채용 페이지에서 해외 근무 공고는 회사당 최대 15건
+OVERSEAS_TITLE_RE = re.compile(r"해외|Overseas|중동|사우디|UAE|카타르|베트남|인도네시아|미국\s*(?:현장|법인)|유럽")
+
+
 def _workday(f: Fetcher, name, tenant, wd, site, sector):
     base = f"https://{tenant}.{wd}.myworkdayjobs.com"
     api = f"{base}/wday/cxs/{tenant}/{site}/jobs"
@@ -550,20 +556,23 @@ def _workday(f: Fetcher, name, tenant, wd, site, sector):
             if len(posts) < 20 or (q != "Korea" and off >= 40):
                 break
             time.sleep(0.3)
-    out = []
+    out, n_overseas = [], 0
     for path, jp in found.items():
         title = clean(jp.get("title", ""))
         loc = clean(jp.get("locationsText", ""))
         if not EN_SAFETY_TITLE_RE.search(title):
             continue
         multi = re.search(r"\d+\s*(?:Locations|개\s*근무지)", loc)
-        if not (KOREA_LOC_RE.search(f"{loc} {title}") or multi):
-            continue
+        overseas = not (KOREA_LOC_RE.search(f"{loc} {title}") or multi)
+        if overseas:  # 해외 근무 공고도 싣되(사용자 요청 2026-10-13), 신입이 지원하기 어려운 직급은 뺀다
+            if EN_SENIOR_RE.search(title) or n_overseas >= OVERSEAS_PER_COMPANY:
+                continue
+            n_overseas += 1
         p = Posting("기업 채용 페이지", title, name, f"{base}/{site}{path}", f"{title} {loc} {jp.get('postedOn', '')}")
         p.company_type = "외국계"
         p.deadline = "채용 시 마감"  # Workday 공고에는 마감일이 없다
         p.extra = {"query": "Workday", "sector": sector, "loc": loc,
-                   "detail_api": f"{base}/wday/cxs/{tenant}/{site}{path}", "need_korea": bool(multi and not KOREA_LOC_RE.search(loc))}
+                   "detail_api": f"{base}/wday/cxs/{tenant}/{site}{path}", "need_korea": False, "overseas": overseas}
         out.append(p)
     return out
 
@@ -599,7 +608,7 @@ def _rmk_basf(f: Fetcher):
 
 
 def src_company_careers(f: Fetcher):
-    """외국계 기업 채용 페이지(Workday 등)에서 한국 근무 HSE/EHS/Safety 공고."""
+    """외국계 기업 채용 페이지(Workday 등)의 HSE/EHS/Safety 공고 (한국 근무 + 해외 근무)."""
     out = []
     targets = list(WORKDAY)
     for name, home, sector in WORKDAY_DISCOVER:
@@ -615,7 +624,7 @@ def src_company_careers(f: Fetcher):
     for name, tenant, wd, site, sector in targets:
         try:
             got = _workday(f, name, tenant, wd, site, sector)
-            CAREER_STATUS[name] = f"한국 HSE {len(got)}건"
+            CAREER_STATUS[name] = f"HSE {len(got)}건 (해외 {sum(1 for q in got if q.extra.get('overseas'))}건)"
             out += got
         except Exception as e:
             CAREER_STATUS[name] = f"실패({type(e).__name__})"
@@ -2257,6 +2266,9 @@ def new_pill(p, today):
 def group_pills(p):
     cls = {"대기업 계열": "pb", "외국계": "pf"}
     out = "".join(f'<span class="pill {cls[g]}">{g}</span>' for g in p.extra.get("groups", []))
+    if p.extra.get("overseas") or OVERSEAS_TITLE_RE.search(p.title):
+        loc = p.extra.get("loc", "") if p.extra.get("overseas") else ""
+        out += f'<span class="pill pf" title="{html.escape(loc)}">해외 근무{(" · " + html.escape(loc[:24])) if loc else ""}</span>'
     if p.extra.get("listed"):
         out += f'<span class="pill pk">{p.extra["listed"]} 상장</span>'
     return out
@@ -2526,7 +2538,7 @@ def render_html(postings, failures, now, stats):
               '<span class="pill keep">API 없음</span>' if "API 없음" in v else '<span class="pill bad">접속 실패</span>')
         crows.append(f"<tr><td>{e(k)}</td><td>{st}</td><td class='dl'>{m.group(1) if m else '-'}</td>"
                      f"<td>{'-' if m else e(v)}</td></tr>")
-    careers = ('<section class="card" id="careers"><h2>기업 채용 페이지 현황<span class="n">한국 근무 HSE·EHS·Safety 공고 기준</span></h2>'
+    careers = ('<section class="card" id="careers"><h2>기업 채용 페이지 현황<span class="n">HSE·EHS·Safety 공고 기준 (해외 근무는 신입 지원 가능 직급만, 회사당 15건)</span></h2>'
                '<div class="scroll"><table style="min-width:560px"><thead><tr><th>기업</th><th>상태</th><th>한국 HSE 공고</th><th>비고</th></tr></thead>'
                f'<tbody>{"".join(crows)}</tbody></table></div></section>') if crows else ""
     def rows5(rows, pill_new=False):
