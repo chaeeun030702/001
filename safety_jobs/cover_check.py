@@ -7,7 +7,7 @@
 기업 분석·머리말은 제출하지 않는 참고 영역이라 검사하지 않는다.
 
   [오류] 타사 이름·브랜드·슬로건 — 지원 회사가 아닌 건설사/대기업 계열/주거 브랜드/다른 자소서에서 온 문구
-  [오류] '수료'(수료증 제외) · 논문 수상 표현 · 자격 '취득/보유' 표현 · '연휴 당직' 옛 표현 · ILO 한글 미병기
+  [오류] '수료'(수료증 제외) · 논문 수상 표현(확정 문안에 있는 수상만 허용) · 자격 '취득/보유' 표현 · '연휴 당직' 옛 표현 · ILO 한글 미병기
   [오류] 중국어 병기 검증 수치(232곳·227곳) · '외국어'(→ 다국어) · '전기안전 데이터베이스' 단독 표기(→ 전기안전과 건설안전 분야)
   [오류] 글자수 한도 초과 / [경고] 한도의 80% 미만 또는 98% 초과
   [오류] 확정 문안(아카이브 01_guide.md 의 '### 확정 문안' 블록) — (아버지·진로 변경) 필수. 졸업연구는
@@ -19,6 +19,7 @@
          2022년 7월 사고·사전작업허가서·e-safety 등)이 두 문항 이상에 나옴
   영문 자기소개서(외국계 공고, 문항 원문에 'English' 또는 '영문'이 든 문항)는 한국어 답변을 영어로 다시 쓰는
   별도 서류라 반복·확정 문안·한국어 표현 검사에서 빼고, 타사 문구·글자수·영문 수상/자격 표현만 본다
+  (영문 수상 표현은 확정 문안에 수상이 없을 때만 오류)
 
     python3 safety_jobs/cover_check.py drafts/2026-10-01_xxxx.md [...] --guide archive/01_guide.md [--briefing briefings/latest.json]
 
@@ -114,7 +115,16 @@ def is_english(q):
     return bool(re.search(r"English|영문", q.get("question", "")))
 
 
-EN_PATS = [(r"\b(won|awarded|award-winning|prize)\b", "영문 논문 수상 표현(submitted까지만)"),
+AWARD_KR = r"(?<!최)우수상|최우수상|수상했|수상하|입상"
+EN_AWARD = r"\b(won|awarded|award-winning|prize)\b"
+
+
+def canon_awards(canon):
+    """확정 문안에 들어 있는 수상 표현 — 답변에는 이것만 허용한다(없으면 수상 표현 금지)."""
+    return set(re.findall(AWARD_KR, " ".join(canon.values())))
+
+
+EN_PATS = [(EN_AWARD, "영문 논문 수상 표현(확정 문안에 수상이 없으면 submitted까지만)"),
            (r"\b(hold|holds|obtained|earned|certified)\b[^.]{0,40}(Industrial Safety Engineer|Construction Safety Engineer|NEBOSH|Internal Auditor)",
             "영문 자격 취득·보유 표현('preparing for')"),
            (r"\bcertificate of completion\b|\bgraduated\b", "영문 '수료/졸업' 표현 확인('completed' 과정·'expected to graduate')")]
@@ -127,6 +137,7 @@ def check(path, names, canon):
     company = meta.get("company", "")
     own = own_tokens(company)
     errs, warns = [], []
+    awards = canon_awards(canon)
     whole = "\n".join(f"{q['sub']}\n{q['answer']}" for q in qs)
 
     def hits(text):
@@ -158,7 +169,10 @@ def check(path, names, canon):
             errs.append(f"{q['id']}: 글자수 초과 {n}/{lim}")
         elif n < lim * 0.8 or n > lim * 0.98:
             warns.append(f"{q['id']}: 글자수 {n}/{lim} ({n * 100 // lim}%) — 권장 80~98%")
-        for pat, msg in [(r"수료(?!증)", "'수료' → '이수'"), (r"(우수상|최우수상|수상했|수상하|입상)", "논문 수상 표현(제출까지만)"),
+        bad = sorted({w for w in re.findall(AWARD_KR, text) if w not in awards})
+        if bad:
+            errs.append(f"{q['id']}: 논문 수상 표현 {'·'.join(bad)} — 확정 문안에 있는 수상만 씀")
+        for pat, msg in [(r"수료(?!증)", "'수료' → '이수'"),
                          (r"(산업안전기사|건설안전기사|NEBOSH|ISO\s*45001 내부심사원)[^.。]{0,15}(취득했|보유|소지)", "자격 취득·보유 표현('취득 준비 중')"),
                          (r"연휴 당직", "옛 표현 '연휴 당직'"), (r"(?<!\()ILO(?!\))", "ILO 한글 병기('국제노동기구(ILO)')"),
                          (r"232곳|227곳", "중국어 병기 검증 수치는 쓰지 않음"), (r"찾아 읽어 본", "'찾아 읽어 본' → '찾아 분석해 본'"), (r"외국어", "'외국어' → '다국어(영어·중국어·베트남어 등)'"),
@@ -202,6 +216,8 @@ def check(path, names, canon):
         elif n < lim * 0.6:
             warns.append(f"{q['id']}(영문): 글자수 {n}/{lim} — 커버레터는 한도의 60~98%")
         for pat, msg in EN_PATS:
+            if pat == EN_AWARD and awards:
+                continue
             if re.search(pat, text, re.I):
                 errs.append(f"{q['id']}(영문): {msg}")
         for s in SLOGANS:

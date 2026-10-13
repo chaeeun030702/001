@@ -677,7 +677,7 @@ PAGE = """<title>자기소개서 일일 브리핑</title>
 {foreign}
 <section class="card"><h2>제출 전 확인</h2><ul class="rules">
 <li><b>문항·글자수</b> 공고 원문과 대조 (추정 문항이면 교체)</li>
-<li><b>수상 표현 금지</b> 논문은 '제출'까지만</li>
+<li><b>수상 표현</b> 논문 수상은 확정 문안대로만</li>
 <li><b>자격</b> 산업안전기사·ISO45001·NEBOSH는 '취득 준비 중'</li>
 <li><b>필수 포함</b> AI 교육 5건 · 해외 안전 교육 15건</li>
 <li><b>웹사이트</b> e-safety.vercel.app 표기</li>
