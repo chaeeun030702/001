@@ -2127,8 +2127,21 @@ SAFETY_ROLE_RE = re.compile(r"(?<![보])안전(?!\s*(?:진단|지원|용품|장�
 MIXED_ROLE = r"총무|생산|품질|공사|공무|시설|설비|기계|물류|공정|사무|행정|보전|시공|정비|유지보수|구매|인사|경영지원"
 MIXED_ROLE_RE = re.compile(rf"(?:{MIXED_ROLE})\s*(?:관리자?|담당자?|팀|직)?\s*(?:/|및|,|·|&|와|과)\s*안전|안전\s*(?:관리자?|담당자?)?\s*(?:/|및|,|·|&)\s*(?:{MIXED_ROLE})")
 NOT_SAFETY_JOB_RE = re.compile(r"공모전|선착순|무료\s*교육|교육생|사진\s*공모|경진\s*대회|설명회|안전\s*(?:관리\s*)?요원|안전\s*진단|개발자|개발\s*(?:연구)?직|연구원|연구직|설치\s*파트너|강사")
-AGENCY_SAFETY_RE = re.compile(r"[가-힣]*안전[가-힣]*(?:교육원|심판원|진흥원|연구원|공단|공사|체험장|체험관|센터|본부|청|부)(?![가-힣])")
+AGENCY_SAFETY_RE = re.compile(r"[가-힣]*안전[가-힣]*(?:교육원|심판원|진흥원|연구원|공단|공사|체험장|체험관)(?![가-힣])")
+# 공고 내용(제목·담당 업무)이 총무+안전, 전기+안전처럼 복합업무인 공고 (사용자 요청 2026-10-13, 환경안전은 포함)
+COMPOSITE_RE = re.compile(r"총무\s*(?:업무\s*)?(?:[/·,&]|및|겸)?\s*안전|안전\s*(?:관리\s*)?(?:[/·,&]|및|겸)\s*총무|"
+                          r"전기\s*(?:[/·,&]|및|겸)?\s*안전|안전\s*(?:관리\s*)?(?:[/·,&]|및|겸)\s*전기")
 OPEN_CALL_RE = re.compile(r"공채|공개\s*채용|신입\s*사원|각\s*부문|인재\s*(?:pool|풀)|상시\s*채용", re.I)
+
+
+def duty_safety_share(p) -> float:
+    """담당 업무 항목(ㆍ•-▶ 등으로 나뉜 줄) 중 안전 업무가 차지하는 비율. 항목을 못 읽으면 0."""
+    d = DUTY_COMPLY_RE.sub(" ", duty_text((p.detail_text or "")[:12000]))
+    d = re.split(rf"{QUAL_HEAD}|자격\s*요건|지원\s*자격|우대\s*사항", d)[0]
+    items = [x.strip() for x in re.split(r"[ㆍ•·▶■□○●◆◇※\n]|\s-\s|(?<!\d)\d{1,2}\.\s", d) if len(re.sub(r"\W", "", x)) >= 3]
+    if not items:
+        return 0.0
+    return sum(1 for x in items if DUTY_SAFETY_RE.search(x)) / len(items)
 
 
 def safety_main_reason(p) -> str:
@@ -2142,17 +2155,19 @@ def safety_main_reason(p) -> str:
         return "안전 주업무 아님"
     if MIXED_ROLE_RE.search(t):
         return "안전 주업무 아님(겸직)"
+    if COMPOSITE_RE.search(t) or COMPOSITE_RE.search(duty_text((p.detail_text or "")[:12000])):
+        return "안전 주업무 아님(복합업무)"
     has_safety = SAFETY_ROLE_RE.search(CERT_NAME_RE.sub(" ", t))
     if not has_safety and HEALTH_ONLY_RE.search(t):
         return "보건관리자"
     if not has_safety:
         # 대기업 공채처럼 직무가 여러 개인 공고는 담당 업무에 안전 직무가 있을 때만 남긴다
-        # (제목에 생산·항만운영 같은 다른 직무를 지정한 공채는 제외)
-        if (OPEN_CALL_RE.search(t) and not re.search(rf"\([^)]*\)\s*$|-\s*\S+\s*$|{MIXED_ROLE}", t)
-                and (duty_verdict(p) or SAFETY_DUTY_RE.search(p.detail_text or ""))):
+        # (제목 끝에 생산·항만운영 같은 다른 모집 분야를 지정한 공채는 제외)
+        if (OPEN_CALL_RE.search(t) and not re.search(r"\([^)]*\)\s*$|-\s*\S+\s*$", t)
+                and duty_safety_share(p) > 0.5):
             return ""
         # '하이테크 해외현장 채용의건'처럼 제목에 직무가 없어도 담당 업무가 안전(안전기획·안전관리)이면 싣는다
-        if not re.search(rf"{MIXED_ROLE}|(?<![A-Za-z])(?:Production|Process|Quality|Maintenance|Technician|Operator|Developer|Sales)(?![A-Za-z])", t, re.I) and duty_verdict(p):
+        if duty_safety_share(p) > 0.5:  # 제목의 다른 직무 이름이 아니라 담당 업무 내용으로 판정 — 안전 업무가 절반을 넘어야 주업무
             return ""
         return "안전 주업무 아님"
     return ""
