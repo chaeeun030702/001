@@ -2903,7 +2903,8 @@ def main():
             if p.source in ("사람인", "워커", "피플앤잡") and lv.startswith("경력") and not NEWBIE_RE.search(lv):
                 counts["경력직"] = counts.get("경력직", 0) + 1
                 continue
-            if n_detail < args.max_detail and time.time() < t_detail_end:
+            must = p.extra.get("user_pick") or p.extra.get("fill_from_detail")  # 사용자가 지정한 공고는 한도와 관계없이 상세를 읽는다
+            if (n_detail < args.max_detail and time.time() < t_detail_end) or (must and not p.url.startswith("manual:")):
                 for attempt in (1, 2):  # 상세 본문이 없으면 자격·우대·복지·연봉을 못 읽으므로 한 번 더 시도
                     try:
                         t = fetch_detail(f, p)
