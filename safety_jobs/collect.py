@@ -532,7 +532,8 @@ def _html_text(h):
 
 
 EN_SENIOR_RE = re.compile(r"(?<![A-Za-z])(?:Senior|Sr\.?|Manager|Lead|Principal|Director|Head|Supervisor|Superintendent|Expert|Chief|VP|Staff|III|IV)(?![A-Za-z])", re.I)
-OVERSEAS_PER_COMPANY = 15  # 기업 채용 페이지에서 해외 근무 공고는 회사당 최대 15건
+CAREERS_OVERSEAS = False  # 외국계 기업 채용 페이지의 해외 근무 공고 (사용자 요청으로 제외, 2026-10-13)
+OVERSEAS_PER_COMPANY = 15  # 켤 경우 회사당 최대 15건
 OVERSEAS_TITLE_RE = re.compile(r"해외|Overseas|중동|사우디|UAE|카타르|베트남|인도네시아|미국\s*(?:현장|법인)|유럽")
 
 
@@ -564,7 +565,9 @@ def _workday(f: Fetcher, name, tenant, wd, site, sector):
             continue
         multi = re.search(r"\d+\s*(?:Locations|개\s*근무지)", loc)
         overseas = not (KOREA_LOC_RE.search(f"{loc} {title}") or multi)
-        if overseas:  # 해외 근무 공고도 싣되(사용자 요청 2026-10-13), 신입이 지원하기 어려운 직급은 뺀다
+        if overseas and not CAREERS_OVERSEAS:  # 외국계 회사의 해외 근무 공고는 싣지 않는다 (사용자 요청 2026-10-13)
+            continue
+        if overseas:
             if EN_SENIOR_RE.search(title) or n_overseas >= OVERSEAS_PER_COMPANY:
                 continue
             n_overseas += 1
@@ -572,7 +575,7 @@ def _workday(f: Fetcher, name, tenant, wd, site, sector):
         p.company_type = "외국계"
         p.deadline = "채용 시 마감"  # Workday 공고에는 마감일이 없다
         p.extra = {"query": "Workday", "sector": sector, "loc": loc,
-                   "detail_api": f"{base}/wday/cxs/{tenant}/{site}{path}", "need_korea": False, "overseas": overseas}
+                   "detail_api": f"{base}/wday/cxs/{tenant}/{site}{path}", "need_korea": bool(multi and not KOREA_LOC_RE.search(loc)), "overseas": overseas}
         out.append(p)
     return out
 
@@ -2538,7 +2541,7 @@ def render_html(postings, failures, now, stats):
               '<span class="pill keep">API 없음</span>' if "API 없음" in v else '<span class="pill bad">접속 실패</span>')
         crows.append(f"<tr><td>{e(k)}</td><td>{st}</td><td class='dl'>{m.group(1) if m else '-'}</td>"
                      f"<td>{'-' if m else e(v)}</td></tr>")
-    careers = ('<section class="card" id="careers"><h2>기업 채용 페이지 현황<span class="n">HSE·EHS·Safety 공고 기준 (해외 근무는 신입 지원 가능 직급만, 회사당 15건)</span></h2>'
+    careers = ('<section class="card" id="careers"><h2>기업 채용 페이지 현황<span class="n">한국 근무 HSE·EHS·Safety 공고 기준</span></h2>'
                '<div class="scroll"><table style="min-width:560px"><thead><tr><th>기업</th><th>상태</th><th>한국 HSE 공고</th><th>비고</th></tr></thead>'
                f'<tbody>{"".join(crows)}</tbody></table></div></section>') if crows else ""
     def rows5(rows, pill_new=False):
@@ -2648,6 +2651,8 @@ def carry_over(prev_path, failed, kept, stats, today):
         if p.industry == "건설" and not p.extra.get("top100"):
             continue
         if user_excluded(p):  # 브리핑에서 삭제한 공고
+            continue
+        if p.extra.get("overseas") and not CAREERS_OVERSEAS:  # 외국계 해외 근무 공고
             continue
         if p.extra.get("manual") and p.url not in manual_urls():  # 직접 추가 목록에서 지운 공고
             continue
