@@ -348,7 +348,11 @@ def src_saramin_gongchae(f: Fetcher):
         box = a.find_parent(["li", "tr"]) or a.find_parent("div") or a
         texts = [t for t in (clean(x) for x in box.stripped_strings) if t]
         title = clean(a.get("title") or a.get_text(" ")) or (texts[1] if len(texts) > 1 else "")
-        company = next((t for t in texts if t != title and not re.search(r"^D-|마감|~|\d{1,2}[./]\d{1,2}|지원하기|더보기|채용\s*중", t)), "")
+        company = next((t for t in texts if t != title and t not in title and not re.search(
+            r"^D-|마감|~|\d{1,2}[./]\d{1,2}|지원하기|더보기|채용\s*중|^(?:채용\s*(?:전환|연계)형|체험형|신입|경력|인턴|정규직|계약직|NEW|HOT|공채|수시)$", t)), "")
+        if not company:  # 제목 머리의 [회사명] 표기
+            m = re.match(r"\s*\[([^\]]{2,20})\]", title)
+            company = m.group(1) if m else ""
         if len(title) < 4 or not GONGCHAE_PICK_RE.search(title):
             continue
         p = Posting("사람인", title, company, f"https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx={rec}", " ".join(texts)[:400])
