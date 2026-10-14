@@ -104,16 +104,16 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 <script>
 /* 작업 데이터 — 에이전트를 맡길 때마다 이 블록만 고친다 (progress: 0~100) */
 var JOB={
-  updated:"2026-10-14 22:25 KST",updatedISO:"2026-10-14T13:25:00Z",
+  updated:"2026-10-14 22:30 KST",updatedISO:"2026-10-14T13:30:00Z",
   main:{name:"메인 에이전트",task:"지금 브리핑 — 안전관리자 채용 브리핑 수집·게시 (run #155)",note:"다른 세션의 '국내 전체 공고' 수집(397건 수집, 294건 반영) 결과도 함께 표시합니다."},
   subs:[
    {name:"수집 규칙 (collect.py --broad)",order:"하청 1",status:"done",progress:100,task:"대기업·상장·시평·계약직 제한을 푼 전체 모드와 실행 워크플로 추가 (다른 세션)",result:"PR #73 (초안) · 필터 동작 로컬 확인"},
    {name:"GitHub Actions 전체 수집",order:"하청 1-2",status:"done",progress:100,task:"safety-jobs-broad run #1 (다른 세션)",result:"성공 · 397건 수집 · 원티드·캐치 403, 충북대 404"},
    {name:"자동 채점 · 브리핑 반영",order:"하청 1-3",status:"done",progress:100,task:"자격요건·우대 채점, '국내 전체' 섹션 추가 (다른 세션)",result:"294건 반영"},
-   {name:"GitHub Actions 수집기",order:"하청 2",status:"run",progress:0,task:"safety-jobs-briefing 수집 (run #155 — 지금 브리핑)",result:"run #154: 59건",startedAt:"2026-10-14T12:54:36Z",etaMin:20},
-   {name:"브리핑 게시",order:"하청 3",status:"wait",progress:0,task:"latest.html 을 브리핑 아티팩트에 게시",result:"run #155 끝나면 게시 (직전 v64, 59건)"},
+   {name:"GitHub Actions 수집기",order:"하청 2",status:"done",progress:100,task:"safety-jobs-briefing 수집 (run #155 — 지금 브리핑)",result:"run #155 성공 · 67건 (직전 59건)"},
+   {name:"브리핑 게시",order:"하청 3",status:"done",progress:100,task:"latest.html 을 브리핑 아티팩트에 게시",result:"v66 게시 (67건) · run #157 후 다시 게시"},
    {name:"이미지 공고 읽기 (OCR)",order:"하청 4",status:"done",progress:100,task:"공고 본문의 이미지를 글자로 읽어(tesseract 한글) 직무·자격 분석에 포함",result:"PR #76 병합 · 한글 공고 이미지 시험 OK"},
-   {name:"이미지 읽기 반영 수집",order:"하청 5",status:"wait",progress:0,task:"safety-jobs-briefing run #157 (이미지 읽기 첫 실행)",result:"run #155 끝난 뒤 자동 시작"}
+   {name:"이미지 읽기 반영 수집",order:"하청 5",status:"run",progress:0,task:"safety-jobs-briefing run #157 (이미지 읽기 첫 실행)",result:"이미지 읽기 결과는 수집 현황에 표시",startedAt:"2026-10-14T13:27:00Z",etaMin:30}
   ]
 };
 
