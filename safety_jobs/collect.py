@@ -38,6 +38,10 @@ Q = quote("안전관리자")
 # 검색어: 안전관리자 + 업종 무관 HSE/EHS 직무 + 자격증 명시 공고
 KEYWORDS = ["안전관리자", "HSE", "EHS", "안전보건", "산업안전기사", "건설안전기사", "NEBOSH", "IOSH", "ISO45001", "안전공학", "안전",
             "해외 안전관리자", "해외현장 안전", "해외 HSE", "해외현장", "해외 상시채용", "하이테크 해외"]  # 해외 근무 공고도 찾는다 (사용자 요청 2026-10-13)
+# 전체 모드(--broad): 대기업·상장·시평·계약직 관심 기업 제한을 풀고, 신입 지원이 가능한 국내 안전 직무 공고를 모두 싣는다 (사용자 요청 2026-10-14)
+BROAD = False
+BROAD_EXTRA_KEYWORDS = ["환경안전", "안전담당", "안전팀", "안전보건관리", "안전관리 신입", "EHS 신입", "산업안전 신입", "건설안전"]
+BROAD_EXCLUDE_RE = re.compile("학원|교육원|감시단")  # 전체 모드에서도 안전관리자 채용이 아닌 곳만 뺀다
 # 우대 강조(보라색): 외국어·영어 능통 / NEBOSH / IOSH / CSP
 LANG_RE = re.compile(r"(?:영어|외국어|어학|English|중국어|일본어|베트남어|스페인어)\s*(?:회화\s*)?(?:능통|능숙|우수|가능|원활|비즈니스|원어민|fluent|business)"
                      r"|(?:TOEIC|토익|OPIc|오픽|TEPS|텝스|TOEIC\s*Speaking|토익\s*스피킹)\s*[:：]?\s*(?:\d{2,3}|IM|IH|AL|Lv|Level)"
@@ -291,8 +295,9 @@ def src_saramin(f: Fetcher):
     out, seen = [], set()
     # 사용자 지정 검색 URL + 검색어별 신입/경력무관 필터 100건
     urls = [("안전관리자", f"https://www.saramin.co.kr/zf_user/search?searchword={Q}&go=&flag=n&searchMode=1&searchType=search&search_done=y&search_optional_item=n")]
+    pages = (1, 2, 3) if BROAD else (1,)  # 전체 모드는 검색어마다 300건까지
     urls += [(kw, f"https://www.saramin.co.kr/zf_user/search?searchword={quote(kw)}&searchType=search&exp_cd=1&exp_none=y"
-                  "&recruitPageCount=100&recruitSort=relation") for kw in KEYWORDS]
+                  f"&recruitPageCount=100&recruitSort=relation&recruitPage={pg}") for kw in KEYWORDS for pg in pages]
     for kw, url in urls:
         s = BeautifulSoup(f.get(url), "html.parser")
         for it in s.select("div.item_recruit"):
@@ -1384,7 +1389,10 @@ def keep(p: Posting, today) -> tuple[bool, str]:
         if p.deadline_date and p.deadline_date < today.isoformat():
             return False, "마감"
         return True, ""
-    if excluded_corp(p):
+    if BROAD:
+        if BROAD_EXCLUDE_RE.search(re.sub(r"\s|\(주\)|㈜|주식회사", "", p.company or "")):
+            return False, "제외 업체명"
+    elif excluded_corp(p):
         return False, "제외 업체명"
     blob = f"{p.title} {p.listing_text} {p.extra.get('sector', '')}"
     if p.extra.get("posted") is not None:  # 학과 게시판: 최근 글 + 채용 공고 + 안전 직무
@@ -1424,17 +1432,23 @@ def keep(p: Posting, today) -> tuple[bool, str]:
         why = safety_main_reason(p)
         if why:
             return False, why
-        if not target_company(p):
+        if not BROAD and not target_company(p):
             return False, "대상 기업 아님"
+    if BROAD and p.source == "기업 채용 페이지" and not KOREA_LOC_RE.search(f"{p.extra.get('loc', '')} {(p.detail_text or '')[:600]}"):
+        return False, "한국 근무 아님"
     if other_role(p):
         return False, "다른 직무(배차·방사선·소방안전)"
     if WATCH_RE.search(f"{p.title} {p.listing_text} {p.detail_text}"):
         return False, "감시단"
-    if p.industry == "건설" and not p.extra.get("top100"):
+    if BROAD:
+        why = broad_scope_reason(p)
+        if why:
+            return False, why
+    elif p.industry == "건설" and not p.extra.get("top100"):
         return False, "건설사(시평 100위 밖)"
     if p.level == "경력":
         return False, "대리급 이상" if p.extra.get("senior") else "경력직"
-    if p.employment == "계약직" and not contract_ok(p):
+    if not BROAD and p.employment == "계약직" and not contract_ok(p):
         return False, "계약직(관심 기업 외)"
     if p.deadline_date and p.deadline_date < today.isoformat():
         return False, "마감"
@@ -2109,6 +2123,31 @@ ENGINEERING_TOP15 = ("도화엔지니어링", "유신", "한국종합기술", "�
 ENGINEERING_TOP15_RE = re.compile("|".join(re.escape(re.sub(r"\s", "", n)) for n in ENGINEERING_TOP15))
 
 
+# 전체 수집(--broad) 범위 (사용자 요청 2026-10-14): 종합건설사·엔지니어링은 상위 15개사만, 전문건설업체는 제외
+ENGINEERING_NAME_RE = re.compile(r"엔지니어링|엔지니어|이엔지|E&G|ENG(?![A-Za-z])|기술단|기술공단|종합기술|건축사사무소|컨설턴트|감리|기술사사무소")
+SPECIALTY_TITLE_RE = re.compile(r"전기\s*공사|설비\s*공사|소방\s*공사|통신\s*공사|배관|철콘|철근\s*콘크리트|토공|방수|도장|해체\s*공사|가설|비계|금속\s*창호|조경|기계\s*설비|클린룸|HVAC|공조|훅업|SET-?UP|셋업|PC\s*제작|플랜트\s*(?:건설\s*)?현장|토목\s*현장|건축\s*현장|시공\s*현장|건설\s*현장|공사\s*현장|신축\s*공사|증개축|철거")
+SPECIALTY_NAME_RE = re.compile(r"(?:전기|설비|소방|배관|통신|방수|도장|조경|토건|기초|지반|해체|테크|기공|산전)(?:\(주\)|㈜)?$|전기공사|설비공사|기술공업|이앤씨|이엔씨|E&C|건설|개발|토목")
+
+
+def broad_scope_reason(p) -> str:
+    """전체 수집에서 범위 밖이면 제외 사유, 대상이면 ''. 대기업 계열·상장사는 건설·시공 업종이 아니면 그대로 둔다."""
+    name = re.sub(r"\(주\)|㈜|주식회사|\(유\)|\s", "", p.company or "")
+    rank = p.extra.get("top100")
+    if p.industry == "건설":
+        return "" if rank and rank <= TARGET_CONSTR_RANK else "종합건설사 상위 15위 밖·전문건설"
+    if ENGINEERING_TOP15_RE.search(name):
+        return ""
+    if ENGINEERING_NAME_RE.search(name):
+        return "엔지니어링 상위 15개사 밖"
+    if p.extra.get("groups"):
+        return ""
+    if SPECIALTY_TITLE_RE.search(p.title or ""):
+        return "전문건설(시공 현장)"
+    if SPECIALTY_NAME_RE.search(name) and not p.extra.get("listed"):
+        return "전문건설업체"
+    return ""
+
+
 # 공기업·공공기관 (사용자 추가 2026-10-13)
 PUBLIC_HOST_RE = re.compile(r"중소벤처기업진흥공단|중소기업진흥공단|워크넷")  # 민간 공고를 대신 올리는 공공 채용 게시판
 PUBLIC_TARGET_RE = re.compile(r"^(?:한국|국가|국립|국민|서울|부산|인천|대구|대전|광주|울산|경기|강원|충북|충남|전북|전남|경북|경남|제주|세종)"
@@ -2733,6 +2772,8 @@ def carry_over(prev_path, failed, kept, stats, today):
     접수기한이 남은 공고는 리스트에 남긴다. 마감일이 없는 공고는 처음 수집 후
     UNDATED_KEEP_DAYS 일까지만 유지한다. 지금 규칙(건설사 시평 100위 등)은 다시 적용한다.
     """
+    if BROAD:  # 전체 모드는 매번 새로 수집한다
+        return
     try:
         prev = json.loads(prev_path.read_text(encoding="utf-8"))
     except (OSError, ValueError):
@@ -2846,7 +2887,12 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="briefings", help="출력 디렉터리")
     ap.add_argument("--max-detail", type=int, default=1600, help="상세 페이지 최대 조회 수")
+    ap.add_argument("--broad", action="store_true", help="전체 모드: 대기업·상장·시평 제한 없이 신입 가능한 국내 안전 공고 전체")
     args = ap.parse_args()
+    global BROAD
+    BROAD = args.broad
+    if BROAD:
+        KEYWORDS.extend(k for k in BROAD_EXTRA_KEYWORDS if k not in KEYWORDS)
 
     now = dt.datetime.now(KST)
     today = now.date()
@@ -2867,7 +2913,7 @@ def main():
     if n_ex:
         print(f"[excluded] 사용자 삭제 {n_ex}건 적용", file=sys.stderr)
     raw, failures, stats = [], [], {}
-    SOURCE_BUDGET = 420  # 사이트 하나에 최대 7분 (느린 사이트가 전체 실행을 막지 않게)
+    SOURCE_BUDGET = 1200 if BROAD else 420  # 사이트 하나에 최대 7분(전체 모드 20분) — 느린 사이트가 전체 실행을 막지 않게
     for name, fn, _ in SOURCES:
         for attempt in (1, 2):
             f.deadline = time.time() + SOURCE_BUDGET
@@ -2889,7 +2935,7 @@ def main():
                 break
 
     f.deadline = None
-    t_detail_end = time.time() + 22 * 60  # 상세 조회 전체 한도 22분
+    t_detail_end = time.time() + (50 if BROAD else 22) * 60  # 상세 조회 전체 한도 22분(전체 모드 50분)
     kept, n_detail = [], 0
     for name, found in raw:
         counts = {"목록": len(found), "채택": 0}
@@ -2997,7 +3043,7 @@ def main():
         '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
         + page.replace("</style>", "</style>\n</head>\n<body>", 1) + "\n</body>\n</html>\n", encoding="utf-8")
     for p in kept:
-        p.detail_text = p.detail_text[:1500]
+        p.detail_text = p.detail_text[: 6000 if BROAD else 1500]  # 전체 모드는 자격요건·우대를 다시 읽을 수 있게 길게 남긴다
     (out / "latest.json").write_text(json.dumps(
         {"generated_at": now.isoformat(), "postings": [asdict(p) for p in kept], "failures": failures, "stats": stats,
          "careers": CAREER_STATUS},
