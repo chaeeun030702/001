@@ -3,6 +3,7 @@
 # dependencies = [
 #     "httpx>=0.27.0",
 #     "beautifulsoup4>=4.12.0",
+#     "pillow>=10.0.0",
 # ]
 # ///
 #!/usr/bin/env python3
@@ -23,7 +24,10 @@ import difflib
 import gzip
 import html
 import json
+import io
 import re
+import shutil
+import subprocess
 import sys
 import time
 from dataclasses import asdict, dataclass, field
@@ -780,6 +784,8 @@ def src_manual(f: Fetcher):
 def fetch_detail(f: Fetcher, p: Posting) -> str:
     if p.url.startswith("manual:") or p.source == "LinkedIn":  # LinkedIn은 자동 접속하지 않는다 (브라우저 작업이 DB에 넣은 값만 씀)
         return ""
+    if HAS_TESSERACT:
+        p.extra["ocr_v"] = 1
     if p.extra.get("detail_api"):  # Workday: JSON 상세
         r = f.c.get(p.extra["detail_api"], headers={"Accept": "application/json"})
         r.raise_for_status()
@@ -792,9 +798,130 @@ def fetch_detail(f: Fetcher, p: Posting) -> str:
     url = p.url
     if p.source == "사람인":
         url = f"https://www.saramin.co.kr/zf_user/jobs/relay/view-detail?rec_idx={p.extra['rec_idx']}&rec_seq=0"
-        body = soup_text(f.get(url))
-        return f"{body} {saramin_benefits(f, p)}".strip()
-    return soup_text(f.get(url, encoding="cp949" if p.source == "워커" else None))
+        raw = f.get(url)
+        body = soup_text(raw)
+        return f"{body} {saramin_benefits(f, p)} {ocr_images(f, p, raw, url)}".strip()
+    raw = f.get(url, encoding="cp949" if p.source == "워커" else None)
+    body, extra = soup_text(raw), ""
+    if p.source == "잡코리아":  # 잡코리아 상세 본문(글·이미지)은 iframe(GI_Read_Comt_Ifrm) 안에 있다
+        m = re.search(r"""src=["']([^"']*GI_Read_Comt_Ifrm[^"']*)""", raw)
+        if m:
+            try:
+                iurl = urljoin(url, html.unescape(m.group(1)))
+                iraw = f.get(iurl, tries=1)
+                extra = f"{soup_text(iraw)} {ocr_images(f, p, iraw, iurl)}"
+            except Exception as e:
+                print(f"[jobkorea-iframe] {p.url}: {e}", file=sys.stderr)
+    return f"{body} {extra} {ocr_images(f, p, raw, url) if not extra else ''}".strip()
+
+
+# ---------------------------------------------------------------- 이미지 공고 읽기 (OCR)
+# 공고 본문이 통이미지인 경우가 많아, 본문 이미지를 tesseract(한글+영어)로 글자로 읽어 상세 본문 뒤에 붙인다 (사용자 요청 2026-10-14).
+# 읽은 결과는 briefings/ocr_cache.json 에 이미지 주소별로 저장해 다음 수집 때 다시 읽지 않는다.
+OCR_CACHE = {}           # 이미지 URL → 읽은 글자
+OCR_STATS = collections.Counter()
+OCR_BUDGET_SEC = 12 * 60  # 한 번 수집에서 새 이미지 읽기에 쓰는 시간 한도
+OCR_USED = [0.0]
+OCR_MAX_PER_POSTING = 4
+OCR_SKIP_RE = re.compile(r"logo|icon|btn|button|banner|blank|spacer|bullet|arrow|sns|share|badge|emoticon|\.svg|\.gif$|tracking|pixel|/ad/|favicon", re.I)
+HAS_TESSERACT = bool(shutil.which("tesseract"))
+
+
+def _img_urls(raw: str, base: str):
+    s = BeautifulSoup(raw, "html.parser")
+    out = []
+    for im in s.find_all("img"):
+        src = im.get("data-src") or im.get("data-original") or im.get("src") or ""
+        if not src or src.startswith("data:") or OCR_SKIP_RE.search(src):
+            continue
+        try:  # 작게 표시되는 이미지(아이콘·로고)는 건너뛴다
+            w, h = int(re.sub(r"\D", "", str(im.get("width") or 0)) or 0), int(re.sub(r"\D", "", str(im.get("height") or 0)) or 0)
+        except ValueError:
+            w = h = 0
+        if (w and w < 200) or (h and h < 120):
+            continue
+        u = urljoin(base, html.unescape(src))
+        if u.startswith("http") and u not in out:
+            out.append(u)
+    return out
+
+
+def _ocr_bytes(data: bytes) -> str:
+    from PIL import Image  # 지연 import: OCR을 안 쓰면 Pillow 없이도 돈다
+    im = Image.open(io.BytesIO(data))
+    im.seek(0)
+    im = im.convert("L")
+    if im.width < 300 or im.height < 150 or im.width * im.height < 120_000:
+        return ""  # 아이콘·작은 배너
+    if im.width < 1000:  # 작은 글씨는 키우면 더 잘 읽힌다
+        r = 1000 / im.width
+        im = im.resize((1000, int(im.height * r)))
+    texts = []
+    step = 2400  # 세로로 긴 통이미지는 잘라서 읽는다
+    for top in range(0, min(im.height, step * 8), step):
+        part = im.crop((0, top, im.width, min(im.height, top + step)))
+        buf = io.BytesIO()
+        part.save(buf, format="PNG")
+        r = subprocess.run(["tesseract", "stdin", "stdout", "-l", "kor+eng", "--psm", "6"],
+                           input=buf.getvalue(), capture_output=True, timeout=60)
+        texts.append(r.stdout.decode("utf-8", errors="ignore"))
+    return clean(" ".join(texts))
+
+
+def ocr_images(f: Fetcher, p: Posting, raw: str, base: str) -> str:
+    """상세 HTML 안의 본문 이미지를 읽어 글자로 돌려준다. tesseract가 없으면 빈 문자열."""
+    if not HAS_TESSERACT or not raw:
+        return ""
+    try:
+        urls = _img_urls(raw, base)[:OCR_MAX_PER_POSTING]
+    except Exception:
+        return ""
+    out = []
+    for u in urls:
+        if u in OCR_CACHE:
+            OCR_STATS["저장본"] += 1
+            out.append(OCR_CACHE[u])
+            continue
+        if OCR_USED[0] > OCR_BUDGET_SEC:
+            OCR_STATS["시간 한도"] += 1
+            continue
+        t0 = time.time()
+        try:
+            r = f.c.get(u, headers={"Referer": base}, timeout=20)
+            r.raise_for_status()
+            if len(r.content) < 15_000 or "image" not in r.headers.get("content-type", "image"):
+                OCR_CACHE[u] = ""
+                continue
+            txt = _ocr_bytes(r.content)
+            ok = len(re.findall(r"[가-힣]", txt)) >= 20  # 글자가 거의 없는 사진은 버린다
+            OCR_CACHE[u] = txt[:6000] if ok else ""
+            OCR_STATS["읽음" if ok else "글자 없음"] += 1
+            if ok:
+                out.append(OCR_CACHE[u])
+        except Exception as e:
+            OCR_STATS["오류"] += 1
+            print(f"[ocr] {u}: {type(e).__name__}: {e}", file=sys.stderr)
+        finally:
+            OCR_USED[0] += time.time() - t0
+    out = [x for x in out if x]
+    if out:
+        p.extra["ocr"] = len(out)
+        return "[이미지 본문] " + " ".join(out)
+    return ""
+
+
+def load_ocr_cache(path: Path):
+    try:
+        OCR_CACHE.update(json.loads(path.read_text(encoding="utf-8")))
+    except (OSError, ValueError):
+        pass
+
+
+def save_ocr_cache(path: Path):
+    if len(OCR_CACHE) > 4000:  # 오래된 것부터 버린다 (dict는 넣은 순서 유지)
+        for k in list(OCR_CACHE)[:len(OCR_CACHE) - 4000]:
+            OCR_CACHE.pop(k)
+    path.write_text(json.dumps(OCR_CACHE, ensure_ascii=False), encoding="utf-8")
 
 
 def saramin_benefits(f: Fetcher, p: Posting) -> str:
@@ -2908,6 +3035,9 @@ def main():
                 PREV_SEEN.setdefault(norm_company(d.get("company", "")) + "|" + norm_title(d.get("title", ""), d.get("company", "")), fs)
     except (OSError, ValueError, KeyError):
         pass
+    load_ocr_cache(Path(args.out) / "ocr_cache.json")
+    if not HAS_TESSERACT:
+        print("[ocr] tesseract 없음 — 이미지 공고 읽기 생략", file=sys.stderr)
     n_ex = load_excluded()
     load_benefits_web()  # 인터넷 조사 복지
     if n_ex:
@@ -2995,7 +3125,8 @@ def main():
         if n_detail >= args.max_detail or time.time() > t_detail_end + 12 * 60:  # 이전 공고 재조회 한도
             break
         stale_bnf = p.extra.get("bnf_v") != BNF_V and p.source != "LinkedIn"  # 복지 규칙이 바뀐 뒤 처음 → 본문 전체로 다시 판정
-        if (len(p.detail_text or "") >= 600 and not stale_bnf) or p.url.startswith("manual:") or p.extra.get("posted") is not None:
+        no_ocr = HAS_TESSERACT and not p.extra.get("ocr_v") and p.source != "LinkedIn"  # 이미지 읽기 전에 실린 공고는 한 번 다시 읽는다
+        if (len(p.detail_text or "") >= 600 and not stale_bnf and not no_ocr) or p.url.startswith("manual:") or p.extra.get("posted") is not None:
             continue
         try:
             t = fetch_detail(f, p)
@@ -3029,6 +3160,9 @@ def main():
     load_starter(out / "starter_salary.json")
     n_look = fill_starter(f, kept, today, out / "starter_salary.json")
     print(f"[starter] 신규 조회 {n_look}개사, 초봉 확인 {sum(bool(p.extra.get('starter')) for p in kept)}/{len(kept)}건", file=sys.stderr)
+    save_ocr_cache(out / "ocr_cache.json")
+    stats["이미지 공고 읽기"] = (", ".join(f"{k} {v}" for k, v in OCR_STATS.items()) + f" · 이미지 글자를 붙인 공고 {sum(bool(p.extra.get('ocr')) for p in kept)}건"
+                                 if HAS_TESSERACT else "tesseract 없음 — 생략")
     md = render_md(kept, failures, now, stats)
     (out / f"{today:%Y-%m-%d}.md").write_text(md, encoding="utf-8")
     (out / "latest.md").write_text(md, encoding="utf-8")
