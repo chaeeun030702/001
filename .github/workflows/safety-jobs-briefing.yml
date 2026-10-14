@@ -26,6 +26,9 @@ jobs:
         # push로 시작된 실행은 트리거 커밋을 체크아웃하므로, 그 뒤에 올라온 최신 브리핑을 이어받는다
         run: |
           git fetch -q origin "${GITHUB_REF_NAME}" && git checkout "origin/${GITHUB_REF_NAME}" -- briefings || true
+      - name: Install OCR (이미지 공고 읽기 — tesseract 한글)
+        continue-on-error: true
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq tesseract-ocr tesseract-ocr-kor >/dev/null
       - name: Collect
         run: uv run safety_jobs/collect.py --out briefings
       - name: Notify (신규 공고 이메일)
