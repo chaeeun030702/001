@@ -1440,7 +1440,11 @@ def keep(p: Posting, today) -> tuple[bool, str]:
         return False, "다른 직무(배차·방사선·소방안전)"
     if WATCH_RE.search(f"{p.title} {p.listing_text} {p.detail_text}"):
         return False, "감시단"
-    if not BROAD and p.industry == "건설" and not p.extra.get("top100"):
+    if BROAD:
+        why = broad_scope_reason(p)
+        if why:
+            return False, why
+    elif p.industry == "건설" and not p.extra.get("top100"):
         return False, "건설사(시평 100위 밖)"
     if p.level == "경력":
         return False, "대리급 이상" if p.extra.get("senior") else "경력직"
@@ -2117,6 +2121,31 @@ ENGINEERING_TOP15 = ("도화엔지니어링", "유신", "한국종합기술", "�
                      "경동엔지니어링", "평화엔지니어링", "수성엔지니어링", "동부엔지니어링", "서영엔지니어링",
                      "선진엔지니어링", "삼성이앤에이", "삼성E&A", "현대엔지니어링")
 ENGINEERING_TOP15_RE = re.compile("|".join(re.escape(re.sub(r"\s", "", n)) for n in ENGINEERING_TOP15))
+
+
+# 전체 수집(--broad) 범위 (사용자 요청 2026-10-14): 종합건설사·엔지니어링은 상위 15개사만, 전문건설업체는 제외
+ENGINEERING_NAME_RE = re.compile(r"엔지니어링|엔지니어|이엔지|E&G|ENG(?![A-Za-z])|기술단|기술공단|종합기술|건축사사무소|컨설턴트|감리|기술사사무소")
+SPECIALTY_TITLE_RE = re.compile(r"전기\s*공사|설비\s*공사|소방\s*공사|통신\s*공사|배관|철콘|철근\s*콘크리트|토공|방수|도장|해체\s*공사|가설|비계|금속\s*창호|조경|기계\s*설비|클린룸|HVAC|공조|훅업|SET-?UP|셋업|PC\s*제작|플랜트\s*(?:건설\s*)?현장|토목\s*현장|건축\s*현장|시공\s*현장|건설\s*현장|공사\s*현장|신축\s*공사|증개축|철거")
+SPECIALTY_NAME_RE = re.compile(r"(?:전기|설비|소방|배관|통신|방수|도장|조경|토건|기초|지반|해체|테크|기공|산전)(?:\(주\)|㈜)?$|전기공사|설비공사|기술공업|이앤씨|이엔씨|E&C|건설|개발|토목")
+
+
+def broad_scope_reason(p) -> str:
+    """전체 수집에서 범위 밖이면 제외 사유, 대상이면 ''. 대기업 계열·상장사는 건설·시공 업종이 아니면 그대로 둔다."""
+    name = re.sub(r"\(주\)|㈜|주식회사|\(유\)|\s", "", p.company or "")
+    rank = p.extra.get("top100")
+    if p.industry == "건설":
+        return "" if rank and rank <= TARGET_CONSTR_RANK else "종합건설사 상위 15위 밖·전문건설"
+    if ENGINEERING_TOP15_RE.search(name):
+        return ""
+    if ENGINEERING_NAME_RE.search(name):
+        return "엔지니어링 상위 15개사 밖"
+    if p.extra.get("groups"):
+        return ""
+    if SPECIALTY_TITLE_RE.search(p.title or ""):
+        return "전문건설(시공 현장)"
+    if SPECIALTY_NAME_RE.search(name) and not p.extra.get("listed"):
+        return "전문건설업체"
+    return ""
 
 
 # 공기업·공공기관 (사용자 추가 2026-10-13)
