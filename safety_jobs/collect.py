@@ -1420,6 +1420,14 @@ def relevant_after_detail(p: Posting) -> bool:
 PUBLIC_CORP_RE = re.compile(r"(?:공단|공사|진흥원|기술원|연구원|안전원|재단)(?:\(.*?\))?$")  # 공공기관은 제외하지 않는다
 
 
+# 회사명에 '안전'·'세이프티'가 들어간 곳은 제외 (사용자 요청 2026-10-14). 공공기관(company_type)만 예외
+SAFETY_NAME_RE = re.compile(r"안전|세이프|safety", re.I)
+
+
+def safety_named_corp(p: Posting) -> bool:
+    return bool(SAFETY_NAME_RE.search(p.company or "")) and "공공" not in (p.company_type or "")
+
+
 def excluded_corp(p: Posting) -> bool:
     """회사명에 제외 용어(EXCLUDE_CORP_TERMS)가 있는 민간 업체인가. 공공기관은 제외하지 않는다."""
     name = re.sub(r"\s|\(주\)|㈜|주식회사", "", p.company or "")
@@ -1516,6 +1524,8 @@ def keep(p: Posting, today) -> tuple[bool, str]:
         if p.deadline_date and p.deadline_date < today.isoformat():
             return False, "마감"
         return True, ""
+    if safety_named_corp(p):
+        return False, "회사명에 안전·세이프티"
     if BROAD:
         if BROAD_EXCLUDE_RE.search(re.sub(r"\s|\(주\)|㈜|주식회사", "", p.company or "")):
             return False, "제외 업체명"
