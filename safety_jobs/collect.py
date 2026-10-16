@@ -66,9 +66,9 @@ PREF_IN_TITLE_RE = re.compile(r"[\(\[【][^\)\]】]*우대[^\)\]】]*[\)\]】]|[
 NON_HSE_SAFETY_RE = re.compile(r"Functional\s*Safety|안전\s*인증|Drug\s*Safety|Pharmacovigilance|Patient\s*Safety|Food\s*Safety|Product\s*Safety|Clinical|"
                                r"약물\s*감시|의약품\s*안전|식품\s*안전|안전성\s*(?:평가|정보)", re.I)
 WATCH_RE = re.compile(r"감시\s*(?:단|원)")  # 안전감시단 등 감시 인력 모집은 제외
-# 안전관리자가 아닌 직무는 제목에 있으면 제외 (배차사무원·방사선안전·소방안전). '…우대' 괄호는 보지 않는다
+# 안전관리자가 아닌 직무는 제목에 있으면 제외 (배차사무원·방사선안전·소방안전·소방/응급구조·간호사·수소충전소 안전관리). '…우대' 괄호는 보지 않는다
 CERT_NAME_RE = re.compile(r"(?:산업|건설|가스|전기|소방|화공|기계)?안전(?:관리)?(?:산업기사|기사|기술사|지도사)|소방안전관리자\s*\d급|산업위생관리(?:산업)?기사|산업보건지도사")
-OTHER_ROLE_RE = re.compile(r"배차|방사선\s*안전|소방\s*안전")
+OTHER_ROLE_RE = re.compile(r"배차|방사선\s*안전|소방\s*안전|소방\s*[/·,&]?\s*응급|응급\s*구조|간호|(?<![A-Za-z])Nurse|(?:수소|전기차|LPG|CNG|가스)?\s*충전소", re.I)  # 간호사·수소충전소 제외 (사용자 요청 2026-10-16)
 # 회사명에 이 용어가 있으면 제외 (안전·소방 전문 용역사, 학원·교육기관 등). 공백은 무시하고 비교한다
 EXCLUDE_CORP_TERMS = ("소방", "조경", "구조엔지니어링", "감시단", "재해예방", "구조안전", "세이프티", "안전관리", "학원",
                       "소방기술단", "교육원", "안전시스템", "방재", "무사퇴근", "보건안전", "호남산업")
@@ -1564,7 +1564,7 @@ def keep(p: Posting, today) -> tuple[bool, str]:
     if BROAD and p.source == "기업 채용 페이지" and not KOREA_LOC_RE.search(f"{p.extra.get('loc', '')} {(p.detail_text or '')[:600]}"):
         return False, "한국 근무 아님"
     if other_role(p):
-        return False, "다른 직무(배차·방사선·소방안전)"
+        return False, "다른 직무(배차·방사선·소방·간호·충전소)"
     if WATCH_RE.search(f"{p.title} {p.listing_text} {p.detail_text}"):
         return False, "감시단"
     if BROAD:
@@ -2330,7 +2330,8 @@ NOT_SAFETY_JOB_RE = re.compile(r"공모전|선착순|무료\s*교육|교육생|�
 AGENCY_SAFETY_RE = re.compile(r"[가-힣]*안전[가-힣]*(?:교육원|심판원|진흥원|연구원|공단|공사|체험장|체험관)(?![가-힣])")
 # 공고 내용(제목·담당 업무)이 총무+안전, 전기+안전처럼 복합업무인 공고 (사용자 요청 2026-10-13, 환경안전은 포함)
 COMPOSITE_RE = re.compile(r"총무\s*(?:업무\s*)?(?:[/·,&]|및|겸)?\s*안전|안전\s*(?:관리\s*)?(?:[/·,&]|및|겸)\s*총무|"
-                          r"전기\s*(?:[/·,&]|및|겸)?\s*안전|안전\s*(?:관리\s*)?(?:[/·,&]|및|겸)\s*전기|전기\s*[·/,]\s*[가-힣]{1,6}\s*안전\s*관리")
+                          r"전기\s*(?:[/·,&]|및|겸)?\s*안전|안전\s*(?:관리\s*)?(?:[/·,&]|및|겸)\s*전기|전기\s*[·/,]\s*[가-힣]{1,6}\s*안전\s*관리|"
+                          r"전기\s*(?:안전\s*)?(?:관리자?\s*)?선임")  # 환경안전부(전기선임·공무·대관)처럼 전기 선임을 겸하는 공고
 OPEN_CALL_RE = re.compile(r"공채|공개\s*채용|신입\s*사원|각\s*부문|인재\s*(?:pool|풀)|상시\s*채용", re.I)
 
 
