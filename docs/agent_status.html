@@ -104,13 +104,12 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 <script>
 /* 작업 데이터 — 에이전트를 맡길 때마다 이 블록만 고친다 (progress: 0~100) */
 var JOB={
-  updated:"2026-10-16 10:05 KST",updatedISO:"2026-10-16T01:05:00Z",
-  main:{name:"메인 에이전트",task:"규칙 수정 후 자동 브리핑 — 간호사·수소충전소·소방/응급구조·전기선임 겸직 제외",note:"직전 v68(77건)에서 4건이 빠질 예정입니다."},
+  updated:"2026-10-16 22:44 KST",updatedISO:"2026-10-16T13:44:00Z",
+  main:{name:"메인 에이전트",task:"SK Careers 안전·환경 직무 공고(role=306) 브리핑에 추가",note:"SK Careers 사이트는 이 세션에서 차단(403) — 직접 추가 목록에 넣고 GitHub Actions가 다시 수집합니다."},
   subs:[
-   {name:"제외 규칙 (collect.py)",order:"하청 1",status:"done",progress:100,task:"간호사·충전소·소방/응급구조 제목 제외, 전기선임 겸직은 복합업무로 제외",result:"PR #77 병합 · 현재 77건에 적용 시 의도한 4건만 제외"},
-   {name:"메일 루틴 기준",order:"하청 2",status:"done",progress:100,task:"사람인·잡코리아 메일 루틴에도 같은 제외 기준 추가",result:"루틴 지시문 갱신 · 다음 실행 오늘 17:55"},
-   {name:"GitHub Actions 수집기",order:"하청 3",status:"done",progress:100,task:"safety-jobs-briefing run #164 (새 규칙)",result:"성공 · 72건 · 간호사·충전소·소방/응급구조·전기선임 공고 0건"},
-   {name:"브리핑 게시",order:"하청 4",status:"done",progress:100,task:"latest.html 을 브리핑 아티팩트에 게시",result:"v69 게시 (72건)"}
+   {name:"직접 추가 등록",order:"하청 1",status:"done",progress:100,task:"manual_postings.json + 브리핑 DB(manual)에 사용자 지정 공고로 등록",result:"PR #78 병합 · DB skcareers-role306"},
+   {name:"GitHub Actions 수집기",order:"하청 2",status:"run",progress:0,task:"safety-jobs-briefing run #166",result:"직전 run #164: 72건",startedAt:"2026-10-16T13:43:19Z",etaMin:35},
+   {name:"브리핑 게시",order:"하청 3",status:"wait",progress:0,task:"latest.html 을 브리핑 아티팩트에 게시",result:"run #166 끝나면 게시"}
   ]
 };
 
