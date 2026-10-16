@@ -104,11 +104,13 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 <script>
 /* 작업 데이터 — 에이전트를 맡길 때마다 이 블록만 고친다 (progress: 0~100) */
 var JOB={
-  updated:"2026-10-16 09:03 KST",updatedISO:"2026-10-16T00:03:00Z",
-  main:{name:"메인 에이전트",task:"지금 브리핑 — 안전관리자 채용 브리핑 수집·게시 (run #162, 이미지 읽기 포함)",note:"직전 게시 v67(67건). 수집이 끝나면 새 브리핑을 게시합니다."},
+  updated:"2026-10-16 10:05 KST",updatedISO:"2026-10-16T01:05:00Z",
+  main:{name:"메인 에이전트",task:"규칙 수정 후 자동 브리핑 — 간호사·수소충전소·소방/응급구조·전기선임 겸직 제외",note:"직전 v68(77건)에서 4건이 빠질 예정입니다."},
   subs:[
-   {name:"GitHub Actions 수집기",order:"하청 1",status:"done",progress:100,task:"safety-jobs-briefing run #162 — 사람인·잡코리아·공채 모음 등 + 공고 이미지 읽기",result:"성공 · 77건 (오늘 신규 4) · 새 이미지 36장 읽음"},
-   {name:"브리핑 게시",order:"하청 2",status:"done",progress:100,task:"latest.html 을 브리핑 아티팩트에 게시",result:"v68 게시 (77건)"}
+   {name:"제외 규칙 (collect.py)",order:"하청 1",status:"done",progress:100,task:"간호사·충전소·소방/응급구조 제목 제외, 전기선임 겸직은 복합업무로 제외",result:"PR #77 병합 · 현재 77건에 적용 시 의도한 4건만 제외"},
+   {name:"메일 루틴 기준",order:"하청 2",status:"done",progress:100,task:"사람인·잡코리아 메일 루틴에도 같은 제외 기준 추가",result:"루틴 지시문 갱신 · 다음 실행 오늘 17:55"},
+   {name:"GitHub Actions 수집기",order:"하청 3",status:"done",progress:100,task:"safety-jobs-briefing run #164 (새 규칙)",result:"성공 · 72건 · 간호사·충전소·소방/응급구조·전기선임 공고 0건"},
+   {name:"브리핑 게시",order:"하청 4",status:"done",progress:100,task:"latest.html 을 브리핑 아티팩트에 게시",result:"v69 게시 (72건)"}
   ]
 };
 

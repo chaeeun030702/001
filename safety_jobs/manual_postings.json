@@ -1152,6 +1152,19 @@
       "user_pick": true,
       "fill_from_detail": true,
       "source": "잡코리아"
+    },
+    {
+      "company": "SK그룹",
+      "title": "SK Careers 안전·환경 직무 채용공고 (SK 관계사)",
+      "url": "https://www.skcareers.com/Recruit?role=306",
+      "deadline": "확인 필요",
+      "employment": "",
+      "level": "",
+      "safety_job": "yes",
+      "via": "사용자 지정(SK Careers)",
+      "note": "SK Careers 직무 필터(role=306) 목록 — 관계사별 공고·마감은 링크에서 확인",
+      "added": "2026-10-16",
+      "user_pick": true
     }
   ]
 }
