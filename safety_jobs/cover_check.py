@@ -167,8 +167,9 @@ def check(path, names, canon):
         n, lim = count(q["answer"]), q["limit"]
         if n > lim:
             errs.append(f"{q['id']}: 글자수 초과 {n}/{lim}")
-        elif n < lim * 0.8 or n > lim * 0.98:
-            warns.append(f"{q['id']}: 글자수 {n}/{lim} ({n * 100 // lim}%) — 권장 80~98%")
+        elif n < lim * 0.95:
+            # 2026-10-16 사용자 요청: 한국어 문항은 한도의 95% 이상 채운다(한도 이하)
+            errs.append(f"{q['id']}: 글자수 부족 {n}/{lim} ({n * 100 // lim}%) — 한도의 95% 이상 채울 것")
         bad = sorted({w for w in re.findall(AWARD_KR, text) if w not in awards})
         if bad:
             errs.append(f"{q['id']}: 논문 수상 표현 {'·'.join(bad)} — 확정 문안에 있는 수상만 씀")
