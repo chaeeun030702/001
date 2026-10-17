@@ -2635,7 +2635,7 @@ def cert_pills(p):
     return "".join(f'<span class="pill pc">{html.escape(c)} 명시</span> ' for c in p.certs)
 
 
-ARCHIVE_KEEP_DAYS = 7  # 오늘 포함 최근 7일치 사본만 남긴다
+ARCHIVE_KEEP_DAYS = 3  # 오늘 포함 최근 3일치 사본만 남긴다 (사용자 요청 2026-10-18)
 ARCHIVE_DATES: list = []  # 날짜별 브리핑 보관본 (briefings/archive/briefing_YYYY-MM-DD.html) — 최신이 앞
 
 
@@ -3198,7 +3198,7 @@ def main():
     if SR_BNF:
         stats["사람인"] = stats.get("사람인", "") + ", " + ", ".join(f"복리후생 {k} {v}" for k, v in SR_BNF.items())
     CLOSED_RECENT[:] = load_recent_closed(out / "history", today, kept)  # 달력: 지난주 마감 공고
-    cutoff = (today - dt.timedelta(days=ARCHIVE_KEEP_DAYS - 1)).isoformat()  # 날짜별 사본은 최근 일주일만 (사용자 요청 2026-10-18)
+    cutoff = (today - dt.timedelta(days=ARCHIVE_KEEP_DAYS - 1)).isoformat()  # 날짜별 사본은 최근 3일만
     for f in (out / "archive").glob("briefing_*.html"):
         if f.stem.removeprefix("briefing_") < cutoff:
             f.unlink()
