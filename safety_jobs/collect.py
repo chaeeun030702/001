@@ -2135,7 +2135,7 @@ ENGINEERING_TOP15_RE = re.compile("|".join(re.escape(re.sub(r"\s", "", n)) for n
 
 # 전체 수집(--broad) 범위 (사용자 요청 2026-10-14): 종합건설사·엔지니어링은 상위 15개사만, 전문건설업체는 제외
 ENGINEERING_NAME_RE = re.compile(r"엔지니어링|엔지니어|이엔지|E&G|ENG(?![A-Za-z])|기술단|기술공단|종합기술|건축사사무소|컨설턴트|감리|기술사사무소")
-SPECIALTY_TITLE_RE = re.compile(r"전기\s*공사|설비\s*공사|소방\s*공사|통신\s*공사|배관|철콘|철근\s*콘크리트|토공|방수|도장|해체\s*공사|가설|비계|금속\s*창호|조경|기계\s*설비|클린룸|HVAC|공조|훅업|SET-?UP|셋업|PC\s*제작|플랜트\s*(?:건설\s*)?현장|토목\s*현장|건축\s*현장|시공\s*현장|건설\s*현장|공사\s*현장|신축\s*공사|증개축|철거")
+SPECIALTY_TITLE_RE = re.compile(r"전기\s*공사|설비\s*공사|소방\s*공사|통신\s*공사|배관|철콘|철근\s*콘크리트|토공|방수|도장|해체\s*공사|가설|비계|금속\s*창호|조경|기계\s*설비\s*(?:공사|시공)|클린룸|HVAC|공조|훅업|SET-?UP|셋업|PC\s*제작|플랜트\s*(?:건설\s*)?현장|토목\s*현장|건축\s*현장|시공\s*현장|건설\s*현장|공사\s*현장|신축\s*공사|증개축|철거")
 SPECIALTY_NAME_RE = re.compile(r"(?:전기|설비|소방|배관|통신|방수|도장|조경|토건|기초|지반|해체|테크|기공|산전)(?:\(주\)|㈜)?$|전기공사|설비공사|기술공업|이앤씨|이엔씨|E&C|건설|개발|토목")
 
 
@@ -2145,7 +2145,7 @@ def broad_scope_reason(p) -> str:
     rank = p.extra.get("top100")
     if p.industry == "건설":
         return "" if rank and rank <= TARGET_CONSTR_RANK else "종합건설사 상위 15위 밖·전문건설"
-    if ENGINEERING_TOP15_RE.search(name):
+    if ENGINEERING_TOP15_RE.search(name) or re.match(r"코레일|한국철도|에스알$", name):  # 코레일·SR 계열은 공기업 자회사
         return ""
     if ENGINEERING_NAME_RE.search(name):
         return "엔지니어링 상위 15개사 밖"
