@@ -45,7 +45,9 @@ drafts/index.json 과 drafts/*.md 초안을 읽어 아티팩트용 index.html �
 
 브리핑 화면도 날짜를 붙인 사본 briefing_YYYY.MM.DD.html(--stamp)을 index.html 옆에 함께 쓴다(2026-10-17 사용자 요청:
 최종본만 남기지 말고 이전 브리핑도 볼 수 있게). 머리말 아래 '지난 브리핑' 줄에 --history 의 briefing_*.html 과
-오늘 사본을 최신순으로 링크한다. 이전 날짜 사본은 게시할 때 보내지 않으면 그대로 남는다.
+오늘 사본을 최신순으로 링크한다. 사본은 최근 일주일(오늘 포함 7일)만 보관한다(2026-10-18 사용자 요청) — 그보다
+오래된 briefing_*.html 은 --expired-out 파일에 줄마다 적으니, 게시할 때 그 경로만 files 에 null 로 넣어 지운다
+(letters/ 편집용 HTML 은 기간과 관계없이 남긴다).
 
 --answers 로 저장된 답변(페이지의 '답변 저장', 아티팩트 db answers 컬렉션)을 주면 그 문항은 저장본으로 보여 주고
 당초 초안과 바뀐 곳을 '당초 초안과 비교'에 표시한다. 수정 경향 정리는 cover_edits.py.
@@ -786,6 +788,7 @@ def main():
     ap.add_argument("--exclude", help="제외 목록 JSON(아티팩트 db excluded 컬렉션을 내려받은 것: id 목록 또는 {id,...} 목록)")
     ap.add_argument("--stamp", help="편집용 HTML 파일명 날짜(기본 오늘 KST, YYYY.MM.DD) — letters/<id>_<stamp>.html")
     ap.add_argument("--history", help="아티팩트에 이미 있는 파일 경로 목록(줄마다 하나 또는 JSON) — 이전 날짜 편집용 HTML 링크 표시")
+    ap.add_argument("--expired-out", help="보관 기간(7일)이 지난 briefing_*.html 경로를 적을 파일 — 게시할 때 null 로 지움")
     ap.add_argument("--answers", help="저장된 답변(아티팩트 db answers 컬렉션: JSON 목록 또는 문서별 JSON 폴더) — 당초 초안과 비교해 표시")
     args = ap.parse_args()
     now = dt.datetime.now(KST)
@@ -817,7 +820,12 @@ def main():
         d["pay"] = pay_of(d["meta"], postings)
     page = render(drafts, today, now, excluded, postings, load_json_list(args.foreign))
     snap = f"briefing_{stamp}.html"
-    pasts = sorted({p for p in history if re.fullmatch(r"briefing_\d{4}\.\d{2}\.\d{2}\.html", p)} | {snap}, reverse=True)
+    keep_from = f"briefing_{today - dt.timedelta(days=6):%Y.%m.%d}.html"
+    allsnaps = {p for p in history if re.fullmatch(r"briefing_\d{4}\.\d{2}\.\d{2}\.html", p)} | {snap}
+    pasts = sorted((p for p in allsnaps if p >= keep_from), reverse=True)
+    expired = sorted(p for p in allsnaps if p < keep_from)
+    if args.expired_out:
+        Path(args.expired_out).write_text("".join(p + "\n" for p in expired), encoding="utf-8")
     nav = ('<div class="gen">지난 브리핑: ' + " · ".join(
         f'<a href="{p}" target="_blank" rel="noopener">{p[9:19]}</a>' for p in pasts) + "</div>")
     page = re.sub(r'(<div class="gen">[^<]*</div>)</header>', lambda m: "<div>" + m.group(1) + nav + "</div></header>", page, count=1)
@@ -828,7 +836,7 @@ def main():
     for d in drafts:
         (letters / Path(d["letter"]).name).write_text(render_letter(d, today), encoding="utf-8")
     shown = sum(1 for d in drafts if d["id"] not in excluded)
-    print(f"{args.out}(+ {snap}): 초안 {len(drafts)}건(제외 {len(drafts) - shown}건), letters/*_{stamp}.html {len(drafts)}개, 저장 답변 반영 {edited}문항")
+    print(f"{args.out}(+ {snap}, 지난 사본 {len(pasts) - 1}개 유지, 만료 {len(expired)}개): 초안 {len(drafts)}건(제외 {len(drafts) - shown}건), letters/*_{stamp}.html {len(drafts)}개, 저장 답변 반영 {edited}문항")
     return 0
 
 
