@@ -39,15 +39,16 @@ drafts/index.json 과 drafts/*.md 초안을 읽어 아티팩트용 index.html �
     python3 safety_jobs/cover_brief.py --drafts drafts --out index.html [--today YYYY-MM-DD]
         [--briefing briefings/latest.json ...] [--exclude excluded.json] [--answers answers/]
 
-편집용 HTML 은 letters/<id>_YYYY.MM.DD.html(--stamp, 기본 오늘 KST)로 날짜를 붙여 새로 쓰고, 이전 날짜 파일은
-지우지 않는다(게시할 때 보내지 않으면 아티팩트에 그대로 남음). --history 로 아티팩트의 기존 파일 목록을 주면
+편집용 HTML 은 letters/<id>_YYYY.MM.DD.html(--stamp, 기본 오늘 KST)로 날짜를 붙여 새로 쓴다(보관 기간은 아래). --history 로 아티팩트의 기존 파일 목록을 주면
 초안 카드에 '이전 버전' 링크를 단다.
 
 브리핑 화면도 날짜를 붙인 사본 briefing_YYYY.MM.DD.html(--stamp)을 index.html 옆에 함께 쓴다(2026-10-17 사용자 요청:
 최종본만 남기지 말고 이전 브리핑도 볼 수 있게). 머리말 아래 '지난 브리핑' 줄에 --history 의 briefing_*.html 과
 오늘 사본을 최신순으로 링크한다. 사본은 최근 일주일(오늘 포함 7일)만 보관한다(2026-10-18 사용자 요청) — 그보다
 오래된 briefing_*.html 은 --expired-out 파일에 줄마다 적으니, 게시할 때 그 경로만 files 에 null 로 넣어 지운다
-(letters/ 편집용 HTML 은 기간과 관계없이 남긴다).
+편집용 HTML(letters/)은 최근 3일만 보관한다(2026-10-18 사용자 요청, 아티팩트 파일 512개 한도) — 3일 지난
+letters/<id>_YYYY.MM.DD.html 과 날짜 없는 letters/<id>.html 도 --expired-out 에 적는다. 오늘 편집용 HTML 은 화면에
+보이는 초안(제외 안 됨, 마감 전)만 만든다.
 
 --answers 로 저장된 답변(페이지의 '답변 저장', 아티팩트 db answers 컬렉션)을 주면 그 문항은 저장본으로 보여 주고
 당초 초안과 바뀐 곳을 '당초 초안과 비교'에 표시한다. 수정 경향 정리는 cover_edits.py.
@@ -326,6 +327,10 @@ def foreign_section(foreign, excluded, postings):
             '<div class="scroll"><table><colgroup><col style="width:36px"><col style="width:16%"><col style="width:13%"><col><col style="width:12%"><col style="width:9%"><col style="width:15%"></colgroup>'
             '<thead><tr><th class="pickcell"><input type="checkbox" class="pickall" aria-label="외국계 공고 전체 선택"></th><th>업체</th><th>구분</th><th>공고</th><th>마감일</th><th>남은 기간</th><th>작성</th></tr></thead><tbody>'
             + "".join(rows) + "</tbody></table></div></section>")
+
+
+LETTER_DAYS = 3  # 편집용 HTML 보관 일수(오늘 포함)
+SNAP_DAYS = 7  # 브리핑 사본 보관 일수(오늘 포함)
 
 
 def older_links(d):
@@ -809,34 +814,50 @@ def main():
                        "questions": questions, "left": d_left(meta.get("deadline", ""), today)})
     stamp = args.stamp or f"{today:%Y.%m.%d}"
     history = load_history(args.history)
+    excluded = load_excluded(args.exclude)
+    # 보관 기간(2026-10-18 사용자 요청): 편집용 HTML 은 최근 3일(오늘 포함), 브리핑 사본은 최근 7일.
+    # 화면에 보이는 초안(제외 안 됨, 마감 전)만 오늘 편집용 HTML 을 만든다(아티팩트 파일 512개 한도).
+    keep_letter = f"{today - dt.timedelta(days=LETTER_DAYS - 1):%Y.%m.%d}"
+    def letter_date(p):
+        m = re.search(r"_(\d{4}\.\d{2}\.\d{2})\.html$", p)
+        return m.group(1) if m else ""
+    shown_ids = {d["id"] for d in drafts if (d["left"] is None or d["left"] >= 0) and d["id"] not in excluded}
     for d in drafts:
         d["letter"] = f"letters/{d['id']}_{stamp}.html"
-        olds = [p for p in history if p != d["letter"] and re.fullmatch(rf"letters/{d['id']}(_\d{{4}}\.\d{{2}}\.\d{{2}})?\.html", p)]
-        d["older"] = sorted(olds, key=lambda p: (len(p) > len(f"letters/{d['id']}.html"), p), reverse=True)
-    excluded = load_excluded(args.exclude)
+        olds = [p for p in history if p != d["letter"] and letter_date(p) >= keep_letter
+                and re.fullmatch(rf"letters/{d['id']}_\d{{4}}\.\d{{2}}\.\d{{2}}\.html", p)]
+        d["older"] = sorted(olds, reverse=True)
+    written = {d["letter"] for d in drafts if d["id"] in shown_ids}
+    expired = sorted(p for p in history if p.startswith("letters/") and p.endswith(".html")
+                     and p not in written and letter_date(p) < keep_letter)
     edited = apply_answers(drafts, load_answers(args.answers))
     postings = load_postings(args.briefing)
     for d in drafts:
         d["pay"] = pay_of(d["meta"], postings)
     page = render(drafts, today, now, excluded, postings, load_json_list(args.foreign))
-    snap = f"briefing_{stamp}.html"
-    keep_from = f"briefing_{today - dt.timedelta(days=6):%Y.%m.%d}.html"
+    snap = f"briefing_{today:%Y.%m.%d}.html"
+    keep_snap = f"briefing_{today - dt.timedelta(days=SNAP_DAYS - 1):%Y.%m.%d}.html"
     allsnaps = {p for p in history if re.fullmatch(r"briefing_\d{4}\.\d{2}\.\d{2}\.html", p)} | {snap}
-    pasts = sorted((p for p in allsnaps if p >= keep_from), reverse=True)
-    expired = sorted(p for p in allsnaps if p < keep_from)
+    pasts = sorted((p for p in allsnaps if p >= keep_snap), reverse=True)
+    expired += sorted(p for p in allsnaps if p < keep_snap)
     if args.expired_out:
         Path(args.expired_out).write_text("".join(p + "\n" for p in expired), encoding="utf-8")
     nav = ('<div class="gen">지난 브리핑: ' + " · ".join(
         f'<a href="{p}" target="_blank" rel="noopener">{p[9:19]}</a>' for p in pasts) + "</div>")
     page = re.sub(r'(<div class="gen">[^<]*</div>)</header>', lambda m: "<div>" + m.group(1) + nav + "</div></header>", page, count=1)
     Path(args.out).write_text(page, encoding="utf-8")
-    (Path(args.out).parent / snap).write_text(page, encoding="utf-8")
+    # 사본은 별도 파일로 그대로 서빙되므로 문서 골격을 직접 붙인다(없으면 quirks 모드).
+    (Path(args.out).parent / snap).write_text(
+        '<!doctype html><html lang="ko"><head><meta charset="utf-8">'
+        '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body>'
+        + page + "</body></html>", encoding="utf-8")
     letters = Path(args.out).parent / "letters"
     letters.mkdir(exist_ok=True)
     for d in drafts:
-        (letters / Path(d["letter"]).name).write_text(render_letter(d, today), encoding="utf-8")
-    shown = sum(1 for d in drafts if d["id"] not in excluded)
-    print(f"{args.out}(+ {snap}, 지난 사본 {len(pasts) - 1}개 유지, 만료 {len(expired)}개): 초안 {len(drafts)}건(제외 {len(drafts) - shown}건), letters/*_{stamp}.html {len(drafts)}개, 저장 답변 반영 {edited}문항")
+        if d["id"] in shown_ids:
+            (letters / Path(d["letter"]).name).write_text(render_letter(d, today), encoding="utf-8")
+    print(f"{args.out}(+ {snap}, 지난 사본 {len(pasts) - 1}개): 초안 {len(drafts)}건(화면 {len(shown_ids)}건), "
+          f"letters/*_{stamp}.html {len(written)}개, 저장 답변 반영 {edited}문항, 보관 기간 지난 파일 {len(expired)}개")
     return 0
 
 
