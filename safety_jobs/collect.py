@@ -2326,8 +2326,10 @@ HEALTH_ONLY_RE = re.compile(r"보건\s*(?:관리자?|관리|직|담당|PJT)|(?<!
 SAFETY_ROLE_RE = re.compile(r"(?<![보])안전(?!\s*(?:진단|지원|용품|장치|인증|요원))|(?<![A-Za-z])(?:HSE|EHS|EH&S|SHE|HSEQ|QHSE|HSSE|[Ss]afety|SAFETY)(?![A-Za-z])")
 MIXED_ROLE = r"총무|생산|품질|공사|공무|시설|설비|기계|물류|공정|사무|행정|보전|시공|정비|유지보수|구매|인사|경영지원"
 MIXED_ROLE_RE = re.compile(rf"(?:{MIXED_ROLE})\s*(?:관리자?|담당자?|팀|직)?\s*(?:/|및|,|·|&|와|과)\s*안전|안전\s*(?:관리자?|담당자?)?\s*(?:/|및|,|·|&)\s*(?:{MIXED_ROLE})")
-NOT_SAFETY_JOB_RE = re.compile(r"공모전|선착순|무료\s*교육|교육생|사진\s*공모|경진\s*대회|설명회|안전\s*(?:관리\s*)?요원|안전\s*진단|개발자|개발\s*(?:연구)?직|연구원|연구직|설치\s*파트너|강사")
+NOT_SAFETY_JOB_RE = re.compile(r"(?:실무형|교육|양성|연수|체험형)\s*프로그|아카데미|부트\s*캠프|(?:양성|교육|연수)\s*과정|공모전|선착순|무료\s*교육|교육생|사진\s*공모|경진\s*대회|설명회|안전\s*(?:관리\s*)?요원|안전\s*진단|개발자|개발\s*(?:연구)?직|연구원|연구직|설치\s*파트너|강사")
 AGENCY_SAFETY_RE = re.compile(r"[가-힣]*안전[가-힣]*(?:교육원|심판원|진흥원|연구원|공단|공사|체험장|체험관)(?![가-힣])")
+BIZ_UNIT_SAFETY_RE = re.compile(r"안전(?:\s*[/·&]\s*[가-힣A-Za-z]+)?\s*사업\s*(?:본부|부문|부)")  # '안전/모션 사업본부'처럼 사업부 이름의 '안전'
+MULTI_FIELD_RE = re.compile(r"분야별|부문별|직무별|직종별|각\s*(?:부문|분야|직무)")  # 여러 분야를 한꺼번에 뽑는 공고
 # 공고 내용(제목·담당 업무)이 총무+안전, 전기+안전처럼 복합업무인 공고 (사용자 요청 2026-10-13, 환경안전은 포함)
 COMPOSITE_RE = re.compile(r"총무\s*(?:업무\s*)?(?:[/·,&]|및|겸)?\s*안전|안전\s*(?:관리\s*)?(?:[/·,&]|및|겸)\s*총무|"
                           r"전기\s*(?:[/·,&]|및|겸)?\s*안전|안전\s*(?:관리\s*)?(?:[/·,&]|및|겸)\s*전기|전기\s*[·/,]\s*[가-힣]{1,6}\s*안전\s*관리|"
@@ -2352,6 +2354,7 @@ def safety_main_reason(p) -> str:
     if len(core) >= 3:  # 제목에 들어간 회사 이름(○○안전공단 등)의 '안전'은 직무로 보지 않는다
         t = re.sub(r"\s*".join(map(re.escape, core)), " ", t)
     t = AGENCY_SAFETY_RE.sub(" ", t)  # 국가재난안전교육원·해양안전심판원 같은 기관 이름
+    t = BIZ_UNIT_SAFETY_RE.sub(" ", t)  # 안전/모션 사업본부 같은 사업부 이름 (사용자 요청 2026-10-17)
     if NOT_SAFETY_JOB_RE.search(t):
         return "안전 주업무 아님"
     if MIXED_ROLE_RE.search(t):
@@ -2361,6 +2364,8 @@ def safety_main_reason(p) -> str:
     has_safety = SAFETY_ROLE_RE.search(CERT_NAME_RE.sub(" ", t))
     if not has_safety and HEALTH_ONLY_RE.search(t):
         return "보건관리자"
+    if not has_safety and MULTI_FIELD_RE.search(t):  # '플랜트 건설 관련 분야별 모집'처럼 제목에 안전이 없는 여러 분야 모집 (사용자 요청 2026-10-17)
+        return "안전 주업무 아님(여러 분야 모집)"
     if not has_safety:
         # 대기업 공채처럼 직무가 여러 개인 공고는 담당 업무에 안전 직무가 있을 때만 남긴다
         # (제목 끝에 생산·항만운영 같은 다른 모집 분야를 지정한 공채는 제외)
