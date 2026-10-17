@@ -1165,6 +1165,19 @@
       "note": "SK Careers 직무 필터(role=306) 목록 — 관계사별 공고·마감은 링크에서 확인",
       "added": "2026-10-16",
       "user_pick": true
+    },
+    {
+      "company": "SK그룹",
+      "title": "SK Careers 공고 R262199 (관계사·직무는 링크에서 확인)",
+      "url": "https://www.skcareers.com/Recruit/Detail/R262199",
+      "deadline": "확인 필요",
+      "employment": "",
+      "level": "",
+      "safety_job": "yes",
+      "via": "사용자 지정(SK Careers)",
+      "note": "사용자가 직접 지정한 공고 — SK Careers는 자동 접속이 막혀 회사·공고명을 읽지 못함",
+      "added": "2026-10-18",
+      "user_pick": true
     }
   ]
 }
