@@ -104,7 +104,7 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 <script>
 /* 작업 데이터 — 에이전트를 맡길 때마다 이 블록만 고친다 (progress: 0~100) */
 var JOB={
-  updated:"2026-10-18 08:05 KST",updatedISO:"2026-10-17T23:05:00Z",
+  updated:"2026-10-18 08:22 KST",updatedISO:"2026-10-17T23:22:00Z",
   main:{name:"메인 에이전트",task:"규칙 수정 후 자동 브리핑 — 교육 프로그램·사업부 이름의 안전·여러 분야 모집 제외",note:"현재 브리핑(81건)에서 현대건설 실무형 프로그램·아우모비오 안전/모션 사업본부가 빠질 예정입니다."},
   subs:[
    {name:"제외 규칙 (collect.py)",order:"하청 1",status:"done",progress:100,task:"교육·실무형 프로그램, 사업부 이름의 '안전', 분야별·부문별 여러 분야 모집 제외",result:"PR #80 병합 · 81건에 적용 시 의도한 2건만 제외"},
@@ -113,8 +113,8 @@ var JOB={
    {name:"SK Careers 공고 추가",order:"하청 5",status:"done",progress:100,task:"R262199 를 직접 추가 목록·브리핑 DB에 등록",result:"PR #81 병합 · 회사·공고명은 사이트 차단으로 확인 못 함"},
    {name:"영남에너지 자소서",order:"하청 7",status:"done",progress:100,task:"공고 정보 조사 · 자소서 초안·메모는 사용자 요청으로 삭제",result:"R262199 → 영남에너지서비스 공고만 유지 · 초안 문서 삭제 · 메모 삭제(PR #85)"},
    {name:"날짜별 브리핑 보관",order:"하청 8",status:"done",progress:100,task:"briefing_날짜.html 보관·이전 브리핑 링크 — 최근 3일만 보관",result:"PR #82·#83·#84 병합 · 10/16·10/17 사본 + 오늘분"},
-   {name:"수집기 (새 규칙·SK·보관)",order:"하청 6",status:"run",progress:0,startedAt:"2026-10-17T22:56:14Z",etaMin:35,task:"safety-jobs-briefing run #179 (#174·#176은 옛 코드라 취소)",result:"공고 수집 중"},
-   {name:"브리핑 게시",order:"하청 4",status:"wait",progress:0,task:"latest.html 을 브리핑 아티팩트에 게시",result:"v73 즉시 게시(07:30 수집분 + 새 규칙·영남에너지, 78건, 10/16·10/17 사본) · run #179 끝나면 다시 게시"}
+   {name:"수집기 (새 규칙·SK·보관)",order:"하청 6",status:"done",progress:100,task:"safety-jobs-briefing run #179 (#174·#176은 옛 코드라 취소)",result:"run #179 성공 · 79건 · 오늘 신규 3 · 아우모비오·실무형 프로그램 0건 · 사본 10/16~10/18"},
+   {name:"브리핑 게시",order:"하청 4",status:"wait",progress:0,task:"latest.html 을 브리핑 아티팩트에 게시",result:"v74 게시 (79건, 최근 3일 사본, 자소서 메모 제거)"}
   ]
 };
 
