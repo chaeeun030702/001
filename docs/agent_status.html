@@ -104,12 +104,13 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 <script>
 /* 작업 데이터 — 에이전트를 맡길 때마다 이 블록만 고친다 (progress: 0~100) */
 var JOB={
-  updated:"2026-10-16 23:25 KST",updatedISO:"2026-10-16T14:25:00Z",
-  main:{name:"메인 에이전트",task:"SK Careers 안전·환경 직무 공고(role=306) 브리핑에 추가",note:"SK Careers 사이트는 이 세션에서 차단(403) — 직접 추가 목록에 넣고 GitHub Actions가 다시 수집합니다."},
+  updated:"2026-10-18 07:31 KST",updatedISO:"2026-10-17T22:31:00Z",
+  main:{name:"메인 에이전트",task:"규칙 수정 후 자동 브리핑 — 교육 프로그램·사업부 이름의 안전·여러 분야 모집 제외",note:"현재 브리핑(81건)에서 현대건설 실무형 프로그램·아우모비오 안전/모션 사업본부가 빠질 예정입니다."},
   subs:[
-   {name:"직접 추가 등록",order:"하청 1",status:"done",progress:100,task:"manual_postings.json + 브리핑 DB(manual)에 사용자 지정 공고로 등록",result:"PR #78 병합 · DB skcareers-role306"},
-   {name:"GitHub Actions 수집기",order:"하청 2",status:"done",progress:100,task:"safety-jobs-briefing run #166",result:"성공 · 83건 · SK Careers 1건 포함(목록 페이지라 개별 공고는 읽지 못함)"},
-   {name:"브리핑 게시",order:"하청 3",status:"done",progress:100,task:"latest.html 을 브리핑 아티팩트에 게시",result:"v71 게시 (83건)"}
+   {name:"제외 규칙 (collect.py)",order:"하청 1",status:"done",progress:100,task:"교육·실무형 프로그램, 사업부 이름의 '안전', 분야별·부문별 여러 분야 모집 제외",result:"PR #80 병합 · 81건에 적용 시 의도한 2건만 제외"},
+   {name:"메일 루틴 기준",order:"하청 2",status:"done",progress:100,task:"사람인·잡코리아 메일 루틴에도 같은 제외 기준 추가",result:"루틴 지시문 갱신 · 다음 실행 10/18 17:55"},
+   {name:"GitHub Actions 수집기",order:"하청 3",status:"run",progress:0,task:"safety-jobs-briefing run #172 (새 규칙)",result:"직전 예약 수집: 81건",startedAt:"2026-10-17T22:30:18Z",etaMin:35},
+   {name:"브리핑 게시",order:"하청 4",status:"wait",progress:0,task:"latest.html 을 브리핑 아티팩트에 게시",result:"run #172 끝나면 자동 게시"}
   ]
 };
 
