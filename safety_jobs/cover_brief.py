@@ -43,6 +43,10 @@ drafts/index.json 과 drafts/*.md 초안을 읽어 아티팩트용 index.html �
 지우지 않는다(게시할 때 보내지 않으면 아티팩트에 그대로 남음). --history 로 아티팩트의 기존 파일 목록을 주면
 초안 카드에 '이전 버전' 링크를 단다.
 
+브리핑 화면도 날짜를 붙인 사본 briefing_YYYY.MM.DD.html(--stamp)을 index.html 옆에 함께 쓴다(2026-10-17 사용자 요청:
+최종본만 남기지 말고 이전 브리핑도 볼 수 있게). 머리말 아래 '지난 브리핑' 줄에 --history 의 briefing_*.html 과
+오늘 사본을 최신순으로 링크한다. 이전 날짜 사본은 게시할 때 보내지 않으면 그대로 남는다.
+
 --answers 로 저장된 답변(페이지의 '답변 저장', 아티팩트 db answers 컬렉션)을 주면 그 문항은 저장본으로 보여 주고
 당초 초안과 바뀐 곳을 '당초 초안과 비교'에 표시한다. 수정 경향 정리는 cover_edits.py.
 
@@ -811,13 +815,20 @@ def main():
     postings = load_postings(args.briefing)
     for d in drafts:
         d["pay"] = pay_of(d["meta"], postings)
-    Path(args.out).write_text(render(drafts, today, now, excluded, postings, load_json_list(args.foreign)), encoding="utf-8")
+    page = render(drafts, today, now, excluded, postings, load_json_list(args.foreign))
+    snap = f"briefing_{stamp}.html"
+    pasts = sorted({p for p in history if re.fullmatch(r"briefing_\d{4}\.\d{2}\.\d{2}\.html", p)} | {snap}, reverse=True)
+    nav = ('<div class="gen">지난 브리핑: ' + " · ".join(
+        f'<a href="{p}" target="_blank" rel="noopener">{p[9:19]}</a>' for p in pasts) + "</div>")
+    page = re.sub(r'(<div class="gen">[^<]*</div>)</header>', lambda m: "<div>" + m.group(1) + nav + "</div></header>", page, count=1)
+    Path(args.out).write_text(page, encoding="utf-8")
+    (Path(args.out).parent / snap).write_text(page, encoding="utf-8")
     letters = Path(args.out).parent / "letters"
     letters.mkdir(exist_ok=True)
     for d in drafts:
         (letters / Path(d["letter"]).name).write_text(render_letter(d, today), encoding="utf-8")
     shown = sum(1 for d in drafts if d["id"] not in excluded)
-    print(f"{args.out}: 초안 {len(drafts)}건(제외 {len(drafts) - shown}건), letters/*_{stamp}.html {len(drafts)}개, 저장 답변 반영 {edited}문항")
+    print(f"{args.out}(+ {snap}): 초안 {len(drafts)}건(제외 {len(drafts) - shown}건), letters/*_{stamp}.html {len(drafts)}개, 저장 답변 반영 {edited}문항")
     return 0
 
 
