@@ -104,7 +104,7 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 <script>
 /* 작업 데이터 — 에이전트를 맡길 때마다 이 블록만 고친다 (progress: 0~100) */
 var JOB={
-  updated:"2026-10-18 08:05 KST",updatedISO:"2026-10-17T23:05:00Z",
+  updated:"2026-10-18 08:15 KST",updatedISO:"2026-10-17T23:15:00Z",
   main:{name:"메인 에이전트",task:"규칙 수정 후 자동 브리핑 — 교육 프로그램·사업부 이름의 안전·여러 분야 모집 제외",note:"현재 브리핑(81건)에서 현대건설 실무형 프로그램·아우모비오 안전/모션 사업본부가 빠질 예정입니다."},
   subs:[
    {name:"제외 규칙 (collect.py)",order:"하청 1",status:"done",progress:100,task:"교육·실무형 프로그램, 사업부 이름의 '안전', 분야별·부문별 여러 분야 모집 제외",result:"PR #80 병합 · 81건에 적용 시 의도한 2건만 제외"},
@@ -112,9 +112,9 @@ var JOB={
    {name:"GitHub Actions 수집기",order:"하청 3",status:"run",progress:0,task:"safety-jobs-briefing run #172 (새 규칙)",result:"직전 예약 수집: 81건",startedAt:"2026-10-17T22:30:18Z",etaMin:35},
    {name:"SK Careers 공고 추가",order:"하청 5",status:"done",progress:100,task:"R262199 를 직접 추가 목록·브리핑 DB에 등록",result:"PR #81 병합 · 회사·공고명은 사이트 차단으로 확인 못 함"},
    {name:"영남에너지 자소서",order:"하청 7",status:"done",progress:100,task:"공고 정보·예상 자소서 문항 조사, 초안 문서 작성, 브리핑 공고에 메모",result:"자소서 초안 문서 · 문항 3개(지난 공고 기준) · R262199 → 영남에너지서비스"},
-   {name:"날짜별 브리핑 보관",order:"하청 8",status:"done",progress:100,task:"briefing_날짜.html 보관·이전 브리핑 링크, 9/30~10/17 보관본 생성",result:"PR #82 병합 · 보관본 18개"},
-   {name:"수집기 (새 규칙·SK·보관)",order:"하청 6",status:"wait",progress:0,task:"safety-jobs-briefing run #176 (run #174는 옛 코드라 취소)",result:"run #172 끝난 뒤 자동 시작"},
-   {name:"브리핑 게시",order:"하청 4",status:"wait",progress:0,task:"latest.html 을 브리핑 아티팩트에 게시",result:"run #176 끝나면 게시 (보관본 파일 함께)"}
+   {name:"날짜별 브리핑 보관",order:"하청 8",status:"done",progress:100,task:"briefing_날짜.html 보관·이전 브리핑 링크 — 최근 3일만 보관",result:"PR #82·#83·#84 병합 · 10/16·10/17 사본 + 오늘분"},
+   {name:"수집기 (새 규칙·SK·보관)",order:"하청 6",status:"wait",progress:0,task:"safety-jobs-briefing run #179 (#174·#176은 옛 코드라 취소)",result:"run #172 끝난 뒤 자동 시작"},
+   {name:"브리핑 게시",order:"하청 4",status:"wait",progress:0,task:"latest.html 을 브리핑 아티팩트에 게시",result:"run #179 끝나면 게시 (최근 3일 사본 함께)"}
   ]
 };
 
