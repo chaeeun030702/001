@@ -1167,17 +1167,18 @@
       "user_pick": true
     },
     {
-      "company": "SK그룹",
-      "title": "SK Careers 공고 R262199 (관계사·직무는 링크에서 확인)",
+      "company": "영남에너지서비스",
+      "title": "SK이노베이션 E&S 도시가스사 안전관리 신입사원(G2) — 영남에너지서비스(구미·포항)",
       "url": "https://www.skcareers.com/Recruit/Detail/R262199",
-      "deadline": "확인 필요",
-      "employment": "",
-      "level": "",
+      "deadline": "2026-10-22",
+      "employment": "정규직",
+      "level": "신입",
       "safety_job": "yes",
       "via": "사용자 지정(SK Careers)",
-      "note": "사용자가 직접 지정한 공고 — SK Careers는 자동 접속이 막혀 회사·공고명을 읽지 못함",
+      "note": "SK Careers R262199 — 웹 검색으로 추정(원문 미확인). 마감 10/22 07:00(다른 안내 10/26)",
       "added": "2026-10-18",
-      "user_pick": true
+      "user_pick": true,
+      "memo": "자소서 문항(예상, 지난 공고 기준): ① 지원 동기·입사 후 포부(800자) ② 협업 경험 ③ 도전 경험 · G2(초대졸) 직급이라 4년제 지원 가능 여부 확인 · 초안: https://claude.ai/code/artifact/4d65d0b3-0ece-4928-a79e-2e4d2f8214ca"
     }
   ]
 }

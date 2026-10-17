@@ -767,7 +767,8 @@ def src_manual(f: Fetcher):
         p.level = it.get("level") or "신입"
         p.extra = {"manual": True, "needs_check": it.get("safety_job") != "yes",
                    "check_note": it.get("note", ""), "via": it.get("via", ""),
-                   "user_pick": bool(it.get("user_pick")), "fill_from_detail": bool(it.get("fill_from_detail"))}
+                   "user_pick": bool(it.get("user_pick")), "fill_from_detail": bool(it.get("fill_from_detail")),
+                   "memo": it.get("memo", "")}  # 자소서 문항 등 공고 아래에 늘 보여 줄 메모
         if src == "LinkedIn":
             p.listing_text = clean(f"{p.title} {it.get('note', '')}")
             p.extra["check_note"] = ""
@@ -1797,6 +1798,11 @@ def check_pill(p):
     return '<span class="pill pck">직무 확인 필요</span>' + (f'<small class="ckn">{e(note)}</small>' if note else "")
 
 
+def memo_html(p):
+    m = p.extra.get("memo", "")
+    return f'<small class="memo">📝 {html.escape(m)}</small>' if m else ""
+
+
 def big_pill(p):
     return '<span class="pill pb">대기업 신입 공채</span>' if is_bigcorp_entry(p) else ""
 
@@ -2043,6 +2049,9 @@ td.src{white-space:nowrap}
 .pill.pw.web{border-style:dashed;background:transparent} a.bnfsrc{text-decoration:none;color:inherit}
 .pill.pck{margin:0 0 4px;border-color:var(--warning);color:var(--text-strong)} .pill.pck::before{background:var(--warning)}
 small.ckn{display:block;font-size:12px;color:var(--caption)}
+small.memo{display:block;font-size:12px;color:var(--text-sub);white-space:pre-line;margin-top:2px}
+nav.archive{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:13px;margin:0 0 12px;color:var(--caption)}
+nav.archive a{color:var(--primary)}
 .pill.pai{margin:4px 4px 0 0;border-color:var(--orange);background:color-mix(in srgb,var(--orange) 12%,transparent);color:var(--text-strong)} .pill.pai::before{background:var(--orange)}
 .cal-legend .tgl .tg.ai{color:var(--orange)}
 .day details summary{font-size:12px;color:var(--primary);cursor:pointer;list-style:none} .day details summary::-webkit-details-marker{display:none}
@@ -2626,6 +2635,18 @@ def cert_pills(p):
     return "".join(f'<span class="pill pc">{html.escape(c)} 명시</span> ' for c in p.certs)
 
 
+ARCHIVE_DATES: list = []  # 날짜별 브리핑 보관본 (briefings/archive/briefing_YYYY-MM-DD.html) — 최신이 앞
+
+
+def archive_nav(today):
+    """이전 브리핑 링크. 아티팩트에 같은 이름(briefing_날짜.html)의 파일로 함께 올린다 (사용자 요청 2026-10-18)."""
+    ds = [d for d in ARCHIVE_DATES if d < today.isoformat()][:45]
+    if not ds:
+        return ""
+    links = " ".join(f'<a href="briefing_{d}.html">{d[5:7]}/{d[8:]}</a>' for d in ds)
+    return f'<nav class="archive" aria-label="이전 브리핑"><b>이전 브리핑</b> {links}</nav>'
+
+
 def render_html(postings, failures, now, stats):
     e = html.escape
     today = now.date()
@@ -2781,7 +2802,7 @@ def render_html(postings, failures, now, stats):
         trs = "".join(
             f'<tr class="h{p.hilite}" data-url="{e(p.url)}" data-ind="{e(p.industry)}" data-cert="{1 if p.certs else 0}" data-pref="{1 if p.prefs else 0}" data-ai="{1 if p.extra.get("ai") else 0}" data-grp="{e(" ".join(p.extra.get("groups", [])))}" data-listed="{e(p.extra.get("listed", ""))}" data-new="{1 if is_new(p, today) else 0}" data-bnf="{1 if has_benefit(p) else 0}">{xsel(p)}<td class="lv">{e(p.level)}<small>{e(p.industry)}</small>{sal_small(p)}</td>'
             f'<td class="corp"><strong>{co_link(p)}</strong>{new_pill(p, today)}{big_pill(p)}{pill[p.hilite]}{group_pills(p)}{rank_pill(p)}</td>'
-            f"<td class=\"ttl\">{ttl_link(p)}{check_pill(p)}{pref_pills(p)}{ai_pill(p)}{benefit_pills(p)}</td><td>{cert_pills(p)}{e(p.qualification or '-')}</td><td>{e(p.preferred or '-')}</td>"
+            f"<td class=\"ttl\">{ttl_link(p)}{check_pill(p)}{memo_html(p)}{pref_pills(p)}{ai_pill(p)}{benefit_pills(p)}</td><td>{cert_pills(p)}{e(p.qualification or '-')}</td><td>{e(p.preferred or '-')}</td>"
             f'<td class="dl{" soon" if id(p) in soon else ""}">{e(p.deadline)}</td>'
             f'<td class="src">{src_link(p)}'
             f'{"<small>이전 수집</small>" if p.extra.get("carried") else ""}</td></tr>'
@@ -2824,7 +2845,7 @@ def render_html(postings, failures, now, stats):
     def rows5(rows, pill_new=False):
         return "".join(
             f'<tr class="h{p.hilite}" data-url="{e(p.url)}">{xsel(p)}<td class="corp"><strong>{co_link(p)}</strong>'
-            f'{new_pill(p, today) if pill_new else ""}{big_pill(p)}{group_pills(p)}</td><td class="ttl">{ttl_link(p)}{check_pill(p)}{benefit_pills(p)}</td><td class="lv">{e(p.employment)}<small>{e(p.level)}</small>{sal_small(p)}</td>'
+            f'{new_pill(p, today) if pill_new else ""}{big_pill(p)}{group_pills(p)}</td><td class="ttl">{ttl_link(p)}{check_pill(p)}{memo_html(p)}{benefit_pills(p)}</td><td class="lv">{e(p.employment)}<small>{e(p.level)}</small>{sal_small(p)}</td>'
             f'<td class="dl{" soon" if id(p) in soon else ""}">{e(p.deadline)}</td><td class="src">{src_link(p)}</td></tr>'
             for p in rows)
     head5 = '<div class="scroll"><table class="t5"><thead><tr>' + PICK_TH + '<th>업체명</th><th>공고명</th><th>고용형태 · 연봉</th><th>접수기한</th><th>출처</th></tr></thead>'
@@ -2863,6 +2884,7 @@ def render_html(postings, failures, now, stats):
 <nav class="side" aria-label="섹션">{side}</nav>
 <main>
 <nav class="chipnav" aria-label="섹션">{chipnav}<a href="#status">사이트 현황</a></nav>
+{archive_nav(today)}
 <div class="kpis" id="summary">{kpis}</div>
 {newsec}
 {render_calendar(postings_all, today)}
@@ -3175,13 +3197,16 @@ def main():
     if SR_BNF:
         stats["사람인"] = stats.get("사람인", "") + ", " + ", ".join(f"복리후생 {k} {v}" for k, v in SR_BNF.items())
     CLOSED_RECENT[:] = load_recent_closed(out / "history", today, kept)  # 달력: 지난주 마감 공고
+    ARCHIVE_DATES[:] = sorted((f.stem.removeprefix("briefing_") for f in (out / "archive").glob("briefing_*.html")), reverse=True)
     page = render_html(kept, failures, now, stats)
     (out / "latest.html").write_text(page, encoding="utf-8")
     # 내려받아 편집기·브라우저에서 고칠 수 있는 완전한 HTML 문서
-    (out / "latest_edit.html").write_text(
-        '<!doctype html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n'
-        '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
-        + page.replace("</style>", "</style>\n</head>\n<body>", 1) + "\n</body>\n</html>\n", encoding="utf-8")
+    full_doc = ('<!doctype html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n'
+                '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
+                + page.replace("</style>", "</style>\n</head>\n<body>", 1) + "\n</body>\n</html>\n")
+    (out / "latest_edit.html").write_text(full_doc, encoding="utf-8")
+    (out / "archive").mkdir(exist_ok=True)  # 날짜별 보관본: 같은 날 다시 수집하면 그날 파일을 덮어쓴다
+    (out / "archive" / f"briefing_{today:%Y-%m-%d}.html").write_text(full_doc, encoding="utf-8")
     for p in kept:
         p.detail_text = p.detail_text[: 6000 if BROAD else 1500]  # 전체 모드는 자격요건·우대를 다시 읽을 수 있게 길게 남긴다
     (out / "latest.json").write_text(json.dumps(
