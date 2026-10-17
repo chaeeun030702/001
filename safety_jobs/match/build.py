@@ -276,3 +276,13 @@ out = f'''<title>안전관리자 채용 매칭 브리핑</title>
 {body_html}'''
 open(SP + "matching_briefing.html", "w").write(out)
 print(len(out), "bytes", "now", n_now, "cert", n_cert, "careful", len(careful), "soon", [r["name"] for r in soon], "green_after", [r["name"] for r in green_after])
+
+# 예약 세션이 최종 보고에 쓰는 요약(summary.json)
+_bn = json.load(open(SP + "broad_stats.json", encoding="utf-8")) if os.path.exists(SP + "broad_stats.json") else {}
+def _brief(r, key):
+    return {"name": r["name"], "title": r["p"]["title"][:40], "employment": r["p"]["employment"], "deadline": r["dl"] or "채용 시 마감", "dd": r["dd"], "gate": r["g"], "now": r["now"], "aft": r["aft"], "shown": r[key]}
+json.dump({"today": TODAY.isoformat(), "when": WHEN, "n_all": n_all, "n_score": n_score, "n_now": n_now, "n_cert": n_cert, "n_careful": len(careful), "n_thin": n_thin,
+           "n_skip": n_skip, "n_broad": _bn.get("n"), "skip_note": _skip_note,
+           "now_top3": [_brief(r, "now") for r in now_ok[:3]], "cert_top3": [_brief(r, "aft") for r in cert_ok[:3]],
+           "soon": [_brief(r, "now") for r in soon], "careful": [_brief(r, "now") for r in careful[:5]]},
+          open(SP + "summary.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
