@@ -66,8 +66,9 @@ uv run safety_jobs/collect.py --out briefings   # latest.md / latest.html / late
 ## 날짜별 브리핑 보관
 
 - 수집할 때마다 `briefings/archive/briefing_YYYY-MM-DD.html`(완전한 HTML 문서)을 남긴다. 같은 날 다시 수집하면 그날 파일을 덮어쓴다.
-- 브리핑 상단 '이전 브리핑' 줄이 보관본(최근 45일)으로 연결된다. 아티팩트에 게시할 때 이 파일들을 같은 이름으로 함께 올린다.
-- 9/30~10/17 보관본은 `briefings/history/*.json.gz`에서 다시 그렸다(그날 마지막 수집 기준).
+- 사본은 오늘 포함 최근 7일치만 남기고, 더 오래된 파일은 수집할 때 지운다 (2026-10-18).
+- 브리핑 상단 '이전 브리핑' 줄이 보관본으로 연결된다. 아티팩트에 게시할 때 이 파일들을 같은 이름으로 함께 올린다.
+- 지난 사본은 `briefings/history/*.json.gz`(날짜별 원자료, 계속 보관)에서 다시 그릴 수 있다.
 
 ## 직접 추가 공고 메모
 
