@@ -104,11 +104,12 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 <script>
 /* 작업 데이터 — 에이전트를 맡길 때마다 이 블록만 고친다 (progress: 0~100) */
 var JOB={
-  updated:"2026-10-20 05:56 KST",updatedISO:"2026-10-19T20:56:00Z",
+  updated:"2026-10-20 05:54 KST",updatedISO:"2026-10-19T20:54:00Z",
   main:{name:"메인 에이전트",task:"지금 브리핑(run #185) 게시 완료 · 다른 세션: 국내 전체 포함 새 수집 → 매칭 브리핑",note:"이 세션의 브리핑은 v76으로 게시했습니다. 다른 세션의 두 수집이 끝나면 그 세션이 매칭 브리핑을 다시 게시합니다."},
   subs:[
    {name:"GitHub Actions 수집기",order:"하청 1",status:"done",progress:100,task:"safety-jobs-briefing run #185",result:"성공 · 75건 · 오늘 신규 7 · 이미지 23장 새로 읽음"},
    {name:"브리핑 게시",order:"하청 2",status:"done",progress:100,task:"latest.html + 최근 3일 사본 게시",result:"v76 게시 · 사본 10/18·10/20 (10/16·10/17 삭제)"},
+   {name:"현장 안전 지킴이 제외 규칙",order:"하청 6",status:"done",progress:100,task:"'안전 지킴이' 공고 제외 — 수집기·메일 루틴",result:"PR #86 병합 · 다음 수집부터 적용"},
    {name:"GitHub Actions 일일 수집 (다른 세션)",order:"하청 3",status:"run",progress:0,task:"safety-jobs-briefing run #186",result:"진행 중",startedAt:"2026-10-19T20:44:10Z",etaMin:45},
    {name:"GitHub Actions 국내 전체 수집 (다른 세션)",order:"하청 4",status:"run",progress:0,task:"safety-jobs-broad run #2",result:"진행 중",startedAt:"2026-10-19T20:44:12Z",etaMin:90},
    {name:"매칭 브리핑 분석·게시 (다른 세션)",order:"하청 5",status:"wait",progress:0,task:"새 공고 채점 → 빌드·검증 → 아티팩트 게시",result:"수집 완료 후 시작"}
