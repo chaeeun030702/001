@@ -63,6 +63,7 @@ import html
 import json
 import re
 import sys
+import urllib.parse
 from pathlib import Path
 
 KST = dt.timezone(dt.timedelta(hours=9))
@@ -333,6 +334,17 @@ LETTER_DAYS = 3  # 편집용 HTML 보관 일수(오늘 포함)
 SNAP_DAYS = 7  # 브리핑 사본 보관 일수(오늘 포함)
 
 
+def saramin_info(d):
+    """사람인 기업정보 링크 — 초안의 기업 개요·분석에 사람인 기업정보(csn) 주소가 있으면 그 기업 페이지,
+    없으면 사람인 기업 검색 결과로 연결한다(2026-10-20 사용자 요청: 회사명 아래 '기업정보')."""
+    blob = " ".join(str(v) for v in (d.get("analysis") or {}).values()) if isinstance(d.get("analysis"), dict) else str(d.get("analysis") or "")
+    m = re.search(r"saramin\.co\.kr/zf_user/company-info/view[\w-]*/csn/([A-Za-z0-9%=+]+)", blob)
+    if m:
+        return f"https://www.saramin.co.kr/zf_user/company-info/view/csn/{m.group(1)}"
+    name = re.sub(r"\(주\)|㈜|주식회사|\(유\)|\s+", " ", d["meta"].get("company", "")).strip()
+    return "https://www.saramin.co.kr/zf_user/search/company?searchword=" + urllib.parse.quote(name)
+
+
 def older_links(d):
     """이전 날짜의 편집용 HTML(지우지 않고 남겨 둔 letters/<id>_YYYY.MM.DD.html) 링크."""
     olds = d.get("older") or []
@@ -387,7 +399,7 @@ def render(drafts, today, now, excluded=(), postings=None, foreign=None):
         badge = '<span class="pill new">NEW</span> ' if d in new else ""
         rows.append(f'<tr data-id="{d["id"]}"><td class="pickcell"><input type="checkbox" class="pick" data-id="{d["id"]}" '
                     f'data-company="{e(m.get("company", ""))}" data-title="{e(m.get("title", ""))}" data-url="{e(m.get("url", ""))}" '
-                    f'aria-label="{e(m.get("company", ""))} 선택"></td><td>{badge}<a href="#{d["id"]}">{e(m.get("company", ""))}</a></td><td>{chips}</td>'
+                    f'aria-label="{e(m.get("company", ""))} 선택"></td><td>{badge}<a href="#{d["id"]}">{e(m.get("company", ""))}</a><div class="coinfo"><a href="{e(saramin_info(d))}" target="_blank" rel="noopener" title="사람인 기업정보 열기">기업정보</a></div></td><td>{chips}</td>'
                     f'<td class="wrap">{title_html}</td><td class="num">{e(m.get("deadline", ""))}</td>'
                     f'<td>{dpill(d["left"])}</td><td class="num">{len(d["questions"])}문항</td></tr>')
     table = (EXCLUDE_BAR + '<div class="scroll"><table><colgroup><col style="width:36px"><col style="width:19%"><col style="width:15%"><col><col style="width:14%">'
@@ -402,7 +414,7 @@ def render(drafts, today, now, excluded=(), postings=None, foreign=None):
         cards.append(f'''<details class="draft" id="{d["id"]}"{open_attr}>
 <summary><span class="co">{e(m.get("company", ""))}</span>{chips_of(m)}{dpill(d["left"])}<span class="ttl">{e(m.get("title", ""))}</span></summary>
 <div class="body">
-<div class="doc-actions" style="margin-top:12px"><a class="btn-ghost" href="{d.get("letter") or f"letters/{d['id']}.html"}" target="_blank" rel="noopener">편집용 HTML 열기</a>{older_links(d)}</div>
+<div class="doc-actions" style="margin-top:12px"><a class="btn-ghost" href="{d.get("letter") or f"letters/{d['id']}.html"}" target="_blank" rel="noopener">편집용 HTML 열기</a><a class="btn-ghost" href="{e(saramin_info(d))}" target="_blank" rel="noopener">기업정보(사람인)</a>{older_links(d)}</div>
 {draft_body(d)}
 </div></details>''')
 
@@ -498,6 +510,7 @@ footer{font-size:12px;color:var(--cap)}
 .btn-ghost{color:var(--primary);background:var(--surface);border:1px solid var(--border-strong)}
 .hint{font-size:12px;color:var(--cap);margin:0}
 .chips{margin-top:6px}
+.coinfo{margin-top:2px;font-size:12px} .coinfo a{color:var(--cap);text-decoration:underline;text-underline-offset:2px} .coinfo a:hover{color:var(--primary)} .coinfo a::after{content:" ↗";font-size:10px}
 a.jd{color:var(--text);text-decoration:underline;text-decoration-color:var(--border-strong);text-underline-offset:3px} a.jd:hover{color:var(--primary);text-decoration-color:var(--primary)} a.jd::after{content:" ↗";font-size:11px;color:var(--cap)}
 .emp{margin-top:4px} td .chip,.emp .pill{white-space:normal;max-width:100%} .pay{margin-top:4px;font-size:12px;color:var(--cap);font-variant-numeric:tabular-nums}
 @media print{@page{size:A4 portrait;margin:14mm}body{background:#fff;padding:0}.ref,.doc-actions,button.copy,button.save,details.diff,.state,.meter,.hint,.tech{display:none!important}
