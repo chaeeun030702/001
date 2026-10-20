@@ -319,6 +319,10 @@ def src_saramin(f: Fetcher):
                         text_of(it))
             bold = " ".join(text_of(b) for b in it.select(".job_sector b"))
             p.extra = {"rec_idx": rec.group(1), "cond": cond, "sector": bold, "query": kw}
+            ca = it.select_one(".corp_name a")
+            csn = re.search(r"csn=([^&\"']+)", (ca.get("href", "") if ca else ""))
+            if csn:
+                p.extra["csn"] = csn.group(1)  # 사람인 기업정보 (업체명 링크)
             p.level = cond[1] if len(cond) > 1 else ""
             p.employment = cond[3] if len(cond) > 3 else ""
             p.deadline = text_of(it.select_one(".job_date .date"))
@@ -801,6 +805,10 @@ def fetch_detail(f: Fetcher, p: Posting) -> str:
         url = f"https://www.saramin.co.kr/zf_user/jobs/relay/view-detail?rec_idx={p.extra['rec_idx']}&rec_seq=0"
         raw = f.get(url)
         body = soup_text(raw)
+        if not p.extra.get("csn"):
+            m = re.search(r"company-info/view[^\"']*?csn=([^&\"']+)", raw)
+            if m:
+                p.extra["csn"] = m.group(1)
         return f"{body} {saramin_benefits(f, p)} {ocr_images(f, p, raw, url)}".strip()
     raw = f.get(url, encoding="cp949" if p.source == "워커" else None)
     body, extra = soup_text(raw), ""
@@ -2066,6 +2074,25 @@ a.tl{color:var(--text);text-decoration:none;font-weight:600} a.tl:hover{color:va
 @media (max-width:1023px){.shell{grid-template-columns:1fr}.side{display:none}.chipnav{display:flex}}
 @media (max-width:480px){main{padding:16px}.kpi .v{font-size:28px}}
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+/* A4 세로 인쇄 (사용자 요청 2026-10-20) */
+@page{size:A4 portrait;margin:12mm 10mm}
+@media print{
+  :root{color-scheme:light}
+  body{background:#fff!important;font-size:10pt}
+  .top{position:static!important;box-shadow:none!important}
+  .side,.chipnav,.xbar,.edit-bar button,.icon-btn,.tools,.charts,#flow,.pickcell,th.pickcell,nav.archive{display:none!important}
+  .shell{display:block!important}
+  main{padding:0!important;max-width:none!important}
+  .card{break-inside:avoid;box-shadow:none!important;border-color:#ccc!important}
+  table,table.t5,table.t7{width:100%!important;min-width:0!important;font-size:8pt;border-collapse:collapse;table-layout:auto}
+  td.corp{min-width:0!important} td.dl,td.lv,td.src,th{white-space:normal!important}
+  .scroll{overflow:visible!important;border:0!important}
+  .kpis{grid-template-columns:repeat(4,1fr)!important;gap:6px!important} .kpi{padding:6px 8px!important} .kpi .v{font-size:16pt!important}
+  tr{break-inside:avoid}
+  th,td{padding:3px 4px!important}
+  a{color:#000!important;text-decoration:none!important}
+  .tw,.scroll,.tbl-wrap{overflow:visible!important}
+}
 """
 
 HTML_JS = """
@@ -2121,6 +2148,18 @@ HTML_JS = """
     setEdit(true);
   });
   rs.addEventListener('click',function(){ try{store().removeItem(key)}catch(e){} location.reload(); });
+  var fb=document.getElementById('edit-file');
+  if(fb) fb.addEventListener('click',function(){
+    var was=document.body.classList.contains('editing'); if(was) setEdit(false);
+    var doc='<!doctype html>\n'+document.documentElement.outerHTML;
+    if(was) setEdit(true);
+    try{
+      var a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([doc],{type:'text/html'}));
+      a.download='안전관리자_채용_브리핑_'+key.replace('brief-','').slice(0,8)+'.html'; document.body.appendChild(a); a.click(); a.remove();
+      say('HTML 파일로 저장했습니다 — 파일을 열어 [편집]으로 계속 고칠 수 있습니다');
+    }catch(e){ say('이 화면에서는 내려받기가 막혀 있습니다'); }
+  });
+  var pb=document.getElementById('print-a4'); if(pb) pb.addEventListener('click',function(){ window.print(); });
 })();
 (function(){
   var q=document.getElementById('q'), mode='all';
@@ -2635,6 +2674,17 @@ def cert_pills(p):
     return "".join(f'<span class="pill pc">{html.escape(c)} 명시</span> ' for c in p.certs)
 
 
+COMPANY_CSN: dict = {}  # 업체명(정규화) → 사람인 기업정보 csn (이번·이전 수집에서 모은 값)
+
+
+def company_info_url(p):
+    csn = p.extra.get("csn") or COMPANY_CSN.get(norm_company(p.company or ""))
+    if csn:
+        return f"https://www.saramin.co.kr/zf_user/company-info/view?csn={csn}"
+    name = re.sub(r"\(주\)|㈜|주식회사|\(유\)|\(재\)|\(사\)", "", p.company or "").strip()
+    return f"https://www.saramin.co.kr/zf_user/search/company?searchword={quote(name)}" if name else ""
+
+
 ARCHIVE_KEEP_DAYS = 3  # 오늘 포함 최근 3일치 사본만 남긴다 (사용자 요청 2026-10-18)
 ARCHIVE_DATES: list = []  # 날짜별 브리핑 보관본 (briefings/archive/briefing_YYYY-MM-DD.html) — 최신이 앞
 
@@ -2778,10 +2828,11 @@ def render_html(postings, failures, now, stats):
         link = (f'<a class="starter" href="{e(p.extra.get("starter_url", ""))}" target="_blank" rel="noopener">{e(st)}</a>' if st else "")
         return f'<small class="sal">{e(salary_of(p))}</small>' + (f'<small class="sal">{link}</small>' if link else "")
 
-    def co_link(p):
-        if not href(p):
+    def co_link(p):  # 업체명을 누르면 사람인 기업정보(없으면 사람인 기업 검색)가 열린다 (사용자 요청 2026-10-20)
+        u = company_info_url(p)
+        if not u:
             return e(p.company or "-")
-        return f'<a class="co" href="{e(p.url)}" target="_blank" rel="noopener">{e(p.company or "-")}</a>'
+        return f'<a class="co" href="{e(u)}" target="_blank" rel="noopener" title="기업정보 보기">{e(p.company or "-")}</a>'
 
     def ttl_link(p):  # 공고명을 누르면 채용 사이트의 공고가 새 탭으로 열린다
         if not href(p):
@@ -2877,6 +2928,8 @@ def render_html(postings, failures, now, stats):
     <button type="button" id="edit-toggle" aria-pressed="false">편집</button>
     <button type="button" id="edit-save" hidden>저장</button>
     <button type="button" id="edit-reset" hidden>원래대로</button>
+    <button type="button" id="edit-file" title="편집한 내용을 HTML 파일로 내려받기">파일로 저장</button>
+    <button type="button" id="print-a4" title="A4 세로로 인쇄·PDF 저장">A4 인쇄</button>
     <span id="edit-msg" role="status"></span>
   <button type="button" class="icon-btn" id="theme-toggle" aria-label="라이트/다크 테마 전환" title="테마 전환">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
@@ -3197,6 +3250,9 @@ def main():
     (out / "latest.md").write_text(md, encoding="utf-8")
     if SR_BNF:
         stats["사람인"] = stats.get("사람인", "") + ", " + ", ".join(f"복리후생 {k} {v}" for k, v in SR_BNF.items())
+    for p in kept:  # 같은 업체의 다른 공고(잡코리아 등)도 사람인 기업정보로 연결
+        if p.extra.get("csn"):
+            COMPANY_CSN.setdefault(norm_company(p.company or ""), p.extra["csn"])
     CLOSED_RECENT[:] = load_recent_closed(out / "history", today, kept)  # 달력: 지난주 마감 공고
     cutoff = (today - dt.timedelta(days=ARCHIVE_KEEP_DAYS - 1)).isoformat()  # 날짜별 사본은 최근 3일만
     for f in (out / "archive").glob("briefing_*.html"):
