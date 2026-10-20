@@ -104,13 +104,13 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 <script>
 /* 작업 데이터 — 에이전트를 맡길 때마다 이 블록만 고친다 (progress: 0~100) */
 var JOB={
-  updated:"2026-10-20 12:27 KST",updatedISO:"2026-10-20T03:27:00Z",
-  main:{name:"메인 에이전트",task:"규칙·자료 저장소 저장(PR #90) · 규칙 조정안 1~7 적용(PR #91) · 브리핑 기능(기업정보 링크·편집 파일·A4)",note:"수집이 끝나면 브리핑을 게시하고, 편집 가능한 HTML 파일(latest_edit.html)을 보내 드립니다. 직전 작업(06:46): run #185·#186·국내 전체 수집 모두 완료, 매칭 브리핑 v16 게시(다른 세션)."},
+  updated:"2026-10-21 08:42 KST",updatedISO:"2026-10-20T23:42:00Z",
+  main:{name:"메인 에이전트",task:"채용 달력·채용 브리핑 최종 결과물을 이 세션에 HTML 파일·아티팩트로 항상 게시(PR #94 + 규칙 추가)",note:"브리핑을 게시할 때마다 브리핑 아티팩트·채용 달력 아티팩트를 갱신하고, 최종 HTML 파일을 이 세션에 보내 드립니다."},
   subs:[
-   {name:"브리핑 기능 (collect.py)",order:"하청 1",status:"done",progress:100,task:"업체명 링크(csn), [파일로 저장]·[A4 인쇄], @page A4 세로",result:"PR #88 병합 · A4 PDF 출력 확인(595×842pt)"},
-   {name:"GitHub Actions 수집기",order:"하청 2",status:"done",progress:100,task:"safety-jobs-briefing run #189",result:"성공 · 78건 · 업체명 78개 링크(사람인 기업정보 21 · 기업 검색 57)"},
-   {name:"규칙 조정안 1~7",order:"하청 4",status:"done",progress:100,task:"rules.md 신설, push 트리거 제거, csn 연결, 루틴 3개 지시문 갱신",result:"PR #90·#91 병합 · 루틴 3개 갱신 · rules.md 원문 주소 응답 200"},
-   {name:"브리핑 게시 · 편집 파일",order:"하청 3",status:"done",progress:100,task:"latest.html 게시 + latest_edit.html 파일 전달",result:"v78 게시(downloads 기능 추가) · 편집 파일 전달 · PR #89"}
+   {name:"채용 달력 (collect.py)",order:"하청 1",status:"done",progress:100,task:"render_calendar_page → briefings/calendar.html, LinkedIn·제품 안전인증 제외",result:"PR #94 병합 · 접수 중 37건 · 지난주부터 마감 8건"},
+   {name:"채용 달력 게시",order:"하청 2",status:"done",progress:100,task:"달력 아티팩트 게시 + 파일 전달, ⚡ 루틴 3(d) 단계 추가",result:"달력 아티팩트 게시 · 2026-10-21 달력 파일 전달"},
+   {name:"채용 브리핑 게시",order:"하청 3",status:"done",progress:100,task:"latest.html + 날짜별 사본 2개(10/20·10/21) 게시, latest_edit.html 파일 전달",result:"v79 게시 · 10/21 00:29 수집 · 2026-10-21 브리핑 파일 전달"},
+   {name:"작업 규칙 (CLAUDE.md)",order:"하청 4",status:"done",progress:100,task:"브리핑·달력 최종 HTML을 항상 이 세션에 게시하는 규칙",result:"CLAUDE.md 갱신 · PR 병합"}
   ]
 };
 
