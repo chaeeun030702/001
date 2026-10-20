@@ -271,7 +271,7 @@ def company_keys(name):
 
 def load_postings(paths):
     """채용 브리핑 latest.json 들 → {"url": url → 공고, "starter": 업체 키 → 신입 초봉}."""
-    by_url, starter = {}, {}
+    by_url, starter, csn = {}, {}, {}
     for p in paths or []:
         try:
             data = json.loads(Path(p).read_text(encoding="utf-8"))
@@ -285,7 +285,11 @@ def load_postings(paths):
             if st:
                 for k in company_keys(x.get("company", "")):
                     starter.setdefault(k, st)
-    return {"url": by_url, "starter": starter}
+            c = ((x.get("extra") or {}).get("csn") or "").strip()
+            if c:
+                for k in company_keys(x.get("company", "")):
+                    csn.setdefault(k, c)
+    return {"url": by_url, "starter": starter, "csn": csn}
 
 
 def pay_of(m, postings):
@@ -334,14 +338,29 @@ LETTER_DAYS = 3  # 편집용 HTML 보관 일수(오늘 포함)
 SNAP_DAYS = 7  # 브리핑 사본 보관 일수(오늘 포함)
 
 
-def saramin_info(d):
-    """사람인 기업정보 링크 — 초안의 기업 개요·분석에 사람인 기업정보(csn) 주소가 있으면 그 기업 페이지,
-    없으면 사람인 기업 검색 결과로 연결한다(2026-10-20 사용자 요청: 회사명 아래 '기업정보')."""
-    blob = " ".join(str(v) for v in (d.get("analysis") or {}).values()) if isinstance(d.get("analysis"), dict) else str(d.get("analysis") or "")
-    m = re.search(r"saramin\.co\.kr/zf_user/company-info/view[\w-]*/csn/([A-Za-z0-9%=+]+)", blob)
-    if m:
-        return f"https://www.saramin.co.kr/zf_user/company-info/view/csn/{m.group(1)}"
-    name = re.sub(r"\(주\)|㈜|주식회사|\(유\)|\s+", " ", d["meta"].get("company", "")).strip()
+SARAMIN_INFO = "https://www.saramin.co.kr/zf_user/company-info/view?csn="
+
+
+def saramin_info(d, postings=None):
+    """사람인 기업정보 주소(2026-10-20 사용자 요청: 업체명을 누르면 그 업체의 사람인 기업정보로 이동,
+    형식 https://www.saramin.co.kr/zf_user/company-info/view?csn=…). csn 찾는 순서:
+    ① 초안 머리말 csn: ② 채용 브리핑의 같은 공고(url) extra.csn, 없으면 같은 업체의 다른 공고 extra.csn
+    ③ 초안 기업 개요·분석에 적힌 사람인 기업정보 주소. 셋 다 없으면 사람인 기업 검색으로 연결한다."""
+    m = d["meta"]
+    postings = postings or {}
+    c = (m.get("csn") or "").strip()
+    if not c:
+        pst = (postings.get("url") or {}).get(m.get("url", "")) or {}
+        c = ((pst.get("extra") or {}).get("csn") or "").strip()
+    if not c:
+        c = next((postings.get("csn", {})[k] for k in company_keys(m.get("company", "")) if k in postings.get("csn", {})), "")
+    if not c:
+        blob = json.dumps(d.get("analysis") or "", ensure_ascii=False) + " " + json.dumps(d.get("overview") or "", ensure_ascii=False)
+        hit = re.search(r"saramin\.co\.kr/zf_user/company-info/view[\w-]*(?:/csn/|\?csn=)([A-Za-z0-9%=+]+)", blob)
+        c = hit.group(1) if hit else ""
+    if c:
+        return SARAMIN_INFO + c
+    name = re.sub(r"\(주\)|㈜|주식회사|\(유\)|\s+", " ", m.get("company", "")).strip()
     return "https://www.saramin.co.kr/zf_user/search/company?searchword=" + urllib.parse.quote(name)
 
 
@@ -399,7 +418,7 @@ def render(drafts, today, now, excluded=(), postings=None, foreign=None):
         badge = '<span class="pill new">NEW</span> ' if d in new else ""
         rows.append(f'<tr data-id="{d["id"]}"><td class="pickcell"><input type="checkbox" class="pick" data-id="{d["id"]}" '
                     f'data-company="{e(m.get("company", ""))}" data-title="{e(m.get("title", ""))}" data-url="{e(m.get("url", ""))}" '
-                    f'aria-label="{e(m.get("company", ""))} 선택"></td><td>{badge}<a href="#{d["id"]}">{e(m.get("company", ""))}</a><div class="coinfo"><a href="{e(saramin_info(d))}" target="_blank" rel="noopener" title="사람인 기업정보 열기">기업정보</a></div></td><td>{chips}</td>'
+                    f'aria-label="{e(m.get("company", ""))} 선택"></td><td>{badge}<a class="coname" href="{e(d.get("coinfo") or saramin_info(d))}" target="_blank" rel="noopener" title="사람인 기업정보 열기">{e(m.get("company", ""))}</a><div class="coinfo"><a href="#{d["id"]}">초안 보기</a></div></td><td>{chips}</td>'
                     f'<td class="wrap">{title_html}</td><td class="num">{e(m.get("deadline", ""))}</td>'
                     f'<td>{dpill(d["left"])}</td><td class="num">{len(d["questions"])}문항</td></tr>')
     table = (EXCLUDE_BAR + '<div class="scroll"><table><colgroup><col style="width:36px"><col style="width:19%"><col style="width:15%"><col><col style="width:14%">'
@@ -414,7 +433,7 @@ def render(drafts, today, now, excluded=(), postings=None, foreign=None):
         cards.append(f'''<details class="draft" id="{d["id"]}"{open_attr}>
 <summary><span class="co">{e(m.get("company", ""))}</span>{chips_of(m)}{dpill(d["left"])}<span class="ttl">{e(m.get("title", ""))}</span></summary>
 <div class="body">
-<div class="doc-actions" style="margin-top:12px"><a class="btn-ghost" href="{d.get("letter") or f"letters/{d['id']}.html"}" target="_blank" rel="noopener">편집용 HTML 열기</a><a class="btn-ghost" href="{e(saramin_info(d))}" target="_blank" rel="noopener">기업정보(사람인)</a>{older_links(d)}</div>
+<div class="doc-actions" style="margin-top:12px"><a class="btn-ghost" href="{d.get("letter") or f"letters/{d['id']}.html"}" target="_blank" rel="noopener">편집용 HTML 열기</a><a class="btn-ghost" href="{e(d.get("coinfo") or saramin_info(d))}" target="_blank" rel="noopener">기업정보(사람인)</a>{older_links(d)}</div>
 {draft_body(d)}
 </div></details>''')
 
@@ -510,7 +529,7 @@ footer{font-size:12px;color:var(--cap)}
 .btn-ghost{color:var(--primary);background:var(--surface);border:1px solid var(--border-strong)}
 .hint{font-size:12px;color:var(--cap);margin:0}
 .chips{margin-top:6px}
-.coinfo{margin-top:2px;font-size:12px} .coinfo a{color:var(--cap);text-decoration:underline;text-underline-offset:2px} .coinfo a:hover{color:var(--primary)} .coinfo a::after{content:" ↗";font-size:10px}
+.coinfo{margin-top:2px;font-size:12px} .coinfo a{color:var(--cap);text-decoration:underline;text-underline-offset:2px} .coinfo a:hover{color:var(--primary)} a.coname{color:var(--text);text-decoration:underline;text-decoration-color:var(--border-strong);text-underline-offset:3px} a.coname:hover{color:var(--primary)} a.coname::after{content:" ↗";font-size:11px;color:var(--cap)}
 a.jd{color:var(--text);text-decoration:underline;text-decoration-color:var(--border-strong);text-underline-offset:3px} a.jd:hover{color:var(--primary);text-decoration-color:var(--primary)} a.jd::after{content:" ↗";font-size:11px;color:var(--cap)}
 .emp{margin-top:4px} td .chip,.emp .pill{white-space:normal;max-width:100%} .pay{margin-top:4px;font-size:12px;color:var(--cap);font-variant-numeric:tabular-nums}
 @media print{@page{size:A4 portrait;margin:14mm}body{background:#fff;padding:0}.ref,.doc-actions,button.copy,button.save,details.diff,.state,.meter,.hint,.tech{display:none!important}
@@ -847,6 +866,7 @@ def main():
     postings = load_postings(args.briefing)
     for d in drafts:
         d["pay"] = pay_of(d["meta"], postings)
+        d["coinfo"] = saramin_info(d, postings)
     page = render(drafts, today, now, excluded, postings, load_json_list(args.foreign))
     snap = f"briefing_{today:%Y.%m.%d}.html"
     keep_snap = f"briefing_{today - dt.timedelta(days=SNAP_DAYS - 1):%Y.%m.%d}.html"
