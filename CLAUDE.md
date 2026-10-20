@@ -20,7 +20,9 @@
 
 ## 작업이 끝나면 아티팩트로도 게시 (항상)
 - 작업이 끝나면 결과를 **이 세션에서 아티팩트로도 게시**하고 링크를 답변에 적는다.
-  - 브리핑 → 브리핑 아티팩트(위 URL)를 같은 URL로 갱신.
+  - 브리핑 → **항상** 기본 브랜치 `briefings/latest.html`(+ `briefings/archive/briefing_*.html` 날짜별 사본)을
+    브리핑 아티팩트(위 URL)에 같은 URL로 게시하고, 최종 결과물 `briefings/latest_edit.html`을
+    `docs/안전관리자_채용_브리핑_YYYY-MM-DD.html`로 복사해 이 세션에 render로 보낸다.
   - 규칙·자료 정리 → [안전관리자 브리핑 운영 규칙](https://claude.ai/artifact/6VvRGcg4ETB48WhnAWBCcr)
     (원본 `docs/rules_and_materials/규칙_자료_모음.html`)을 같은 URL로 갱신.
   - 채용 달력 → 브리핑을 게시할 때마다 **항상** 기본 브랜치 `briefings/calendar.html`(채용 달력만 담은 HTML 한 파일)을
