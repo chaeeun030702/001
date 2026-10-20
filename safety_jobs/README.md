@@ -71,6 +71,12 @@ uv run safety_jobs/collect.py --out briefings   # latest.md / latest.html / late
 - 브리핑 상단 '이전 브리핑' 줄이 보관본으로 연결된다. 아티팩트에 게시할 때 이 파일들을 같은 이름으로 함께 올린다.
 - 지난 사본은 `briefings/history/*.json.gz`(날짜별 원자료, 계속 보관)에서 다시 그릴 수 있다.
 
+## 업체명 링크 · 편집 파일 · A4 인쇄
+
+- 업체명을 누르면 사람인 기업정보(`company-info/view?csn=…`)가 열린다. csn은 사람인 목록·상세에서 모으고, 같은 업체의 다른 사이트 공고도 그 csn으로 연결한다. csn이 없으면 사람인 기업 검색으로 연결한다 (2026-10-20).
+- 브리핑 상단 [편집]으로 표·제목을 고치고, [파일로 저장]으로 편집한 내용을 HTML 파일로 내려받는다. 그 파일을 열어 다시 [편집]할 수 있다. `briefings/latest_edit.html`도 같은 편집 가능한 완전한 HTML이다.
+- [A4 인쇄]는 A4 세로(@page size A4 portrait)로 인쇄·PDF 저장한다. 인쇄할 때는 메뉴·차트·필터를 빼고 표를 용지 너비에 맞춘다.
+
 ## 직접 추가 공고 메모
 
 - `manual_postings.json` 항목의 `memo`(예: 자소서 문항)는 공고명 아래 📝로 늘 표시된다.
