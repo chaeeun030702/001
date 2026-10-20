@@ -10,6 +10,10 @@
   - 갱신할 때마다 Artifact 도구 `action: "open"`으로 작업현황 페이지를 **항상 열어** 보여준다.
   - 답변에도 작업현황 표(에이전트 · 상태 · 결과)를 함께 적는다.
 
-## 브리핑 게시 후 표시 (항상)
-- 안전관리자 채용 브리핑을 게시(갱신)한 뒤에는 **항상** Artifact 도구 `action: "open"`으로 브리핑 아티팩트
-  https://claude.ai/artifact/8vwqioKkr5ADyBJnbVDQZA 를 열어 보여준다 (작업현황 페이지와 함께).
+## 결과 바로 열어 보기 (항상)
+- 결과가 나오면 **바로** 결과물을 **한 파일**로 열어 보여준다: SendUserFile(`display: "render"`)로 완성된 HTML 한 파일을 보낸다.
+  - 브리핑: 기본 브랜치 `briefings/latest_edit.html`(완전한 HTML 한 파일, 편집·A4 인쇄 가능)을
+    `docs/안전관리자_채용_브리핑_YYYY-MM-DD.html`로 복사해 render로 보낸다.
+  - 그 밖의 결과(문서·표·보고서)도 HTML 한 파일로 만들어 render로 보낸다.
+- 브리핑을 게시(갱신)한 뒤에는 Artifact 도구 `action: "open"`으로 브리핑 아티팩트
+  https://claude.ai/artifact/8vwqioKkr5ADyBJnbVDQZA 도 연다 (작업현황 페이지와 함께).
