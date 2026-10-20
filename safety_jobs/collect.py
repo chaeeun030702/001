@@ -2149,15 +2149,24 @@ HTML_JS = """
   });
   rs.addEventListener('click',function(){ try{store().removeItem(key)}catch(e){} location.reload(); });
   var fb=document.getElementById('edit-file');
+  /* 아티팩트 화면에서는 downloads 기능으로, 내려받은 파일·일반 브라우저에서는 바로 내려받는다 */
+  var dlP=(window.claude&&window.claude.use)?window.claude.use('downloads').catch(function(){return null}):Promise.resolve(null);
   if(fb) fb.addEventListener('click',function(){
     var was=document.body.classList.contains('editing'); if(was) setEdit(false);
     var doc='<!doctype html>\n'+document.documentElement.outerHTML;
     if(was) setEdit(true);
-    try{
-      var a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([doc],{type:'text/html'}));
-      a.download='안전관리자_채용_브리핑_'+key.replace('brief-','').slice(0,8)+'.html'; document.body.appendChild(a); a.click(); a.remove();
-      say('HTML 파일로 저장했습니다 — 파일을 열어 [편집]으로 계속 고칠 수 있습니다');
-    }catch(e){ say('이 화면에서는 내려받기가 막혀 있습니다'); }
+    var name='안전관리자_채용_브리핑_'+key.replace('brief-','').slice(0,8)+'.html';
+    dlP.then(function(dl){
+      if(dl){
+        return dl.save({filename:name,data:doc}).then(function(){ say('HTML 파일로 저장했습니다 — 파일을 열어 [편집]으로 계속 고칠 수 있습니다'); },
+          function(err){ say(err&&err.code==='declined'?'저장을 취소했습니다':'이 화면에서는 저장할 수 없습니다'); });
+      }
+      try{
+        var a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([doc],{type:'text/html'}));
+        a.download=name; document.body.appendChild(a); a.click(); a.remove();
+        say('HTML 파일로 저장했습니다 — 파일을 열어 [편집]으로 계속 고칠 수 있습니다');
+      }catch(e){ say('이 화면에서는 내려받기가 막혀 있습니다'); }
+    });
   });
   var pb=document.getElementById('print-a4'); if(pb) pb.addEventListener('click',function(){ window.print(); });
 })();
