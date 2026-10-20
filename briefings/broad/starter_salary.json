@@ -511,7 +511,7 @@
 "id": null,
 "pay": null,
 "year": "",
-"checked": "2026-10-04",
+"checked": "2026-10-20",
 "v": 2
 },
 "케이지모빌리티커머셜": {
@@ -594,7 +594,7 @@
 "id": null,
 "pay": null,
 "year": "",
-"checked": "2026-10-04",
+"checked": "2026-10-20",
 "v": 2
 },
 "이에이치에스테크루브": {
@@ -2800,7 +2800,7 @@
 "id": null,
 "pay": null,
 "year": "",
-"checked": "2026-10-05",
+"checked": "2026-10-20",
 "v": 2
 },
 "브이이엔에이지알오유피": {
@@ -6482,6 +6482,153 @@
 "id": "16153899",
 "pay": null,
 "year": null,
+"checked": "2026-10-20",
+"v": 2
+},
+"티와이엠": {
+"id": "1726800",
+"pay": "4,170만원",
+"year": "2025",
+"checked": "2026-10-20",
+"v": 2
+},
+"리강산업": {
+"id": null,
+"pay": null,
+"year": "",
+"checked": "2026-10-20",
+"v": 2
+},
+"동부테크원": {
+"id": null,
+"pay": null,
+"year": "",
+"checked": "2026-10-20",
+"v": 2
+},
+"국보디자인": {
+"id": null,
+"pay": null,
+"year": "",
+"checked": "2026-10-20",
+"v": 2
+},
+"유에스티": {
+"id": "16154032",
+"pay": null,
+"year": null,
+"checked": "2026-10-20",
+"v": 2
+},
+"그린에어": {
+"id": "1595571",
+"pay": null,
+"year": null,
+"checked": "2026-10-20",
+"v": 2
+},
+"한국관광대학교": {
+"id": "16154468",
+"pay": null,
+"year": null,
+"checked": "2026-10-20",
+"v": 2
+},
+"솔라라이트": {
+"id": null,
+"pay": null,
+"year": "",
+"checked": "2026-10-20",
+"v": 2
+},
+"유니코써치": {
+"id": null,
+"pay": null,
+"year": "",
+"checked": "2026-10-20",
+"v": 2
+},
+"카펙발레오": {
+"id": null,
+"pay": null,
+"year": "",
+"checked": "2026-10-20",
+"v": 2
+},
+"알엑스": {
+"id": "16151897",
+"pay": null,
+"year": null,
+"checked": "2026-10-20",
+"v": 2
+},
+"유니원커뮤니케이션즈": {
+"id": null,
+"pay": null,
+"year": "",
+"checked": "2026-10-20",
+"v": 2
+},
+"학교법인성균관대학삼성창원병원": {
+"id": null,
+"pay": null,
+"year": "",
+"checked": "2026-10-20",
+"v": 2
+},
+"일점영안과의원": {
+"id": null,
+"pay": null,
+"year": "",
+"checked": "2026-10-20",
+"v": 2
+},
+"알펜시아": {
+"id": null,
+"pay": null,
+"year": "",
+"checked": "2026-10-20",
+"v": 2
+},
+"유한그린": {
+"id": null,
+"pay": null,
+"year": "",
+"checked": "2026-10-20",
+"v": 2
+},
+"대림항업": {
+"id": null,
+"pay": null,
+"year": "",
+"checked": "2026-10-20",
+"v": 2
+},
+"서울센트럴메디케어의원": {
+"id": null,
+"pay": null,
+"year": "",
+"checked": "2026-10-20",
+"v": 2
+},
+"리베스트": {
+"id": null,
+"pay": null,
+"year": "",
+"checked": "2026-10-20",
+"v": 2
+},
+"삼성교통": {
+"id": null,
+"pay": null,
+"year": "",
+"checked": "2026-10-20",
+"v": 2
+},
+"순천향대학교산학협력단": {
+"id": null,
+"pay": null,
+"year": "",
 "checked": "2026-10-20",
 "v": 2
 }
