@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>콜마비앤에이치(주) 자기소개서</title>
+<style>
+/* 레이아웃: A4 세로 폭 한 장 — 요약 타일 → 마감순 표 → 공고별 초안(펼침, 문항 카드 편집) */
+:root{
+ --primary:#0F6FFF;--primary-hover:#0E65E8;--canvas:#EEF1F5;--surface:#FFFFFF;--alt1:#F2F3F6;--alt2:#E2E4E9;
+ --strong:#000000;--text:#1C1C1C;--sub:#303030;--cap:#737373;--border:#E2E4E9;--border-strong:#CCD0D6;--divider:#E9EBEF;
+ --ok:#15B874;--warn:#FFA833;--err:#E63B3B;--ok-bg:#E5F7EF;--warn-bg:#FFF3E0;--err-bg:#FDEBEB;--pri-bg:#E7F0FF;
+ --font:"Pretendard Variable","Pretendard","Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic","Segoe UI",Roboto,sans-serif;
+ --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+ --primary:#3F8CFF;--primary-hover:#0F6FFF;--canvas:#15171C;--surface:#1D1F24;--alt1:#282B33;--alt2:#333741;
+ --strong:#FFFFFF;--text:#EBECED;--sub:#C4C4C4;--cap:#8A8A8A;--border:#333741;--border-strong:#4A505F;--divider:#282B33;
+ --ok:#44C690;--warn:#FFB95C;--err:#EB5E5E;--ok-bg:#16332A;--warn-bg:#3A2E1A;--err-bg:#3A1F22;--pri-bg:#1A2B47;color-scheme:dark}}
+:root[data-theme="dark"]{
+ --primary:#3F8CFF;--primary-hover:#0F6FFF;--canvas:#15171C;--surface:#1D1F24;--alt1:#282B33;--alt2:#333741;
+ --strong:#FFFFFF;--text:#EBECED;--sub:#C4C4C4;--cap:#8A8A8A;--border:#333741;--border-strong:#4A505F;--divider:#282B33;
+ --ok:#44C690;--warn:#FFB95C;--err:#EB5E5E;--ok-bg:#16332A;--warn-bg:#3A2E1A;--err-bg:#3A1F22;--pri-bg:#1A2B47;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--canvas);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.65;padding-inline:16px;padding-block:24px 48px}
+.sheet{max-width:210mm;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+a{color:var(--primary)} a:focus-visible,button:focus-visible,summary:focus-visible,[contenteditable]:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 16px;border-bottom:2px solid var(--strong);padding-bottom:12px}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.08em;color:var(--primary)}
+h1{font-size:28px;font-weight:700;color:var(--strong);margin:2px 0 0;text-wrap:balance}
+.gen{font-size:12px;color:var(--cap);font-variant-numeric:tabular-nums}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.tile{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
+.tile .lbl{font-size:12px;font-weight:600;color:var(--cap)}
+.tile .num{font-size:28px;font-weight:700;color:var(--strong);font-variant-numeric:tabular-nums;line-height:1.2}
+.tile small{font-size:13px;font-weight:600;color:var(--sub);margin-left:2px}
+section.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px}
+h2{font-size:18px;font-weight:700;color:var(--strong);margin:0 0 10px}
+h3{font-size:14px;font-weight:700;color:var(--strong);margin:14px 0 6px}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:13px}
+th,td{text-align:left;padding:8px;border-bottom:1px solid var(--divider);vertical-align:top;overflow-wrap:anywhere}
+thead th{font-size:12px;font-weight:600;color:var(--cap);background:var(--alt1)}
+.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.scroll table{min-width:640px}
+.pill,.chip{display:inline-block;font-size:11px;font-weight:600;border-radius:9999px;padding:1px 8px;margin:1px 4px 1px 0;white-space:nowrap}
+.chip{background:var(--alt1);color:var(--sub);border:1px solid var(--border)}
+.pill{background:var(--alt1);color:var(--sub)} .pill.ok{background:var(--ok-bg);color:var(--ok)} .pill.warn{background:var(--warn-bg);color:var(--warn)}
+.pill.err{background:var(--err-bg);color:var(--err)} .pill.new{background:var(--primary);color:var(--surface)} .pill.mute{color:var(--cap)}
+.empty{color:var(--cap);margin:0}
+.rules{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0;padding:0;list-style:none;font-size:13px}
+.rules li{background:var(--alt1);border-radius:8px;padding:8px 10px;color:var(--sub)} .rules b{color:var(--strong)}
+.draft{background:var(--surface);border:1px solid var(--border);border-radius:12px}
+.draft summary{cursor:pointer;padding:14px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;list-style:none}
+.draft summary::-webkit-details-marker{display:none}
+.draft summary::before{content:"";width:8px;height:8px;border-right:2px solid var(--cap);border-bottom:2px solid var(--cap);transform:rotate(-45deg);margin-right:6px;transition:transform .15s}
+.draft[open] summary::before{transform:rotate(45deg)}
+.co{font-size:18px;font-weight:700;color:var(--strong);margin-right:4px}
+.ttl{flex-basis:100%;font-size:13px;color:var(--sub);padding-left:20px}
+.draft .body{padding:0 16px 16px;border-top:1px solid var(--divider)}
+.kv{margin-top:12px} .kv th{width:120px;font-size:12px;color:var(--cap);font-weight:600;background:var(--alt1)}
+.facts{margin:0;padding-left:18px;font-size:13px;color:var(--sub);display:flex;flex-direction:column;gap:4px}
+.q{margin-top:16px;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.qhead{display:flex;gap:10px;align-items:flex-start;background:var(--alt1);padding:10px 12px}
+.qid{font-size:12px;font-weight:700;color:var(--surface);background:var(--primary);border-radius:8px;padding:2px 8px;flex:none}
+.qtext{margin:0;font-size:13px;font-weight:600;color:var(--sub);min-width:0}
+.q h4{margin:12px 14px 4px;font-size:16px;font-weight:700;color:var(--strong)}
+.ans{padding:4px 14px 8px;font-size:15px;color:var(--text);max-width:68ch}
+.ans p{margin:0 0 10px}
+.tech{margin:0;padding:6px 12px;font-size:12px;font-weight:600;color:var(--primary);background:var(--pri-bg);border-bottom:1px solid var(--divider)}
+.vhead{margin-top:28px;padding-top:14px;border-top:2px solid var(--border)} .vhead h3{margin:0 0 4px}
+.q.v .qid{background:var(--sub)}
+.q.v .ans p[data-k]::before{content:attr(data-k);display:inline-block;margin-right:6px;padding:0 6px;border-radius:6px;font-size:11px;font-weight:700;line-height:18px;color:var(--primary);border:1px solid var(--border-strong);vertical-align:1px}
+.qfoot{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 14px;border-top:1px solid var(--divider)}
+.meter{flex:1 1 120px;height:6px;background:var(--alt2);border-radius:9999px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--primary)}
+.q.over .meter i{background:var(--err)} .q.low .meter i{background:var(--warn)}
+.cnt{font-size:13px;color:var(--cap);font-variant-numeric:tabular-nums} .cnt b{color:var(--strong)}
+.state{font-size:12px;font-weight:600} .q.ok .state{color:var(--ok)} .q.over .state{color:var(--err)} .q.low .state{color:var(--warn)}
+button.copy{font:600 13px var(--font);color:var(--surface);background:var(--primary);border:0;border-radius:8px;padding:7px 14px;cursor:pointer;min-height:36px}
+button.copy:hover{background:var(--primary-hover)}
+details.diff{border-top:1px solid var(--divider);padding:8px 14px 12px;font-size:14px} details.diff[hidden]{display:none}
+details.diff summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--primary)} details.diff .dsub{margin:8px 0 4px;font-size:13px;color:var(--cap)}
+details.diff .dbody{line-height:1.8;color:var(--text);max-width:68ch} details.diff del{background:color-mix(in srgb,var(--err) 14%,transparent);color:var(--err);text-decoration:line-through}
+details.diff ins{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--strong);text-decoration:none;font-weight:600}
+button.save{font:600 13px var(--font);color:var(--primary);background:var(--surface);border:1px solid var(--border-strong);border-radius:8px;padding:7px 14px;cursor:pointer;min-height:36px}
+button.save:hover{border-color:var(--primary)} button.save.clean{color:var(--ok)} button.save:disabled{opacity:.6;cursor:wait} button.save[hidden]{display:none}
+footer{font-size:12px;color:var(--cap)}
+@media (max-width:640px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.rules{grid-template-columns:1fr}h1{font-size:24px}.kv th{width:88px}}
+.doc-actions{display:flex;flex-wrap:wrap;gap:8px}
+.doc-actions a,.doc-actions button{font:600 13px var(--font);border-radius:8px;padding:7px 14px;min-height:36px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center}
+.btn-ghost{color:var(--primary);background:var(--surface);border:1px solid var(--border-strong)}
+.hint{font-size:12px;color:var(--cap);margin:0}
+.chips{margin-top:6px}
+.coinfo{margin-top:2px;font-size:12px} .coinfo a{color:var(--cap);text-decoration:underline;text-underline-offset:2px} .coinfo a:hover{color:var(--primary)} a.coname{color:var(--text);text-decoration:underline;text-decoration-color:var(--border-strong);text-underline-offset:3px} a.coname:hover{color:var(--primary)} a.coname::after{content:" ↗";font-size:11px;color:var(--cap)}
+a.jd{color:var(--text);text-decoration:underline;text-decoration-color:var(--border-strong);text-underline-offset:3px} a.jd:hover{color:var(--primary);text-decoration-color:var(--primary)} a.jd::after{content:" ↗";font-size:11px;color:var(--cap)}
+.emp{margin-top:4px} td .chip,.emp .pill{white-space:normal;max-width:100%} .pay{margin-top:4px;font-size:12px;color:var(--cap);font-variant-numeric:tabular-nums}
+@media print{@page{size:A4 portrait;margin:14mm}body{background:#fff;padding:0}.ref,.doc-actions,button.copy,button.save,details.diff,.state,.meter,.hint,.tech{display:none!important}
+.q{break-inside:avoid;border-color:#ccc}.sheet{max-width:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.xbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:0 0 10px}
+.xbar[hidden]{display:none}
+.xbar button{font:600 13px var(--font);border-radius:8px;padding:6px 12px;min-height:34px;cursor:pointer;border:1px solid var(--border-strong);background:var(--surface);color:var(--sub)}
+.xbar button.danger{background:var(--err);border-color:var(--err);color:#fff}
+.xbar button:disabled{opacity:.45;cursor:not-allowed}
+.xbar .msg{font-size:12px;color:var(--cap)}
+.pickcell{width:36px;text-align:center} .pickcell input{width:16px;height:16px;cursor:pointer;accent-color:var(--primary)}
+.xlist{margin:8px 0 0;font-size:13px;color:var(--sub)} .xlist summary{cursor:pointer;color:var(--cap);font-size:12px}
+.xlist ul{margin:6px 0 0;padding-left:18px} .xlist li{margin:2px 0} .xlist button{margin-left:6px;font:600 12px var(--font);border:1px solid var(--border-strong);background:var(--surface);color:var(--primary);border-radius:6px;padding:1px 8px;cursor:pointer}
+tr.gone,.draft.gone{display:none}
+button.req{font:600 12px var(--font);border-radius:8px;padding:6px 10px;min-height:32px;cursor:pointer;border:1px solid var(--primary);background:var(--surface);color:var(--primary);white-space:nowrap}
+button.req.on{background:var(--primary);color:var(--surface)} button.req:disabled{opacity:.45;cursor:not-allowed}
+@media print{#foreign{display:none!important}}
+@media print{.xbar,.xlist,.pickcell{display:none!important}}
+</style>
+</head>
+<body>
+<div class="sheet">
+<header><div><div class="eyebrow">콜마비앤에이치 환경안전 신입/경력 채용(음성)</div><h1 contenteditable="true" spellcheck="false">콜마비앤에이치(주) 자기소개서</h1>
+<div class="chips"><span class="chip">코스닥</span><span class="chip">콜마그룹</span><span class="pill">마감 미정</span></div></div>
+<div class="doc-actions"><button type="button" class="copy-all btn-ghost">전체 답변 복사</button><button type="button" class="dl btn-ghost">편집본 HTML 저장</button><button type="button" class="print btn-ghost">인쇄 · PDF</button></div></header>
+<p class="hint">제목·소제목·답변을 눌러 바로 고칠 수 있습니다. 고친 뒤 '편집본 HTML 저장' 버튼이나 브라우저의 '다른 이름으로 저장'(Ctrl+S)으로 HTML 파일을 저장하면 수정 내용이 그대로 남습니다. 인쇄할 때는 공고 정보·기업 개요·기업 분석과 버튼이 빠지고 문항과 답변만 A4에 나옵니다.</p>
+<div class="ref"><table class="kv"><tbody>
+<tr><th>공고</th><td><a href="https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55158732" target="_blank" rel="noopener">공고 원문 열기</a></td></tr>
+<tr><th>마감 · 작성</th><td class="num">채용 시 마감 마감 · 2026-10-15 작성</td></tr>
+<tr><th>문항 출처</th><td>추정 문항 — 공고는 홈페이지 지원만 안내하고 문항이 없음. 콜마비앤에이치 문항, 글자수는 검색으로 찾지 못했고(자소설닷컴 문항 페이지는 내용 비공개), 같은 콜마그룹 공채 문항 유형(하이잡 검색 요약: 입사 전 직무 역량개발 노력과 입사 후 콜마그룹에서 이루고 싶은 꿈 / 지원 직무에 적합한 이유와 그동안의 노력과 도전 / 문제 해결 경험 / 협업 경험)으로 4문항 구성, 글자수는 확인 못 해 800자로 보수 가정. 채용 홈페이지 문항과 반드시 대조</td></tr><tr><th>연봉 · 초봉</th><td>연봉 미기재 · 신입 초봉 3,988만원 (2025) <span class="hint">(채용현황 브리핑 기준)</span></td></tr>
+</tbody></table>
+<h3>기업 개요</h3><ul class="facts"><li>회사: 콜마비앤에이치(주) · 2004년 한국콜마와 한국원자력연구원 합작 설립(연구소기업 1호) · 콜마그룹 계열 · 코스닥 상장 · 본사 주소는 이번 검색에서 확인 못 해 원문 확인 필요(사업장 세종, 음성) — <a href="https://www.metroseoul.co.kr/article/20240207500399" target="_blank" rel="noopener">메트로신문</a></li><li>주요 사업: 건강기능식품 ODM(연구개발, 생산), 화장품 사업 축소와 건기식 기반 헬스케어 확장 방향(2026-09 보도). 세종3공장(2023-11 준공, 연간 생산능력 7,000억 원 규모 보도), 음성공장(호주 TGA GMP 인증) — <a href="https://www.sidae.com/article/2026090409292063671" target="_blank" rel="noopener">시대일보</a>, <a href="https://www.metroseoul.co.kr/article/20240207500399" target="_blank" rel="noopener">메트로신문</a></li><li>규모: 2024년 연결 매출 6,156억 원(창사 이래 최대, 회사 발표), 2026년 상반기 별도 매출 2,454억 원(8.1%↑), 영업이익 206억 원(46.7%↑). 2025년 연간 실적과 임직원 수는 확인 못 함(2024년 창립 20주년 기사 기준 약 500명 추정, 원문 확인 필요) — <a href="https://biz.sbs.co.kr/amp/article/20000325619" target="_blank" rel="noopener">SBS Biz</a>, <a href="https://newstomato.com/ReadNews.aspx?no=1273884" target="_blank" rel="noopener">IB토마토</a></li></ul>
+<h3>기업 분석</h3><ul class="facts"><li>공고(채용 브리핑 기준): 환경안전 신입/경력 채용(음성) / 정규직 / 신입·경력, 학력 고졸 이상 / 근무지 충북 음성군 / 2026-09-30 등록, 채용 시 마감, 홈페이지 지원 / 채용 브리핑 detail_text에는 복리후생만 있고 주요업무, 자격은 없음(공고 이미지 확인 못 함 — 이미지 URL 없음). 검색 요약(링크어레어 게시물, 같은 공고인지 원문 확인 필요): 주요업무 생물학적 폐수처리 설비 운전과 유지보수, 수질·대기 배출시설 및 방지시설 관리, 폐기물 반출 관리, 환경안전팀 업무 지원 / 자격 전문학사 이상, 환경 관련 학과, 신입 및 5년 이하, <b>필수 자격증 환경기능사 이상</b> / 우대 환경 관련 자격증, 폐수처리 설비 운전 경력, 인근 거주자 및 운전 가능자, 동종업계 인턴 경험 — <a href="https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55158732" target="_blank" rel="noopener">사람인 공고</a>, <a href="https://linkareer.com/activity/346110" target="_blank" rel="noopener">링커리어</a></li><li><b>지원 전 확인 필요: 검색 요약의 공고 내용이 맞다면 직무가 폐수처리 설비 운전 등 환경 쪽에 가깝고, &#x27;환경 관련 학과&#x27;와 &#x27;환경기능사 이상&#x27; 필수 요건을 지원자는 충족하지 못함(안전공학과, 환경 자격 없음). 안전관리 업무 비중과 안전공학 전공 지원 가능 여부를 먼저 확인. 이 초안은 &#x27;환경안전&#x27; 직무 중 안전 쪽 역량 중심으로 썼음</b></li><li>DART: dart.fss.or.kr 접속 차단 → 2024년 매출 6,156억 원, 영업이익률 4%로 하락(세종3공장 건설비, 감가상각, 자회사 부진, 중국 법인 완전자본잠식 보도), 2026년 2분기 별도 영업이익 117억 원(11.8%↑), 세종3공장 공정 안정화 반영 — <b>사업보고서 원문 확인 필요</b> — <a href="https://newstomato.com/ReadNews.aspx?no=1273884" target="_blank" rel="noopener">IB토마토</a>, <a href="https://biz.sbs.co.kr/amp/article/20000325619" target="_blank" rel="noopener">SBS Biz</a></li><li>DART 안전·신사업 적합도(원문 확인 필요): 건기식 생산 확대(글로벌 고객사, 올리브영 등 신규 채널) → 설비 정비, 청소 작업 안전과 <b>맞음(Q1, Q2 반영)</b>. 헬스케어 확장, 해외 전시회는 직무와 거리가 있어 <b>반영 보류</b></li><li>안전보건 기준: 회사 안전보건경영방침, ISO 45001·KOSHA-MS 인증은 검색으로 확인 못 함 → 반영 보류</li><li>지속가능경영보고서(안전): 확인 못 함</li><li>최근 1년 주요 기사(안전 기사 없음 — 회사 안전·환경 기사 확인 못 함): 2026-08 상반기 영업이익 46.7% 증가, 글로벌 고객사 제품군 확대와 신규 거래선 확보(SBS Biz) → Q1 반영 / 2026-09 &#x27;비타푸드 아시아 2026&#x27; 참가(MTN) — <a href="https://biz.sbs.co.kr/amp/article/20000325619" target="_blank" rel="noopener">SBS Biz</a>, <a href="https://news.mtn.co.kr/news-detail/2026090709452596689" target="_blank" rel="noopener">MTN</a></li><li>최근 1년 AI 기사: 회사 AI 기사 확인 못 함 → 반영 안 함</li><li>사고 데이터 활용: Q2에 문장 10(SIF 제조업 등 사망사고 2,573건 중 비정형 작업 20.5%, &#x27;설비 미정지, 전원 미차단&#x27; 283건) 1개 사용</li><li>연결 포인트: 식품 제조 설비 정비, 청소 → SIF 제조업 데이터, 제조업 PPE 과정 / 환경안전팀 → ISO 45001 원리 과정, 산업안전 기초 / 음성 근무 → 충북(충북대) 연고, 태권도 1단 체력 / 협업 → 과대표와 학생회 활동</li><li>신입 연봉: <b>연봉 미기재 · 신입 초봉 3,988만원 (2025)</b> (채용현황 브리핑 기준) / 초안 조사 참고(브리핑 값과 다를 수 있음): 신입 초봉 3,988만원 (2025) (채용 브리핑 기준, 잡코리아 연봉 페이지) / 공고 급여 기재 없음 — <a href="https://www.jobkorea.co.kr/company/16152299/salary" target="_blank" rel="noopener">잡코리아 연봉</a></li><li>예상 성과금: 확인 못 함(공고 급여제도에 인센티브제 있음)</li><li>회사 복지: 자녀학자금(공고, 대상·한도 확인 못 함), 기숙사 운영(공고, 대상·조건 확인 못 함), 주택·전세자금 지원 확인 못 함, 통근버스 확인 못 함 / 건강검진, 각종 경조사 지원, 인센티브제, 퇴직금, 야근·휴일(특근)·직책·가족수당, 창립일 선물·행사, 워크숍, 신규 입사자 교육(OJT), 직무능력향상교육, 구내식당, 유니폼, 리프레시 연차, 여름휴가, 경조휴가, 반차, 산전 후 휴가, 육아휴직(공고) — <a href="https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55158732" target="_blank" rel="noopener">사람인 공고</a></li></ul></div>
+<div class="q" data-orig="건설회사의 공무팀장이셨던 아버지는 추석 당직 근무 날 저를 현장에 데려가신 적이 있으셨는데, 아버지는 현장의 정리정돈이 근로자의 안전을 지키는 여러 방법 중 하나라며 5S와 3정(정리, 정돈, 청소, 청결, 습관화와 정품, 정량, 정위치)을 설명해 주시며, 같이 일하는 동료들이 무사히 퇴근할 수 있도록 직원들이 노력하고 있다고 해 주신 말씀을 기억하고 있습니다. 어릴 때 꿈은 아픈 사람을 돌보는 간호사였지만, 그날 이후 다친 사람을 돌보는 것보다 근로자와 동료, 회사가 다치지 않도록 하는 일이 먼저라고 생각하게 되어, 고3 때 안전관리자를 목표로 안전공학과에 진학하였습니다.
+
+안전공학을 배우며 부족한 현장 경험은 교육으로 채웠습니다. 해외 기관의 안전 교육 15건과 Google, Microsoft, Anthropic의 AI 교육 5건을 이수했고, 캐나다 어학연수 뒤 영어회화 강사로 일하며 오픽 AL을 취득했고, 미국 대학 공과대학 연수에서 여러 공학 분야에 AI가 쓰이는 모습을 배우며 영어 자료를 읽는 힘도 길렀습니다.
+
+콜마비앤에이치는 사람의 건강을 위한 제품을 만드는 회사이고, 올해 상반기에는 글로벌 고객사 제품군 확대와 신규 거래선 확보로 영업이익이 46.7% 늘었습니다. 생산이 늘수록 설비를 멈추고 정비하는 일도 잦아집니다. 입사 후에는 아버지께 배운 5S와 3정을 기준으로 설비 주변과 통로의 정리정돈부터 점검하겠습니다. 제 꿈은 환경안전팀의 일원으로 음성 사업장에서 그런 작업까지 같은 기준으로 관리해, 건강을 만드는 사람들이 먼저 건강하게 퇴근하는 공장을 만드는 것입니다." data-osub="건강을 만드는 공장에서 일하는 사람의 건강까지">
+<div class="qhead"><span class="qid">Q1</span><p class="qtext">입사 전, 해당 직무수행을 위한 본인의 역량개발 노력과 입사 후 콜마그룹에서 이루고 싶은 꿈을 설명해주세요. (추정 문항)</p></div>
+<h4 contenteditable="true" spellcheck="false">[건강을 만드는 공장에서 일하는 사람의 건강까지]</h4>
+<div class="ans" contenteditable="true" spellcheck="false" data-limit="800"><p>건설회사의 공무팀장이셨던 아버지는 추석 당직 근무 날 저를 현장에 데려가신 적이 있으셨는데, 아버지는 현장의 정리정돈이 근로자의 안전을 지키는 여러 방법 중 하나라며 5S와 3정(정리, 정돈, 청소, 청결, 습관화와 정품, 정량, 정위치)을 설명해 주시며, 같이 일하는 동료들이 무사히 퇴근할 수 있도록 직원들이 노력하고 있다고 해 주신 말씀을 기억하고 있습니다. 어릴 때 꿈은 아픈 사람을 돌보는 간호사였지만, 그날 이후 다친 사람을 돌보는 것보다 근로자와 동료, 회사가 다치지 않도록 하는 일이 먼저라고 생각하게 되어, 고3 때 안전관리자를 목표로 안전공학과에 진학하였습니다.</p><p>안전공학을 배우며 부족한 현장 경험은 교육으로 채웠습니다. 해외 기관의 안전 교육 15건과 Google, Microsoft, Anthropic의 AI 교육 5건을 이수했고, 캐나다 어학연수 뒤 영어회화 강사로 일하며 오픽 AL을 취득했고, 미국 대학 공과대학 연수에서 여러 공학 분야에 AI가 쓰이는 모습을 배우며 영어 자료를 읽는 힘도 길렀습니다.</p><p>콜마비앤에이치는 사람의 건강을 위한 제품을 만드는 회사이고, 올해 상반기에는 글로벌 고객사 제품군 확대와 신규 거래선 확보로 영업이익이 46.7% 늘었습니다. 생산이 늘수록 설비를 멈추고 정비하는 일도 잦아집니다. 입사 후에는 아버지께 배운 5S와 3정을 기준으로 설비 주변과 통로의 정리정돈부터 점검하겠습니다. 제 꿈은 환경안전팀의 일원으로 음성 사업장에서 그런 작업까지 같은 기준으로 관리해, 건강을 만드는 사람들이 먼저 건강하게 퇴근하는 공장을 만드는 것입니다.</p></div>
+<div class="qfoot"><div class="meter"><i style="width:97%"></i></div>
+<span class="cnt"><b>780</b> / 800자</span><span class="state"></span>
+<button type="button" class="save" hidden>답변 저장</button><button type="button" class="copy">답변 복사</button></div>
+<details class="diff" hidden><summary>당초 초안과 비교 · <b>0</b>곳 변경</summary><div class="dsub"></div><div class="dbody"></div></details></div><div class="q" data-orig="제가 환경안전 직무에 맞는 이유는 제조 현장의 사고가 어디서 생기는지 데이터로 이해하고, 보호구와 작업 절차로 막는 법을 익혔기 때문입니다.
+
+근거는 제조 현장을 다룬 해외 안전 교육과 사망사고 사례 분석, 그리고 ISO45001 내부심사원 준비입니다.
+
+SIF 제조업 등 사망사고 2,573건 중 정비, 청소, 점검 같은 비정형 작업이 20.5%였고, 유발요인 1위는 &#x27;설비 미정지, 전원 미차단&#x27;(283건)이었습니다. 식품을 만드는 설비도 품목이 바뀔 때마다 세척과 정비가 이어지는 만큼, 사고는 생산보다 멈춘 설비 앞에서 더 자주 날 수 있다고 보았습니다.
+
+그래서 SC Training의 제조업 개인보호구(PPE) 과정, UniAthena의 산업안전 기초 과정(88점), 국제노동기구(ILO) 국제훈련센터의 화재안전점검 과정, CCOHS의 심리적 건강과 안전 과정, OSHAcademy 과정 5건을 영어로 이수했습니다. 산업안전보건법과 고용노동부 행정해석 사례를 분석하며, 위험성평가는 현장 확인과 작업자 참여가 핵심이라는 회시를 졸업연구 설계에 반영했습니다. Alison의 ISO 45001 원리 과정도 이수했고, 산업안전기사는 실기를 앞두고 있고 ISO45001 내부심사원 취득을 준비하고 있습니다.
+
+입사하면 품목 전환에 따른 세척, 정비 작업 전에 설비 정지와 전원 차단, 잠금, 표지를 확인하는 절차부터 챙기고, 폐수처리 설비처럼 처음 보는 설비는 선배들에게 배우며 위험한 지점을 점검표에 더하겠습니다. 음성 사업장을 오래 걷는 점검은 고3 때 딴 태권도 1단으로 기른 체력으로 해내겠습니다." data-osub="제조 설비의 위험을 정비 순간에서 찾는 눈">
+<div class="qhead"><span class="qid">Q2</span><p class="qtext">지원한 직무에 본인이 적합한 이유와 지원한 직무를 잘 수행하기 위한 그 동안의 노력과 도전 등을 구체적으로 기술하여 주십시오. (추정 문항)</p></div><p class="tech">CPSBS 기법 · 핵심(Core) → 요점(Point) → 상황(Situation) → 행동(Behavior) → 요약(Summary)</p>
+<h4 contenteditable="true" spellcheck="false">[제조 설비의 위험을 정비 순간에서 찾는 눈]</h4>
+<div class="ans" contenteditable="true" spellcheck="false" data-limit="800"><p>제가 환경안전 직무에 맞는 이유는 제조 현장의 사고가 어디서 생기는지 데이터로 이해하고, 보호구와 작업 절차로 막는 법을 익혔기 때문입니다.</p><p>근거는 제조 현장을 다룬 해외 안전 교육과 사망사고 사례 분석, 그리고 ISO45001 내부심사원 준비입니다.</p><p>SIF 제조업 등 사망사고 2,573건 중 정비, 청소, 점검 같은 비정형 작업이 20.5%였고, 유발요인 1위는 &#x27;설비 미정지, 전원 미차단&#x27;(283건)이었습니다. 식품을 만드는 설비도 품목이 바뀔 때마다 세척과 정비가 이어지는 만큼, 사고는 생산보다 멈춘 설비 앞에서 더 자주 날 수 있다고 보았습니다.</p><p>그래서 SC Training의 제조업 개인보호구(PPE) 과정, UniAthena의 산업안전 기초 과정(88점), 국제노동기구(ILO) 국제훈련센터의 화재안전점검 과정, CCOHS의 심리적 건강과 안전 과정, OSHAcademy 과정 5건을 영어로 이수했습니다. 산업안전보건법과 고용노동부 행정해석 사례를 분석하며, 위험성평가는 현장 확인과 작업자 참여가 핵심이라는 회시를 졸업연구 설계에 반영했습니다. Alison의 ISO 45001 원리 과정도 이수했고, 산업안전기사는 실기를 앞두고 있고 ISO45001 내부심사원 취득을 준비하고 있습니다.</p><p>입사하면 품목 전환에 따른 세척, 정비 작업 전에 설비 정지와 전원 차단, 잠금, 표지를 확인하는 절차부터 챙기고, 폐수처리 설비처럼 처음 보는 설비는 선배들에게 배우며 위험한 지점을 점검표에 더하겠습니다. 음성 사업장을 오래 걷는 점검은 고3 때 딴 태권도 1단으로 기른 체력으로 해내겠습니다.</p></div>
+<div class="qfoot"><div class="meter"><i style="width:97%"></i></div>
+<span class="cnt"><b>780</b> / 800자</span><span class="state"></span>
+<button type="button" class="save" hidden>답변 저장</button><button type="button" class="copy">답변 복사</button></div>
+<details class="diff" hidden><summary>당초 초안과 비교 · <b>0</b>곳 변경</summary><div class="dsub"></div><div class="dbody"></div></details></div><div class="q" data-orig="현장 경험이 없다는 사실이 마음에 걸려, 현장에서 실제로 일어난 사고사례와 대책 등을 가장 많이 찾아 분석해 본 사람이 되자는 마음으로 논문을 준비하였습니다.
+
+고용노동부 산업재해 분석보고서와 CSI(건설공사안전관리 종합정보망)의 사고사례 30,896건에 중대재해 사례 840건, 안전 관련 법령 등을 묶어 Database를 확보하였고, 자료 분석, 활용을 위해 5건의 AI 교육을 이수했습니다. 분석 결과 국내 현장에서 외국인 근로자가 증가하고 있으며 인당 재해율은 전체 근로자의 1.94배에 이르고, 국내 안전시스템이 대부분 내국인 위주의 문서에 기반하고 있음을 확인하였습니다. 전기 현장이나 일반 현장 사진을 업로드하면 Database를 학습한 AI가 위험요인을 판단하여 위험요인 분석, 위험성평가표, 사전작업허가서를 웹 기반으로 자동 작성하고 다국어(영어, 중국어, 베트남어, 우즈벡어)로 병기하는 웹(e-safety.vercel.app)을 완성했고, 감시모드 활성화 시 관리자에게 e-mail, 문자로 위험요인을 전송하는 기능을 보완한 논문은 2026년 10월 한국전기공사협회 전기공사 우수논문 공모전에서 최우수상을 수상했습니다.
+
+논문을 준비하여 정확한 결론을 위해서는 원자료가 중요하다는 생각에 Data를 확보하는 데 시간을 많이 써 일정이 지연되고 있었으나, 우선 찾은 Data로 최초 분석을 시작하고 부족한 부분을 추가 분석하는 게 최초 분석보다 시간이 적게 소요되고 누락된 부분도 확인하고 보완할 수 있음을 알게 되며 일정을 맞춰 나갔으며, 확보된 자료로 우선 시작해 보고 고쳐 나가는 법도 배웠습니다." data-osub="원자료를 찾다 늦어진 일정을 되찾은 졸업연구, AI 활용">
+<div class="qhead"><span class="qid">Q3</span><p class="qtext">문제를 해결하기 위해 노력했던 경험과 그 결과를 구체적으로 기술해 주십시오. (추정 문항)</p></div><p class="tech">STAR 기법 · 상황(Situation) → 과제(Task) → 행동(Action) → 결과(Result)</p>
+<h4 contenteditable="true" spellcheck="false">[원자료를 찾다 늦어진 일정을 되찾은 졸업연구, AI 활용]</h4>
+<div class="ans" contenteditable="true" spellcheck="false" data-limit="800"><p>현장 경험이 없다는 사실이 마음에 걸려, 현장에서 실제로 일어난 사고사례와 대책 등을 가장 많이 찾아 분석해 본 사람이 되자는 마음으로 논문을 준비하였습니다.</p><p>고용노동부 산업재해 분석보고서와 CSI(건설공사안전관리 종합정보망)의 사고사례 30,896건에 중대재해 사례 840건, 안전 관련 법령 등을 묶어 Database를 확보하였고, 자료 분석, 활용을 위해 5건의 AI 교육을 이수했습니다. 분석 결과 국내 현장에서 외국인 근로자가 증가하고 있으며 인당 재해율은 전체 근로자의 1.94배에 이르고, 국내 안전시스템이 대부분 내국인 위주의 문서에 기반하고 있음을 확인하였습니다. 전기 현장이나 일반 현장 사진을 업로드하면 Database를 학습한 AI가 위험요인을 판단하여 위험요인 분석, 위험성평가표, 사전작업허가서를 웹 기반으로 자동 작성하고 다국어(영어, 중국어, 베트남어, 우즈벡어)로 병기하는 웹(e-safety.vercel.app)을 완성했고, 감시모드 활성화 시 관리자에게 e-mail, 문자로 위험요인을 전송하는 기능을 보완한 논문은 2026년 10월 한국전기공사협회 전기공사 우수논문 공모전에서 최우수상을 수상했습니다.</p><p>논문을 준비하여 정확한 결론을 위해서는 원자료가 중요하다는 생각에 Data를 확보하는 데 시간을 많이 써 일정이 지연되고 있었으나, 우선 찾은 Data로 최초 분석을 시작하고 부족한 부분을 추가 분석하는 게 최초 분석보다 시간이 적게 소요되고 누락된 부분도 확인하고 보완할 수 있음을 알게 되며 일정을 맞춰 나갔으며, 확보된 자료로 우선 시작해 보고 고쳐 나가는 법도 배웠습니다.</p></div>
+<div class="qfoot"><div class="meter"><i style="width:98%"></i></div>
+<span class="cnt"><b>791</b> / 800자</span><span class="state"></span>
+<button type="button" class="save" hidden>답변 저장</button><button type="button" class="copy">답변 복사</button></div>
+<details class="diff" hidden><summary>당초 초안과 비교 · <b>0</b>곳 변경</summary><div class="dsub"></div><div class="dbody"></div></details></div><div class="q" data-orig="1학년 때 안전공학과 과대표를 맡으며 협업을 처음 배웠습니다. 학사 일정과 공지를 빠짐없이 전하는 한편, 수업과 시험에 관한 학우들의 의견을 모아 학과에 건의하는 일이 제 몫이었습니다. 입장이 다른 사람들의 이야기를 끝까지 듣고 하나의 계획으로 모으는 과정이 쉽지 않았지만, 학과 행사 준비를 도우며 서로의 사정을 먼저 묻는 것이 출발이라는 것을 알게 되었습니다. 이 경험은 현장에서 근로자와 관리자 사이를 잇는 안전관리자를 준비하는 출발점이 되었습니다.
+
+이 경험은 이듬해 공과대학 학생회 활동으로 이어졌습니다. 복지부장으로서 목표는 공대 학우들의 학교생활을 돕는 복지 사업을 차질 없이 운영하는 것이었습니다. 혼자 준비하면 빠뜨리는 것이 생기기 쉬워, 사업마다 필요한 인원과 예산, 동선, 비품을 표로 정리해 임원들과 나누고 당일 생길 수 있는 변수를 함께 점검했습니다. 학생회 임원으로 야간 캠퍼스 폴리스도 맡아, 동료들과 늦게까지 남은 학우들을 위해 캠퍼스를 순찰하며 위험한 곳을 살폈습니다.
+
+여러 사람의 안전과 편의를 책임지는 일은 먼저 보고 먼저 챙기는 일이라는 것을 배웠습니다. 학생회에서 표 한 장으로 임원들과 변수를 함께 점검했던 것처럼, 환경안전팀에서도 점검표를 생산, 설비 담당자와 함께 보며 지적사항이 고쳐질 때까지 같은 목표로 움직이는 동료가 되겠습니다. 협력업체가 함께하는 정비, 청소 작업은 작업 전 회의에서 담당자들과 역할을 먼저 나누겠습니다. 위험성평가를 할 때도 작업자와 협력업체 근로자의 의견을 직접 듣고, 그 의견이 대책에 반영되었는지 함께 확인하겠습니다." data-osub="과대표와 학생회 활동, 여럿이 함께 지킨 캠퍼스">
+<div class="qhead"><span class="qid">Q4</span><p class="qtext">다른 사람과 협업하여 공동의 목표를 달성한 경험을 기술해 주십시오. (추정 문항)</p></div><p class="tech">STAR 기법 · 상황(Situation) → 과제(Task) → 행동(Action) → 결과(Result)</p>
+<h4 contenteditable="true" spellcheck="false">[과대표와 학생회 활동, 여럿이 함께 지킨 캠퍼스]</h4>
+<div class="ans" contenteditable="true" spellcheck="false" data-limit="800"><p>1학년 때 안전공학과 과대표를 맡으며 협업을 처음 배웠습니다. 학사 일정과 공지를 빠짐없이 전하는 한편, 수업과 시험에 관한 학우들의 의견을 모아 학과에 건의하는 일이 제 몫이었습니다. 입장이 다른 사람들의 이야기를 끝까지 듣고 하나의 계획으로 모으는 과정이 쉽지 않았지만, 학과 행사 준비를 도우며 서로의 사정을 먼저 묻는 것이 출발이라는 것을 알게 되었습니다. 이 경험은 현장에서 근로자와 관리자 사이를 잇는 안전관리자를 준비하는 출발점이 되었습니다.</p><p>이 경험은 이듬해 공과대학 학생회 활동으로 이어졌습니다. 복지부장으로서 목표는 공대 학우들의 학교생활을 돕는 복지 사업을 차질 없이 운영하는 것이었습니다. 혼자 준비하면 빠뜨리는 것이 생기기 쉬워, 사업마다 필요한 인원과 예산, 동선, 비품을 표로 정리해 임원들과 나누고 당일 생길 수 있는 변수를 함께 점검했습니다. 학생회 임원으로 야간 캠퍼스 폴리스도 맡아, 동료들과 늦게까지 남은 학우들을 위해 캠퍼스를 순찰하며 위험한 곳을 살폈습니다.</p><p>여러 사람의 안전과 편의를 책임지는 일은 먼저 보고 먼저 챙기는 일이라는 것을 배웠습니다. 학생회에서 표 한 장으로 임원들과 변수를 함께 점검했던 것처럼, 환경안전팀에서도 점검표를 생산, 설비 담당자와 함께 보며 지적사항이 고쳐질 때까지 같은 목표로 움직이는 동료가 되겠습니다. 협력업체가 함께하는 정비, 청소 작업은 작업 전 회의에서 담당자들과 역할을 먼저 나누겠습니다. 위험성평가를 할 때도 작업자와 협력업체 근로자의 의견을 직접 듣고, 그 의견이 대책에 반영되었는지 함께 확인하겠습니다.</p></div>
+<div class="qfoot"><div class="meter"><i style="width:97%"></i></div>
+<span class="cnt"><b>776</b> / 800자</span><span class="state"></span>
+<button type="button" class="save" hidden>답변 저장</button><button type="button" class="copy">답변 복사</button></div>
+<details class="diff" hidden><summary>당초 초안과 비교 · <b>0</b>곳 변경</summary><div class="dsub"></div><div class="dbody"></div></details></div>
+<footer>작성 2026-10-15 · 글자수는 줄바꿈 제외·공백 포함 기준입니다. 제출 전 공고 원문 문항·글자수와 대조하세요.</footer>
+</div>
+<script>
+(function(){
+ function len(t){return t.replace(/\n/g,"").length}
+ // 당초 초안(data-orig)과 지금 답변을 어절 단위로 비교해 지운 말은 취소선, 새로 쓴 말은 굵게
+ function toks(t){return t.split(/(\s+)/).filter(function(x){return x!==""})}
+ function esc(t){return t.replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+ function diff(q,a){var box=q.querySelector("details.diff");if(!box)return;
+  var o=(q.dataset.orig||"").trim(),n=text(a),h=q.querySelector("h4"),os=q.dataset.osub||"",ns=raw(h).trim().replace(/^\[|\]$/g,"");
+  if(o===n&&os===ns){box.hidden=true;return}
+  var A=toks(o),B=toks(n),la=A.length,lb=B.length,L=[];for(var i=0;i<=la;i++){L.push(new Uint16Array(lb+1))}
+  for(i=la-1;i>=0;i--)for(var j=lb-1;j>=0;j--)L[i][j]=A[i]===B[j]?L[i+1][j+1]+1:Math.max(L[i+1][j],L[i][j+1]);
+  var out=[],cnt=0,mode="",buf="",last="";function flush(){if(buf){out.push(mode?"<"+mode+">"+esc(buf)+"</"+mode+">":esc(buf));if(mode&&!(mode==="ins"&&last==="del"))cnt++;last=mode}buf=""}
+  function put(m,t){if(m!==mode&&!(/^\s+$/.test(t)&&mode)){flush();mode=m}buf+=t}
+  i=0;j=0;while(i<la||j<lb){if(i<la&&j<lb&&A[i]===B[j]){put("",A[i]);i++;j++}else if(j<lb&&(i>=la||L[i][j+1]>L[i+1][j])){put("ins",B[j]);j++}else{put("del",A[i]);i++}}
+  flush();
+  box.querySelector(".dbody").innerHTML=out.join("").replace(/\n\n/g,"<br><br>");
+  box.querySelector(".dsub").textContent=os===ns?"":"소제목: ["+os+"] → ["+ns+"]";
+  box.querySelector("summary b").textContent=cnt+(os===ns?0:1);box.hidden=false}
+ function raw(e){return e.innerText||e.textContent||""}  // 접힌 <details> 안에서는 innerText 가 빈 문자열
+ function text(el){return Array.from(el.querySelectorAll("p")).map(function(p){return raw(p).trim()}).filter(Boolean).join("\n\n")||raw(el).trim()}
+ document.querySelectorAll(".q").forEach(function(q,i){
+  var a=q.querySelector(".ans"),lim=+a.dataset.limit,key="cl:"+(q.closest(".draft")||{}).id+":"+i;
+  try{var s=localStorage.getItem(key);if(s)a.innerHTML=s}catch(e){}
+  function upd(){diff(q,a);var n=len(text(a)),r=n/lim;q.querySelector(".cnt b").textContent=n.toLocaleString();
+   q.querySelector(".meter i").style.width=Math.min(100,r*100)+"%";q.classList.remove("ok","low","over");
+   var st=q.querySelector(".state");if(r>1){q.classList.add("over");st.textContent="초과 "+(n-lim)+"자"}else if(r>=.8){q.classList.add("ok");st.textContent="적정"}else{q.classList.add("low");st.textContent="부족"}}
+  a.addEventListener("input",function(){upd();try{localStorage.setItem(key,a.innerHTML)}catch(e){}});upd();q._upd=upd;
+  var dd=q.closest("details");if(dd)dd.addEventListener("toggle",function(){if(dd.open)upd()});
+  q.querySelector("h4").addEventListener("input",function(){diff(q,a)});
+  var b=q.querySelector("button.copy");b.addEventListener("click",function(){var t=text(a);
+   function done(){b.textContent="복사됨";setTimeout(function(){b.textContent="답변 복사"},1500)}
+   function sel(){var r=document.createRange();r.selectNodeContents(a);var s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent="선택됨 · Ctrl+C"}
+   try{navigator.clipboard.writeText(t).then(done,sel)}catch(e){sel()}});
+ });
+})();
+</script>
+<script>
+document.querySelector("button.print").addEventListener("click",function(){window.print()});
+document.querySelector("button.copy-all").addEventListener("click",function(){
+ var b=this,t=Array.from(document.querySelectorAll(".q:not(.v)")).map(function(q){return q.querySelector(".qid").innerText+" "+q.querySelector(".qtext").innerText+"\n"+q.querySelector("h4").innerText+"\n"+q.querySelector(".ans").innerText.trim()}).join("\n\n");
+ try{navigator.clipboard.writeText(t).then(function(){b.textContent="복사됨"},function(){b.textContent="복사 실패"})}catch(x){b.textContent="복사 실패"}
+});
+</script>
+<script>(function(){var b=document.querySelector("button.dl");if(!b)return;b.onclick=function(){var d=document.documentElement.cloneNode(true);d.querySelectorAll("[contenteditable]").forEach(function(e){});var bl=new Blob(["<!doctype html>\n"+d.outerHTML],{type:"text/html"}),a=document.createElement("a");a.href=URL.createObjectURL(bl);a.download=(document.title||"자기소개서")+"_편집본.html";document.body.appendChild(a);a.click();a.remove()}})();</script></body>
+</html>

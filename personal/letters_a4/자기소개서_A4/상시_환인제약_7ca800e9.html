@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>환인제약 자기소개서</title>
+<style>
+/* 레이아웃: A4 세로 폭 한 장 — 요약 타일 → 마감순 표 → 공고별 초안(펼침, 문항 카드 편집) */
+:root{
+ --primary:#0F6FFF;--primary-hover:#0E65E8;--canvas:#EEF1F5;--surface:#FFFFFF;--alt1:#F2F3F6;--alt2:#E2E4E9;
+ --strong:#000000;--text:#1C1C1C;--sub:#303030;--cap:#737373;--border:#E2E4E9;--border-strong:#CCD0D6;--divider:#E9EBEF;
+ --ok:#15B874;--warn:#FFA833;--err:#E63B3B;--ok-bg:#E5F7EF;--warn-bg:#FFF3E0;--err-bg:#FDEBEB;--pri-bg:#E7F0FF;
+ --font:"Pretendard Variable","Pretendard","Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic","Segoe UI",Roboto,sans-serif;
+ --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+ --primary:#3F8CFF;--primary-hover:#0F6FFF;--canvas:#15171C;--surface:#1D1F24;--alt1:#282B33;--alt2:#333741;
+ --strong:#FFFFFF;--text:#EBECED;--sub:#C4C4C4;--cap:#8A8A8A;--border:#333741;--border-strong:#4A505F;--divider:#282B33;
+ --ok:#44C690;--warn:#FFB95C;--err:#EB5E5E;--ok-bg:#16332A;--warn-bg:#3A2E1A;--err-bg:#3A1F22;--pri-bg:#1A2B47;color-scheme:dark}}
+:root[data-theme="dark"]{
+ --primary:#3F8CFF;--primary-hover:#0F6FFF;--canvas:#15171C;--surface:#1D1F24;--alt1:#282B33;--alt2:#333741;
+ --strong:#FFFFFF;--text:#EBECED;--sub:#C4C4C4;--cap:#8A8A8A;--border:#333741;--border-strong:#4A505F;--divider:#282B33;
+ --ok:#44C690;--warn:#FFB95C;--err:#EB5E5E;--ok-bg:#16332A;--warn-bg:#3A2E1A;--err-bg:#3A1F22;--pri-bg:#1A2B47;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--canvas);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.65;padding-inline:16px;padding-block:24px 48px}
+.sheet{max-width:210mm;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+a{color:var(--primary)} a:focus-visible,button:focus-visible,summary:focus-visible,[contenteditable]:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 16px;border-bottom:2px solid var(--strong);padding-bottom:12px}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.08em;color:var(--primary)}
+h1{font-size:28px;font-weight:700;color:var(--strong);margin:2px 0 0;text-wrap:balance}
+.gen{font-size:12px;color:var(--cap);font-variant-numeric:tabular-nums}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.tile{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
+.tile .lbl{font-size:12px;font-weight:600;color:var(--cap)}
+.tile .num{font-size:28px;font-weight:700;color:var(--strong);font-variant-numeric:tabular-nums;line-height:1.2}
+.tile small{font-size:13px;font-weight:600;color:var(--sub);margin-left:2px}
+section.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px}
+h2{font-size:18px;font-weight:700;color:var(--strong);margin:0 0 10px}
+h3{font-size:14px;font-weight:700;color:var(--strong);margin:14px 0 6px}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:13px}
+th,td{text-align:left;padding:8px;border-bottom:1px solid var(--divider);vertical-align:top;overflow-wrap:anywhere}
+thead th{font-size:12px;font-weight:600;color:var(--cap);background:var(--alt1)}
+.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.scroll table{min-width:640px}
+.pill,.chip{display:inline-block;font-size:11px;font-weight:600;border-radius:9999px;padding:1px 8px;margin:1px 4px 1px 0;white-space:nowrap}
+.chip{background:var(--alt1);color:var(--sub);border:1px solid var(--border)}
+.pill{background:var(--alt1);color:var(--sub)} .pill.ok{background:var(--ok-bg);color:var(--ok)} .pill.warn{background:var(--warn-bg);color:var(--warn)}
+.pill.err{background:var(--err-bg);color:var(--err)} .pill.new{background:var(--primary);color:var(--surface)} .pill.mute{color:var(--cap)}
+.empty{color:var(--cap);margin:0}
+.rules{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0;padding:0;list-style:none;font-size:13px}
+.rules li{background:var(--alt1);border-radius:8px;padding:8px 10px;color:var(--sub)} .rules b{color:var(--strong)}
+.draft{background:var(--surface);border:1px solid var(--border);border-radius:12px}
+.draft summary{cursor:pointer;padding:14px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;list-style:none}
+.draft summary::-webkit-details-marker{display:none}
+.draft summary::before{content:"";width:8px;height:8px;border-right:2px solid var(--cap);border-bottom:2px solid var(--cap);transform:rotate(-45deg);margin-right:6px;transition:transform .15s}
+.draft[open] summary::before{transform:rotate(45deg)}
+.co{font-size:18px;font-weight:700;color:var(--strong);margin-right:4px}
+.ttl{flex-basis:100%;font-size:13px;color:var(--sub);padding-left:20px}
+.draft .body{padding:0 16px 16px;border-top:1px solid var(--divider)}
+.kv{margin-top:12px} .kv th{width:120px;font-size:12px;color:var(--cap);font-weight:600;background:var(--alt1)}
+.facts{margin:0;padding-left:18px;font-size:13px;color:var(--sub);display:flex;flex-direction:column;gap:4px}
+.q{margin-top:16px;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.qhead{display:flex;gap:10px;align-items:flex-start;background:var(--alt1);padding:10px 12px}
+.qid{font-size:12px;font-weight:700;color:var(--surface);background:var(--primary);border-radius:8px;padding:2px 8px;flex:none}
+.qtext{margin:0;font-size:13px;font-weight:600;color:var(--sub);min-width:0}
+.q h4{margin:12px 14px 4px;font-size:16px;font-weight:700;color:var(--strong)}
+.ans{padding:4px 14px 8px;font-size:15px;color:var(--text);max-width:68ch}
+.ans p{margin:0 0 10px}
+.tech{margin:0;padding:6px 12px;font-size:12px;font-weight:600;color:var(--primary);background:var(--pri-bg);border-bottom:1px solid var(--divider)}
+.vhead{margin-top:28px;padding-top:14px;border-top:2px solid var(--border)} .vhead h3{margin:0 0 4px}
+.q.v .qid{background:var(--sub)}
+.q.v .ans p[data-k]::before{content:attr(data-k);display:inline-block;margin-right:6px;padding:0 6px;border-radius:6px;font-size:11px;font-weight:700;line-height:18px;color:var(--primary);border:1px solid var(--border-strong);vertical-align:1px}
+.qfoot{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 14px;border-top:1px solid var(--divider)}
+.meter{flex:1 1 120px;height:6px;background:var(--alt2);border-radius:9999px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--primary)}
+.q.over .meter i{background:var(--err)} .q.low .meter i{background:var(--warn)}
+.cnt{font-size:13px;color:var(--cap);font-variant-numeric:tabular-nums} .cnt b{color:var(--strong)}
+.state{font-size:12px;font-weight:600} .q.ok .state{color:var(--ok)} .q.over .state{color:var(--err)} .q.low .state{color:var(--warn)}
+button.copy{font:600 13px var(--font);color:var(--surface);background:var(--primary);border:0;border-radius:8px;padding:7px 14px;cursor:pointer;min-height:36px}
+button.copy:hover{background:var(--primary-hover)}
+details.diff{border-top:1px solid var(--divider);padding:8px 14px 12px;font-size:14px} details.diff[hidden]{display:none}
+details.diff summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--primary)} details.diff .dsub{margin:8px 0 4px;font-size:13px;color:var(--cap)}
+details.diff .dbody{line-height:1.8;color:var(--text);max-width:68ch} details.diff del{background:color-mix(in srgb,var(--err) 14%,transparent);color:var(--err);text-decoration:line-through}
+details.diff ins{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--strong);text-decoration:none;font-weight:600}
+button.save{font:600 13px var(--font);color:var(--primary);background:var(--surface);border:1px solid var(--border-strong);border-radius:8px;padding:7px 14px;cursor:pointer;min-height:36px}
+button.save:hover{border-color:var(--primary)} button.save.clean{color:var(--ok)} button.save:disabled{opacity:.6;cursor:wait} button.save[hidden]{display:none}
+footer{font-size:12px;color:var(--cap)}
+@media (max-width:640px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.rules{grid-template-columns:1fr}h1{font-size:24px}.kv th{width:88px}}
+.doc-actions{display:flex;flex-wrap:wrap;gap:8px}
+.doc-actions a,.doc-actions button{font:600 13px var(--font);border-radius:8px;padding:7px 14px;min-height:36px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center}
+.btn-ghost{color:var(--primary);background:var(--surface);border:1px solid var(--border-strong)}
+.hint{font-size:12px;color:var(--cap);margin:0}
+.chips{margin-top:6px}
+.coinfo{margin-top:2px;font-size:12px} .coinfo a{color:var(--cap);text-decoration:underline;text-underline-offset:2px} .coinfo a:hover{color:var(--primary)} a.coname{color:var(--text);text-decoration:underline;text-decoration-color:var(--border-strong);text-underline-offset:3px} a.coname:hover{color:var(--primary)} a.coname::after{content:" ↗";font-size:11px;color:var(--cap)}
+a.jd{color:var(--text);text-decoration:underline;text-decoration-color:var(--border-strong);text-underline-offset:3px} a.jd:hover{color:var(--primary);text-decoration-color:var(--primary)} a.jd::after{content:" ↗";font-size:11px;color:var(--cap)}
+.emp{margin-top:4px} td .chip,.emp .pill{white-space:normal;max-width:100%} .pay{margin-top:4px;font-size:12px;color:var(--cap);font-variant-numeric:tabular-nums}
+@media print{@page{size:A4 portrait;margin:14mm}body{background:#fff;padding:0}.ref,.doc-actions,button.copy,button.save,details.diff,.state,.meter,.hint,.tech{display:none!important}
+.q{break-inside:avoid;border-color:#ccc}.sheet{max-width:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.xbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:0 0 10px}
+.xbar[hidden]{display:none}
+.xbar button{font:600 13px var(--font);border-radius:8px;padding:6px 12px;min-height:34px;cursor:pointer;border:1px solid var(--border-strong);background:var(--surface);color:var(--sub)}
+.xbar button.danger{background:var(--err);border-color:var(--err);color:#fff}
+.xbar button:disabled{opacity:.45;cursor:not-allowed}
+.xbar .msg{font-size:12px;color:var(--cap)}
+.pickcell{width:36px;text-align:center} .pickcell input{width:16px;height:16px;cursor:pointer;accent-color:var(--primary)}
+.xlist{margin:8px 0 0;font-size:13px;color:var(--sub)} .xlist summary{cursor:pointer;color:var(--cap);font-size:12px}
+.xlist ul{margin:6px 0 0;padding-left:18px} .xlist li{margin:2px 0} .xlist button{margin-left:6px;font:600 12px var(--font);border:1px solid var(--border-strong);background:var(--surface);color:var(--primary);border-radius:6px;padding:1px 8px;cursor:pointer}
+tr.gone,.draft.gone{display:none}
+button.req{font:600 12px var(--font);border-radius:8px;padding:6px 10px;min-height:32px;cursor:pointer;border:1px solid var(--primary);background:var(--surface);color:var(--primary);white-space:nowrap}
+button.req.on{background:var(--primary);color:var(--surface)} button.req:disabled{opacity:.45;cursor:not-allowed}
+@media print{#foreign{display:none!important}}
+@media print{.xbar,.xlist,.pickcell{display:none!important}}
+</style>
+</head>
+<body>
+<div class="sheet">
+<header><div><div class="eyebrow">상시 인재pool 등록(환경안전관리)</div><h1 contenteditable="true" spellcheck="false">환인제약 자기소개서</h1>
+<div class="chips"><span class="chip">중견기업</span><span class="chip">코스피</span><span class="chip">상시 인재Pool</span><span class="pill">마감 미정</span></div></div>
+<div class="doc-actions"><button type="button" class="copy-all btn-ghost">전체 답변 복사</button><button type="button" class="dl btn-ghost">편집본 HTML 저장</button><button type="button" class="print btn-ghost">인쇄 · PDF</button></div></header>
+<p class="hint">제목·소제목·답변을 눌러 바로 고칠 수 있습니다. 고친 뒤 '편집본 HTML 저장' 버튼이나 브라우저의 '다른 이름으로 저장'(Ctrl+S)으로 HTML 파일을 저장하면 수정 내용이 그대로 남습니다. 인쇄할 때는 공고 정보·기업 개요·기업 분석과 버튼이 빠지고 문항과 답변만 A4에 나옵니다.</p>
+<div class="ref"><table class="kv"><tbody>
+<tr><th>공고</th><td><a href="https://www.jobkorea.co.kr/Recruit/GI_Read/50148214?Oem_Code=C1" target="_blank" rel="noopener">공고 원문 열기</a></td></tr>
+<tr><th>마감 · 작성</th><td class="num">채용 시 마감 마감 · 2026-10-15 작성</td></tr>
+<tr><th>문항 출처</th><td>추정 문항 — 인재pool 공고(잡코리아)에 자기소개서 문항이 없음. 잡코리아 공고 페이지의 합격자소서(2022 하반기 신입 &#x27;지원동기 및 앞으로의 포부&#x27;)와 하이잡에 정리된 환인제약 문항 유형(지원동기 및 포부 / 회사를 선택할 때 가장 중요하게 생각하는 것과 환인제약의 부합 / 인생에서 가장 중요한 가치와 실천 사례 / 강점 및 약점)으로 4문항 구성. 글자수는 확인 못 해(2016 하반기 &#x27;성장과정 1000자 이내&#x27;만 확인) 800자로 보수 가정. 인재pool 등록 양식·채용 홈페이지 문항과 반드시 대조</td></tr><tr><th>연봉 · 초봉</th><td>회사 내규에 따름 · 신입 초봉 4,240만원 (2025) <span class="hint">(채용현황 브리핑 기준)</span></td></tr>
+</tbody></table>
+<h3>기업 개요</h3><ul class="facts"><li>회사: 환인제약(주) · 코스피 상장 · 중견기업(잡코리아) · 본사 서울 송파구 법원로6길 11(문정동) · 설립 연도는 이번 검색에서 확인 못 해 원문 확인 필요 — <a href="https://www.jobkorea.co.kr/Recruit/GI_Read/50148214?Oem_Code=C1" target="_blank" rel="noopener">잡코리아 공고</a></li><li>주요 사업: 완제 의약품 제조업, 정신신경계 치료제 중심의 전문의약품과 건강기능식품 개발·생산·판매(기업 분석 페이지 요약) / 생산은 경기 안성공장(공단로 50)과 화성 향남공장(제약공단2길 45, 2022년 하반기 가동 — 2023년 기사) — <a href="https://jasoseol.com/companies/2468/insights" target="_blank" rel="noopener">자소설닷컴</a>, <a href="https://dealsite.co.kr/articles/121593" target="_blank" rel="noopener">딜사이트</a></li><li>규모: 2025년 연결 매출 2,552억 원(1.7%↓)·영업이익 130억 원(39.4%↓), 영업이익률 2021년 17.6% → 2025년 5.1%(데일리팜 2026-02) / 잡코리아·캐치는 매출 2,547억 원·영업이익 147억 원으로 달라 원문 확인 필요 / 사원수 501~1,000명 — <a href="https://www.dailypharm.com/user/news/335783" target="_blank" rel="noopener">데일리팜</a></li></ul>
+<h3>기업 분석</h3><ul class="facts"><li>공고(채용 브리핑 기준): 상시 인재pool 등록(환경안전관리), 모집인원 ○명, 급여 회사 내규, 근무지 경기 안성시 공단로 50(환인제약 안성공장)·경기 화성시 향남읍 제약공단2길 45, 신입·경력, 학력 초대졸 이상, 접수 2026-10-12 ~ 채용 시 마감, 고용형태 미표기. 상세 직무·우대 없음(공고 이미지 확인 못 함 — 브리핑 데이터에 이미지 URL 없음) — <a href="https://www.jobkorea.co.kr/Recruit/GI_Read/50148214?Oem_Code=C1" target="_blank" rel="noopener">잡코리아</a></li><li>지원 자격: 초대졸 이상·신입 가능으로 지원자와 맞음. 근무지가 안성·화성 두 곳이라 배치 공장과 고용형태는 원문 확인 필요</li><li>DART: dart.fss.or.kr 접속 차단 → 2025년 연결 매출 2,552억 원·영업이익 130억 원, 이익률 하락 원인으로 향남공장 가동에 따른 인건비 등 원가 부담(2023 기사)과 라인업 확대로 반등 모색(2026-02 기사) — <b>사업보고서 원문 확인 필요</b> — <a href="https://www.dailypharm.com/user/news/335783" target="_blank" rel="noopener">데일리팜</a>, <a href="https://dealsite.co.kr/articles/121593" target="_blank" rel="noopener">딜사이트</a></li><li>DART 안전·신사업 적합도(원문 확인 필요): 두 공장 체제와 라인업 확대 → 생산 품목·설비가 늘면 환경안전 관리 범위도 넓어짐, 공정안전(AIChE) 교육·기록 관리 역량과 <b>맞음(Q1 반영)</b>. 정신신경계 치료제 중심 사업 → CCOHS 심리적 보건안전 과정 이수와 <b>맞음(Q2 반영)</b></li><li>안전보건 기준: 환인제약 안전보건경영방침·ISO 45001·KOSHA-MS 인증은 검색으로 확인 못 함 → <b>반영 보류</b></li><li>지속가능경영보고서(안전): 확인 못 함</li><li>최근 1년 주요 기사(안전 기사 없음): 2026-02 데일리팜 &#x27;환인, 이익률 17.6%→5.1%…라인업 확대로 반등 모색&#x27; → Q1 반영 — <a href="https://www.dailypharm.com/user/news/335783" target="_blank" rel="noopener">데일리팜</a>. 2026-07 제약업계 생산설비 친환경·자동화 투자 기사(메디칼타임즈)는 환인제약이 언급되지 않아 쓰지 않음</li><li>최근 1년 AI 기사: 확인 못 함 → 반영 안 함</li><li>사고 데이터 활용: 별도 통계 문장은 쓰지 않음(Q3 졸업연구 확정 문안의 수치만)</li><li>연결 포인트: 환경안전관리(안전+환경) → 해외 안전 교육 15건(AIChE 공정안전·PPE), 학생회 표 정리 습관 / 정신건강 의약품 회사 → CCOHS 심리적 보건안전 과정 / 두 공장 점검 → 태권도 1단 체력</li><li>신입 연봉: <b>회사 내규에 따름 · 신입 초봉 4,240만원 (2025)</b> (채용현황 브리핑 기준) / 초안 조사 참고(브리핑 값과 다를 수 있음): 신입 초봉 4,240만원 (2025) (채용 브리핑 기준) — <a href="https://www.jobkorea.co.kr/company/1808058/salary" target="_blank" rel="noopener">잡코리아 연봉</a> / 공고 급여 회사 내규</li><li>예상 성과금: 확인 못 함</li><li>회사 복지: 자녀 학자금 확인 못 함, 기숙사·사택 확인 못 함, 주택·전세자금 지원 확인 못 함, 통근버스 확인 못 함 / 건강검진·의료비 지원, 자사 제품 직원 할인, 경조사 지원금(검색 요약 — 잡플래닛 직원 응답 목록) / 공고 복리후생 항목 없음 — <a href="https://www.jobplanet.co.kr/companies/426/benefits/%ED%99%98%EC%9D%B8%EC%A0%9C%EC%95%BD" target="_blank" rel="noopener">잡플래닛</a></li></ul></div>
+<div class="q" data-orig="건설회사의 공무팀장이셨던 아버지는 추석 당직 근무 날 저를 현장에 데려가신 적이 있으셨는데, 아버지는 현장의 정리정돈이 근로자의 안전을 지키는 여러 방법 중 하나라며 5S와 3정(정리, 정돈, 청소, 청결, 습관화와 정품, 정량, 정위치)을 설명해 주시며, 같이 일하는 동료들이 무사히 퇴근할 수 있도록 직원들이 노력하고 있다고 해 주신 말씀을 기억하고 있습니다. 어릴 때 꿈은 아픈 사람을 돌보는 간호사였지만, 그날 이후 다친 사람을 돌보는 것보다 근로자와 동료, 회사가 다치지 않도록 하는 일이 먼저라고 생각하게 되어, 고3 때 안전관리자를 목표로 안전공학과에 진학하였습니다.
+
+아픈 사람을 돌보고 싶던 마음은 지금도 남아 있어서, 정신신경계 치료제를 중심으로 전문의약품을 만드는 환인제약에서 그 약을 만드는 사람의 안전과 건강을 지키고 싶어 지원했습니다. 환인제약은 안성공장에 이어 화성 향남공장을 가동하며 생산 기반을 넓혀 지난해 연결 매출 2,552억 원을 기록했고, 최근에는 제품 라인업을 넓혀 수익성 반등을 모색하고 있습니다. 생산 품목과 설비가 늘수록 환경안전관리가 챙겨야 할 물질과 공정, 사람도 늘어납니다.
+
+입사하면 먼저 안성과 향남 두 공장의 작업 순서와 설비를 익히겠습니다. 5S와 3정을 기준으로 원료와 화학물질의 보관 상태, 통로부터 살피고, 작업 전 점검과 위험성평가에 작업자가 직접 참여하도록 돕겠습니다. 5년 뒤에는 실기를 앞둔 산업안전기사를 시작으로 자격을 갖추고, 두 공장의 환경과 안전 기록을 같은 기준으로 관리해 위험을 먼저 찾아내는 환경안전관리자가 되겠습니다." data-osub="약을 만드는 사람의 안전과 건강을 지키고 싶습니다">
+<div class="qhead"><span class="qid">Q1</span><p class="qtext">지원동기 및 앞으로의 포부에 대하여 기술하여 주십시오. (추정 문항)</p></div>
+<h4 contenteditable="true" spellcheck="false">[약을 만드는 사람의 안전과 건강을 지키고 싶습니다]</h4>
+<div class="ans" contenteditable="true" spellcheck="false" data-limit="800"><p>건설회사의 공무팀장이셨던 아버지는 추석 당직 근무 날 저를 현장에 데려가신 적이 있으셨는데, 아버지는 현장의 정리정돈이 근로자의 안전을 지키는 여러 방법 중 하나라며 5S와 3정(정리, 정돈, 청소, 청결, 습관화와 정품, 정량, 정위치)을 설명해 주시며, 같이 일하는 동료들이 무사히 퇴근할 수 있도록 직원들이 노력하고 있다고 해 주신 말씀을 기억하고 있습니다. 어릴 때 꿈은 아픈 사람을 돌보는 간호사였지만, 그날 이후 다친 사람을 돌보는 것보다 근로자와 동료, 회사가 다치지 않도록 하는 일이 먼저라고 생각하게 되어, 고3 때 안전관리자를 목표로 안전공학과에 진학하였습니다.</p><p>아픈 사람을 돌보고 싶던 마음은 지금도 남아 있어서, 정신신경계 치료제를 중심으로 전문의약품을 만드는 환인제약에서 그 약을 만드는 사람의 안전과 건강을 지키고 싶어 지원했습니다. 환인제약은 안성공장에 이어 화성 향남공장을 가동하며 생산 기반을 넓혀 지난해 연결 매출 2,552억 원을 기록했고, 최근에는 제품 라인업을 넓혀 수익성 반등을 모색하고 있습니다. 생산 품목과 설비가 늘수록 환경안전관리가 챙겨야 할 물질과 공정, 사람도 늘어납니다.</p><p>입사하면 먼저 안성과 향남 두 공장의 작업 순서와 설비를 익히겠습니다. 5S와 3정을 기준으로 원료와 화학물질의 보관 상태, 통로부터 살피고, 작업 전 점검과 위험성평가에 작업자가 직접 참여하도록 돕겠습니다. 5년 뒤에는 실기를 앞둔 산업안전기사를 시작으로 자격을 갖추고, 두 공장의 환경과 안전 기록을 같은 기준으로 관리해 위험을 먼저 찾아내는 환경안전관리자가 되겠습니다.</p></div>
+<div class="qfoot"><div class="meter"><i style="width:97%"></i></div>
+<span class="cnt"><b>780</b> / 800자</span><span class="state"></span>
+<button type="button" class="save" hidden>답변 저장</button><button type="button" class="copy">답변 복사</button></div>
+<details class="diff" hidden><summary>당초 초안과 비교 · <b>0</b>곳 변경</summary><div class="dsub"></div><div class="dbody"></div></details></div><div class="q" data-orig="제가 회사를 고를 때 가장 중요하게 보는 기준은 그 회사의 일이 사람을 지키는 일과 맞닿아 있는가입니다. 안전관리자는 근로자가 다치지 않게 하는 사람이고, 저는 이 일이 회사의 사업과 같은 방향을 볼 때 가장 오래, 깊게 할 수 있다고 생각합니다. 이 기준이 맞아야 회사의 성장과 근로자의 안전을 같은 목표로 놓고 일할 수 있습니다.
+
+환인제약은 이 기준에 잘 맞습니다. 사람의 마음과 신경의 건강을 돌보는 약을 만드는 회사라면, 그 약을 만드는 근로자의 건강도 몸과 마음 모두에서 챙겨야 한다고 생각합니다. 이 생각은 올봄 캐나다 산업안전보건센터(CCOHS)의 심리적 보건안전 인식 과정을 영어로 이수하며 더 분명해졌습니다. 사고를 막는 일만큼 일터의 스트레스와 마음 건강을 살피는 일도 산업안전보건의 한 부분이라는 점을 배웠습니다.
+
+또 하나의 기준은 신입이 넓게 배울 수 있는가입니다. 환경안전관리라는 직무 이름처럼 안전과 함께 환경 관리까지 맡는 자리라, 안전과 보건, 환경을 두루 배우기에 좋은 기회인 것으로 보았습니다. 근무지가 안성과 화성 두 공장이라 서로 다른 공장의 설비와 공정을 비교하며 배울 수 있다는 점도 큰 장점입니다.
+
+입사하면 작업 전 점검과 안전교육 시간에 근로자의 피로와 고충도 함께 묻고, 위험성평가에서는 작업 자세나 반복 작업처럼 몸에 쌓이는 부담도 빠뜨리지 않겠습니다. 환경 분야는 공장의 대기, 수질 배출과 폐기물 관리 기준부터 차근차근 익혀 안전과 같은 무게로 챙기겠습니다. 공장 근로자가 몸도 마음도 다치지 않고 무사히 퇴근하는 일터를 만드는 데 보탬이 되겠습니다." data-osub="사람을 지키는 일과 같은 방향을 보는 회사">
+<div class="qhead"><span class="qid">Q2</span><p class="qtext">본인이 회사를 선택할 때 가장 중요하게 생각하는 것과 환인제약이 그것과 어떻게 부합하는지 기술해 주십시오. (추정 문항)</p></div>
+<h4 contenteditable="true" spellcheck="false">[사람을 지키는 일과 같은 방향을 보는 회사]</h4>
+<div class="ans" contenteditable="true" spellcheck="false" data-limit="800"><p>제가 회사를 고를 때 가장 중요하게 보는 기준은 그 회사의 일이 사람을 지키는 일과 맞닿아 있는가입니다. 안전관리자는 근로자가 다치지 않게 하는 사람이고, 저는 이 일이 회사의 사업과 같은 방향을 볼 때 가장 오래, 깊게 할 수 있다고 생각합니다. 이 기준이 맞아야 회사의 성장과 근로자의 안전을 같은 목표로 놓고 일할 수 있습니다.</p><p>환인제약은 이 기준에 잘 맞습니다. 사람의 마음과 신경의 건강을 돌보는 약을 만드는 회사라면, 그 약을 만드는 근로자의 건강도 몸과 마음 모두에서 챙겨야 한다고 생각합니다. 이 생각은 올봄 캐나다 산업안전보건센터(CCOHS)의 심리적 보건안전 인식 과정을 영어로 이수하며 더 분명해졌습니다. 사고를 막는 일만큼 일터의 스트레스와 마음 건강을 살피는 일도 산업안전보건의 한 부분이라는 점을 배웠습니다.</p><p>또 하나의 기준은 신입이 넓게 배울 수 있는가입니다. 환경안전관리라는 직무 이름처럼 안전과 함께 환경 관리까지 맡는 자리라, 안전과 보건, 환경을 두루 배우기에 좋은 기회인 것으로 보았습니다. 근무지가 안성과 화성 두 공장이라 서로 다른 공장의 설비와 공정을 비교하며 배울 수 있다는 점도 큰 장점입니다.</p><p>입사하면 작업 전 점검과 안전교육 시간에 근로자의 피로와 고충도 함께 묻고, 위험성평가에서는 작업 자세나 반복 작업처럼 몸에 쌓이는 부담도 빠뜨리지 않겠습니다. 환경 분야는 공장의 대기, 수질 배출과 폐기물 관리 기준부터 차근차근 익혀 안전과 같은 무게로 챙기겠습니다. 공장 근로자가 몸도 마음도 다치지 않고 무사히 퇴근하는 일터를 만드는 데 보탬이 되겠습니다.</p></div>
+<div class="qfoot"><div class="meter"><i style="width:97%"></i></div>
+<span class="cnt"><b>781</b> / 800자</span><span class="state"></span>
+<button type="button" class="save" hidden>답변 저장</button><button type="button" class="copy">답변 복사</button></div>
+<details class="diff" hidden><summary>당초 초안과 비교 · <b>0</b>곳 변경</summary><div class="dsub"></div><div class="dbody"></div></details></div><div class="q" data-orig="제가 가장 중요하게 여기는 가치는 모르는 것을 먼저 찾아보고 끝까지 확인하는 태도입니다. 안전은 확인하지 않은 곳에서 무너진다고 생각하기 때문입니다. 이 가치를 가장 크게 실천한 경험은 졸업연구입니다.
+
+현장 경험이 없다는 사실이 마음에 걸려, 현장에서 실제로 일어난 사고사례와 대책 등을 가장 많이 찾아 분석해 본 사람이 되자는 마음으로 논문을 준비하였습니다.
+
+고용노동부 산업재해 분석보고서와 CSI(건설공사안전관리 종합정보망)의 사고사례 30,896건에 중대재해 사례 840건, 안전 관련 법령 등을 묶어 Database를 확보하였고, 자료 분석, 활용을 위해 5건의 AI 교육을 이수했습니다. 분석 결과 국내 현장에서 외국인 근로자가 증가하고 있으며 인당 재해율은 전체 근로자의 1.94배에 이르고, 국내 안전시스템이 대부분 내국인 위주의 문서에 기반하고 있음을 확인하였습니다. 전기 현장이나 일반 현장 사진을 업로드하면 Database를 학습한 AI가 위험요인을 판단하여 위험요인 분석, 위험성평가표, 사전작업허가서를 웹 기반으로 자동 작성하고 다국어(영어, 중국어, 베트남어, 우즈벡어)로 병기하는 웹(e-safety.vercel.app)을 완성했고, 감시모드 활성화 시 관리자에게 e-mail, 문자로 위험요인을 전송하는 기능을 보완한 논문은 2026년 10월 한국전기공사협회 전기공사 우수논문 공모전에서 최우수상을 수상했습니다.
+
+이 경험으로 근거를 끝까지 확인하면 처음 해 보는 일도 결과로 만들 수 있다는 것을 배웠습니다. 환인제약에서도 물질과 설비의 위험을 법령과 기록으로 끝까지 확인하겠습니다." data-osub="먼저 찾아보고 끝까지 확인하는 태도, AI 활용">
+<div class="qhead"><span class="qid">Q3</span><p class="qtext">인생에서 가장 중요하다고 생각하는 가치와 그 이유, 이를 실천한 구체적인 사례를 기술해 주십시오. (추정 문항)</p></div><p class="tech">STAR 기법 · 상황(Situation) → 과제(Task) → 행동(Action) → 결과(Result)</p>
+<h4 contenteditable="true" spellcheck="false">[먼저 찾아보고 끝까지 확인하는 태도, AI 활용]</h4>
+<div class="ans" contenteditable="true" spellcheck="false" data-limit="800"><p>제가 가장 중요하게 여기는 가치는 모르는 것을 먼저 찾아보고 끝까지 확인하는 태도입니다. 안전은 확인하지 않은 곳에서 무너진다고 생각하기 때문입니다. 이 가치를 가장 크게 실천한 경험은 졸업연구입니다.</p><p>현장 경험이 없다는 사실이 마음에 걸려, 현장에서 실제로 일어난 사고사례와 대책 등을 가장 많이 찾아 분석해 본 사람이 되자는 마음으로 논문을 준비하였습니다.</p><p>고용노동부 산업재해 분석보고서와 CSI(건설공사안전관리 종합정보망)의 사고사례 30,896건에 중대재해 사례 840건, 안전 관련 법령 등을 묶어 Database를 확보하였고, 자료 분석, 활용을 위해 5건의 AI 교육을 이수했습니다. 분석 결과 국내 현장에서 외국인 근로자가 증가하고 있으며 인당 재해율은 전체 근로자의 1.94배에 이르고, 국내 안전시스템이 대부분 내국인 위주의 문서에 기반하고 있음을 확인하였습니다. 전기 현장이나 일반 현장 사진을 업로드하면 Database를 학습한 AI가 위험요인을 판단하여 위험요인 분석, 위험성평가표, 사전작업허가서를 웹 기반으로 자동 작성하고 다국어(영어, 중국어, 베트남어, 우즈벡어)로 병기하는 웹(e-safety.vercel.app)을 완성했고, 감시모드 활성화 시 관리자에게 e-mail, 문자로 위험요인을 전송하는 기능을 보완한 논문은 2026년 10월 한국전기공사협회 전기공사 우수논문 공모전에서 최우수상을 수상했습니다.</p><p>이 경험으로 근거를 끝까지 확인하면 처음 해 보는 일도 결과로 만들 수 있다는 것을 배웠습니다. 환인제약에서도 물질과 설비의 위험을 법령과 기록으로 끝까지 확인하겠습니다.</p></div>
+<div class="qfoot"><div class="meter"><i style="width:98%"></i></div>
+<span class="cnt"><b>786</b> / 800자</span><span class="state"></span>
+<button type="button" class="save" hidden>답변 저장</button><button type="button" class="copy">답변 복사</button></div>
+<details class="diff" hidden><summary>당초 초안과 비교 · <b>0</b>곳 변경</summary><div class="dsub"></div><div class="dbody"></div></details></div><div class="q" data-orig="제 강점은 해야 할 일을 표로 정리해 빠뜨리지 않고 챙기는 꼼꼼함입니다.
+
+이 강점은 학생회 활동과 해외 교육으로 길렀고, 체력이 뒷받침합니다.
+
+공과대학 학생회 복지부장일 때 복지 사업마다 인원과 예산, 동선, 비품을 표로 정리해 당일 생길 수 있는 변수를 미리 점검했고, 야간 캠퍼스 폴리스로 늦게까지 남은 학우들을 위해 캠퍼스를 순찰했습니다. 현장 경험이 없다는 단점은 국제노동기구(ILO) 국제훈련센터와 미국화학공학회(AIChE) 등 해외 주요기관의 온라인 안전 교육 15건을 모두 영어로 이수하며 메워 왔습니다. 화학공정 안전과 폭주반응 과정에서는 원료와 반응의 위험을, 제조업 개인보호구(PPE) 과정에서는 작업에 맞는 보호구를 고르는 법을 배웠고, ISO 45001 원리 과정으로 기록을 체계로 관리하는 기준도 익혔습니다. 고3 때 딴 태권도 1단으로 기른 체력이 있고, 방학 동안 태권도 학원에서 초등학생들의 안전을 지키며 사람을 먼저 살피는 습관도 들였습니다.
+
+약점은 자료를 끝까지 확인하려다 시작이 늦어질 때가 있다는 점입니다. 그래서 지금은 확보한 자료로 먼저 시작하고, 부족한 부분은 고쳐 나가는 방식으로 일정을 지킵니다. 일을 시작하기 전에 우선순위를 먼저 정하는 습관도 들이고 있습니다.
+
+입사하면 점검 결과와 조치를 표로 정리해 끝날 때까지 확인하고, 급한 위험은 먼저 조치한 뒤 기록을 보완해 약점이 조치를 늦추지 않게 하겠습니다. 기록 정리에는 Google, Microsoft, Anthropic의 AI 교육 5건에서 익힌 도구를 써 빠르고 정확하게 남기겠습니다." data-osub="표로 챙기는 꼼꼼함, 먼저 시작하는 연습">
+<div class="qhead"><span class="qid">Q4</span><p class="qtext">본인의 강점 및 약점을 기술해 주십시오. (추정 문항)</p></div><p class="tech">CPSBS 기법 · 핵심(Core) → 요점(Point) → 상황(Situation) → 행동(Behavior) → 요약(Summary)</p>
+<h4 contenteditable="true" spellcheck="false">[표로 챙기는 꼼꼼함, 먼저 시작하는 연습]</h4>
+<div class="ans" contenteditable="true" spellcheck="false" data-limit="800"><p>제 강점은 해야 할 일을 표로 정리해 빠뜨리지 않고 챙기는 꼼꼼함입니다.</p><p>이 강점은 학생회 활동과 해외 교육으로 길렀고, 체력이 뒷받침합니다.</p><p>공과대학 학생회 복지부장일 때 복지 사업마다 인원과 예산, 동선, 비품을 표로 정리해 당일 생길 수 있는 변수를 미리 점검했고, 야간 캠퍼스 폴리스로 늦게까지 남은 학우들을 위해 캠퍼스를 순찰했습니다. 현장 경험이 없다는 단점은 국제노동기구(ILO) 국제훈련센터와 미국화학공학회(AIChE) 등 해외 주요기관의 온라인 안전 교육 15건을 모두 영어로 이수하며 메워 왔습니다. 화학공정 안전과 폭주반응 과정에서는 원료와 반응의 위험을, 제조업 개인보호구(PPE) 과정에서는 작업에 맞는 보호구를 고르는 법을 배웠고, ISO 45001 원리 과정으로 기록을 체계로 관리하는 기준도 익혔습니다. 고3 때 딴 태권도 1단으로 기른 체력이 있고, 방학 동안 태권도 학원에서 초등학생들의 안전을 지키며 사람을 먼저 살피는 습관도 들였습니다.</p><p>약점은 자료를 끝까지 확인하려다 시작이 늦어질 때가 있다는 점입니다. 그래서 지금은 확보한 자료로 먼저 시작하고, 부족한 부분은 고쳐 나가는 방식으로 일정을 지킵니다. 일을 시작하기 전에 우선순위를 먼저 정하는 습관도 들이고 있습니다.</p><p>입사하면 점검 결과와 조치를 표로 정리해 끝날 때까지 확인하고, 급한 위험은 먼저 조치한 뒤 기록을 보완해 약점이 조치를 늦추지 않게 하겠습니다. 기록 정리에는 Google, Microsoft, Anthropic의 AI 교육 5건에서 익힌 도구를 써 빠르고 정확하게 남기겠습니다.</p></div>
+<div class="qfoot"><div class="meter"><i style="width:96%"></i></div>
+<span class="cnt"><b>773</b> / 800자</span><span class="state"></span>
+<button type="button" class="save" hidden>답변 저장</button><button type="button" class="copy">답변 복사</button></div>
+<details class="diff" hidden><summary>당초 초안과 비교 · <b>0</b>곳 변경</summary><div class="dsub"></div><div class="dbody"></div></details></div>
+<footer>작성 2026-10-15 · 글자수는 줄바꿈 제외·공백 포함 기준입니다. 제출 전 공고 원문 문항·글자수와 대조하세요.</footer>
+</div>
+<script>
+(function(){
+ function len(t){return t.replace(/\n/g,"").length}
+ // 당초 초안(data-orig)과 지금 답변을 어절 단위로 비교해 지운 말은 취소선, 새로 쓴 말은 굵게
+ function toks(t){return t.split(/(\s+)/).filter(function(x){return x!==""})}
+ function esc(t){return t.replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+ function diff(q,a){var box=q.querySelector("details.diff");if(!box)return;
+  var o=(q.dataset.orig||"").trim(),n=text(a),h=q.querySelector("h4"),os=q.dataset.osub||"",ns=raw(h).trim().replace(/^\[|\]$/g,"");
+  if(o===n&&os===ns){box.hidden=true;return}
+  var A=toks(o),B=toks(n),la=A.length,lb=B.length,L=[];for(var i=0;i<=la;i++){L.push(new Uint16Array(lb+1))}
+  for(i=la-1;i>=0;i--)for(var j=lb-1;j>=0;j--)L[i][j]=A[i]===B[j]?L[i+1][j+1]+1:Math.max(L[i+1][j],L[i][j+1]);
+  var out=[],cnt=0,mode="",buf="",last="";function flush(){if(buf){out.push(mode?"<"+mode+">"+esc(buf)+"</"+mode+">":esc(buf));if(mode&&!(mode==="ins"&&last==="del"))cnt++;last=mode}buf=""}
+  function put(m,t){if(m!==mode&&!(/^\s+$/.test(t)&&mode)){flush();mode=m}buf+=t}
+  i=0;j=0;while(i<la||j<lb){if(i<la&&j<lb&&A[i]===B[j]){put("",A[i]);i++;j++}else if(j<lb&&(i>=la||L[i][j+1]>L[i+1][j])){put("ins",B[j]);j++}else{put("del",A[i]);i++}}
+  flush();
+  box.querySelector(".dbody").innerHTML=out.join("").replace(/\n\n/g,"<br><br>");
+  box.querySelector(".dsub").textContent=os===ns?"":"소제목: ["+os+"] → ["+ns+"]";
+  box.querySelector("summary b").textContent=cnt+(os===ns?0:1);box.hidden=false}
+ function raw(e){return e.innerText||e.textContent||""}  // 접힌 <details> 안에서는 innerText 가 빈 문자열
+ function text(el){return Array.from(el.querySelectorAll("p")).map(function(p){return raw(p).trim()}).filter(Boolean).join("\n\n")||raw(el).trim()}
+ document.querySelectorAll(".q").forEach(function(q,i){
+  var a=q.querySelector(".ans"),lim=+a.dataset.limit,key="cl:"+(q.closest(".draft")||{}).id+":"+i;
+  try{var s=localStorage.getItem(key);if(s)a.innerHTML=s}catch(e){}
+  function upd(){diff(q,a);var n=len(text(a)),r=n/lim;q.querySelector(".cnt b").textContent=n.toLocaleString();
+   q.querySelector(".meter i").style.width=Math.min(100,r*100)+"%";q.classList.remove("ok","low","over");
+   var st=q.querySelector(".state");if(r>1){q.classList.add("over");st.textContent="초과 "+(n-lim)+"자"}else if(r>=.8){q.classList.add("ok");st.textContent="적정"}else{q.classList.add("low");st.textContent="부족"}}
+  a.addEventListener("input",function(){upd();try{localStorage.setItem(key,a.innerHTML)}catch(e){}});upd();q._upd=upd;
+  var dd=q.closest("details");if(dd)dd.addEventListener("toggle",function(){if(dd.open)upd()});
+  q.querySelector("h4").addEventListener("input",function(){diff(q,a)});
+  var b=q.querySelector("button.copy");b.addEventListener("click",function(){var t=text(a);
+   function done(){b.textContent="복사됨";setTimeout(function(){b.textContent="답변 복사"},1500)}
+   function sel(){var r=document.createRange();r.selectNodeContents(a);var s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent="선택됨 · Ctrl+C"}
+   try{navigator.clipboard.writeText(t).then(done,sel)}catch(e){sel()}});
+ });
+})();
+</script>
+<script>
+document.querySelector("button.print").addEventListener("click",function(){window.print()});
+document.querySelector("button.copy-all").addEventListener("click",function(){
+ var b=this,t=Array.from(document.querySelectorAll(".q:not(.v)")).map(function(q){return q.querySelector(".qid").innerText+" "+q.querySelector(".qtext").innerText+"\n"+q.querySelector("h4").innerText+"\n"+q.querySelector(".ans").innerText.trim()}).join("\n\n");
+ try{navigator.clipboard.writeText(t).then(function(){b.textContent="복사됨"},function(){b.textContent="복사 실패"})}catch(x){b.textContent="복사 실패"}
+});
+</script>
+<script>(function(){var b=document.querySelector("button.dl");if(!b)return;b.onclick=function(){var d=document.documentElement.cloneNode(true);d.querySelectorAll("[contenteditable]").forEach(function(e){});var bl=new Blob(["<!doctype html>\n"+d.outerHTML],{type:"text/html"}),a=document.createElement("a");a.href=URL.createObjectURL(bl);a.download=(document.title||"자기소개서")+"_편집본.html";document.body.appendChild(a);a.click();a.remove()}})();</script></body>
+</html>

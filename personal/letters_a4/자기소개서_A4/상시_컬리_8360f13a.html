@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>㈜컬리 자기소개서</title>
+<style>
+/* 레이아웃: A4 세로 폭 한 장 — 요약 타일 → 마감순 표 → 공고별 초안(펼침, 문항 카드 편집) */
+:root{
+ --primary:#0F6FFF;--primary-hover:#0E65E8;--canvas:#EEF1F5;--surface:#FFFFFF;--alt1:#F2F3F6;--alt2:#E2E4E9;
+ --strong:#000000;--text:#1C1C1C;--sub:#303030;--cap:#737373;--border:#E2E4E9;--border-strong:#CCD0D6;--divider:#E9EBEF;
+ --ok:#15B874;--warn:#FFA833;--err:#E63B3B;--ok-bg:#E5F7EF;--warn-bg:#FFF3E0;--err-bg:#FDEBEB;--pri-bg:#E7F0FF;
+ --font:"Pretendard Variable","Pretendard","Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic","Segoe UI",Roboto,sans-serif;
+ --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+ --primary:#3F8CFF;--primary-hover:#0F6FFF;--canvas:#15171C;--surface:#1D1F24;--alt1:#282B33;--alt2:#333741;
+ --strong:#FFFFFF;--text:#EBECED;--sub:#C4C4C4;--cap:#8A8A8A;--border:#333741;--border-strong:#4A505F;--divider:#282B33;
+ --ok:#44C690;--warn:#FFB95C;--err:#EB5E5E;--ok-bg:#16332A;--warn-bg:#3A2E1A;--err-bg:#3A1F22;--pri-bg:#1A2B47;color-scheme:dark}}
+:root[data-theme="dark"]{
+ --primary:#3F8CFF;--primary-hover:#0F6FFF;--canvas:#15171C;--surface:#1D1F24;--alt1:#282B33;--alt2:#333741;
+ --strong:#FFFFFF;--text:#EBECED;--sub:#C4C4C4;--cap:#8A8A8A;--border:#333741;--border-strong:#4A505F;--divider:#282B33;
+ --ok:#44C690;--warn:#FFB95C;--err:#EB5E5E;--ok-bg:#16332A;--warn-bg:#3A2E1A;--err-bg:#3A1F22;--pri-bg:#1A2B47;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--canvas);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.65;padding-inline:16px;padding-block:24px 48px}
+.sheet{max-width:210mm;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+a{color:var(--primary)} a:focus-visible,button:focus-visible,summary:focus-visible,[contenteditable]:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 16px;border-bottom:2px solid var(--strong);padding-bottom:12px}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.08em;color:var(--primary)}
+h1{font-size:28px;font-weight:700;color:var(--strong);margin:2px 0 0;text-wrap:balance}
+.gen{font-size:12px;color:var(--cap);font-variant-numeric:tabular-nums}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.tile{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
+.tile .lbl{font-size:12px;font-weight:600;color:var(--cap)}
+.tile .num{font-size:28px;font-weight:700;color:var(--strong);font-variant-numeric:tabular-nums;line-height:1.2}
+.tile small{font-size:13px;font-weight:600;color:var(--sub);margin-left:2px}
+section.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px}
+h2{font-size:18px;font-weight:700;color:var(--strong);margin:0 0 10px}
+h3{font-size:14px;font-weight:700;color:var(--strong);margin:14px 0 6px}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:13px}
+th,td{text-align:left;padding:8px;border-bottom:1px solid var(--divider);vertical-align:top;overflow-wrap:anywhere}
+thead th{font-size:12px;font-weight:600;color:var(--cap);background:var(--alt1)}
+.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.scroll table{min-width:640px}
+.pill,.chip{display:inline-block;font-size:11px;font-weight:600;border-radius:9999px;padding:1px 8px;margin:1px 4px 1px 0;white-space:nowrap}
+.chip{background:var(--alt1);color:var(--sub);border:1px solid var(--border)}
+.pill{background:var(--alt1);color:var(--sub)} .pill.ok{background:var(--ok-bg);color:var(--ok)} .pill.warn{background:var(--warn-bg);color:var(--warn)}
+.pill.err{background:var(--err-bg);color:var(--err)} .pill.new{background:var(--primary);color:var(--surface)} .pill.mute{color:var(--cap)}
+.empty{color:var(--cap);margin:0}
+.rules{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0;padding:0;list-style:none;font-size:13px}
+.rules li{background:var(--alt1);border-radius:8px;padding:8px 10px;color:var(--sub)} .rules b{color:var(--strong)}
+.draft{background:var(--surface);border:1px solid var(--border);border-radius:12px}
+.draft summary{cursor:pointer;padding:14px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;list-style:none}
+.draft summary::-webkit-details-marker{display:none}
+.draft summary::before{content:"";width:8px;height:8px;border-right:2px solid var(--cap);border-bottom:2px solid var(--cap);transform:rotate(-45deg);margin-right:6px;transition:transform .15s}
+.draft[open] summary::before{transform:rotate(45deg)}
+.co{font-size:18px;font-weight:700;color:var(--strong);margin-right:4px}
+.ttl{flex-basis:100%;font-size:13px;color:var(--sub);padding-left:20px}
+.draft .body{padding:0 16px 16px;border-top:1px solid var(--divider)}
+.kv{margin-top:12px} .kv th{width:120px;font-size:12px;color:var(--cap);font-weight:600;background:var(--alt1)}
+.facts{margin:0;padding-left:18px;font-size:13px;color:var(--sub);display:flex;flex-direction:column;gap:4px}
+.q{margin-top:16px;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.qhead{display:flex;gap:10px;align-items:flex-start;background:var(--alt1);padding:10px 12px}
+.qid{font-size:12px;font-weight:700;color:var(--surface);background:var(--primary);border-radius:8px;padding:2px 8px;flex:none}
+.qtext{margin:0;font-size:13px;font-weight:600;color:var(--sub);min-width:0}
+.q h4{margin:12px 14px 4px;font-size:16px;font-weight:700;color:var(--strong)}
+.ans{padding:4px 14px 8px;font-size:15px;color:var(--text);max-width:68ch}
+.ans p{margin:0 0 10px}
+.tech{margin:0;padding:6px 12px;font-size:12px;font-weight:600;color:var(--primary);background:var(--pri-bg);border-bottom:1px solid var(--divider)}
+.vhead{margin-top:28px;padding-top:14px;border-top:2px solid var(--border)} .vhead h3{margin:0 0 4px}
+.q.v .qid{background:var(--sub)}
+.q.v .ans p[data-k]::before{content:attr(data-k);display:inline-block;margin-right:6px;padding:0 6px;border-radius:6px;font-size:11px;font-weight:700;line-height:18px;color:var(--primary);border:1px solid var(--border-strong);vertical-align:1px}
+.qfoot{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 14px;border-top:1px solid var(--divider)}
+.meter{flex:1 1 120px;height:6px;background:var(--alt2);border-radius:9999px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--primary)}
+.q.over .meter i{background:var(--err)} .q.low .meter i{background:var(--warn)}
+.cnt{font-size:13px;color:var(--cap);font-variant-numeric:tabular-nums} .cnt b{color:var(--strong)}
+.state{font-size:12px;font-weight:600} .q.ok .state{color:var(--ok)} .q.over .state{color:var(--err)} .q.low .state{color:var(--warn)}
+button.copy{font:600 13px var(--font);color:var(--surface);background:var(--primary);border:0;border-radius:8px;padding:7px 14px;cursor:pointer;min-height:36px}
+button.copy:hover{background:var(--primary-hover)}
+details.diff{border-top:1px solid var(--divider);padding:8px 14px 12px;font-size:14px} details.diff[hidden]{display:none}
+details.diff summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--primary)} details.diff .dsub{margin:8px 0 4px;font-size:13px;color:var(--cap)}
+details.diff .dbody{line-height:1.8;color:var(--text);max-width:68ch} details.diff del{background:color-mix(in srgb,var(--err) 14%,transparent);color:var(--err);text-decoration:line-through}
+details.diff ins{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--strong);text-decoration:none;font-weight:600}
+button.save{font:600 13px var(--font);color:var(--primary);background:var(--surface);border:1px solid var(--border-strong);border-radius:8px;padding:7px 14px;cursor:pointer;min-height:36px}
+button.save:hover{border-color:var(--primary)} button.save.clean{color:var(--ok)} button.save:disabled{opacity:.6;cursor:wait} button.save[hidden]{display:none}
+footer{font-size:12px;color:var(--cap)}
+@media (max-width:640px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.rules{grid-template-columns:1fr}h1{font-size:24px}.kv th{width:88px}}
+.doc-actions{display:flex;flex-wrap:wrap;gap:8px}
+.doc-actions a,.doc-actions button{font:600 13px var(--font);border-radius:8px;padding:7px 14px;min-height:36px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center}
+.btn-ghost{color:var(--primary);background:var(--surface);border:1px solid var(--border-strong)}
+.hint{font-size:12px;color:var(--cap);margin:0}
+.chips{margin-top:6px}
+.coinfo{margin-top:2px;font-size:12px} .coinfo a{color:var(--cap);text-decoration:underline;text-underline-offset:2px} .coinfo a:hover{color:var(--primary)} a.coname{color:var(--text);text-decoration:underline;text-decoration-color:var(--border-strong);text-underline-offset:3px} a.coname:hover{color:var(--primary)} a.coname::after{content:" ↗";font-size:11px;color:var(--cap)}
+a.jd{color:var(--text);text-decoration:underline;text-decoration-color:var(--border-strong);text-underline-offset:3px} a.jd:hover{color:var(--primary);text-decoration-color:var(--primary)} a.jd::after{content:" ↗";font-size:11px;color:var(--cap)}
+.emp{margin-top:4px} td .chip,.emp .pill{white-space:normal;max-width:100%} .pay{margin-top:4px;font-size:12px;color:var(--cap);font-variant-numeric:tabular-nums}
+@media print{@page{size:A4 portrait;margin:14mm}body{background:#fff;padding:0}.ref,.doc-actions,button.copy,button.save,details.diff,.state,.meter,.hint,.tech{display:none!important}
+.q{break-inside:avoid;border-color:#ccc}.sheet{max-width:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.xbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:0 0 10px}
+.xbar[hidden]{display:none}
+.xbar button{font:600 13px var(--font);border-radius:8px;padding:6px 12px;min-height:34px;cursor:pointer;border:1px solid var(--border-strong);background:var(--surface);color:var(--sub)}
+.xbar button.danger{background:var(--err);border-color:var(--err);color:#fff}
+.xbar button:disabled{opacity:.45;cursor:not-allowed}
+.xbar .msg{font-size:12px;color:var(--cap)}
+.pickcell{width:36px;text-align:center} .pickcell input{width:16px;height:16px;cursor:pointer;accent-color:var(--primary)}
+.xlist{margin:8px 0 0;font-size:13px;color:var(--sub)} .xlist summary{cursor:pointer;color:var(--cap);font-size:12px}
+.xlist ul{margin:6px 0 0;padding-left:18px} .xlist li{margin:2px 0} .xlist button{margin-left:6px;font:600 12px var(--font);border:1px solid var(--border-strong);background:var(--surface);color:var(--primary);border-radius:6px;padding:1px 8px;cursor:pointer}
+tr.gone,.draft.gone{display:none}
+button.req{font:600 12px var(--font);border-radius:8px;padding:6px 10px;min-height:32px;cursor:pointer;border:1px solid var(--primary);background:var(--surface);color:var(--primary);white-space:nowrap}
+button.req.on{background:var(--primary);color:var(--surface)} button.req:disabled{opacity:.45;cursor:not-allowed}
+@media print{#foreign{display:none!important}}
+@media print{.xbar,.xlist,.pickcell{display:none!important}}
+</style>
+</head>
+<body>
+<div class="sheet">
+<header><div><div class="eyebrow">EHS 안전관리자 (김포)</div><h1 contenteditable="true" spellcheck="false">㈜컬리 자기소개서</h1>
+<div class="chips"><span class="chip">중견기업</span><span class="chip">비상장</span><span class="chip">전자상거래</span><span class="pill">마감 미정</span></div></div>
+<div class="doc-actions"><button type="button" class="copy-all btn-ghost">전체 답변 복사</button><button type="button" class="dl btn-ghost">편집본 HTML 저장</button><button type="button" class="print btn-ghost">인쇄 · PDF</button></div></header>
+<p class="hint">제목·소제목·답변을 눌러 바로 고칠 수 있습니다. 고친 뒤 '편집본 HTML 저장' 버튼이나 브라우저의 '다른 이름으로 저장'(Ctrl+S)으로 HTML 파일을 저장하면 수정 내용이 그대로 남습니다. 인쇄할 때는 공고 정보·기업 개요·기업 분석과 버튼이 빠지고 문항과 답변만 A4에 나옵니다.</p>
+<div class="ref"><table class="kv"><tbody>
+<tr><th>공고</th><td><a href="https://www.jobkorea.co.kr/Recruit/GI_Read/49977230" target="_blank" rel="noopener">공고 원문 열기</a></td></tr>
+<tr><th>마감 · 작성</th><td class="num">채용 시 마감 마감 · 2026-10-16 작성</td></tr>
+<tr><th>문항 출처</th><td>추정 문항 — 사용자가 직접 지정한 잡코리아 공고(2026-10-14)로 공고에는 자기소개서 문항이 없고, 컬리 신입 공채 문항과 글자수는 검색으로 찾지 못함(채용 사이트 직접 접속 금지). 안전관리자 지원 일반 4항목(성장과정, 지원동기 / 직무역량 / 도전 경험 / 입사 후 포부), 항목당 800자 보수 가정. 컬리 채용 홈페이지와 잡코리아 지원 양식의 문항, 글자수와 반드시 대조</td></tr><tr><th>연봉 · 초봉</th><td>회사 내규에 따름 · 신입 초봉 3,000만원 (2025) <span class="hint">(채용현황 브리핑 기준)</span></td></tr>
+</tbody></table>
+<h3>기업 개요</h3><ul class="facts"><li>회사: ㈜컬리 · 설립 12년차(공고 표기, 설립 연도는 확인 필요) · 본사 서울 서초구 잠원동 37-7 성한빌딩 8~9층(공고) · 비상장 중견기업 · 전자상거래 소매업(샛별배송 등 신선식품 새벽배송) · 사원수 1,001~10,000명(공고 표기) — <a href="https://www.jobkorea.co.kr/Recruit/GI_Read/49977230" target="_blank" rel="noopener">잡코리아 공고</a></li><li>주요 사업: 컬리 온라인 마켓(신선식품 중심 새벽배송), 근무지는 김포 물류센터(공고 근무지 주소 경기 김포시 고촌읍 아라육로 75, 제일모직 수도권 통합물류센터로 표기)</li><li>규모: 2025년 연결 매출 2조 3,671억 원(전년 대비 7.8%↑), 영업이익 131억 원으로 창사 첫 연간 흑자(2026-03-04 어닝콜 잠정치, 감사 전 수치) — <a href="https://www.hankyung.com/article/202603048507g" target="_blank" rel="noopener">한국경제</a>, <a href="https://byline.network/2026/03/05_1928783/" target="_blank" rel="noopener">바이라인네트워크</a></li></ul>
+<h3>기업 분석</h3><ul class="facts"><li><b>지원 전 확인 필요: 공고 지원자격이 경력 1년 이상(학력무관)이라 신입인 지원자가 해당하는지 먼저 확인해야 함. 채용 브리핑 level 칸은 &#x27;신입&#x27;으로 서로 다름. 필수 자격증 기재는 공고 본문에서 확인 못 함(공고 이미지 확인 못 함)</b></li><li>공고(채용 브리핑 detail_text 기준): EHS 안전관리자(김포) / 정규직(수습 3개월) / 급여 회사 내규에 따름(면접 후 결정) / 주 5일(월~금) 10:00~19:00 / 근무지 경기 김포시 고촌읍 아라육로 75 / 시작일 2026.09.11, 마감일 2026.11.10(채용 시 마감, 조기 마감 또는 변경 가능) / 복지 표기: 도서 구입비 지원, 임직원 교육비, 리프레시 휴가 / 주요업무와 우대사항은 수집되지 않음 — <a href="https://www.jobkorea.co.kr/Recruit/GI_Read/49977230" target="_blank" rel="noopener">잡코리아 공고</a></li><li>DART: 컬리는 비상장이라 사업보고서가 아닌 감사 전 잠정 실적 기사만 확인(위 규모) — <b>감사보고서 원문 확인 필요</b>(dart.fss.or.kr 접속 차단) — <a href="https://www.hankyung.com/article/202603048507g" target="_blank" rel="noopener">한국경제</a></li><li>DART 안전·신사업 적합도(원문 확인 필요): 신선식품 새벽배송을 하는 물류센터는 자동화 설비, 지게차, 냉장·냉동 구역이 있는 현장이라 직무와 <b>맞음(Q1, Q2, Q4 반영)</b>. 미국 진출 등 신사업은 직무와 거리가 있어 <b>반영 보류</b></li><li>안전보건 기준: 컬리의 안전보건경영방침, ISO 45001 인증, 지속가능경영보고서(안전 수치)는 검색으로 확인 못 함(검색된 보고서는 다른 회사 것이라 쓰지 않음) → <b>반영 보류</b>, 본문에는 쓰지 않음</li><li>최근 1년 안전 기사: 컬리 단독 안전 기사는 확인 못 함(2026-02 김포 물류센터 보건관리자 계약직 채용 공고가 있었다는 검색 요약만 확인) → 반영 안 함</li><li>최근 1년 주요 기사: 2026-03-04 첫 연간 영업 흑자(위 규모) → Q1 반영</li><li>최근 1년 AI 기사: 2026-05-17 LG CNS와 컬리가 스마트 물류센터 고도화를 위한 휴머노이드 로봇 PoC와 물류 자동화 협력 MOU 체결(LG CNS는 이전에 컬리 김포 복합물류센터 구축 사업 수행) → Q1, Q4 반영 — <a href="https://www.heraldk.com/article/2026051718211363545" target="_blank" rel="noopener">헤럴드경제</a> / 2025-05 김포와 평택 센터에 AI 기반 검품 선별기 도입(1년 밖이라 쓰지 않음)</li><li>사고 데이터 활용: 쓰지 않음(졸업연구 확정 문안의 수치만)</li><li>연결 포인트: 물류센터 자동화·로봇 도입 → 장비와 사람의 동선 분리·점검, 졸업연구 위험성평가표 / 근무시간 10:00~19:00 → 야간 센터 운영을 고려해 순회 점검 체력(태권도 1단) / 공고 복지 중 교육비 지원 → 자격 취득 계획</li><li>신입 연봉: <b>회사 내규에 따름 · 신입 초봉 3,000만원 (2025)</b> (채용현황 브리핑 기준) / 초안 조사 참고(브리핑 값과 다를 수 있음): 신입 초봉 3,000만원 (2025) (채용 브리핑 기준, 잡코리아 연봉 페이지) / 공고 급여 회사 내규에 따름 — <a href="https://www.jobkorea.co.kr/company/16153122/salary" target="_blank" rel="noopener">잡코리아 연봉</a></li><li>예상 성과금: 확인 못 함</li><li>회사 복지: 공고 표기 도서 구입비 지원, 임직원 교육비, 리프레시 휴가(공고) / 자녀 학자금, 기숙사·사택, 주택·전세자금 지원, 통근버스는 확인 못 함(검색에서 컬리 복지 자료를 찾지 못함)</li></ul></div>
+<div class="q" data-orig="건설회사의 공무팀장이셨던 아버지는 추석 당직 근무 날 저를 현장에 데려가신 적이 있으셨는데, 아버지는 현장의 정리정돈이 근로자의 안전을 지키는 여러 방법 중 하나라며 5S와 3정(정리, 정돈, 청소, 청결, 습관화와 정품, 정량, 정위치)을 설명해 주시며, 같이 일하는 동료들이 무사히 퇴근할 수 있도록 직원들이 노력하고 있다고 해 주신 말씀을 기억하고 있습니다. 어릴 때 꿈은 아픈 사람을 돌보는 간호사였지만, 그날 이후 다친 사람을 돌보는 것보다 근로자와 동료, 회사가 다치지 않도록 하는 일이 먼저라고 생각하게 되어, 고3 때 안전관리자를 목표로 안전공학과에 진학하였습니다.
+
+컬리는 지난해 연결 매출 2조 3,671억 원으로 창사 첫 연간 영업 흑자를 낸 회사입니다. 올해 5월에는 휴머노이드 로봇을 활용한 스마트 물류센터 실증과 물류 자동화 협력 협약을 맺었습니다. 센터가 커지고 자동화 설비와 로봇이 늘수록 설비 점검과 사람의 동선을 함께 보는 안전관리의 비중도 커진다고 판단하여 김포 센터의 EHS 안전관리자에 지원했습니다.
+
+안전공학을 공부할수록 아버지가 왜 정리정돈부터 말씀하셨는지 이해하게 되었습니다. 큰 사고도 결국 치우지 않은 자재나 건너뛴 확인 같은 작은 빈틈에서 시작된다는 것을 배웠기 때문입니다. 아버지께 배운 정리정돈은 물류센터에서도 기본입니다. 제품이 쌓이고 장비가 오가는 통로가 정돈되어 있어야 사람도 제품도 안전하기 때문입니다. 현장 경험은 아직 없지만 학교에서 준비해 온 지식과 습관을 선배에게 배운 현장 기준에 맞춰 빠르게 쓰겠습니다." data-osub="아버지의 현장에서 신선식품 물류센터의 안전까지">
+<div class="qhead"><span class="qid">Q1</span><p class="qtext">성장과정 및 지원동기</p></div>
+<h4 contenteditable="true" spellcheck="false">[아버지의 현장에서 신선식품 물류센터의 안전까지]</h4>
+<div class="ans" contenteditable="true" spellcheck="false" data-limit="800"><p>건설회사의 공무팀장이셨던 아버지는 추석 당직 근무 날 저를 현장에 데려가신 적이 있으셨는데, 아버지는 현장의 정리정돈이 근로자의 안전을 지키는 여러 방법 중 하나라며 5S와 3정(정리, 정돈, 청소, 청결, 습관화와 정품, 정량, 정위치)을 설명해 주시며, 같이 일하는 동료들이 무사히 퇴근할 수 있도록 직원들이 노력하고 있다고 해 주신 말씀을 기억하고 있습니다. 어릴 때 꿈은 아픈 사람을 돌보는 간호사였지만, 그날 이후 다친 사람을 돌보는 것보다 근로자와 동료, 회사가 다치지 않도록 하는 일이 먼저라고 생각하게 되어, 고3 때 안전관리자를 목표로 안전공학과에 진학하였습니다.</p><p>컬리는 지난해 연결 매출 2조 3,671억 원으로 창사 첫 연간 영업 흑자를 낸 회사입니다. 올해 5월에는 휴머노이드 로봇을 활용한 스마트 물류센터 실증과 물류 자동화 협력 협약을 맺었습니다. 센터가 커지고 자동화 설비와 로봇이 늘수록 설비 점검과 사람의 동선을 함께 보는 안전관리의 비중도 커진다고 판단하여 김포 센터의 EHS 안전관리자에 지원했습니다.</p><p>안전공학을 공부할수록 아버지가 왜 정리정돈부터 말씀하셨는지 이해하게 되었습니다. 큰 사고도 결국 치우지 않은 자재나 건너뛴 확인 같은 작은 빈틈에서 시작된다는 것을 배웠기 때문입니다. 아버지께 배운 정리정돈은 물류센터에서도 기본입니다. 제품이 쌓이고 장비가 오가는 통로가 정돈되어 있어야 사람도 제품도 안전하기 때문입니다. 현장 경험은 아직 없지만 학교에서 준비해 온 지식과 습관을 선배에게 배운 현장 기준에 맞춰 빠르게 쓰겠습니다.</p></div>
+<div class="qfoot"><div class="meter"><i style="width:95%"></i></div>
+<span class="cnt"><b>764</b> / 800자</span><span class="state"></span>
+<button type="button" class="save" hidden>답변 저장</button><button type="button" class="copy">답변 복사</button></div>
+<details class="diff" hidden><summary>당초 초안과 비교 · <b>0</b>곳 변경</summary><div class="dsub"></div><div class="dbody"></div></details></div><div class="q" data-orig="제가 내세울 역량은 설비와 사람이 함께 일하는 현장의 위험을 법령과 사고 기록에 근거해 찾고, 이를 AI로 정리해 기록으로 남기는 능력입니다.
+
+근거는 해외 기관의 안전 교육 15건, Google, Microsoft, Anthropic의 AI 교육 5건, 행정해석 분석 경험입니다.
+
+물류센터의 EHS 업무는 위험성평가와 설비 점검, 안전교육, 법정 서류를 빠짐없이 이어 가는 일이라고 생각했습니다. 저는 현장 경험이 없어, 학교에 있는 동안 지식과 도구를 먼저 채우기로 했습니다. 모르는 부분은 사고사례와 법령, KOSHA GUIDE를 직접 찾아 읽으며 메웠습니다.
+
+올봄 국제노동기구(ILO) 국제훈련센터의 화재안전점검 과정, SC Training의 제조업 개인보호구(PPE) 과정, 미국화학공학회(AIChE)의 위험성 이해 과정 등 해외 기관의 안전 교육 15건을 모두 영어로 이수했습니다. 위험성을 발생 가능성과 결과의 크기로 나눠 판단하는 법을 배웠고, Google, Microsoft, Anthropic의 AI 교육 5건으로 자료를 분석하는 도구도 익혔습니다. 산업안전보건법과 고용노동부 행정해석 사례를 분석하며, 위험성평가는 현장 확인과 작업자 참여가 핵심이라는 회시를 졸업연구 설계에 반영했습니다.
+
+입사하면 설비와 지게차 동선, 보관 구역의 점검 항목을 위험성평가로 정리하고, 점검 결과는 AI를 활용해 빠지는 항목 없이 기록하겠습니다. 캐나다 어학연수와 영어회화 강사 경험으로 오픽 AL을 취득했기에 영어로 된 설비 매뉴얼과 안전 자료도 부담 없이 직접 읽어 현장 기준에 반영하는 안전관리자가 되겠습니다." data-osub="위험을 근거로 찾아 기록으로 남기는 힘, AI 활용">
+<div class="qhead"><span class="qid">Q2</span><p class="qtext">직무 관련 역량</p></div><p class="tech">CPSBS 기법 · 핵심(Core) → 요점(Point) → 상황(Situation) → 행동(Behavior) → 요약(Summary)</p>
+<h4 contenteditable="true" spellcheck="false">[위험을 근거로 찾아 기록으로 남기는 힘, AI 활용]</h4>
+<div class="ans" contenteditable="true" spellcheck="false" data-limit="800"><p>제가 내세울 역량은 설비와 사람이 함께 일하는 현장의 위험을 법령과 사고 기록에 근거해 찾고, 이를 AI로 정리해 기록으로 남기는 능력입니다.</p><p>근거는 해외 기관의 안전 교육 15건, Google, Microsoft, Anthropic의 AI 교육 5건, 행정해석 분석 경험입니다.</p><p>물류센터의 EHS 업무는 위험성평가와 설비 점검, 안전교육, 법정 서류를 빠짐없이 이어 가는 일이라고 생각했습니다. 저는 현장 경험이 없어, 학교에 있는 동안 지식과 도구를 먼저 채우기로 했습니다. 모르는 부분은 사고사례와 법령, KOSHA GUIDE를 직접 찾아 읽으며 메웠습니다.</p><p>올봄 국제노동기구(ILO) 국제훈련센터의 화재안전점검 과정, SC Training의 제조업 개인보호구(PPE) 과정, 미국화학공학회(AIChE)의 위험성 이해 과정 등 해외 기관의 안전 교육 15건을 모두 영어로 이수했습니다. 위험성을 발생 가능성과 결과의 크기로 나눠 판단하는 법을 배웠고, Google, Microsoft, Anthropic의 AI 교육 5건으로 자료를 분석하는 도구도 익혔습니다. 산업안전보건법과 고용노동부 행정해석 사례를 분석하며, 위험성평가는 현장 확인과 작업자 참여가 핵심이라는 회시를 졸업연구 설계에 반영했습니다.</p><p>입사하면 설비와 지게차 동선, 보관 구역의 점검 항목을 위험성평가로 정리하고, 점검 결과는 AI를 활용해 빠지는 항목 없이 기록하겠습니다. 캐나다 어학연수와 영어회화 강사 경험으로 오픽 AL을 취득했기에 영어로 된 설비 매뉴얼과 안전 자료도 부담 없이 직접 읽어 현장 기준에 반영하는 안전관리자가 되겠습니다.</p></div>
+<div class="qfoot"><div class="meter"><i style="width:98%"></i></div>
+<span class="cnt"><b>788</b> / 800자</span><span class="state"></span>
+<button type="button" class="save" hidden>답변 저장</button><button type="button" class="copy">답변 복사</button></div>
+<details class="diff" hidden><summary>당초 초안과 비교 · <b>0</b>곳 변경</summary><div class="dsub"></div><div class="dbody"></div></details></div><div class="q" data-orig="현장 경험이 없다는 사실이 마음에 걸려, 현장에서 실제로 일어난 사고사례와 대책 등을 가장 많이 찾아 분석해 본 사람이 되자는 마음으로 논문을 준비하였습니다.
+
+고용노동부 산업재해 분석보고서와 CSI(건설공사안전관리 종합정보망)의 사고사례 30,896건에 중대재해 사례 840건, 안전 관련 법령 등을 묶어 Database를 확보하였고, 자료 분석, 활용을 위해 5건의 AI 교육을 이수했습니다. 분석 결과 국내 현장에서 외국인 근로자가 증가하고 있으며 인당 재해율은 전체 근로자의 1.94배에 이르고, 국내 안전시스템이 대부분 내국인 위주의 문서에 기반하고 있음을 확인하였습니다. 전기 현장이나 일반 현장 사진을 업로드하면 Database를 학습한 AI가 위험요인을 판단하여 위험요인 분석, 위험성평가표, 사전작업허가서를 웹 기반으로 자동 작성하고 다국어(영어, 중국어, 베트남어, 우즈벡어)로 병기하는 웹(e-safety.vercel.app)을 완성했고, 감시모드 활성화 시 관리자에게 e-mail, 문자로 위험요인을 전송하는 기능을 보완한 논문은 2026년 10월 한국전기공사협회 전기공사 우수논문 공모전에서 최우수상을 수상했습니다.
+
+논문을 준비하여 정확한 결론을 위해서는 원자료가 중요하다는 생각에 Data를 확보하는 데 시간을 많이 써 일정이 지연되고 있었으나, 우선 찾은 Data로 최초 분석을 시작하고 부족한 부분을 추가 분석하는 게 최초 분석보다 시간이 적게 소요되고 누락된 부분도 확인하고 보완할 수 있음을 알게 되며 일정을 맞춰 나갔으며, 확보된 자료로 우선 시작해 보고 고쳐 나가는 법도 배웠습니다." data-osub="원자료에서 출발해 끝까지 완성한 안전분야 AI 연구">
+<div class="qhead"><span class="qid">Q3</span><p class="qtext">가장 도전적이었던 경험</p></div><p class="tech">STAR 기법 · 상황(Situation) → 과제(Task) → 행동(Action) → 결과(Result)</p>
+<h4 contenteditable="true" spellcheck="false">[원자료에서 출발해 끝까지 완성한 안전분야 AI 연구]</h4>
+<div class="ans" contenteditable="true" spellcheck="false" data-limit="800"><p>현장 경험이 없다는 사실이 마음에 걸려, 현장에서 실제로 일어난 사고사례와 대책 등을 가장 많이 찾아 분석해 본 사람이 되자는 마음으로 논문을 준비하였습니다.</p><p>고용노동부 산업재해 분석보고서와 CSI(건설공사안전관리 종합정보망)의 사고사례 30,896건에 중대재해 사례 840건, 안전 관련 법령 등을 묶어 Database를 확보하였고, 자료 분석, 활용을 위해 5건의 AI 교육을 이수했습니다. 분석 결과 국내 현장에서 외국인 근로자가 증가하고 있으며 인당 재해율은 전체 근로자의 1.94배에 이르고, 국내 안전시스템이 대부분 내국인 위주의 문서에 기반하고 있음을 확인하였습니다. 전기 현장이나 일반 현장 사진을 업로드하면 Database를 학습한 AI가 위험요인을 판단하여 위험요인 분석, 위험성평가표, 사전작업허가서를 웹 기반으로 자동 작성하고 다국어(영어, 중국어, 베트남어, 우즈벡어)로 병기하는 웹(e-safety.vercel.app)을 완성했고, 감시모드 활성화 시 관리자에게 e-mail, 문자로 위험요인을 전송하는 기능을 보완한 논문은 2026년 10월 한국전기공사협회 전기공사 우수논문 공모전에서 최우수상을 수상했습니다.</p><p>논문을 준비하여 정확한 결론을 위해서는 원자료가 중요하다는 생각에 Data를 확보하는 데 시간을 많이 써 일정이 지연되고 있었으나, 우선 찾은 Data로 최초 분석을 시작하고 부족한 부분을 추가 분석하는 게 최초 분석보다 시간이 적게 소요되고 누락된 부분도 확인하고 보완할 수 있음을 알게 되며 일정을 맞춰 나갔으며, 확보된 자료로 우선 시작해 보고 고쳐 나가는 법도 배웠습니다.</p></div>
+<div class="qfoot"><div class="meter"><i style="width:98%"></i></div>
+<span class="cnt"><b>791</b> / 800자</span><span class="state"></span>
+<button type="button" class="save" hidden>답변 저장</button><button type="button" class="copy">답변 복사</button></div>
+<details class="diff" hidden><summary>당초 초안과 비교 · <b>0</b>곳 변경</summary><div class="dsub"></div><div class="dbody"></div></details></div><div class="q" data-orig="입사 후 첫해에는 김포 센터의 설비와 보관 구역, 장비 동선을 선배와 함께 걸으며 작업 전 점검과 위험성평가, 안전교육이 어떻게 이루어지는지 배우겠습니다. 정리정돈의 5S, 3정을 기준으로 통로와 적치 상태를 매일 확인하고, 점검에서 찾은 위험은 조치가 끝날 때까지 기록해 같은 문제가 되풀이되지 않게 하겠습니다. 이 기간에 실기를 앞둔 산업안전기사를 취득하고, ISO45001 내부심사원과 NEBOSH IGC도 차례로 준비하겠습니다.
+
+새 설비가 들어올 때마다 반입과 설치, 시험 가동 단계에서 위험성평가를 다시 하는 절차를 챙기겠습니다. 새 설비일수록 사용법과 위험 구역을 짧은 문장과 그림으로 알리고, 교육 뒤에는 근로자에게 직접 물어 이해했는지 확인하겠습니다. 점검 결과는 위치와 시기, 조치 내용을 표로 정리해 팀과 공유하겠습니다.
+
+자동화 설비와 로봇이 늘어도 사람이 설비 옆에서 일하는 시간은 남는다고 생각합니다. 학생회 복지부장 때 사업마다 인원과 동선을 표로 정리해 변수를 미리 점검했던 방식으로, 설비 가동 구역과 사람이 다니는 구역을 나눠 점검표를 만들겠습니다. 야간 캠퍼스 폴리스로 동료들과 늦게까지 남은 학우들을 위해 캠퍼스를 순찰했던 경험을 살려, 늦은 시간에 일하는 근로자의 안전도 살피겠습니다.
+
+센터를 오래 걷는 순회 점검은 고3 때 태권도 1단을 따며 기른 체력으로 해내겠고, 방학 동안 태권도 학원에서 초등학생들의 안전을 지키며 사람을 먼저 살피는 습관도 들였습니다. 근로자가 불안한 점을 편하게 말할 수 있도록 작업 전 회의에서 먼저 의견을 묻는 안전관리자가 되겠습니다." data-osub="기본을 지키며 설비와 사람을 함께 보는 안전관리자">
+<div class="qhead"><span class="qid">Q4</span><p class="qtext">입사 후 포부</p></div>
+<h4 contenteditable="true" spellcheck="false">[기본을 지키며 설비와 사람을 함께 보는 안전관리자]</h4>
+<div class="ans" contenteditable="true" spellcheck="false" data-limit="800"><p>입사 후 첫해에는 김포 센터의 설비와 보관 구역, 장비 동선을 선배와 함께 걸으며 작업 전 점검과 위험성평가, 안전교육이 어떻게 이루어지는지 배우겠습니다. 정리정돈의 5S, 3정을 기준으로 통로와 적치 상태를 매일 확인하고, 점검에서 찾은 위험은 조치가 끝날 때까지 기록해 같은 문제가 되풀이되지 않게 하겠습니다. 이 기간에 실기를 앞둔 산업안전기사를 취득하고, ISO45001 내부심사원과 NEBOSH IGC도 차례로 준비하겠습니다.</p><p>새 설비가 들어올 때마다 반입과 설치, 시험 가동 단계에서 위험성평가를 다시 하는 절차를 챙기겠습니다. 새 설비일수록 사용법과 위험 구역을 짧은 문장과 그림으로 알리고, 교육 뒤에는 근로자에게 직접 물어 이해했는지 확인하겠습니다. 점검 결과는 위치와 시기, 조치 내용을 표로 정리해 팀과 공유하겠습니다.</p><p>자동화 설비와 로봇이 늘어도 사람이 설비 옆에서 일하는 시간은 남는다고 생각합니다. 학생회 복지부장 때 사업마다 인원과 동선을 표로 정리해 변수를 미리 점검했던 방식으로, 설비 가동 구역과 사람이 다니는 구역을 나눠 점검표를 만들겠습니다. 야간 캠퍼스 폴리스로 동료들과 늦게까지 남은 학우들을 위해 캠퍼스를 순찰했던 경험을 살려, 늦은 시간에 일하는 근로자의 안전도 살피겠습니다.</p><p>센터를 오래 걷는 순회 점검은 고3 때 태권도 1단을 따며 기른 체력으로 해내겠고, 방학 동안 태권도 학원에서 초등학생들의 안전을 지키며 사람을 먼저 살피는 습관도 들였습니다. 근로자가 불안한 점을 편하게 말할 수 있도록 작업 전 회의에서 먼저 의견을 묻는 안전관리자가 되겠습니다.</p></div>
+<div class="qfoot"><div class="meter"><i style="width:97%"></i></div>
+<span class="cnt"><b>781</b> / 800자</span><span class="state"></span>
+<button type="button" class="save" hidden>답변 저장</button><button type="button" class="copy">답변 복사</button></div>
+<details class="diff" hidden><summary>당초 초안과 비교 · <b>0</b>곳 변경</summary><div class="dsub"></div><div class="dbody"></div></details></div>
+<footer>작성 2026-10-16 · 글자수는 줄바꿈 제외·공백 포함 기준입니다. 제출 전 공고 원문 문항·글자수와 대조하세요.</footer>
+</div>
+<script>
+(function(){
+ function len(t){return t.replace(/\n/g,"").length}
+ // 당초 초안(data-orig)과 지금 답변을 어절 단위로 비교해 지운 말은 취소선, 새로 쓴 말은 굵게
+ function toks(t){return t.split(/(\s+)/).filter(function(x){return x!==""})}
+ function esc(t){return t.replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+ function diff(q,a){var box=q.querySelector("details.diff");if(!box)return;
+  var o=(q.dataset.orig||"").trim(),n=text(a),h=q.querySelector("h4"),os=q.dataset.osub||"",ns=raw(h).trim().replace(/^\[|\]$/g,"");
+  if(o===n&&os===ns){box.hidden=true;return}
+  var A=toks(o),B=toks(n),la=A.length,lb=B.length,L=[];for(var i=0;i<=la;i++){L.push(new Uint16Array(lb+1))}
+  for(i=la-1;i>=0;i--)for(var j=lb-1;j>=0;j--)L[i][j]=A[i]===B[j]?L[i+1][j+1]+1:Math.max(L[i+1][j],L[i][j+1]);
+  var out=[],cnt=0,mode="",buf="",last="";function flush(){if(buf){out.push(mode?"<"+mode+">"+esc(buf)+"</"+mode+">":esc(buf));if(mode&&!(mode==="ins"&&last==="del"))cnt++;last=mode}buf=""}
+  function put(m,t){if(m!==mode&&!(/^\s+$/.test(t)&&mode)){flush();mode=m}buf+=t}
+  i=0;j=0;while(i<la||j<lb){if(i<la&&j<lb&&A[i]===B[j]){put("",A[i]);i++;j++}else if(j<lb&&(i>=la||L[i][j+1]>L[i+1][j])){put("ins",B[j]);j++}else{put("del",A[i]);i++}}
+  flush();
+  box.querySelector(".dbody").innerHTML=out.join("").replace(/\n\n/g,"<br><br>");
+  box.querySelector(".dsub").textContent=os===ns?"":"소제목: ["+os+"] → ["+ns+"]";
+  box.querySelector("summary b").textContent=cnt+(os===ns?0:1);box.hidden=false}
+ function raw(e){return e.innerText||e.textContent||""}  // 접힌 <details> 안에서는 innerText 가 빈 문자열
+ function text(el){return Array.from(el.querySelectorAll("p")).map(function(p){return raw(p).trim()}).filter(Boolean).join("\n\n")||raw(el).trim()}
+ document.querySelectorAll(".q").forEach(function(q,i){
+  var a=q.querySelector(".ans"),lim=+a.dataset.limit,key="cl:"+(q.closest(".draft")||{}).id+":"+i;
+  try{var s=localStorage.getItem(key);if(s)a.innerHTML=s}catch(e){}
+  function upd(){diff(q,a);var n=len(text(a)),r=n/lim;q.querySelector(".cnt b").textContent=n.toLocaleString();
+   q.querySelector(".meter i").style.width=Math.min(100,r*100)+"%";q.classList.remove("ok","low","over");
+   var st=q.querySelector(".state");if(r>1){q.classList.add("over");st.textContent="초과 "+(n-lim)+"자"}else if(r>=.8){q.classList.add("ok");st.textContent="적정"}else{q.classList.add("low");st.textContent="부족"}}
+  a.addEventListener("input",function(){upd();try{localStorage.setItem(key,a.innerHTML)}catch(e){}});upd();q._upd=upd;
+  var dd=q.closest("details");if(dd)dd.addEventListener("toggle",function(){if(dd.open)upd()});
+  q.querySelector("h4").addEventListener("input",function(){diff(q,a)});
+  var b=q.querySelector("button.copy");b.addEventListener("click",function(){var t=text(a);
+   function done(){b.textContent="복사됨";setTimeout(function(){b.textContent="답변 복사"},1500)}
+   function sel(){var r=document.createRange();r.selectNodeContents(a);var s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent="선택됨 · Ctrl+C"}
+   try{navigator.clipboard.writeText(t).then(done,sel)}catch(e){sel()}});
+ });
+})();
+</script>
+<script>
+document.querySelector("button.print").addEventListener("click",function(){window.print()});
+document.querySelector("button.copy-all").addEventListener("click",function(){
+ var b=this,t=Array.from(document.querySelectorAll(".q:not(.v)")).map(function(q){return q.querySelector(".qid").innerText+" "+q.querySelector(".qtext").innerText+"\n"+q.querySelector("h4").innerText+"\n"+q.querySelector(".ans").innerText.trim()}).join("\n\n");
+ try{navigator.clipboard.writeText(t).then(function(){b.textContent="복사됨"},function(){b.textContent="복사 실패"})}catch(x){b.textContent="복사 실패"}
+});
+</script>
+<script>(function(){var b=document.querySelector("button.dl");if(!b)return;b.onclick=function(){var d=document.documentElement.cloneNode(true);d.querySelectorAll("[contenteditable]").forEach(function(e){});var bl=new Blob(["<!doctype html>\n"+d.outerHTML],{type:"text/html"}),a=document.createElement("a");a.href=URL.createObjectURL(bl);a.download=(document.title||"자기소개서")+"_편집본.html";document.body.appendChild(a);a.click();a.remove()}})();</script></body>
+</html>
