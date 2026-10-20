@@ -1,11 +1,9 @@
 # 안전 신입 채용 전체 수집 — 대기업·상장·시평 제한 없이 신입 지원이 가능한 국내 안전 공고 전체
 # 결과는 briefings/broad/ 에 커밋한다 (일일 브리핑 briefings/latest.* 는 건드리지 않는다).
+# 더 쓰지 않는 브랜치(claude/loving-mayer-awelta)의 push 트리거는 뺐다. 수동 실행만 쓴다.
 name: safety-jobs-broad
 on:
   workflow_dispatch:
-  push:
-    branches: [claude/loving-mayer-awelta]
-    paths: [safety_jobs/collect.py, .github/workflows/safety-jobs-broad.yml]
 permissions:
   contents: write
 concurrency:
