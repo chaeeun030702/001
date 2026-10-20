@@ -79,6 +79,11 @@ uv run safety_jobs/collect.py --out briefings   # latest.md / latest.html / late
 - 브리핑 상단 [편집]으로 표·제목을 고치고, [파일로 저장]으로 편집한 내용을 HTML 파일로 내려받는다. 그 파일을 열어 다시 [편집]할 수 있다. `briefings/latest_edit.html`도 같은 편집 가능한 완전한 HTML이다.
 - [A4 인쇄]는 A4 세로(@page size A4 portrait)로 인쇄·PDF 저장한다. 인쇄할 때는 메뉴·차트·필터를 빼고 표를 용지 너비에 맞춘다.
 
+## 채용 달력 한 파일
+
+- 수집마다 `briefings/calendar.html`(채용 달력만 담은 완전한 HTML 한 파일)을 만든다. 게시: https://claude.ai/artifact/1pvKKJpGMY9Wc4cqH3AaAk
+- 달력에는 LinkedIn 공고와 제품 안전인증 직무를 싣지 않는다(브리핑 달력도 같음).
+
 ## 직접 추가 공고 메모
 
 - `manual_postings.json` 항목의 `memo`(예: 자소서 문항)는 공고명 아래 📝로 늘 표시된다.

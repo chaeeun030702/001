@@ -23,5 +23,8 @@
   - 브리핑 → 브리핑 아티팩트(위 URL)를 같은 URL로 갱신.
   - 규칙·자료 정리 → [안전관리자 브리핑 운영 규칙](https://claude.ai/artifact/6VvRGcg4ETB48WhnAWBCcr)
     (원본 `docs/rules_and_materials/규칙_자료_모음.html`)을 같은 URL로 갱신.
+  - 채용 달력 → 브리핑을 게시할 때마다 **항상** 기본 브랜치 `briefings/calendar.html`(채용 달력만 담은 HTML 한 파일)을
+    [안전관리자 채용 달력](https://claude.ai/artifact/1pvKKJpGMY9Wc4cqH3AaAk)에 같은 URL로 게시하고,
+    `docs/안전관리자_채용_달력_YYYY-MM-DD.html`로 복사해 render로도 보낸다.
   - 그 밖의 결과 → 결과 HTML 한 파일을 새 아티팩트로 게시(같은 주제를 다시 하면 그 URL을 갱신).
 - 게시한 아티팩트는 `action: "open"`으로 연다.
