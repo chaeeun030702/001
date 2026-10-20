@@ -773,6 +773,8 @@ def src_manual(f: Fetcher):
                    "check_note": it.get("note", ""), "via": it.get("via", ""),
                    "user_pick": bool(it.get("user_pick")), "fill_from_detail": bool(it.get("fill_from_detail")),
                    "memo": it.get("memo", "")}  # 자소서 문항 등 공고 아래에 늘 보여 줄 메모
+        if it.get("csn"):  # 메일 루틴이 메일 링크에서 모은 사람인 기업정보 번호 (업체명 링크, 규칙 조정안 6)
+            p.extra["csn"] = str(it["csn"])[:120]
         if src == "LinkedIn":
             p.listing_text = clean(f"{p.title} {it.get('note', '')}")
             p.extra["check_note"] = ""
