@@ -1,0 +1,121 @@
+<title>안전관리자 브리핑 운영 규칙</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* 레이아웃: 안전 표지(KOSHA 계열)의 황색·청색을 절제해 쓴 업무 문서 — 머리 요약 → 일정 → 기준 표 → 조정 결과 → 자료 위치 */
+:root{
+  --bg:#F6F7F4; --surface:#FFFFFF; --ink:#1C2126; --sub:#525C66; --line:#DCE1E4;
+  --accent:#1F5FA8; --sign:#E8B517; --ok:#2E7D4F; --stop:#B3402E;
+  --font:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12161A; --surface:#1A2026; --ink:#E9EDF0; --sub:#A3AEB8; --line:#2C343C;
+  --accent:#6FA5E6; --sign:#E8B517; --ok:#5FBF86; --stop:#E07A66; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12161A; --surface:#1A2026; --ink:#E9EDF0; --sub:#A3AEB8; --line:#2C343C;
+  --accent:#6FA5E6; --sign:#E8B517; --ok:#5FBF86; --stop:#E07A66; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:400 15px/1.65 var(--font);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 56px}
+.wrap{max-width:960px;margin:0 auto;display:grid;gap:28px}
+header{display:grid;gap:8px;border-left:6px solid var(--sign);padding-left:16px}
+h1{font-size:26px;font-weight:700;margin:0;text-wrap:balance;letter-spacing:-.01em}
+.meta{font:500 12px var(--mono);color:var(--sub)}
+.lead{margin:0;max-width:68ch;color:var(--sub)}
+h2{font-size:18px;margin:0 0 10px;text-wrap:balance}
+section{display:grid;gap:10px;min-width:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px;min-width:0}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;vertical-align:top;padding:8px 10px;border-bottom:1px solid var(--line)}
+th{font-size:12px;font-weight:500;color:var(--sub);letter-spacing:.04em;white-space:nowrap}
+td.k{white-space:nowrap;font-weight:500}
+.time{font:500 13px var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.tag{display:inline-block;font:500 11px var(--mono);padding:1px 7px;border-radius:4px;border:1px solid currentColor;white-space:nowrap}
+.tag.in{color:var(--ok)} .tag.out{color:var(--stop)} .tag.done{color:var(--accent)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:14px}
+ul.plain{margin:0;padding-left:18px} ul.plain li{margin:2px 0}
+code{font:500 12.5px var(--mono);background:color-mix(in srgb,var(--line) 55%,transparent);padding:1px 5px;border-radius:3px;word-break:break-all}
+a{color:var(--accent)} a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.note{font-size:13px;color:var(--sub);margin:0}
+</style>
+
+<div class="wrap">
+<header>
+  <h1>안전관리자 브리핑 운영 규칙</h1>
+  <div class="meta">2026-10-20 · chaeeun030702/001 · 조정안 1~7 적용 완료</div>
+  <p class="lead">신입 안전관리자(충북대 안전공학과 4학년) 채용 브리핑을 만드는 규칙과 자동 실행을 한곳에 모았습니다. 선별 기준의 원본은 <code>safety_jobs/rules.md</code>이고, 루틴 세 개가 실행 때마다 이 파일을 읽습니다.</p>
+</header>
+
+<section>
+  <h2>하루 자동 실행</h2>
+  <div class="panel scroll"><table>
+    <thead><tr><th>시각 (KST)</th><th>작업</th><th>하는 일</th></tr></thead>
+    <tbody>
+      <tr><td class="time">17:55 매일</td><td class="k">메일 루틴</td><td>사람인·잡코리아 메일 3일치 → 기준 통과 공고를 브리핑 DB에 넣음 (기업정보 번호 csn 포함)</td></tr>
+      <tr><td class="time">19:07·19:27</td><td class="k">GitHub Actions 수집</td><td>사이트 수집 → 이미지 공고 읽기 → 선별 → <code>briefings/</code>에 저장 (날짜별 사본 최근 3일)</td></tr>
+      <tr><td class="time">19:20 짝수일</td><td class="k">⚡ 브리핑 루틴</td><td>삭제·추가 목록 동기화 → 수집 → 게시본보다 새 수집분일 때만 브리핑·사본 게시 → 알림</td></tr>
+      <tr><td class="time">20:30 매일</td><td class="k">Chrome 루틴</td><td>사람인·캐치 달력, 자소설, 사람인 공채 모음, LinkedIn 열람 → 브리핑 DB · LinkedIn 분석 보고서</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>선별 기준</h2>
+  <div class="grid2">
+    <div class="panel">
+      <p><span class="tag in">포함</span></p>
+      <ul class="plain">
+        <li>건설안전·산업안전·환경안전이 주업무인 신입·경력무관 공고</li>
+        <li>대기업·계열사, 외국계(한국 근무), 코스피·코스닥, 공기업, 빅테크</li>
+        <li>시평 15위 종합건설 (16~50위는 정규직만), 엔지니어링 15위</li>
+        <li>대상 기업의 해외현장·해외 상시채용</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <p><span class="tag out">제외</span></p>
+      <ul class="plain">
+        <li>감시단·안전요원·현장 안전 지킴이</li>
+        <li>소방·방사선·전기안전, 간호사, 충전소, 보건관리자 단독, 배차</li>
+        <li>총무·전기 선임 같은 복합업무, 이름에만 '안전'(기관·사업부)</li>
+        <li>교육·실무형 프로그램, 안전 직무 없는 분야별 모집</li>
+        <li>경력직 전용, 시평 20위 밖 건설사 계약직, 외국계 해외 근무, 사용자 삭제 공고</li>
+      </ul>
+    </div>
+  </div>
+  <p class="note">'…우대' 괄호 안에만 있는 단어는 제외 이유로 보지 않습니다.</p>
+</section>
+
+<section>
+  <h2>규칙 조정 결과</h2>
+  <div class="panel scroll"><table>
+    <thead><tr><th>#</th><th>조정</th><th>반영한 곳</th><th></th></tr></thead>
+    <tbody>
+      <tr><td class="time">1</td><td>브리핑과 함께 날짜별 사본을 올리고 3일 지난 사본은 지움</td><td>⚡ 루틴 게시 단계</td><td><span class="tag done">적용</span></td></tr>
+      <tr><td class="time">2</td><td>게시본보다 오래된 수집분은 다시 올리지 않음</td><td>⚡ 루틴 게시 단계</td><td><span class="tag done">적용</span></td></tr>
+      <tr><td class="time">3</td><td>Chrome 루틴의 포함·제외 기준을 수집기와 맞춤</td><td>Chrome 루틴</td><td><span class="tag done">적용</span></td></tr>
+      <tr><td class="time">4</td><td>Chrome 루틴 시각 표기를 20:30으로 고침</td><td>⚡ 루틴</td><td><span class="tag done">적용</span></td></tr>
+      <tr><td class="time">5</td><td>작업 브랜치에 올려도 수집이 돌지 않음</td><td>수집 워크플로</td><td><span class="tag done">적용</span></td></tr>
+      <tr><td class="time">6</td><td>사람인 기업정보 번호(csn)를 모아 업체명 링크에 사용</td><td>메일·Chrome·⚡ 루틴, 수집기</td><td><span class="tag done">적용</span></td></tr>
+      <tr><td class="time">7</td><td>선별 기준을 <code>rules.md</code> 한 파일로 모음</td><td>루틴 세 개가 실행 때 읽음</td><td><span class="tag done">적용</span></td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">수집기는 코드 안의 규칙을 그대로 쓰므로, 기준을 바꿀 때는 <code>rules.md</code>와 <code>collect.py</code>를 함께 고칩니다.</p>
+</section>
+
+<section>
+  <h2>자료 위치</h2>
+  <div class="panel scroll"><table>
+    <tbody>
+      <tr><td class="k">채용 브리핑</td><td><a href="https://claude.ai/artifact/8vwqioKkr5ADyBJnbVDQZA" target="_blank" rel="noopener">안전관리자 채용 브리핑</a> · 업체명 → 사람인 기업정보 · 편집·파일로 저장·A4 인쇄</td></tr>
+      <tr><td class="k">작업현황</td><td><a href="https://claude.ai/artifact/ETZGZnQbEEFCZErq8QWxMS" target="_blank" rel="noopener">에이전트 작업현황</a></td></tr>
+      <tr><td class="k">선별 기준</td><td><a href="https://github.com/chaeeun030702/001/blob/claude/github-claude-code-connector-vbr24r/safety_jobs/rules.md" target="_blank" rel="noopener"><code>safety_jobs/rules.md</code></a></td></tr>
+      <tr><td class="k">규칙·자료</td><td><a href="https://github.com/chaeeun030702/001/tree/claude/github-claude-code-connector-vbr24r/docs/rules_and_materials" target="_blank" rel="noopener"><code>docs/rules_and_materials/</code></a> · 조정 초안, 개인 자료, 루틴 지시문 원문</td></tr>
+      <tr><td class="k">작업 규칙</td><td><code>CLAUDE.md</code> · 작업현황 표시, 결과를 한 파일로 바로 열기, 아티팩트 게시</td></tr>
+    </tbody>
+  </table></div>
+</section>
+</div>

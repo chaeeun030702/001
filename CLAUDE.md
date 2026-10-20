@@ -17,3 +17,11 @@
   - 그 밖의 결과(문서·표·보고서)도 HTML 한 파일로 만들어 render로 보낸다.
 - 브리핑을 게시(갱신)한 뒤에는 Artifact 도구 `action: "open"`으로 브리핑 아티팩트
   https://claude.ai/artifact/8vwqioKkr5ADyBJnbVDQZA 도 연다 (작업현황 페이지와 함께).
+
+## 작업이 끝나면 아티팩트로도 게시 (항상)
+- 작업이 끝나면 결과를 **이 세션에서 아티팩트로도 게시**하고 링크를 답변에 적는다.
+  - 브리핑 → 브리핑 아티팩트(위 URL)를 같은 URL로 갱신.
+  - 규칙·자료 정리 → [안전관리자 브리핑 운영 규칙](https://claude.ai/artifact/6VvRGcg4ETB48WhnAWBCcr)
+    (원본 `docs/rules_and_materials/규칙_자료_모음.html`)을 같은 URL로 갱신.
+  - 그 밖의 결과 → 결과 HTML 한 파일을 새 아티팩트로 게시(같은 주제를 다시 하면 그 URL을 갱신).
+- 게시한 아티팩트는 `action: "open"`으로 연다.
