@@ -8,3 +8,4 @@
 
 ## 브리핑 표시 (항상)
 - 자기소개서 브리핑(https://claude.ai/artifact/GEkympcXxpmb48ez87mY99)을 게시하거나 브리핑 루틴 실행이 끝나면, 결과를 보고하기 전에 Artifact `open` 으로 브리핑 페이지를 사용자 화면에 띄운다(2026-10-20 사용자 요청).
+- 특정 회사 자소서를 추가·수정·보완하는 작업이 끝나면, 그 회사의 편집용 A4 HTML 한 파일(브리핑의 '편집용 HTML 열기'와 같은 `letters/<id>_YYYY.MM.DD.html`)을 SendUserFile(`display: "render"`)로 바로 열어 보여 준다(2026-10-20 사용자 요청: 작업 끝나면 바로 열어 보기, 한 파일).
