@@ -1,0 +1,31 @@
+# 제외 규칙 회귀 테스트 — 수집(30~50분) 없이 1분 안에 규칙만 검사한다.
+# 규칙을 고친 PR에서 자동 실행된다. 실패하면 병합 전에 고친다.
+name: safety-jobs-test
+on:
+  pull_request:
+    paths: [safety_jobs/**, tests/**, .github/workflows/safety-jobs-test.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  rules:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: collect.py 의존성 목록 뽑기 (PEP 723)
+        run: |
+          python3 - <<'PY'
+          import re, tomllib
+          s = open("safety_jobs/collect.py", encoding="utf-8").read()
+          m = re.search(r"(?m)^# /// script\n((?:#.*\n)+?)# ///", s)
+          deps = []
+          if m:
+              body = "".join(l[2:] if l.startswith("# ") else l[1:] for l in m.group(1).splitlines(True))
+              deps = tomllib.loads(body).get("dependencies", [])
+          open("/tmp/req.txt", "w").write("\n".join(deps) + "\n")
+          print("deps:", deps)
+          PY
+      - name: Test
+        run: uv run --no-project --with pytest --with-requirements /tmp/req.txt pytest -q tests

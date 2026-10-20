@@ -2082,7 +2082,7 @@ HTML_JS = """
     document.querySelectorAll('.kpi .v[data-k]').forEach(function(v){
       v.textContent=v.dataset.k.split('+').reduce(function(a,k){return a+(c[k]||0)},0);
       var sub=v.parentNode.querySelector('.s[data-sub]'); if(!sub) return;
-      sub.textContent=sub.dataset.sub.replace(/\{(\w+)(%?)\}/g,function(_,k,pc){var n=c[k]||0;return pc?Math.floor(n*100/Math.max(tot,1))+'%':n});
+      sub.textContent=sub.dataset.sub.replace(/\\{(\\w+)(%?)\\}/g,function(_,k,pc){var n=c[k]||0;return pc?Math.floor(n*100/Math.max(tot,1))+'%':n});
     });
   }
   document.addEventListener('brief-refilter',recount);

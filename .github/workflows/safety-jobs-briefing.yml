@@ -1,15 +1,14 @@
 # 안전관리자 채용 일일 브리핑 — 12개 사이트 수집 후 briefings/ 에 커밋
 # 20:00 KST Routine이 briefings/latest.* 를 읽어 브리핑 전달.
 # GitHub 예약 실행은 지연·누락될 수 있어 19:07 / 19:27 KST 두 번 잡아 둔다(늦게 끝난 쪽이 최신).
+# 작업 브랜치 push 트리거는 뺐다: 커밋마다 시작됐다가 1분 반 만에 취소되는 실행이 반복됐다(#171·#173·#175·#177·#178·#180·#187).
+# 규칙을 바꾼 뒤 바로 결과를 보려면 병합 후 Actions → Run workflow(수동 실행)를 쓴다.
 name: safety-jobs-briefing
 on:
   schedule:
-    - cron: "7 10 * * *"  # 19:07 KST
-    - cron: "27 10 * * *" # 19:27 KST
+    - cron: "7 10 * * *"   # 19:07 KST
+    - cron: "27 10 * * *"  # 19:27 KST
   workflow_dispatch:
-  push:
-    branches: [claude/safety-manager-job-openings-ab59yi]
-    paths: [safety_jobs/**, .github/workflows/safety-jobs-briefing.yml]
 permissions:
   contents: write
 concurrency:
@@ -23,7 +22,6 @@ jobs:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
       - name: Use latest briefings (이전 수집 정보 유지)
-        # push로 시작된 실행은 트리거 커밋을 체크아웃하므로, 그 뒤에 올라온 최신 브리핑을 이어받는다
         run: |
           git fetch -q origin "${GITHUB_REF_NAME}" && git checkout "origin/${GITHUB_REF_NAME}" -- briefings || true
       - name: Install OCR (이미지 공고 읽기 — tesseract 한글)

@@ -1,0 +1,21 @@
+{
+  "_설명": "제외 규칙 회귀 사례. 규칙을 추가·수정할 때마다 여기에 사례를 한 줄씩 더한다. expect: exclude(빠져야 함) / keep(남아야 함). keep 사례는 제목·업체명만으로 판정되는 규칙에 걸리지 않는지만 본다(대상 기업·본문 판정은 보지 않음).",
+  "cases": [
+    {"title": "현장 안전 지킴이 모집", "company": "현대건설", "expect": "exclude", "rule": "안전지킴이 (2026-10-20)"},
+    {"title": "안전지킴이 단기 채용", "company": "GS건설", "expect": "exclude", "rule": "안전지킴이 (2026-10-20)"},
+    {"title": "건설현장 안전감시단 모집", "company": "대우건설", "expect": "exclude", "rule": "감시단 WATCH_RE"},
+    {"title": "사업장 간호사(보건관리자) 채용", "company": "LG화학", "expect": "exclude", "rule": "간호사 (2026-10-16)"},
+    {"title": "수소충전소 안전관리자 채용", "company": "SK에너지", "expect": "exclude", "rule": "수소충전소 (2026-10-16)"},
+    {"title": "방사선안전관리자 채용", "company": "삼성전자", "expect": "exclude", "rule": "OTHER_ROLE_RE"},
+    {"title": "배차 및 안전 담당 채용", "company": "CJ대한통운", "expect": "exclude", "rule": "OTHER_ROLE_RE"},
+    {"title": "총무/안전 담당 신입", "company": "롯데케미칼", "expect": "exclude", "rule": "COMPOSITE_RE 복합업무"},
+    {"title": "안전관리자 양성과정 교육생 모집", "company": "한국산업인력공단", "expect": "exclude", "rule": "교육·양성과정 (2026-10-17)"},
+    {"title": "신입 안전관리자 채용", "company": "OO세이프티", "expect": "exclude", "rule": "EXCLUDE_CORP_TERMS 세이프티"},
+    {"title": "신입 안전관리자 채용", "company": "OO안전관리", "expect": "exclude", "rule": "EXCLUDE_CORP_TERMS 안전관리"},
+    {"title": "안전관리자 채용", "company": "OO소방학원", "expect": "exclude", "rule": "EXCLUDE_CORP_TERMS 학원"},
+    {"title": "건설현장 안전관리자 신입 채용", "company": "삼성물산", "expect": "keep", "rule": "기본 대상"},
+    {"title": "환경안전(EHS) 신입사원 모집", "company": "SK하이닉스", "expect": "keep", "rule": "환경안전은 포함"},
+    {"title": "HSE Engineer (신입)", "company": "Air Liquide Korea", "expect": "keep", "rule": "외국계 HSE"},
+    {"title": "안전보건 담당 채용", "company": "한국안전보건공단", "expect": "keep", "rule": "공단으로 끝나는 이름은 업체명 제외 안 함"}
+  ]
+}

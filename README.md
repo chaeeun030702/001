@@ -1,3 +1,14 @@
+# 001 — 저장소 안내
+
+| 폴더·파일 | 내용 |
+| --- | --- |
+| `safety_jobs/` · `briefings/` | **안전관리자 채용 일일 브리핑** (주 용도) — 설명은 [`safety_jobs/README.md`](safety_jobs/README.md) |
+| `server.py` · `.mcp.json` | Claude Code에서 ChatGPT를 부르는 MCP 서버 (아래 설명) |
+| `CLAUDE.md` | AI 에이전트 작업 규칙 |
+| `tests/` | 제외 규칙 회귀 테스트 |
+
+---
+
 # openai_mcp — Call ChatGPT from Claude Code
 
 An MCP (Model Context Protocol) server that lets **Claude Code** call
