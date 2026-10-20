@@ -2500,6 +2500,32 @@ def load_recent_closed(hist_dir: Path, today, kept):
     return out
 
 
+CAL_HIDE_RE = re.compile(r"안전\s*인증|인증\s*엔지니어|시험\s*엔지니어|시험원|안전성\s*평가|안전\s*평가|제품\s*안전|Product\s*Safety", re.I)
+
+
+def cal_hidden(p):
+    """달력에서 빼는 공고: LinkedIn 공고, 제품 안전인증 직무 (사용자 요청 2026-10-06, 원래 ⚡ 루틴이 게시본에서 지우던 것)."""
+    return "linkedin.com" in (p.url or "") or bool(CAL_HIDE_RE.search(p.title or ""))
+
+
+def render_calendar_page(postings, now):
+    """채용 달력만 담은 완전한 HTML 한 파일 (briefings/calendar.html, 사용자 요청 2026-10-21)."""
+    today = now.date()
+    cal = render_calendar(postings, today)
+    page = (f'<title>안전관리자 채용 달력</title>\n'
+            '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
+            '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap">\n'
+            f'<style>{HTML_CSS}\n.calpage{{max-width:1200px;margin:0 auto;padding-block:20px 40px;'
+            'padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}'
+            '.calpage .sub{color:var(--caption);font-size:13px;margin:4px 0 14px}</style>\n'
+            f'<div class="calpage"><h1 style="margin:0">안전관리자 채용 달력</h1>'
+            f'<p class="sub">{now:%Y-%m-%d %H:%M} KST 수집 · 업체명을 누르면 공고가 열립니다 · '
+            f'<a href="https://claude.ai/artifact/8vwqioKkr5ADyBJnbVDQZA" target="_blank" rel="noopener">전체 브리핑</a></p>{cal}</div>')
+    return ('<!doctype html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n'
+            '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
+            + page.replace("</style>", "</style>\n</head>\n<body>", 1) + "\n</body>\n</html>\n")
+
+
 def render_calendar(postings, today, months=2, show=5, closed=None):
     """접수기한 달력: 지난주 일요일부터 2개월 뒤까지, 주 단위. 지난 날짜(마감)는 흐리게, 달은 배경색으로 약하게 구분.
     업체명을 누르면 공고로 이동."""
@@ -2510,6 +2536,8 @@ def render_calendar(postings, today, months=2, show=5, closed=None):
         end_m, end_y = end_m - 12, end_y + 1
     end = safe_date(end_y, end_m, min(today.day, 28)) or today + dt.timedelta(days=61)
     by_day = collections.defaultdict(list)
+    postings = [p for p in postings if not cal_hidden(p)]
+    closed = [p for p in closed if not cal_hidden(p)]
     for p in postings:
         if p.deadline_date and calendar_eligible(p):
             d = dt.date.fromisoformat(p.deadline_date)
@@ -3277,6 +3305,7 @@ def main():
                 '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
                 + page.replace("</style>", "</style>\n</head>\n<body>", 1) + "\n</body>\n</html>\n")
     (out / "latest_edit.html").write_text(full_doc, encoding="utf-8")
+    (out / "calendar.html").write_text(render_calendar_page(kept, now), encoding="utf-8")  # 채용 달력 한 파일
     (out / "archive").mkdir(exist_ok=True)  # 날짜별 보관본: 같은 날 다시 수집하면 그날 파일을 덮어쓴다
     (out / "archive" / f"briefing_{today:%Y-%m-%d}.html").write_text(full_doc, encoding="utf-8")
     for p in kept:
