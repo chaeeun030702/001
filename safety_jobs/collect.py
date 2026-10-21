@@ -248,7 +248,8 @@ def parse_deadline(text: str, today: dt.date):
         if d:
             return f"{d:%Y-%m-%d}", d
     m = re.search(r"~\s*(\d{1,2})\s*[/.월]\s*(\d{1,2})", t) or re.search(r"\((\d{1,2})/(\d{1,2})\)", t) \
-        or re.search(r"(\d{1,2})\s*월\s*(\d{1,2})\s*일", t) or re.fullmatch(r"(\d{1,2})/(\d{1,2})", t)
+        or re.search(r"(\d{1,2})\s*월\s*(\d{1,2})\s*일", t) or re.fullmatch(r"(\d{1,2})/(\d{1,2})", t) \
+        or re.search(r"(?<![\d.])(\d{1,2})\s*\.\s*(\d{1,2})\s*(?:\(\s*[월화수목금토일]\s*\))?\s*(?:\d{1,2}\s*:\s*\d{2}\s*)?마감", t)
     if m:
         mo, da = int(m.group(1)), int(m.group(2))
         d = safe_date(today.year, mo, da)
@@ -2155,7 +2156,7 @@ HTML_JS = """
   var dlP=(window.claude&&window.claude.use)?window.claude.use('downloads').catch(function(){return null}):Promise.resolve(null);
   if(fb) fb.addEventListener('click',function(){
     var was=document.body.classList.contains('editing'); if(was) setEdit(false);
-    var doc='<!doctype html>\n'+document.documentElement.outerHTML;
+    var doc='<!doctype html>\\n'+document.documentElement.outerHTML;
     if(was) setEdit(true);
     var name='안전관리자_채용_브리핑_'+key.replace('brief-','').slice(0,8)+'.html';
     dlP.then(function(dl){
@@ -3033,6 +3034,10 @@ def carry_over(prev_path, failed, kept, stats, today):
             p = Posting(**d)
         except TypeError:  # 이전 형식 필드
             continue
+        if not p.deadline_date and p.deadline:  # 예전 파서가 못 읽은 마감(예: '10.13(화) 마감') 다시 읽기
+            disp, dd = parse_deadline(p.deadline, today)
+            if dd:
+                p.deadline, p.deadline_date = disp, dd.isoformat()
         if p.deadline_date:
             if p.deadline_date < today.isoformat():
                 continue
