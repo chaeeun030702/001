@@ -104,13 +104,13 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 <script>
 /* 작업 데이터 — 에이전트를 맡길 때마다 이 블록만 고친다 (progress: 0~100) */
 var JOB={
-  updated:"2026-10-21 08:42 KST",updatedISO:"2026-10-20T23:42:00Z",
-  main:{name:"메인 에이전트",task:"채용 달력·채용 브리핑 최종 결과물을 이 세션에 HTML 파일·아티팩트로 항상 게시(PR #94 + 규칙 추가)",note:"브리핑을 게시할 때마다 브리핑 아티팩트·채용 달력 아티팩트를 갱신하고, 최종 HTML 파일을 이 세션에 보내 드립니다. 직전 작업(21:47, 다른 세션): 20:15 매칭 브리핑 — 국내 전체 수집 run #4 성공(217건, csn 157), 매칭 브리핑 v19 재게시."},
+  updated:"2026-10-21 09:10 KST",updatedISO:"2026-10-21T00:10:00Z",
+  main:{name:"메인 에이전트",task:"선택 삭제 동작 오류 수정 · 마감 지난 공고 제외",note:"원인: [파일로 저장] 코드의 '\\n'이 실제 줄바꿈으로 들어가 페이지 스크립트 전체가 멈춤(선택 삭제·편집·저장 버튼 무반응). 마감 표기 '10.13(화) 마감'을 읽지 못해 지난 공고 3건이 남아 있었음."},
   subs:[
-   {name:"채용 달력 (collect.py)",order:"하청 1",status:"done",progress:100,task:"render_calendar_page → briefings/calendar.html, LinkedIn·제품 안전인증 제외",result:"PR #94 병합 · 접수 중 37건 · 지난주부터 마감 8건"},
-   {name:"채용 달력 게시",order:"하청 2",status:"done",progress:100,task:"달력 아티팩트 게시 + 파일 전달, ⚡ 루틴 3(d) 단계 추가",result:"달력 아티팩트 게시 · 2026-10-21 달력 파일 전달"},
-   {name:"채용 브리핑 게시",order:"하청 3",status:"done",progress:100,task:"latest.html + 날짜별 사본 2개(10/20·10/21) 게시, latest_edit.html 파일 전달",result:"v79 게시 · 10/21 00:29 수집 · 2026-10-21 브리핑 파일 전달"},
-   {name:"작업 규칙 (CLAUDE.md)",order:"하청 4",status:"done",progress:100,task:"브리핑·달력 최종 HTML을 항상 이 세션에 게시하는 규칙",result:"CLAUDE.md 갱신 · PR 병합"}
+   {name:"원인 확인 (headless 브라우저)",order:"하청 1",status:"done",progress:100,task:"latest.html 스크립트 문법 검사 · 체크 → 선택 삭제 클릭 시험",result:"스크립트 문법 오류 1건 → 수정 후 체크·삭제·숨김 동작 확인"},
+   {name:"collect.py 수정",order:"하청 2",status:"done",progress:100,task:"JS 줄바꿈 이스케이프, 'MM.DD(요일) 마감' 읽기, 이전 수집분 마감 다시 읽기",result:"마감 지난 3건(이수그룹 10/13·CJ대한통운 10/15·채용전환형 10/19) 제외 대상"},
+   {name:"GitHub Actions 수집기",order:"하청 3",status:"run",progress:10,task:"PR 병합 후 safety-jobs-briefing 재실행",result:"",startedAt:"2026-10-21T00:10:00Z",etaMin:25},
+   {name:"브리핑·달력 게시",order:"하청 4",status:"wait",progress:0,task:"latest.html·날짜별 사본·calendar.html 게시, 최종 HTML 파일 전달",result:""}
   ]
 };
 
