@@ -1,252 +1,287 @@
-# 안전관리자 채용 브리핑 — 2026-10-21 (Wed) 20:20 KST
+# 안전관리자 채용 브리핑 — 2026-10-22 (Thu) 20:19 KST
 
-신입·경력무관·인턴 공고 **237건** (경력직·마감 제외, 중복은 상위 사이트 우선) · 일반 산업체 225건 · 건설 12건 · 산업/건설안전기사·ISO 45001 명시 56건 · 🟣 외국어·NEBOSH·IOSH·CSP 우대 6건
+신입·경력무관·인턴 공고 **275건** (경력직·마감 제외, 중복은 상위 사이트 우선) · 일반 산업체 260건 · 건설 15건 · 산업/건설안전기사·ISO 45001 명시 80건 · 🟣 외국어·NEBOSH·IOSH·CSP 우대 5건
 
 건설사는 2026년 시공능력평가 상위 100개사(토목건축)만 싣습니다.
 
-범례: 🔴 데이터센터·하이테크·삼성·하이닉스 관련 · 🔵 대기업 계열사 · 🌐 외국계 회사 (여럿 해당하면 🔴 > 🔵 > 🌐, 업체명 옆에 [대기업 계열]/[외국계] 표기) · 🟣 외국어·영어 능통 / NEBOSH / IOSH / CSP 우대 (🔴·🔵와 함께 표시될 수 있음) · [코스피]/[코스닥] 상장사 · 🤖 AI 역량 우대 · 🆕 오늘(10/21) 새로 찾은 공고 (다음 날 고용형태 묶음으로 이동)
+범례: 🔴 데이터센터·하이테크·삼성·하이닉스 관련 · 🔵 대기업 계열사 · 🌐 외국계 회사 (여럿 해당하면 🔴 > 🔵 > 🌐, 업체명 옆에 [대기업 계열]/[외국계] 표기) · 🟣 외국어·영어 능통 / NEBOSH / IOSH / CSP 우대 (🔴·🔵와 함께 표시될 수 있음) · [코스피]/[코스닥] 상장사 · 🤖 AI 역량 우대 · 🆕 오늘(10/22) 새로 찾은 공고 (다음 날 고용형태 묶음으로 이동)
 
-## 🆕 신규 공고 73건 (오늘 10/21 새로 찾음 · 삭제하지 않으면 내일 고용형태 묶음으로 이동)
+## 🆕 신규 공고 105건 (오늘 10/22 새로 찾음 · 삭제하지 않으면 내일 고용형태 묶음으로 이동)
 
 | 업체명 | 공고명 | 고용형태 · 연봉 | 접수기한 | 출처 |
 |---|---|---|---|---|
-| 🔴 ㈜제이솔루션 | 환경안전 담당자(정규직/삼성전자 평택 또는 화성 캠퍼스... | 정규직<br>회사 내규에 따름 | 2026-10-26 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50210039?Oem_Code=C1) |
-| 🔴 (주)예스디앤에스 | 삼성전자(평택) 협력사 - 안전관리 안전감시자 모집 | 정규직<br>월급 300만원~320만원 | 2026-10-29 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55147314) |
-| 🔴 삼성다이나에이치백(주) | 삼성다이나에이치백(주) 환경기술인 채용 공고 | 정규직<br>면접 후 결정 | 2026-11-30 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55268554) |
-| 🔴 (주)창원기전 | 용인 SK하이닉스 현장 작업지휘자 모집 | 계약직<br>525만원~600만원 이상 | 2026-12-11 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55255277) |
-| 🔴 ㈜트로이스세이프티 | 삼성디스플레이 탕정 장비 협력사 안전담당자 채용 | 계약직<br>회사 내규에 따름 | 채용 시 마감 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50011400?Oem_Code=C1) |
-| 🔴 (주)티오피코리아 | (주)삼성 화성 반도체 현장내 안전 담당자 모집 | 정규직<br>면접 후 결정 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55350560) |
-| 🔵 현대건설(주) | [현대건설/송파구] 잠실주경기장 현장, 보건보조원 채용 | 계약직<br>면접 후 결정 · 신입 초봉 4,726만원 (2025) | ⏰ **2026-10-22 (D-1)** | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55097993) |
-| 🔵 에이치앤엘어드밴스드㈜ [대기업 신입 공채] | 2026년 하반기 전문직 신입 채용(서산시 지역인재전형) -... ⚠️ **[직무 확인 필요]** 안전 키워드에 걸렸지만 직무 확인 필요 | 계약직<br>회사 내규에 따름 | 2026-11-01 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50216085?Oem_Code=C1) |
-| 🔵 에이치앤엘어드밴스드㈜ [대기업 신입 공채] | 2026년 하반기 전문직 신입 채용(일반 전형) - 환경·안전 | 계약직<br>회사 내규에 따름 | 2026-11-01 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50215932?Oem_Code=C1) |
-| 🔵 현대엘리베이터 | 승강기안전관리자 계약직 채용 | 계약직<br>회사 내규에 따름 · 신입 초봉 5,600만원 (2025) | 2026-11-08 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50210879?Oem_Code=C1) |
-| 🔵 에스케이실트론 [대기업 신입 공채] | SHE 안전 사무직 대졸신입 수시 채용 | 정규직<br>회사 내규에 따름 · 신입 초봉 5,802만원 (2025) | 2026-11-08 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50215349?Oem_Code=C1) |
-| 🔵 에이치앤엘어드밴스드㈜ [대기업 신입 공채] | 2026년 하반기 경영관리직 신입 채용 - 안전·환경 | 기타/미표기<br>회사 내규에 따름 | 2026-11-10 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50215602?Oem_Code=C1) |
-| 🔵 (주)포스코이앤씨 | 포스코이앤씨 상봉터미널 주상복합 현장 안전관리자, 자재관리자 | 계약직<br>면접 후 결정 · 신입 초봉 3,515만원 (2025) | 2026-12-20 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55352324) |
-| 🔵 롯데지알에스(주) | 롯데GRS 본사 사무지원 계약직 채용 | 계약직<br>연봉 미기재 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55189807) |
-| 🌐 국제커리어센터 | [외국계 배터리 제조업체]안전,환경,환경안전 부문 채용 | 정규직<br>면접 후 결정 | ⏰ **2026-10-21 (오늘 마감)** | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55093659) |
-| 🌐 덴소코리아(주) | 덴소코리아 마산공장 안전관리자 채용 - 신입/경력 | 정규직<br>연봉 미기재 | 2026-10-25 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55297384) |
-| 🌐 디스커버믹스테크매뉴팩처링(주) | [외국계 배터리 제조업체] 안전, 환경, 환경안전 부문 채용 | 정규직<br>면접 후 결정 | 2026-11-15 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55306920) |
-| 🌐 아이언마운틴코리아(유) | 안전자산 서비스 신입 CS 담당자 모집 (재택·출근 혼합... | 정규직<br>연봉 3,000~3,600만원 | 2026-11-20 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50210241?Oem_Code=C1) |
-| ㈜대송안전 | 잠실 롯데월드타워 엘리베이터 공사 안전담당자 모집 | 계약직<br>일급 130,000원 | ⏰ **2026-10-23 (D-2)** | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50045881?Oem_Code=C1) |
-| 청호나이스 | 청호나이스(주) 산업안전 신입/경력 채용 | 정규직<br>회사 내규에 따름 · 신입 초봉 3,604만원 (2022) | ⏰ **2026-10-23 (D-2)** | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50043487?Oem_Code=C1) |
-| (주)한백 | [한백] 2026 신입 안전관리자 채용 | 정규직<br>연봉 미기재 | ⏰ **2026-10-23 (D-2)** | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55297482) |
-| (주)코리아인 | [아산소재/유명기업] 안전관리 현장보조 채용 | 계약직<br>3,000만 원 내외 · 신입 초봉 2,789만원 (2019) | ⏰ **2026-10-23 (D-2)** | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55238892) |
-| (의)한라의료재단 | 제주한라병원 경영지원부 안전관리자 모집 | 계약직<br>연봉 미기재 | ⏰ **2026-10-23 (D-2)** | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55131467) |
-| 한국산업기술시험원 | (산업부 공공기관)반도체/QM,QC/의료기기/GMP/안전/QME 취업 교육 | 기타/미표기<br>연봉 미기재 · 신입 초봉 3,500만원 (2023) | ⏰ **2026-10-23 (D-2)** | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55288765) |
-| TKG애강 | [TKG애강] 경영·사무 일경험 프로그램_인사총무팀(안전환경)_9기 | 기타/미표기<br>연봉 미기재 | 2026-10-27 | [링커리어](https://linkareer.com/activity/358427) |
-| 사단법인 한국생물안전협회 | 사단법인 한국생물안전협회 - 사무국 행정 및 교육담당 | 계약직<br>연봉 3,000만원 | 2026-10-29 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55298709) |
-| 신선대감만터미널(주) | 위험물안전관리자 (정규직) 및 보건관리자 (계약직) 채용 | 계약직<br>4,720만원 | 2026-10-30 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55176472) |
-| 경희대학교 | 경희대학교 국제C 안전팀(산업안전 및 중대재해) 계약직 모집 | 계약직<br>월급 260만원 | 2026-10-30 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55308411) |
-| 동남공영(주) | 동남공영(주) 기반시설(토목)현장 안전관리자(경기도 김포) 모집 | 계약직<br>면접 후 결정 | 2026-10-31 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55213308) |
-| (주)효원파워텍 | 경영지원 팀원 신입 신규채용 | 계약직<br>면접 후 결정 | 2026-10-31 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55173040) |
-| (유)삼송 | (유)삼송 안전성능시험팀 신입/경력 채용 | 계약직<br>면접 후 결정 · 신입 초봉 3,200만원 (2019) | 2026-10-31 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55064035) |
-| ㈜대송안전 | 시흥시 정왕동 인근내현장 안전담당자모집 | 계약직<br>월급 300~350만원 | 2026-11-01 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50100737?Oem_Code=C1) |
-| (주)한국공정안전환경센터 | 화학플랜트 정기보수 안전지원단 | 계약직<br>면접 후 결정 | 2026-11-01 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55184686) |
-| (주)석비계 | [안전보건관리자] 안전관리자 채용 | 계약직<br>면접 후 결정 | 2026-11-05 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55212162) |
-| (주)본텍코리아에이치큐 | (주)본텍코리아 화성공장 안전관리 및 현장관리 | 정규직<br>연봉 미기재 | 2026-11-06 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55227466) |
-| 지에스건설(주) | GS건설(주)도룡자이라피크현장 안전시설(직영) | 계약직<br>면접 후 결정 · 신입 초봉 3,929만원 (2025) | 2026-11-06 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55225866) |
-| 신안종합리조트(주) | [웰리힐리파크] 워터파크 안전관리, 대여소 정규직 채용 | 정규직<br>회사 내규에 따름 | 2026-11-07 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55238028) |
-| (주)경원안전 | [건설/안전시설물] 안전시설물 설치 및 해체 현장반장(아산) | 정규직<br>연봉 미기재 | 2026-11-07 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55238194) |
-| 대한재해예방기술(주) | 산업안전관리자(신입,경력우대) | 정규직<br>면접 후 결정 | 2026-11-11 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55261275) |
-| (주)에스피엔이 | (주)에스피엔이 전기소방사업부 울산 안전관리자 모집공고(전기) | 계약직<br>연봉 4,500만원 | 2026-11-11 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55263612) |
-| 케이피엑스글로벌(주) | 환경안전팀 정규직 채용 | 정규직<br>면접 후 결정 | 2026-11-12 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55277389) |
-| (주)에이알텍 | (주)에이알텍 시스템팀 신입사원 채용(철도안전설비) | 정규직<br>면접 후 결정 | 2026-11-12 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55268369) |
-| (주)듀어코리아 | [Health & Safety] Safety Assistant Engineer (3~6 months) | 계약직<br>연봉 미기재 | 2026-11-13 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55286479) |
-| (주)정우이엠씨 | 정우이엠씨 태양광사업부 안전관리자 추가 채용 공고 | 정규직<br>면접 후 결정 | 2026-11-13 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55284843) |
-| 광진전력 주식회사 | 광진전력 주식회사 안전관리자 모집 | 계약직<br>면접 후 결정 | 2026-11-14 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55300529) |
-| 에스앤엠안전 시스템 | 에스앤엠안전 시스템 산업안전기사 안전관리자 선임 채용 공고 | 계약직<br>월급 450만원 | 2026-11-14 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55297161) |
-| (주)진성아이엔디 | (주)진성아이엔디 현장 안전관리자 채용 | 계약직<br>면접 후 결정 | 2026-11-14 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55299782) |
-| (주)엘엠에이티 | (주)엘엠에이티 산업안전관리자 모집 | 정규직<br>면접 후 결정 | 2026-11-14 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55300621) |
-| (주)에스이마샬 | 전기/커미셔닝/안전 경력자 채용 (연봉상향 조건) | 계약직<br>면접 후 결정 | 2026-11-14 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55297127) |
-| (주)일진에너지 | 일진에너지 환경안전팀 사원 모집 | 정규직<br>면접 후 결정 · 신입 초봉 4,204만원 (2024) | 2026-11-15 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55313043) |
-| (주)선인 | [아산/품질관리] 고객에게 안전한 식품 제공을 위해 기여할 인재 | 계약직<br>연봉 미기재 | 2026-11-19 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55341547) |
-| (주)유한그린 | (주)유한그린 생산직 [산업용 안전모(인쇄)] 정규직 모집 | 정규직<br>시급 10,320원 | 2026-11-19 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55339630) |
-| ㈜한국안전환경연구원 | 작업환경측정(우수기관)-산업위생기사(신입) | 정규직<br>회사 내규에 따름 | 2026-11-20 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50215766?Oem_Code=C1) |
-| ㈜엔아이티 | (주)엔아이티 시설사업부 안전지원팀 | 정규직<br>연봉 3,000만원 이상 · 신입 초봉 3,300만원 (2022) | 2026-11-20 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50211131?Oem_Code=C1) |
-| 디엔산업 | 디엔산업에서 레미콘기사로 안전 운행 함께해요 | 정규직<br>면접 후 결정 | 2026-11-20 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55351483) |
-| 동아스틸(주) | 생산팀 안전환경파트 신입·경력 직원 채용(세아제강 계열사) | 정규직<br>면접 후 결정 | 2026-11-20 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55349558) |
-| 이피에스코리아(주) | 환경안전팀 정규직 채용 | 정규직<br>면접 후 결정 | 2026-11-20 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55355357) |
-| (주)세이프엔 | [안전의기준 세이프엔] 함께 일 할 뛰어난 인재를 모집합니다. | 정규직<br>면접 후 결정 | 2026-11-28 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55144480) |
-| 주식회사 제이디씨에스(JDCS) | (주)제이디씨에스(JDCS)- 안전관리자 채용의 건 | 계약직<br>면접 후 결정 | 2026-12-11 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55252258) |
-| 남영물류산업(주) | 현장 안전 관리자 모집 | 정규직<br>면접 후 결정 | 2026-12-12 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55269450) |
-| 아주정공(주) | 아주정공(주) 관리자 및 안전관리자채용 | 정규직<br>330만원 | 2026-12-18 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55322567) |
-| (주)우진고분자 | (주)우진고분자 군산공장 환경안전 관리자 모집 | 정규직<br>면접 후 결정 | 2026-12-20 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55357333) |
-| 주식회사 무경 부산지점 | (주)무경 더현대광주 현장 안전관리자 채용 | 계약직<br>연봉 4,200만원 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55242304) |
-| (주)상림기술 | 화성시 AI자율주행허브 안전관리자 모집 | 계약직<br>면접 후 결정 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55242656) |
-| 주식회사 무경 부산지점 | 주식회사 무경 용인지사 안전보건기획팀 정규직 채용 공고 | 정규직<br>면접 후 결정 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55322196) |
-| 디에스코리아충주(주) | 디에스코리아충주(주) 생산 안전관리자 채용 공고 | 정규직<br>연봉 3,500만원 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55339791) |
-| HLB바이오코드(주) | HLB바이오코드(주) 안전성약리팀 신입,경력사원 채용 | 정규직<br>면접 후 결정 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55150977) |
-| (주)에코인슈텍 | [양산공장] 생산팀 모집 | 정규직<br>면접 후 결정 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55003480) |
-| 더플래닛세이프티(주) | [더플래닛세이프티]통합안전센터(울산) 교육운영팀원 채용 | 계약직<br>연봉 미기재 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55193265) |
-| 한국차폐기술(주) | 총무업무 직원공고 (노무, 안전, ESG)-경력자우대 | 정규직<br>면접 후 결정 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55064993) |
-| 에이치엘비에너지(주) | HLB에너지 주식회사 안전외주팀 공무직 구인 | 정규직<br>면접 후 결정 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55149922) |
-| 반도호이스트크레인(주) | 반도 (경기도 화성) 관리직 (신입+경력) | 정규직<br>면접 후 결정 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54845057) |
-| (주)청풍소방안전 | 소방시설 안전관리 대행 및 점검 담당자 모집합니다. | 정규직<br>연봉 미기재 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55353142) |
+| 🔴 정화솔루션(주) | [삼성전자상주협력사] 소방시설/소화기 점검, 안전관리자 채용 | 정규직<br>연봉 미기재 | 2026-10-26 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55259844) |
+| 🔴 (주)제이솔루션 | 환경안전담당(삼성반도체 평택 또는 화성, 하이닉스 이천) | 정규직<br>면접 후 결정 | 2026-10-26 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55103580) |
+| 🔴 (주)삼우에프앤지 | [중견기업/정규직/삼성전자로지텍협력사] 평택 안전보건 담당자 | 정규직<br>면접 후 결정 · 신입 초봉 3,025만원 (캐치) | 2026-10-31 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55176599) |
+| 🔴 (주)게스 | [평택] 삼성전자 P4, P5 안전감시 모집 | 계약직<br>면접 후 결정 | 2026-11-01 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54920780) |
+| 🔴 (주)에스엠세이프 | 삼성 반도체 안전담당자 모집-화성 (신입 가능/성별 무관) | 계약직<br>연봉 미기재 · 신입 초봉 3,300만원 (2026, 잡코리아) | 2026-11-05 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55211526) |
+| 🔴 (주)에스가드 | [삼성전자/삼성전기 사업장] 환경안전관리사/안전 감독관 채용 | 정규직<br>협의 | 2026-11-20 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55355091) |
+| 🔴 (주)삼성방재 | (주)삼성방재와 새롭게 시작해보실분 (소방점검 및 보수공사) | 정규직<br>협의 | 2026-11-20 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55357149) |
+| 🔴 엠이케이(주) | [삼성전자 협력사 채용박람회] 안전관리자(전졸) | 정규직<br>연봉 2,976만원 | 진행예정 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55363203) |
+| 🔴 (주)트로이스세이프티 | 삼성 반도체 기흥,화성현장 장비 협력사 안전담당자 채용 | 계약직<br>면접 후 결정 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55119283) |
+| 🔴 주식회사 코아네트웍스 | [삼성반도체현장] 화성사업장 현장 안전담당자 모집 | 정규직<br>연봉 미기재 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54928952) |
+| 🔴 주식회사 세이프티에디션 | 삼성전자(평택,기흥/화성,천안) 및 SK하이닉스(이천/청주)반도체설비 관련 안전담당자 구인 | 계약직<br>시급 16,825원 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55036034) |
+| 🔵 LS일렉트릭 | 2026년 10월 건설안전팀 PJT 안전관리자 촉탁직(계약직) ... | 계약직<br>회사 내규에 따름 · 신입 초봉 4,037만원 (2025) | ⏰ **2026-10-22 (오늘 마감)** | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50218692?Oem_Code=C1) |
+| 🔵 (주)한솔안전 | (주)한솔안전 추락방지망 안전시설물 설치/해체 현장직 채용 | 정규직<br>월급 400만원 | 2026-10-28 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55128309) |
+| 🔵 (주)현대계전 | (여수) 플랜트 공사 현장 안전담당자 모집 | 정규직<br>33000000원 이상 · 신입 초봉 3,528만원 (2022) | 2026-10-30 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55316877) |
+| 🔵 (주)한솔에스엔피 | (주)한솔에스엔피 안전관리자 구인 | 정규직<br>월급 310만원 | 2026-11-13 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55289583) |
+| 🔵 대상에스티(주) | 대상에스티(주) 산업안전보건 경영관리자 채용 | 정규직<br>면접 후 결정 | 2026-11-18 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55333264) |
+| 🔵 (주)이터널그룹 | [보끄레/이터널그룹] 안전·보건 관리자 | 계약직<br>연봉 미기재 · 신입 초봉 3,100만원 (캐치) | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55162888) |
+| 🌐 드림HR | 안전관리(인하우스) 및 총무-외국계 산업엔지니어링사 | 기타/미표기<br>면접 후 협의 | 2026-11-21 | [피플앤잡](https://www.peoplenjob.com/jobs/6304146) |
+| 🌐 세빌스코리아 | [세빌스코리아] 안전관리자(부동산자산관리분야) 주임대리급 | 기타/미표기<br>면접 후 협의 | 채용 시 마감 | [피플앤잡](https://www.peoplenjob.com/jobs/6304340) |
+| (주)플랜엠 | 모듈러 제작,안전관리,현장관리,공무,재무회계,노무/총무 채용 | 정규직<br>면접 후 결정 | ⏰ **2026-10-22 (오늘 마감)** | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55103979) |
+| 에스케이에코플랜트(주) | [SK에코플랜트] 용인 반도체 토목 공사보조 채용 | 계약직<br>면접 후 결정 · 신입 초봉 5,500만원 (2024) | ⏰ **2026-10-23 (D-1)** | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54822396) |
+| 유엘코리아 주식회사 | 평택시험소 프로젝트 엔지니어 채용 (EV 배터리 분야) | 정규직<br>면접 후 결정 · 신입 초봉 3,700만원 (2025, 잡코리아) | ⏰ **2026-10-24 (D-2)** | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54839983) |
+| (주)유엠아이 | 신입/경력 비파괴검사(원자력발전소 안전검사) 채용 | 정규직<br>회사내규에 따름 | 2026-10-26 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55258882) |
+| 한국도로공사 | 논산지사 기간제근로자(안전순찰원) 채용 | 계약직<br>회사 내규에 따름 · 신입 초봉 2,585만원 (2023) | 2026-10-28 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50218577?Oem_Code=C1) |
+| (주）원일 | 환경/안전관리자 담당자 모집 | 정규직<br>2400000원 이상 | 2026-10-28 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55292696) |
+| 이에이치에스테크루브㈜ | [EHS] 그리스 생산직 모집(신입/경력) | 정규직<br>면접 후 결정 | 2026-10-29 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55362699) |
+| (주)이클린워터 | (주)이클린워터 환경안전팀 경력무관 채용(정규직) | 정규직<br>연봉 미기재 | 2026-10-29 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55145459) |
+| 희성산업（주） | 산업안전관리자 모집 (신입/경력 지원가능) | 정규직<br>3000000원 이상 | 2026-10-29 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55304041) |
+| (주)지엔티 | 폐기물 운반사 안전관리자 채용 | 계약직<br>면접 후 결정 | 2026-10-30 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55270541) |
+| (주)무등기업 | [안전보건] 안전보건담당자 채용 | 정규직<br>면접 후 결정 | 2026-10-30 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55162698) |
+| (주)디에스검사 | (주)디에스검사 비파괴검사원 및 안전관리자(RI면허필수) 채용 | 정규직<br>면접 시 협의 | 2026-10-30 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54985645) |
+| (주)빌트에이 | 건설·건축(수장공사) 안전관리자 신입 및 경력직 모집 | 계약직<br>면접 후 결정 | 2026-10-31 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55331289) |
+| (주)피알피사이언스 | (주)피알피사이언스 생산관리 및 산업안전관리자 경력자 모집 | 정규직<br>회사 내규에 따름 | 2026-10-31 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55312223) |
+| 올릭스(주) | [올릭스] 연구관리지원팀(안전관리/연구행정) | 정규직<br>연봉 미기재 | 2026-10-31 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55309169) |
+| 옵티멀에너지서비스(주) | 옵티멀에너지서비스㈜ 기계정비원 및 안전담당자 채용 공고 | 계약직<br>연봉 미기재 | 2026-10-31 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54908538) |
+| (주)에이텍정밀화학 | 안전관리 실무담당자 채용 | 정규직<br>3000000원 이상 | 2026-10-31 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55217618) |
+| (주）평길해양 | 안전하고 효율적인 선박 해체 현장을 위한 안전 관리 담당자 모집합니다. | 정규직<br>38000000원 이상 | 2026-10-31 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55180227) |
+| 신성통상(주) | 신성통상(주) 안전관리자 계약직 채용 | 계약직<br>연봉 미기재 · 신입 초봉 3,450만원 (2022) | 2026-11-01 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55356287) |
+| (주)삼흥 | [현장관리자] 현장 안전관리 & 납품 업무 직원 | 정규직<br>면접 후 결정 | 2026-11-06 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55361893) |
+| (주)지앤지랩이룸 | 작업환경측정 분석사 채용 공고 - 경력우대 | 정규직<br>면접 후 결정 | 2026-11-06 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54965894) |
+| 티디이엔텍(주) | 티디이엔텍(주) 안전업무 보조원 채용 공고 | 계약직<br>면접 후 결정 | 2026-11-06 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55222681) |
+| (주)후니드 | (주)후니드 울산지역 안전관리자 모집 | 정규직<br>회사내규 | 2026-11-06 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55331346) |
+| 지에스건설(주) | GS건설(주) 백석시그니처현장 안전시설(직영) 채용 | 계약직<br>월급 330만원 · 신입 초봉 3,929만원 (2025) | 2026-11-07 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54973638) |
+| (주)DB하이텍 | [DB하이텍] 안전관리(방재) 신입 채용 (상우캠퍼스) | 정규직<br>연봉 미기재 · 신입 초봉 3,475만원 (2025) | 2026-11-08 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55323568) |
+| ㈜아트박스 | (주)아트박스 안전관리자 신입 및 경력 사원 모집(계약직) | 계약직<br>회사 내규에 따름 | 2026-11-09 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50223767?Oem_Code=C1) |
+| 에이치앤엘어드밴스드(주) | 2026년 하반기 경영관리직 신입 채용 (생산관리/설비(전기/전자) | 정규직<br>면접 후 결정 | 2026-11-10 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55355422) |
+| 하이즈항공㈜ | 2026년 하이즈항공(주) 소방·환경·산업안전 관리자 신... | 정규직<br>회사 내규에 따름 | 2026-11-11 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50225033?Oem_Code=C1) |
+| 진우에이티에스(주) | [진우에이티에스(주)]제2경인연결고속도로 안전관리자 팀원 모집 | 정규직<br>면접 후 결정 | 2026-11-11 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55256152) |
+| (주)삼영기업 | (주)삼영기업 이천 SK Hynix 안전 서류(보조) 모집 | 계약직<br>월급 300만원 · 신입 초봉 4,000만원 (2022) | 2026-11-11 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55261884) |
+| 주식회사에이치큐 | 주식회사 에이치큐 토목분야 안전점검 정규직 모집(신입, 경력) | 정규직<br>연봉 3,200~3,400만원 · 신입 초봉 3,700만원 (2025) | 2026-11-11 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55254278) |
+| 한국소방관리(주) | 소방시설사업부 소방시설 안전관리 팀원 채용 | 정규직<br>면접 후 협의 | 2026-11-12 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55269745) |
+| (주)썬전기안전관리 | 안전관리 총무팀 사무 정규직 채용 (전기 관련 자격증 우대) | 정규직<br>연봉 3,000만원 | 2026-11-12 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55275475) |
+| (주)한국 환경안전 연구소 | 작업환경측정기사 모집 | 정규직<br>면접 후 결정 | 2026-11-14 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55299970) |
+| (주)청담이엠텍 | 산업위생관리기사 모집 | 정규직<br>면접 후 결정 | 2026-11-14 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55300250) |
+| (주)장풍솔루션 | 부산신항 BCT(장풍솔루션) 안전관리자(가스산업기사) 채용 | 정규직<br>면접 후 결정 | 2026-11-15 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55309973) |
+| (재)정해산업보건연구소 | 작업환경측정 산업위생관리기사(산업기사) 채용 | 정규직<br>면접 후 결정 | 2026-11-15 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55306729) |
+| 오리엔트(주) | 신광교 지식산업센터 현장 안전담당자 모집합니다. | 계약직<br>면접 후 결정 · 신입 초봉 3,000만원 (2022) | 2026-11-15 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55307952) |
+| (주)에코프라임 | 환경사업본부 천안현장 안전관리자 | 계약직<br>면접 후 결정 | 2026-11-18 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55331474) |
+| 한영기업(주) | 화약류관리산업기사 모집합니다 | 계약직<br>3500만원~4000만원 | 2026-11-18 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55332497) |
+| (주)티와이엠 | (주)티와이엠 신입/경력 안전관리자 모집(전북/익산) | 정규직<br>면접 후 결정 · 신입 초봉 4,170만원 (2025) | 2026-11-19 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55337014) |
+| (주)국보디자인 | 안전관리자(PJT) 모집 (역삼/논현) | 계약직<br>면접 후 결정 | 2026-11-20 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55352151) |
+| 주식회사더재월 | 산업안전 전문인력 채용 (안전점검·컨설팅 업무/정규직) | 정규직<br>면접 후 결정 | 2026-11-20 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55356402) |
+| (주)동광씨앤에스 | (주)동광씨앤에스 소방점검팀 신입 / 경력 모집 | 정규직<br>면접 후 결정 | 2026-11-20 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55354660) |
+| 씨엔리(주) | [경남 사천] 씨엔리(주) 경영지원팀 안전 총무 담당 정규직 채용 | 정규직<br>연봉 미기재 | 2026-11-20 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55354272) |
+| 동일산업(주) | 동일산업 현장관리직 신입/경력 채용 (영주현장근무) | 계약직<br>면접 후 결정 | 2026-11-20 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55351216) |
+| ㈜대송안전 | 파주시 LG 유플러스 엘리베이터 설치현장 안전담당자 모집 | 계약직<br>월급 330~370만원 | 2026-11-21 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50223495?Oem_Code=C1) |
+| 코아텍㈜ | 코아텍(주)-현장 공사 관리감독, 안전담당자 | 정규직<br>회사 내규에 따름 | 2026-11-21 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50219172?Oem_Code=C1) |
+| (유)엠케이지 | 대구 롯데몰현장 안전관리자 구인 | 계약직<br>면접 후 결정 | 2026-11-21 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55363995) |
+| (주)한국기계설비성능관리단 | 수원현장 안전관리자 (신입가능) 구인합니다 | 계약직<br>면접 후 결정 | 2026-11-21 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55366246) |
+| (주)시스템알앤디 | [2차전지, Display, 자동차, 자동화장비] 안전관리 채용 | 정규직<br>연봉 미기재 | 2026-11-21 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55366667) |
+| 칸토덴카화인프로덕츠한국(주) | 반도체용 특수가스 제조업 가스안전관리자 정규직 사원 모집 | 정규직<br>면접 후 결정 | 2026-11-21 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55365949) |
+| 지에스건설(주) | 지에스건설(주) 동작센트럴자이 안전시설원 채용합니다. | 계약직<br>월급 300만원 · 신입 초봉 3,929만원 (2025) | 2026-11-21 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55362698) |
+| 다온산업(주) | 다온산업(주) 본사 안전시설물 현장관리자 채용 공고 | 정규직<br>월급 300만원~450만원 | 2026-11-27 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55129291) |
+| (주)플라스틱과사람들 | 설비 안전 관리팀 신설, 안전, 소방, 환경 업무 전문가 모집 | 정규직<br>40000000원 이상 | 2026-11-27 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55181953) |
+| 미래환경보건연구소(주) | 작업환경측정 산업위생관리(산업)기사 경력무관 채용(정규직) | 정규직<br>면접 후 결정 | 2026-11-29 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55160040) |
+| (주)한국휴먼안전컨설팅 | 건설재해예방 기술지도요원 및 산업안전지도사 모집 | 정규직<br>면접 후 결정 | 2026-11-30 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55175445) |
+| 바이오코프 주식회사 | PSM(공정안전관리) 담당자 채용공고 | 계약직<br>27000000원 이상 | 2026-12-05 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55217351) |
+| 주식회사 무경 부산지점 | (주)무경 힐스테이트 물금 센트럴 현장 안전관리자 채용 | 계약직<br>연봉 4,200만원 | 2026-12-06 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55228093) |
+| 일동후디스(주) | 일동후디스 공무팀(보일러안전관리자) 인원 채용 | 정규직<br>면접 후 결정 | 2026-12-11 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55258583) |
+| (주)한국방폭인증센터 | [신입]폭발위험성 평가 및 방폭도면 작성 기술 컨설턴트 모집 | 정규직<br>면접 후 결정 | 2026-12-14 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55298389) |
+| 가람소방방재(주) | 소방시설 안전관리대행 월점검 인력 모집 | 정규직<br>2,940만원 이상 | 2026-12-15 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55309068) |
+| 지에스건설(주) | 지에스건설(주) 양산자이파크 팰리체 현장 안전시설 직영 채용 | 계약직<br>면접 후 결정 · 신입 초봉 3,929만원 (2025) | 2026-12-19 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55338000) |
+| 이도에코제주㈜ | [이도에코원] 안전관리 채용(신입) | 정규직<br>연봉 3,200만원 이상 | 2026-12-21 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50222919?Oem_Code=C1) |
+| (주)공감안전컨설팅 | 설계안전성검토 및 안전보건대장 작성 인재 모집 | 정규직<br>면접 후 결정 | 2026-12-21 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55362548) |
+| 한국수산자원공단 | 2026년 제1차 직원(일반정규직) 채용(건설안전(안전관리자)) | 정규직<br>면접 후 결정 · 신입 초봉 3,416만원 (2020) | 진행예정 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55327714) |
+| (주)무경 | (주)무경 울산 신복역 비스타메트로 현장 안전관리자 채용 | 계약직<br>연봉 4,200만원 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55227781) |
+| (주)성원기업사천공장 | (주)성원기업 사천공장 HSE팀(안전관리자) 모집 | 정규직<br>면접 후 결정 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55363187) |
+| (주)사람인에이치에스 | [경력별협의/커리어개발] 안전교육전문기관 전략기획팀 채용 | 계약직<br>면접 후 협의 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55263594) |
+| 국제커리어센터 | [디스커버믹스테크매뉴팩처링(주)] 안전,환경 부문 채용 | 정규직<br>연봉 3300만원 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55365619) |
+| 리뉴어스(주) | 리뉴어스(주) 양산바이오 초급기술자(안전) 정규직 채용 | 정규직<br>면접 후 결정 · 신입 초봉 3,350만원 (2022) | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55064671) |
+| 하나에프이씨(주) | [소방/방재] 소방시설점검 사원 모집 | 정규직<br>면접 후 결정 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54919588) |
+| (주) 안전을 지키는 사람들 | 6개월이상 경력자) 안전관리전문기관 산업안전기사, 산업안전산업기사 채용 - 건설업제외 | 계약직<br>32000000원 이상 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55215565) |
+| (주)한울구조안전진단 | 안전점검전문기관(토목분야) 신입 및 경력직 모집 | 정규직<br>면접 후 결정 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55366048) |
+| (주)티에스검사 | [검사팀] 정규직 안전검사원 채용 | 정규직<br>3,000~6,000만원 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55295143) |
+| 알엑스(주) | 원자로 계통 및 안전해석·인허가 엔지니어 신입 및 경력 채용 | 정규직<br>협의 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55339572) |
+| 콜마비앤에이치(주) | 콜마비앤에이치 환경안전 신입/경력 채용(음성) | 정규직<br>연봉 미기재 · 신입 초봉 3,988만원 (2025) | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55158732) |
+| 주식회사 세기중공업 | 직원모집(공장 안전,보건,품질 담당자) | 정규직<br>2500000원 이상 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54993737) |
+| 주식회사 제로나인솔루션 | 경기.안산시 반도체 사업장 안전담당자 모집 | 정규직<br>3600000원 이상 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55266794) |
+| 서해플랜트 | 안전 전문가를 찾습니다. 특정설비 안전 점검 및 검사 담당 | 정규직<br>35000000원 이상 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55336169) |
+| 이도에코원(주) | 평택-부여 고속도로 안전순찰원 모집 | 계약직<br>연봉 3,764만원 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55259571) |
+| 나라기업 주식회사 | [나라기업]위험물안전관리팀 직원 채용 | 정규직<br>30000000원 이상 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55291934) |
+| (주)나눔누리 | 파주)안전관리 및 보건관리 업무 직원모집 | 계약직<br>연봉 4,000만원 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55123492) |
+| （주）일성 | 여수공단 내 안전감시자 (안전관리자 보조 업무) 모집 | 정규직<br>33000000원 이상 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54981766) |
+| (주)후레씨네코리아 | 건축 안전관리자 채용: 안전하고 지속가능한 건설 환경 조성에 기여하세요 | 계약직<br>4000000원 이상 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55215415) |
+| (주)아신산업안전 | [안전시설물] 작업반장 모집(경기도 구리,시흥 현장 각 1명) | 정규직<br>면접 후 결정 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54895935) |
 
-## [정규직] 74건
+## [정규직] 88건
 
 | 구분 · 연봉 | 업체명 | 공고명 | 지원 자격 (학과·자격·영어·학력) | 우대 사항 | 접수기한 | 출처 |
 |---|---|---|---|---|---|---|
+| 신입·경력 · 일반 산업<br>회사 내규에 따름 | 🔴 **㈜제이솔루션** | 환경안전 담당자(정규직/삼성전자 화성 캠퍼스 또는 하이... | 🏠 **[복지: 자녀학자금·기숙사]** 학력: 고졸이상 | 기본우대 인근거주자, 운전가능자, 유관업무 경험자(인턴·알바), 문서작성 우수자, 장기근무 가능자 | 2026-10-26 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50210039?Oem_Code=C1) |
+| 경력무관 · 일반 산업<br>월급 300만원~320만원 | 🔴 **(주)예스디앤에스** | 삼성전자(평택) 협력사 - 안전관리 안전감시자 모집 | • 신입 / 경력 (연수 무관) • 고등학교졸업이상 📋 / 학력: 고졸↑ | • 보유역량: 해당직무 근무경험 🏠 | 2026-10-29 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55147314) |
+| 경력무관 · 일반 산업<br>면접 후 결정 | 🔴 **삼성다이나에이치백(주)** [대기업 계열] | 삼성다이나에이치백(주) 환경기술인 채용 공고 | **[산업안전기사·ISO 45001 명시]** 🏠 **[복지: 자녀학자금]** 자격: 대기환경기사, 수질환경기사 / 학력: 대졸↑ | 대기환경기사, 수질환경기사, 산업안전기사, 소방안전관리자 1급 · • 전공: 공학계열, 자연계열 • 보유역량: 해당직무 근무경험, 해당직무 인턴경력, 운전가능자 • 자격증: 대기환경기사, 수질환경기사, 산업안전기사 소방안전관리자 1급 또는 소방설비(산업)기사 우대 | 2026-11-30 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55268554) |
+| 경력무관 · 일반 산업<br>면접 후 결정 | 🔴 **(주)티오피코리아** | (주)삼성 화성 반도체 현장내 안전 담당자 모집 | 학력: 학력무관 | - | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55350560) |
 | 경력무관 · 일반 산업<br>9000만원 | 🔴 **(주)에스솔루션** | [삼성물산평택/상주근무] 건설장비 안전점검 검사원,팀장 채용 | 🏠 **[복지: 주택지원·기숙사]** 학력: 고졸↑ | >필수 자격증 < 승강기 기능사 및 국가기술자격법에 따른 기계,전기,전자,화공 등 산업안전 분야 기능사이상 • 사교성이 좋고 커뮤니케이션 능력이 뛰어나신분 • 문서작업 가능하신분 (한글,엑셀 기본적 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55143937) |
 | 신입 · 일반 산업<br>면접 후 결정 · 신입 초봉 4,465만원 (2022) | 🔴 **삼성물산 (주)** [대기업 계열] [대기업 신입 공채] [코스피] | 삼성물산 구미 데이터센터 신축공사 안전관리자 채용 | 🌐 [복지(인터넷 조사): 노조] • 경력 무관 • 고등학교졸업이상 • 건설현장 안전관리 수행 가능자 • 산업안전 관련 자격 보유자 • 안전보건 법규 이해 있는자 • 현장 점검 및 문서화 가능한 자 📋 | • 건축공사 현장 안전관리 경험자 • 대형 건설현장 안전관리 경험자 • 위험성평가 운영 경험 • 협력사 안전관리 경험자 • 안전보건 시스템 운영 경험자 🏠 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55219167) |
-| 신입·경력 · 일반 산업<br>회사 내규에 따름 | 🔵 **제일사료㈜** [대기업 계열] [대기업 신입 공채] | 2027년 신입/경력 공개채용 - 안전관리 | 학력: 대졸이상 | - | 2026-10-25 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50169958?Oem_Code=C1) |
-| 신입 · 일반 산업<br>면접 후 결정 · 신입 초봉 3,900만원 (2021) | 🔵 **부산도시가스** [대기업 계열] [대기업 신입 공채] | 2026년 하반기 부산도시가스 신입사원(G2) 모집 | • 학력 및 전공 무관 • 2027년 1월 입사 가능자 • 현장 점검 및 비상상황 대응 등 안전관리 직무의 필수 업무를 수행할 수 있는 자 ※ 본 직무는 산업안전보건법상 특수건강진단 대상업무로, 업 | - | 2026-10-26 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55286827) |
+| 신입·경력 · 일반 산업<br>회사 내규에 따름 | 🔵 **제일사료㈜** [대기업 계열] [대기업 신입 공채] | 2027년 신입/경력 공개채용 - 안전관리 | 학력: 대졸이상 | - | ⏰ **2026-10-25 (D-3)** | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50169958?Oem_Code=C1) |
+| 신입 · 일반 산업<br>면접 후 결정 · 신입 초봉 3,900만원 (2021) | 🔵 **(주)부산도시가스** [대기업 계열] [대기업 신입 공채] | 2026년 하반기 부산도시가스 신입사원(G2) 모집 | • 학력 및 전공 무관 • 2027년 1월 입사 가능자 • 현장 점검 및 비상상황 대응 등 안전관리 직무의 필수 업무를 수행할 수 있는 자 ※ 본 직무는 산업안전보건법상 특수건강진단 대상업무로, 업 | - | 2026-10-26 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55286827) |
 | 신입 · 일반 산업<br>회사 내규에 따름 · 신입 초봉 4,125만원 (2022) | 🔵 **코카콜라음료㈜** [대기업 계열] [외국계] [대기업 신입 공채] | 여주공장 안전관리자 신입 채용 | 학력: 대졸이상 | - | 2026-10-28 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50197023?Oem_Code=C1) |
+| 신입 · 일반 산업<br>회사 내규에 따름 · 신입 초봉 5,802만원 (2025) | 🔵 **에스케이실트론** [대기업 계열] [대기업 신입 공채] | SHE 안전 사무직 대졸신입 수시 채용 | 학력: 대졸이상 | - | 2026-11-08 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50215349?Oem_Code=C1) |
 | 신입 · 일반 산업<br>회사 내규에 따름 · 신입 초봉 3,475만원 (2025) | 🔵 **㈜디비하이텍** [대기업 계열] [대기업 신입 공채] [코스피] | [DB하이텍] 안전관리(방재) 신입 채용 (상우캠퍼스) | 학력: 초대졸이상 | - | 2026-11-08 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50192598?Oem_Code=C1) |
+| 신입 · 일반 산업<br>회사 내규에 따름 | 🔵 **에이치앤엘어드밴스드㈜** [대기업 계열] [대기업 신입 공채] | 2026년 하반기 경영관리직 신입 채용 - 안전·환경 | 학력: 대졸이상 | - | 2026-11-10 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50215602?Oem_Code=C1) |
 | 경력 · 일반 산업<br>회사 내규에 따름 · 신입 초봉 4,683만원 (2025) | 🔵 **금호석유화학㈜** [대기업 계열] [코스피] | 상시 인재등록 Pool(환경안전) | 학력: 대졸이상 | - | 채용 시 마감 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50078031) |
 | 신입 · 일반 산업<br>연봉 미기재 | 🔵 **SK그룹** [대기업 계열] [대기업 신입 공채] | SK Careers 안전·환경 직무 채용공고 (SK 관계사) | - | - | 확인 필요 | [직접 추가](https://www.skcareers.com/Recruit?role=306) |
-| 신입·경력 · 일반 산업<br>면접 후 결정 · 신입 초봉 4,445만원 (캐치) | 🌐 **엠이엠씨코리아(주)** [외국계] | [비상장/외국계법인] 산업안전&위험물 관리자 | **[산업안전기사 명시]** 🟣 **[외국어·영어 우대]** 🤖 **[AI 우대]** 🏠 **[복지: 자녀학자금·노조·주택지원]** 🌐 [복지(인터넷 조사): 기숙사] 학과: 소방/화학 / 자격: 산업안전기사, 위험물산업기사 / 영어: 토익 700점 / 학력: 대졸↑ | • 기타 안전/보건/소방/가스 관련 자격증 소지자 • PSM 사업장 경력/경험 • 영어활용 역량 (토익 700점 또는 회화 IM2 이상의 수준) • Data 기반 문제해결 및 AI 활용 역량 🏠 | ⏰ **2026-10-21 (오늘 마감)** | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55163336) |
-| 경력무관 · 일반 산업<br>면접 후 결정 · 신입 초봉 2,839만원 (2022) | 🌐 **이케아코리아(유)** [외국계] | [IKEA고양] Health & Wellbeing Specialist (안전관리자) 정규직 | 🌐 [복지(인터넷 조사): 노조] • Being passionate about people and having a strong belief in everyone is a talent • Passion for home furnishi / 학력: 학력무관 | - | 2026-10-25 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55341463) |
+| 경력무관 · 일반 산업<br>면접 후 결정 · 신입 초봉 2,839만원 (2022) | 🌐 **이케아코리아(유)** [외국계] | [IKEA고양] Health & Wellbeing Specialist (안전관리자) 정규직 | 🌐 [복지(인터넷 조사): 노조] • Being passionate about people and having a strong belief in everyone is a talent • Passion for home furnishi / 학력: 학력무관 | - | ⏰ **2026-10-25 (D-3)** | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55341463) |
+| 경력무관 · 일반 산업<br>면접 후 결정 | 🌐 **디스커버믹스테크매뉴팩처링(주)** [외국계] | [외국계 배터리 제조업체] 안전, 환경, 환경안전 부문 채용 | **[ISO 45001 명시]** 학력: 대졸 이상 | • 안전 - PSM, 유해화학물질 취급시설 안전관리 경험자 - 영어 사용 가능자 • 환경 - 제조업 환경관리 업무 1년 이상 경험자 - 영어 사용 가능자 • 환경안전 - PSM, 화학사고예방계획서 | 2026-11-15 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55306920) |
+| 신입 · 일반 산업<br>연봉 3,000~3,600만원 | 🌐 **아이언마운틴코리아(유)** [외국계] | 안전자산 서비스 신입 CS 담당자 모집 (재택·출근 혼합... | 학력: 학력무관 | - | 2026-11-20 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50210241?Oem_Code=C1) |
 | 경력 요건 확인 필요 · 일반 산업<br>연봉 미기재 | 🌐 **Applied Materials Korea** [외국계] | EHS Manager, Safety Engineer | - | - | 채용 시 마감 | [LinkedIn](https://www.linkedin.com/jobs/view/4460722818/) |
-| 신입·경력 · 일반 산업<br>면접 후 결정 | (주)유연에이치알 | EHS 담당자 | 학력: 4년제 학사 이상 📋 | - 대기업 본사와 사업장 경력 필수 🏠 | ⏰ **2026-10-22 (D-1)** | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55231997) |
-| 신입·경력 · 일반 산업<br>면접 후 결정 | (주)레몬 [코스닥] | (주)레몬 환경안전파트 안전분야 인재채용 | **[산업안전기사 명시]** 🏠 **[복지: 자녀학자금·기숙사]** 자격: 위험물산업기사, 산업안전기사 / 학력: 대졸↑ | • 전공: 산업공학 🏠 | ⏰ **2026-10-22 (D-1)** | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55104359) |
-| 신입 · 일반 산업<br>연봉 미기재 | 영남에너지서비스 | SK이노베이션 E&S 도시가스사 안전관리 신입사원(G2) — 영남에너지서비스(구미·포항) | 학력 및 전공 무관 2027년 1월 입사 가능자 현장 점검 및 비상상황 대응 등 안전관리 직무의 필수 업무를 수행할 수 있는 자 ※ 본 직무는 산업안전보건법상 특수건강진단 대상업무로, 업무 배치 전 | 가스∙산업안전∙전기∙토목 등 도시가스 관련 자격증 소지자및 실무 경험 보유자 배관 및 설비의 시공∙접합∙융착, 유지보수 등 현장 작업 관련 기술 또는 경험 보유자 이러한 여정으로 진행됩니다. | ⏰ **2026-10-22 (D-1)** | [직접 추가](https://www.skcareers.com/Recruit/Detail/R262199) |
-| 경력무관 · 일반 산업<br>연봉 미기재 | 엘비세미콘(주) [코스닥] | LB세미콘 구미 환경관리팀 안전관리자 모집 | **[산업안전기사·ISO 45001 명시]** 🏠 **[복지: 자녀학자금·기숙사]** 자격: 산업안전기사, 소방설비기사 / 학력: 4년제) 졸업 이상 ㆍ | 위험물산업기사 · ㆍ위험물산업기사 등 유관 자격증 보유자 ㆍ사업장(공장) 안전관리, 소방안전관리 경력자 | 2026-10-25 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55260779) |
+| 신입·경력 · 일반 산업<br>면접 후 결정 | (주)레몬 [코스닥] | (주)레몬 환경안전파트 안전분야 인재채용 | **[산업안전기사 명시]** 🏠 **[복지: 자녀학자금·기숙사]** 자격: 위험물산업기사, 산업안전기사 / 학력: 대졸↑ | • 전공: 산업공학 🏠 | ⏰ **2026-10-22 (오늘 마감)** | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55104359) |
+| 신입 · 일반 산업<br>연봉 미기재 | 영남에너지서비스 | SK이노베이션 E&S 도시가스사 안전관리 신입사원(G2) — 영남에너지서비스(구미·포항) | 학력 및 전공 무관 2027년 1월 입사 가능자 현장 점검 및 비상상황 대응 등 안전관리 직무의 필수 업무를 수행할 수 있는 자 ※ 본 직무는 산업안전보건법상 특수건강진단 대상업무로, 업무 배치 전 | 가스∙산업안전∙전기∙토목 등 도시가스 관련 자격증 소지자및 실무 경험 보유자 배관 및 설비의 시공∙접합∙융착, 유지보수 등 현장 작업 관련 기술 또는 경험 보유자 이러한 여정으로 진행됩니다. | ⏰ **2026-10-22 (오늘 마감)** | [직접 추가](https://www.skcareers.com/Recruit/Detail/R262199) |
+| 신입 · 일반 산업<br>연봉 미기재 | (주)한백 | [한백] 2026 신입 안전관리자 채용 | **[건설안전기사·산업안전기사 명시]** 🏠 **[복지: 주택지원]** 자격: 산업안전기사, 건설안전기사 / 학력: 학력무관 | - | ⏰ **2026-10-23 (D-1)** | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55297482) |
+| 경력무관 · 일반 산업<br>연봉 미기재 | 엘비세미콘(주) [코스닥] | LB세미콘 구미 환경관리팀 안전관리자 모집 | **[산업안전기사·ISO 45001 명시]** 🏠 **[복지: 자녀학자금·기숙사]** 자격: 산업안전기사, 소방설비기사 / 학력: 4년제) 졸업 이상 ㆍ | 위험물산업기사 · ㆍ위험물산업기사 등 유관 자격증 보유자 ㆍ사업장(공장) 안전관리, 소방안전관리 경력자 | ⏰ **2026-10-25 (D-3)** | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55260779) |
 | 신입 · 일반 산업<br>면접 후 결정 | 영남에너지서비스(주) | 2026년 하반기 영남에너지서비스(구미) 신입사원(G2) 모집 | • 학력 및 전공 무관 • 2027년 1월 입사 가능자 • 현장 점검 및 비상상황 대응 등 안전관리 직무의 필수 업무를 수행할 수 있는 자 - 본 직무는 산업안전보건법상 특수건강진단 대상업무로 업무 | - | 2026-10-26 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55286586) |
-| 신입 · 일반 산업<br>면접 후 결정 · 신입 초봉 4,100만원 (2022) | 충청에너지서비스(주) | 2026년 하반기 충청에너지서비스 신입사원 (G2) 모집 | • 학력 및 전공 무관 • 2027년 1월 입사 가능자 • 해외여행에 결격 사유가 없는자 • 현장 점검 및 비상상황 대응 등 안전관리 직무의 필수 업무를 수행할 수 있는 자 ※ 본 직무는 산업안전보 | - | 2026-10-26 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55286684) |
-| 신입 · 일반 산업<br>연봉 미기재 · 신입 초봉 3,600만원 (2015) | 코원에너지서비스 | [코원에너지서비스] 안전관리 직무 채용 | 학과: 기계공학, 전자공학과 / 영어: 토익 740, 오픽 | - | 2026-10-26 | [링커리어](https://linkareer.com/activity/357158) |
+| 신입 · 일반 산업<br>연봉 미기재 · 신입 초봉 3,600만원 (2015) | 코원에너지서비스 | [코원에너지서비스] 안전관리 직무 채용 | 학과: 기계공학, 전자공학과 / 영어: 토익, 오픽 | 싹다 원하네 ( 12 ) 03 23인데 하고싶은게 맨날 바뀌면 어떡해…. ( 6 ) 04 AI 나오고 나서 내 스스로의 실천력은 더 낮아지는듯 ( 5 ) 05 인턴 지원할 때 사진 첨부하는거 없는거 | 2026-10-26 | [링커리어](https://linkareer.com/activity/357158) |
 | 경력무관 · 일반 산업<br>면접 후 결정 | (주)에이프로세미콘 | [반도체전문기업]에이프로세미콘 시설안전팀 채용 | • 경력 무관 (신입 지원 가능) • 고등학교졸업이상 • 보유역량: 야간근무 가능자, 2교대근무 가능자, 3교대근무 가능자 • 자격증: 에너지관리기능사, 에너지관리산업기사, 에너지관리기사 📋 / 학력: 고졸↑ | 가스산업기사 · • 보유역량: 해당직무 근무경험 • 자격증: 가스산업기사, 위험물관리산업기사 🏠 | 2026-10-27 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54881528) |
-| 신입·경력 · 일반 산업<br>연봉 3,600만원 · 신입 초봉 4,600만원 (2021) | (주)에스원 [코스피] | 건설 안전시설물설치업 본사에서 사무직 및 현장관리 모집합니다 | 학력: 초대졸↑ | • 건설.건축 관련학과 졸업자 우대 • CAD 프로그램 가능자 우대 • 건축관련 자격증 소지 및 비계기능사 자격증 소지자 우대 🏠 | 2026-10-27 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55127470) |
+| 신입·경력 · 일반 산업<br>연봉 3,600만원 · 신입 초봉 4,600만원 (2021) | (주)에스원 [코스피] | 건설 안전시설물설치업 본사에서 사무직 및 현장관리 모집합니다 | • 신입 / 경력 1년 이상 • 대학졸업(2,3년)이상 • 운전가능자/ 차량소지자(필수) 📋 / 학력: 초대졸↑ | • 건설.건축 관련학과 졸업자 우대 • CAD 프로그램 가능자 우대 • 건축관련 자격증 소지 및 비계기능사 자격증 소지자 우대 🏠 | 2026-10-27 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55127470) |
 | 경력무관 · 일반 산업<br>면접 후 결정 | 청우방재 | [소방/방재] 소방점검 및 안전관리대행 신입 및 경력직 모집 | 자격: 소방설비기사, 소방산업기사 / 학력: 학력무관 | 소방설비기사 · • 자격증: 소방설비기사 🏠 | 2026-10-28 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55137834) |
-| 경력무관 · 일반 산업<br>250만원~300만원 | 대한예수교장로회드림교회 | 안전하고 쾌적한 환경을 위해 힘쓰는 건물 관리사를 채용합니다. | 학력: 학력무관 | • 유관 분야 실무 경험이 있는 분입니다 • 시설 관리 자격증 소지자를 우대합니다 • 안전 관련 교육 이수자를 선호합니다 • 종교단체 근무 경험이 있는 분입니다 • 지역사회 봉사 경험이 있는 분입니 | 2026-10-28 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54888880) |
 | 신입 · 일반 산업<br>회사 내규에 따름 | ㈜에스씨디(SCD) [코스닥] | 안전환경그룹 사원 모집 | 학력: 학력무관 | - | 2026-10-29 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50199506?Oem_Code=C1) |
 | 신입 · 일반 산업<br>회사 내규에 따름 · 신입 초봉 3,667만원 (2025) | TechWing [코스닥] | [테크윙] 아산 안전환경팀 신입 채용 | 🏠 **[복지: 자녀학자금·기숙사]** 학력: 대졸이상 | - | 2026-10-30 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50176110?Oem_Code=C1) |
 | 경력무관 · 일반 산업<br>약 3,690만원 이상 | (주)지에이에스티 | (주)지에이에스티 시설안전환경팀 정규직 채용 | 학력: 학력무관 | - | 2026-10-30 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54893577) |
 | 신입·경력 · 일반 산업<br>회사 내규에 따름 | ㈜유엔이 | 공간안전기술연구소 R&D 수행 및 지원 신입/경력 채용 | 🤖 **[AI 우대]** 학력: 대졸이상 | 기본우대 컴퓨터활용능력 우수자, 문서작성 우수자, 석사학위 수여자, AI 활용 업무경험 및 바이브코딩 우대전공 | 2026-10-31 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50188637?Oem_Code=C1) |
+| 신입 · 일반 산업<br>270만원 | (주)로지스원 | (주)로지스원 신입 현장 안전관리자 채용 공고 | **[건설안전기사·산업안전기사 명시]** 자격: 운전면허 / 학력: 학력무관 | 산업안전기사, 산업안전산업기사, 건설안전기사 · * 산업안전기사 / 산업안전산업기사 * 건설안전기사 * 안전관리 실무 경험자 * 물류·제조업 근무 경험자 🏠 | 2026-10-31 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55169920) |
 | 신입·경력 · 일반 산업<br>연봉 4,400만원 | (주)에이스침대중부공장 | (주)에이스침대 안전보건팀 직원 채용 | **[산업안전기사·ISO 45001 명시]** 🏠 **[복지: 자녀학자금·노조·기숙사]** 자격: 산업안전기사, 산업위생관리기사 / 학력: 대졸↑ | 보건관리자 · • 산업안전보건법상 안전관리자 선임 자격 보유자 • 제조업 300인 이상 사업장 안전관리자 또는 보건관리자 선임 경력 • 중대재해처벌법 대응 또는 안전보건관리체계 구축 경험 • ISO 45001 인 | 2026-10-31 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55241812) |
+| 경력무관 · 일반 산업<br>면접 후 결정 | 주식회사 중앙방재 | [정규직]소방시설 점검.공사.안전관리팀 채용(신입/경력) | 자격: 운전면허 / 학력: 초대졸↑ | • 전공: 공학계열 주 5일(월~금) 09:00~18:00 🎁 복지 및 혜택 • 연차, 반차, 여름휴가, 근로자의 날 휴무, 휴가비 지원, 명절선물, 공휴일 휴무 • 퇴직연금, 명절 상여금, 야근/ | 2026-10-31 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55309892) |
 | 경력무관 · 일반 산업<br>2500000원 이상 | 주식회사 한국산업안전컨설팅 | 안전관리전문기관 안전관리자 채용(업무수행 분야별) | **[산업안전기사·ISO 45001 명시]** 자격: 산업안전기사, 산업안전산업기사, 산업안전지도사, 운전면허 / 학력: 학력무관 | 에 따라 | 2026-10-31 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55194496) |
-| 경력무관 · 일반 산업<br>2,156,880원 | (주)리버텍 | 생산직 모집(안전하고 깔끔한 환경, 주간 근무, 야근/특근 없음) | 🏠 **[복지: 기숙사]** 요건 ㆍ학력 : 무관 ㆍ나이/성별 : 무관 제조 단순 생산직 1명 담당업무 ㆍ 주요업무 담당업무 ㆍ생산보조, 운반, 포장 등의 업무 ㆍ자사의 의료기기 제품을 생산하는 직무 (생산.조립.검사 등) ㆍ | 동종업계 또는 생산직 유경험자 ㆍ즐거운 마음으로 함께 일하실 분을 환영합니다. | 2026-10-31 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55205900) |
-| 경력무관 · 일반 산업<br>면접 후 결정 | 주식회사 중앙방재 | [정규직]소방시설 점검.공사.안전관리팀 채용(신입/경력) | 학력: 초대졸↑ | • 전공: 공학계열 주 5일(월~금) 09:00~18:00 🎁 복지 및 혜택 • 연차, 반차, 여름휴가, 근로자의 날 휴무, 휴가비 지원, 명절선물, 공휴일 휴무 • 퇴직연금, 명절 상여금, 야근/ | 2026-10-31 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55309892) |
-| 신입 · 일반 산업<br>270만원 | (주)로지스원 | (주)로지스원 신입 현장 안전관리자 채용 공고 | 학력: 학력무관 | * 산업안전기사 / 산업안전산업기사 * 건설안전기사 * 안전관리 실무 경험자 * 물류·제조업 근무 경험자 🏠 | 2026-10-31 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55169920) |
-| 신입 · 일반 산업<br>면접 후 결정 | (주)카펙발레오 | [카펙발레오] BSA 생산팀 사무직(정규직) 채용 | 🟣 **[외국어·영어 우대]** 🏠 **[복지: 자녀학자금]** 영어: 영어 회화 / 학력: 4년제) / 졸업 예정자 | • 영어 회화 우수자 • 기계/전기 관련 자격증 보유자 🏠 | 2026-11-01 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55337926) |
 | 신입 · 일반 산업<br>회사 내규에 따름 | 한국후지필름일렉트로닉머티리얼즈㈜ | 한국후지필름 각 부문 신입 및 경력 모집 (기술, EHS, 제... | 🟣 **[외국어·영어 우대]** 영어: 영어가능 / 학력: 학력무관 | 기본우대 영어가능자, 일본어가능자, 인근거주자, 관련 학과 전공자, 관련 자격증 보유자, 유관업무 경력자 외국어 [] 자격증 | 2026-11-05 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50132108?Oem_Code=C1) |
+| 경력무관 · 일반 산업<br>연봉 미기재 | (주)본텍코리아에이치큐 | (주)본텍코리아 화성공장 안전관리 및 현장관리 | 학력: 학력무관 | - | 2026-11-06 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55227466) |
+| 신입·경력 · 일반 산업<br>면접 후 결정 | (주)유연에이치알 | EHS 담당자 | 학력: 4년제 학사 이상 📋 | - 대기업 본사와 사업장 경력 필수 🏠 | 2026-11-07 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55231997) |
+| 경력무관 · 일반 산업<br>연봉 미기재 | (주)경원안전 | [건설/안전시설물] 안전시설물 설치 및 해체 현장반장(아산) | 학력: 학력무관 | - | 2026-11-07 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55238194) |
 | 경력무관 · 일반 산업<br>연봉 미기재 · 신입 초봉 3,350만원 (2022) | 리뉴어스(주) | 리뉴어스(주) hynix용인사업소 안전보건직 채용 | 🌐 [복지(인터넷 조사): 자녀학자금] - | - | 2026-11-07 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55234096) |
 | 경력무관 · 일반 산업<br>연봉 3,120만원 | 주식회사티제이솔루션 | 파주 LGD 현장 안전 담당자 정직원 채용 | 학력: 학력무관 | - | 2026-11-09 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54997962) |
 | 신입 · 일반 산업<br>회사 내규에 따름 · 신입 초봉 3,000만원 (2025) | ㈜컬리 | EHS 안전관리자 (김포) | 학력: 학력무관 | - | 2026-11-10 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/49977230) |
-| 신입·경력 · 일반 산업<br>연봉 4,000만원 이상 | 주식회사 맨투맨 | ㈜맨투맨 본사 기술인력 채용 (전기/기계/방재/산업안전) | 학력: 고졸이상 | 기본우대 문서작성 우수자, 관련 자격증 보유자, 유관업무 경력자 자격증 | 2026-11-11 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50148143?Oem_Code=C1) |
-| 경력무관 · 일반 산업<br>연봉 미기재 | (주)서전기전 [코스닥] | (주)서전기전 이천 본사 안전관리 부문 채용 | 학력: 고졸↑ | - | 2026-11-11 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55262477) |
+| 신입·경력 · 일반 산업<br>면접 후 결정 | 대한재해예방기술(주) | 산업안전관리자(신입,경력우대) | • 신입 / 경력 1년 이상 • 대학졸업(2,3년)이상 📋 / 학력: 초대졸↑ | • 성실하신 분 • 한글, 엑셀 등 컴퓨터 업무 능숙하신 분 🏠 | 2026-11-11 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55261275) |
 | 경력무관 · 일반 산업<br>월급 286만원 | 유양에스엔지(주) | 가스 안전관리 전문가 성장 희망자 / 신입 가능 / 자격 취득지원 | 학력: 학력무관 | <우대 자격증> 비파괴검사 자격증 관련 가스 자격증 산업안전 자격증 위험물 자격증 • 가스 안전점검 경험을 보유하신 분 • 조사·분석 업무에 익숙하신 분 • 관련 자격증을 보유하신 분 • 현장 이슈 | 2026-11-11 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55258578) |
-| 경력무관 · 일반 산업<br>면접 후 결정 | (주)세원시스템 | (신입/경력) 반도체 자동화 물류 안전관리자 모집 | 학력: 학력무관 | 안전관리자 ㆍSK하이닉스 및 삼성 반도체 현장 안전관리 ㆍ현장 안전점검 및 작업자 안전관리 ㆍ안전교육 및 TBM 실시 ㆍ안전 관련 서류 작성 및 관리 ㆍ고객사 안전 기준 준수 및 대응 ㆍ현장업무와 | 2026-11-12 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55271221) |
+| 경력무관 · 일반 산업<br>연봉 미기재 | (주)서전기전 [코스닥] | (주)서전기전 이천 본사 안전관리 부문 채용 | 학력: 고졸↑ | - | 2026-11-11 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55262477) |
 | 신입·경력 · 일반 산업<br>4,825만원 | 지에이이노더스(주) | 지에이이노더스(주) 현장 안전관리자 모집(신입/경력) | **[건설안전기사·산업안전기사 명시]** 🏠 **[복지: 자녀학자금·기숙사]** 자격: 건설안전기사, 산업안전기사 / 학력: 초대졸↑ | - | 2026-11-12 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55277475) |
 | 신입·경력 · 일반 산업<br>면접 후 결정 | (주)신호인더스트리 | 안전환경 담당자 모집 | **[산업안전기사 명시]** 자격: 산업안전기사 / 학력: 대졸↑ | • 운전가능자, 차량소지자, 지방근무 가능자 🏠 | 2026-11-12 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55271696) |
-| 경력무관 · 일반 산업<br>면접 후 결정 · 신입 초봉 4,328만원 (2022) | 서진산업(주) | SECO 서진산업 광주공장 제조팀(공정 관리-용접) | 🏠 **[복지: 자녀학자금]** • 경력 무관 (신입 지원 가능) • 대학교졸업(4년)이상 📋 / 학력: 대졸↑ | • 전공: 공학계열 • 보유역량: 인근거주자, 해당직무 근무경험 🏠 | 2026-11-12 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55268792) |
+| 경력무관 · 일반 산업<br>면접 후 결정 | 케이피엑스글로벌(주) | 환경안전팀 정규직 채용 | 자격: 위험물산업기사 / 학력: 대졸↑ | 산업안전, 공조냉동, 가스, 에너지관리 관련 자격 취득자 🏠 | 2026-11-12 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55277389) |
+| 경력무관 · 일반 산업<br>면접 후 결정 | (주)세원시스템 | (신입/경력) 반도체 자동화 물류 안전관리자 모집 | 학력: 학력무관 | 안전관리자 ㆍSK하이닉스 및 삼성 반도체 현장 안전관리 ㆍ현장 안전점검 및 작업자 안전관리 ㆍ안전교육 및 TBM 실시 ㆍ안전 관련 서류 작성 및 관리 ㆍ고객사 안전 기준 준수 및 대응 ㆍ현장업무와 | 2026-11-12 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55271221) |
 | 신입·경력 · 일반 산업<br>월급 252~252만원 | ㈜티앤에스자산관리 | 퍼시스 안성공장- 안전관리직 채용 | 학력: 학력무관 | 기본우대 군전역간부(장교·부사관) | 2026-11-13 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50169461?Oem_Code=C1) |
 | 신입 · 일반 산업<br>연봉 3,000~3,000만원 | 강북2 도시가스 고객센터 | 도시가스안전점검원 모집 | 학력: 학력무관 | - | 2026-11-13 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50167232?Oem_Code=C1) |
-| 경력무관 · 일반 산업<br>연봉 4,180만원 | 풍기산업(주) | 기아자동차 1차 협력사 안전관리자 신입, 경력직 모집 | 🏠 **[복지: 자녀학자금]** • 신입 / 경력 (연수 무관) • 대학졸업(2,3년)이상 📋 / 학력: 초대졸↑ | • 보유역량: 컴퓨터활용능력 우수, 인근거주자, 운전가능자, 차량소지자, 문서작성 우수자 🏠 | 2026-11-13 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55290741) |
+| 신입·경력 · 일반 산업<br>면접 후 결정 | (주)정우이엠씨 | 정우이엠씨 태양광사업부 안전관리자 추가 채용 공고 | 학력: 학력무관 | • 금속재료 제조현장 경험 있으신 분 • 태양광공사 현장 경험 있으신 분 • 안전관리 관련 자격 보유하신 분 • 위험성평가 운영 경험 있으신 분 • 안전보건 시스템 운영 경험 있으신 분 • 현장 개 | 2026-11-13 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55284843) |
 | 경력무관 · 일반 산업<br>면접 후 결정 | 서울검사(주) | [서울검사 창원사무소] 비파괴검사원 RI안전관리자 모집 | 학력: 학력무관 | - | 2026-11-13 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55027135) |
+| 경력무관 · 일반 산업<br>연봉 4,180만원 | 풍기산업(주) | 기아자동차 1차 협력사 안전관리자 신입, 경력직 모집 | 🏠 **[복지: 자녀학자금]** • 신입 / 경력 (연수 무관) • 대학졸업(2,3년)이상 📋 / 학력: 초대졸↑ | • 보유역량: 컴퓨터활용능력 우수, 인근거주자, 운전가능자, 차량소지자, 문서작성 우수자 🏠 | 2026-11-13 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55290741) |
 | 경력무관 · 일반 산업<br>연봉 4,900만원 | (주)일강 | 자동차부품 다이캐스팅제조업 안전환경파트 채용 | 🏠 **[복지: 자녀학자금·기숙사]** • 경력 무관 (신입 지원 가능) • 대학교졸업(4년)이상 🏠 / 학력: 대졸↑ | - | 2026-11-13 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55289034) |
 | 신입·경력 · 일반 산업<br>월급 270만원 | (주)동진안전 천안지점 | 건설안전표지판 제작 및 물품 출고관리 정규직 채용 - 경력&신입 | 학력: 학력무관 | - | 2026-11-13 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55022936) |
+| 경력무관 · 일반 산업<br>면접 후 결정 | (주)엘엠에이티 | (주)엘엠에이티 산업안전관리자 모집 | • 경력 무관 (신입 지원 가능) • 대학교졸업(4년)이상 🏠 / 학력: 대졸↑ | - | 2026-11-14 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55300621) |
 | 신입 · 일반 산업<br>회사 내규에 따름 | ㈜티케이씨 | 현장 안전관리자 모집 | 학력: 초대졸이상 | 기본우대 컴퓨터활용능력 우수자, CAD/CAM 프로그램 능숙자, 지방근무 가능자, 해외근무 가능자 | 2026-11-15 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50186378?Oem_Code=C1) |
 | 경력무관 · 일반 산업<br>면접 후 결정 | 포보코리아(주) | 스위스 Forbo그룹 포보코리아 · 생산기술팀 생산관리사무모집 | (1) 경력 무관 (신입 지원 가능) (2) 고등학교졸업이상 (3) 학력: 고등학교 졸업 이상 (4) 경력: 경력 무관 (신입 지원 가능 / 제조업 생산행정, SCM지원, EHS행정 경력 5년 이하 | (1) 제조업/가공업 현장 생산 행정, 자재 관리, 또는 안전(EHS) 행정 경험자 (2) 산업안전보건법 관련 기초 지식 보유자 (TBM, 위험성 평가, LOTO, MSDS, GHS 등) (3) 아 | 2026-11-15 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55306852) |
 | 신입·경력 · 일반 산업<br>연봉 미기재 | (주)레이크머티리얼즈 [코스닥] | [화학소재] 안전(PSM)/보건 관련 실무 담당자 채용 | **[산업안전기사 명시]** 🏠 **[복지: 자녀학자금·노조·주택지원·기숙사]** 학과: 화학공학과, 안전공학과 / 자격: 산업안전기사, 위험물산업기사 / 학력: 대졸 이상 | ㆍ부사관 및 장교 출신 ㆍ안전/보건 관련 업무 경험자 참고사항 ㆍ | 2026-11-15 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55310904) |
-| 경력무관 · 일반 산업<br>면접 후 결정 | 피알에스 | 경영지원관리 사무원 모집 - 무역/안전보건/해외출장지원 | 학력: 학력무관 | • 영어(일반)회화 가능자 • 🏠 | 2026-11-15 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55310327) |
 | 신입·경력 · 일반 산업<br>회사 내규에 따름 | (주)세이프티온솔루션 | 신입/경력 안전 컨설턴트 채용 | **[산업안전기사 명시]** 🤖 **[AI 우대]** 공통 ㆍ학사 이상 학위 소지자(졸업예정자는 입사일부터 정상 근무가 가능해야 합니다) ㆍ신입 지원 가능(경력·인턴 경험 유무 무관) ㆍ국내 출장 수행 가능(프로젝트에 따라 고객사 현장 방문이 있습니다 / 학력: 대졸↑ | 산업안전기사, 산업위생관리기사 · 공통 ㆍ관련 분야 석사 학위 소지자와 석사 졸업예정자 : 안전공학, 보건학, 산업·조직심리학, 산업공학, 통계학, 데이터사이언스 등 ㆍ관련 인턴, 연구 참여, 논문 작성, 학회 발표 경험 분야 1 | 2026-11-15 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55323266) |
-| 신입 · 일반 산업<br>면접 후 결정 | (주)엔트리연구원 | (주)엔트리연구원(문막 시험소) 안전 시험 엔지니어 | 학력: 초대졸↑ | • 전공: 전기/전자공학, 공학계열, 동종업계 근무 경력 • 보유역량: 문서작성 우수자 🏠 | 2026-11-17 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55064456) |
+| 경력무관 · 일반 산업<br>면접 후 결정 | 피알에스 | 경영지원관리 사무원 모집 - 무역/안전보건/해외출장지원 | 학력: 학력무관 | • 영어(일반)회화 가능자 • 🏠 | 2026-11-15 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55310327) |
+| 신입 · 일반 산업<br>면접 후 결정 | (주)엔트리연구원 | (주)엔트리연구원(문막 시험소) 안전 시험 엔지니어 | • 신입 • 대학졸업(2,3년)이상, 졸업 예정자 지원가능 • 인근거주자 📋 / 학력: 초대졸↑ | • 전공: 전기/전자공학, 공학계열, 동종업계 근무 경력 • 보유역량: 문서작성 우수자 🏠 | 2026-11-17 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55064456) |
 | 신입 · 일반 산업<br>연봉 3,740만원 | (주)아이씨알 | 기계 안전 EMC 시험 신입사원 채용 (근무지 : 서울) | 학과: 기계공학, 전기전자관련학 / 학력: 대졸↑ | • 전공: 공학계열 • 보유역량: 국가유공자, 보훈대상자, 해당직무 인턴경력, 해당직무 알바경험, 해당직무 근무경험 🏠 | 2026-11-18 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55326794) |
 | 경력무관 · 일반 산업<br>연봉 미기재 | 주식회사 알펜시아 | 알펜시아리조트 시설안전팀 시설관리(전기, 영선, 환경) 모집 | 🏠 **[복지: 노조·기숙사]** 학력: 학력무관 | - | 2026-11-19 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55345038) |
-| 경력무관 · 일반 산업<br>시급 10,320원 | (주)유한그린 | (주)유한그린 산업용 안전벨트[생산직(조립)] 정규직 모집 | 학력: 고졸↑ | - | 2026-11-19 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55339610) |
+| 신입 · 일반 산업<br>회사 내규에 따름 | ㈜한국안전환경연구원 | 작업환경측정(우수기관)-산업위생기사(신입) | 학력: 초대졸이상 | 기본우대 인근거주자, 관련 자격증 보유자, 장기근무 가능자 | 2026-11-20 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50215766?Oem_Code=C1) |
+| 신입·경력 · 일반 산업<br>연봉 3,000만원 이상 · 신입 초봉 3,300만원 (2022) | ㈜엔아이티 | (주)엔아이티 시설사업부 안전지원팀 | 학력: 고졸이상 | 기본우대 컴퓨터활용능력 우수자, 차량소지자 | 2026-11-20 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50211131?Oem_Code=C1) |
 | 경력무관 · 일반 산업<br>면접 후 결정 | 레인보우힐스Cc | DB그룹 골프장(레인보우힐스)안전관리자 채용 | 학력: 학력무관 | - | 2026-11-20 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55087696) |
+| 경력무관 · 일반 산업<br>면접 후 결정 | 동아스틸(주) | 생산팀 안전환경파트 신입·경력 직원 채용(세아제강 계열사) | **[산업안전기사 명시]** 자격: 산업안전기사, 산업안전산업기사 / 학력: 초대졸↑ | • 전공: 산업안전, 공학계열 • 안전보건·환경 등 직무 관련자격증 보유 시 우대 • 보유역량: 인근거주자, 운전가능자, 차량소지자, 해당직무 근무경험, 문서작성 우수자 🏠 | 2026-11-20 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55349558) |
+| 경력무관 · 일반 산업<br>면접 후 결정 | 이피에스코리아(주) | 환경안전팀 정규직 채용 | 🏠 **[복지: 자녀학자금]** 학력: 학력무관 | • 제조업 근무 경험자 • 인근 거주자 • 업무 관련 자격증 보유자 🏠 | 2026-11-20 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55355357) |
 | 신입·경력 · 일반 산업<br>협의 | (주)부경방재 | 소방점검,안전관리 신입 / 경력 모집합니다 | 자격: 소방설비기사, 소방설비산업기사 / 학력: 초대졸↑ | • 전공: 전기/전자공학, 건축/토목/조경/도시공학, 에너지/원자력공학 🏠 | 2026-11-21 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55099187) |
 | 신입 · 일반 산업<br>면접 후 결정 | ㈜정현프랜트 | (주) 정현프랜트 안전관리자 신입 채용 공고 | 🏠 **[복지: 기숙사]** 자격: 운전면허 / 학력: 학력무관 | • 보유역량: 인근거주자, 운전가능자, 해당직무 근무경험, 문서작성 우수자 • 자격증: 3톤미만지게차 🏠 | 2026-11-27 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55124567) |
+| 경력무관 · 일반 산업<br>면접 후 결정 | (주)세이프엔 | [안전의기준 세이프엔] 함께 일 할 뛰어난 인재를 모집합니다. | 학력: 학력무관 | 교육기관 또는 고객 응대(CS) 업무 경험자 안전보건 분야에 관심 있는 분 안전보건분야 자격증 소지자 🏠 | 2026-11-28 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55144480) |
 | 신입·경력 · 일반 산업<br>3,400만원 | (주)지와이일렉트릭 | (주)지와이일렉트릭 2026년 안전환경 (신입/경력) 채용 | **[ISO 45001 명시]** • 신입 / 경력 1년 이상 (주임 이상) • 대학졸업(2,3년)이상 • 안전 관련 자격증 보유자 • 안전보건 업무 수행이 가능한 자 📋 / 학력: 초대졸↑ | • ISO 인증(14001, 450001) 운영 경험자 • 제조업 안전,보건,환경,소방 실무 경험자 • 보건,환경,위험물,소방 관련 자격 보유자 🏠 | 2026-11-30 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55253334) |
+| 신입 · 일반 산업<br>면접 후 결정 | 남영물류산업(주) | 현장 안전 관리자 모집 | **[건설안전기사·산업안전기사 명시]** 자격: 운전면허, 건설안전기사, 산업안전기사 / 학력: 학력무관 | • 보유역량: 문서작성 우수자, 엑셀 고급능력자, PPT능력 우수자, 직접입력 🏠 | 2026-12-12 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55269450) |
 | 신입·경력 · 일반 산업<br>연봉 미기재 | (주)한서켐 | (주)한서켐 환경안전팀 신입/경력 사원 모집 | 🏠 **[복지: 자녀학자금·기숙사]** 학과: 안전/화학 / 학력: 대졸↑ | 환경안전팀 · 학사 졸업 이상 · 신입 또는 경력 (경력 2년 이상) · 산업안전보건법 및 중대재해처벌법 이행 · 공정안전관리 및 위험성평가 · 사업장 안전점검 · 생산설비 및 유틸리티 점검 · 안 | 2026-12-13 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55311540) |
 | 경력무관 · 일반 산업<br>면접 후 결정 | 웨이브로드(주) | 안전환경 시설관리 인원 채용 | • 경력 무관 (신입 지원 가능) • 고등학교졸업이상 (해당직무 근무 경험) 전기, 냉동 등 관련 기능사 자격증 이상 / 학력: 고졸↑ | -제조업 공무 및 시설관리 업무 경험 -전기, 냉동 등 관련 기능사 자격증 이상 우대 • 안전환경팀 부서 소속으로 함께할 예정이에요. 📋 자격요건 • 경력 무관 (신입 지원 가능) • 고등학교졸업이 | 2026-12-13 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55286989) |
 | 신입 · 일반 산업<br>회사 내규에 따름 · 신입 초봉 3,066만원 (2019) | ㈜경복궁면세점 | [경복궁면세점] 안전관리자 채용 | 학력: 학력무관 | 기본우대 컴퓨터활용능력 우수자, 차량소지자, 프리젠테이션 능력우수자, 엑셀 고급능력 보유자, 문서작성 우수자, 즉시출근 가능자, 장기근무 가능자 | 2026-12-15 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50180646?Oem_Code=C1) |
-| 경력무관 · 일반 산업<br>면접 후 결정 | (주)전천후 | (주)전천후 건설 안전시설물 업체 본사 근무 신입, 경력 채용 | 학력: 고졸↑ | • 건설 관련 학과 졸업자 • CAD 작업 가능자 • 건설관련 자격증 소지자 (비계, 도장, 방수 등...) • 건설업 사무 보조 경험 있으신 분 • 견적·발주 업무 이해 있으신 분 • ERP 또는 | 2026-12-15 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55310711) |
 | 신입·경력 · 일반 산업<br>회사 내규에 따름 | ㈜소노인터내셔널 단양지점 | [소노벨 단양] 서비스부문 인재채용(홀지원/단체진행, 수... | 🏠 **[복지: 자녀학자금·기숙사]** 학력: 학력무관 | 기본우대 국가유공자, 인근거주자, 유관업무 경험자(인턴·알바), 보훈대상자, 유관업무 경력자, 기숙사 생활가능자 | 2026-12-18 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50194415?Oem_Code=C1) |
 | 경력무관 · 일반 산업<br>면접 후 결정 | 코웨이엔텍(주) | [코웨이엔텍] 안전관리자 | 학력: 대졸 이상 | • 산업위생 / 위험물 산업기사 이상 자격증 보유 • 중대재해처벌법 관련 업무 경험 • MS Office 활용 우수자 🏠 | 2026-12-18 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55328816) |
+| 경력무관 · 일반 산업<br>330만원 | 아주정공(주) | 아주정공(주) 관리자 및 안전관리자채용 | 학력: 학력무관 | • 건설 현장 경험 보유자 우대해요 • 안전관리 자격증 소지자 환영해요 • 유관 분야 실무 경험자 우대해요 • 현장 관리 경험 있는 분 선호해요 🏠 | 2026-12-18 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55322567) |
+| 신입·경력 · 일반 산업<br>면접 후 결정 | (주)우진고분자 | (주)우진고분자 군산공장 환경안전 관리자 모집 | **[산업안전기사 명시]** • 신입 / 경력 1년 이상 • 대학졸업(2,3년)이상 📋 / 학력: 초대졸↑ | 산업안전기사 · • 전공: 생명/환경공학 • 보유역량: 인근거주자, 해당직무 근무경험 • 자격증: 대기산업기사,산업안전기사 우대 🏠 | 2026-12-20 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55357333) |
 | 신입·경력 · 일반 산업<br>연봉 2,800~3,000만원 | ㈜우리넥스코 | 건축안전자재 온라인 마케팅 및 디자인 담당자 채용 | 학력: 고졸이상 | - | 채용 시 마감 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50193059?Oem_Code=C1) |
-| 신입·경력 · 일반 산업<br>회사 내규에 따름 · 신입 초봉 5,500만원 (2017) | 코비코 | 환경안전실 상시채용 (인재 Pool 등록) | 학력: 대졸이상 | - | 채용 시 마감 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50150683?Oem_Code=C1) |
-| 경력무관 · 일반 산업<br>면접 후 결정 | 일진제강(주) | 일진제강(주) 임실사업장 안전환경팀 현장직 채용 | **[산업안전기사 명시]** 🏠 **[복지: 자녀학자금·노조]** • 경력 무관 (신입 지원 가능) • 고등학교졸업이상 • 자격증: 지게차운전기능사 📋 / 학력: 고졸↑ | 산업안전산업기사 · • 보유역량: 인근거주자, 해당직무 근무경험 • 자격증: 산업안전산업기사, 용접기능사 🏠 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54831293) |
-| 경력무관 · 일반 산업<br>면접 후 결정 · 신입 초봉 4,300만원 (2019) | (주)넥스트워터 | (주)넥스트워터 포천사업소 기계/전기/환경/안전 직원 채용 | 🏠 **[복지: 자녀학자금·기숙사]** • 경력 무관 (신입 지원 가능) • 고등학교졸업이상, 졸업 예정자 지원가능 📋 / 학력: 고졸↑ | • 관력학과 • 관련자격증 🏠 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54960798) |
-| 경력무관 · 일반 산업<br>연봉 미기재 | 일점영안과의원 | [일점영안과]안전하고 체계적인 수술 환경을 함께할 수술팀 모집 | 학력: 학력무관 | - | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55319366) |
+| 신입·경력 · 일반 산업<br>연봉 미기재 | (주)청풍소방안전 | 소방시설 안전관리 대행 및 점검 담당자 모집합니다. | 요건 ㆍ학력 : 무관 소방시설 안전관리 및 점검 담당자 모십니다. 소방관리부 1명 담당업무 ㆍ 지원자격 ㆍ경력 : 신입/경력 1년 ~ 3년 (사원, 주임급) ㆍ기타 필수 사항 - 소방기술인정자격수첩 | ㆍ전기/전자공학, 공학계열 ㆍ인근거주자 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55353142) |
+| 경력무관 · 일반 산업<br>연봉 3,500만원 | 디에스코리아충주(주) | 디에스코리아충주(주) 생산 안전관리자 채용 공고 | **[산업안전기사 명시]** 자격: 산업안전기사 / 학력: 학력무관 | • 안전교육 자료 제작 가능하신 분 🏠 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55339791) |
 | 신입·경력 · 일반 산업<br>연봉 미기재 | (주)지구 | 대형건설 협력사 신입채용 [안전시설물/사무직·현장직/정규직] | 학력: 초대졸↑ | - | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54975107) |
+| 경력무관 · 일반 산업<br>면접 후 결정 · 신입 초봉 4,300만원 (2019) | (주)넥스트워터 | (주)넥스트워터 포천사업소 기계/전기/환경/안전 직원 채용 | 🏠 **[복지: 자녀학자금·기숙사]** • 경력 무관 (신입 지원 가능) • 고등학교졸업이상, 졸업 예정자 지원가능 📋 / 학력: 고졸↑ | • 관력학과 • 관련자격증 🏠 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54960798) |
+| 경력무관 · 일반 산업<br>면접 후 결정 | 에이치엘비에너지(주) | HLB에너지 주식회사 안전외주팀 공무직 구인 | 학력: 학력무관 | ) 근거리 거주자, 자차 출퇴근 가능자 📋 자격요건 • 경력 무관 (신입 지원 가능) • 학력무관 🏠 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55149922) |
 
-## [계약직] 72건
+## [계약직] 67건
 
 | 구분 · 연봉 | 업체명 | 공고명 | 지원 자격 (학과·자격·영어·학력) | 우대 사항 | 접수기한 | 출처 |
 |---|---|---|---|---|---|---|
-| 경력무관 · 일반 산업<br>면접 후 결정 | 🔴 **(주)지앤아이** | 이천 하이닉스 안전감독자(작업지휘자) 채용 합니다. | 학력: 학력무관 | • 해당 직무 경험 • 하이닉스 작업지휘자 인증 교육 수료자 • 출퇴근 가능한 인근 거주자 • 오래 함께 일할 수 있는 분 🏠 | ⏰ **2026-10-21 (오늘 마감)** | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55087468) |
 | 신입 · 일반 산업<br>면접 후 결정 · 신입 초봉 4,465만원 (2022) | 🔴 **삼성물산 (주)** [대기업 계열] [대기업 신입 공채] [코스피] | 삼성물산 아산현장 계약직 모집(안전관리자) | 🌐 [복지(인터넷 조사): 노조] • 경력 3년 이상 ~ 13년 이하 • 대학졸업(2,3년)이상 • 건설안전,산업안전 산업기사 이상 보유자 📋 | • 대형 건설사 근무 경험 우대. • 건설현장 신축현장 유 경험자. • 하이테크현장 유 경험자. • 천안, 아산 지역 거주자 우대. 🏠 | 2026-10-30 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55227096) |
-| 경력무관 · 일반 산업<br>면접 후 결정 | 🔴 **(주)지앤아이** | 평택 삼성전자 안전감시자 채용 합니다. | 학력: 학력무관 | • 해당 직무 경험 • 삼성전자 안전담당자자 인증 교육 수료자 • 출퇴근 가능한 인근 거주자 • 오래 함께 일할 수 있는 분 🏠 | 2026-10-31 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55173665) |
-| 경력무관 · 일반 산업<br>240만원 | 🔴 **삼성교통(주)** [대기업 계열] | 진주 시내버스 삼성교통(주) 사고안전 담당자 모집 | 🏠 **[복지: 자녀학자금]** • 주말 및 공휴일 / 학력: 학력무관 | 운전면허 · • 컴퓨터활용능력 우수, 문서작성 우수 • 1종대형운전면허 🏠 | 2026-11-08 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55341083) |
-| 신입·경력 · 일반 산업<br>회사 내규에 따름 · 신입 초봉 3,300만원 (2026, 잡코리아) | 🔴 **㈜에스엠세이프** | 삼성반도체(화성) 안전담당 모집(신입가능) | 🟣 **[외국어·영어 우대]** 영어: 영어가능 / 학력: 고졸이상 | 기본우대 영어가능자, 일본어가능자, 반도체 생산현장 유경험자, 안전관리 경력자, 근면성실하신 분 외국어 [ ] [ ] [ ] | 2026-11-11 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50147252?Oem_Code=C1) |
-| 경력무관 · 건설<br>일급 150,000원 · 신입 초봉 4,726만원 (2025) | 🔴 **현대건설(주)** [대기업 계열] [코스피] (시평 2위) | [현대건설(주)] 안산 성곡동 데이터센터 현장 안전통제원 채용 | 🌐 [복지(인터넷 조사): 자녀학자금·기숙사·노조] 학력: 학력무관 | • 보유역량: 인근거주자, 해당직무 근무경험 🏠 | 2026-11-11 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55255205) |
+| 경력무관 · 건설<br>일급 150,000원 · 신입 초봉 4,726만원 (2025) | 🔴 **현대건설(주)** [대기업 계열] [코스피] (시평 2위) | [현대건설(주)] 안산 성곡동 데이터센터 현장 안전통제원 채용 | 🌐 [복지(인터넷 조사): 자녀학자금·기숙사·노조] • 경력 / 학력: 학력무관 | • 보유역량: 인근거주자, 해당직무 근무경험 🏠 | 2026-11-11 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55255205) |
 | 경력무관 · 건설<br>면접 후 결정 · 신입 초봉 3,515만원 (2025) | 🔴 **(주)포스코이앤씨** [대기업 계열] (시평 8위) | (주)포스코이앤씨 고양 데이터센터 안전관리자(PJT계약직) 채용 | • 경력 무관 (신입 지원 가능) • 건설현장 안전관리 직무 관심 있으신 분 • 안전보건 관련 법규 학습 의지 있으신 분 • 대학졸업(2,3년)이상, 졸업 예정자 지원 가능 • 산업안전/건설안전 산 / 학력: 학력무관 | - | 2026-11-13 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55289020) |
 | 경력무관 · 일반 산업<br>시급 15,000원 | 🔴 **(주)티에스에스피** | (주)티에스에스피에서 삼성전자/SK하이닉스 안전담당자 모집합니다 | 학력: 학력무관 | • 반도체 사업장 안전관리 경험이 있으신 분 • 산업안전 관련 자격을 보유하신 분 • 위험성평가 수행 경험이 있으신 분 • 협력사 안전관리 경험이 있으신 분 • 안전교육 자료 제작이 가능하신 분 🏠 | 2026-11-20 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55084668) |
-| 신입·경력 · 일반 산업<br>회사 내규에 따름 | 🔴 **㈜트로이스세이프티** | 삼성전자 기흥/화성 반도체 현장 장비 협력사 안전담당자... | 학력: 학력무관 | 기본우대 인근거주자, 야간근무 가능자, 유관업무 경력자, 자차소지자 | 채용 시 마감 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50123712?Oem_Code=C1) |
 | 경력무관 · 일반 산업<br>면접 후 결정 · 신입 초봉 4,465만원 (2022) | 🔴 **삼성물산 (주)** [대기업 계열] [코스피] | [삼성물산] 하이테크 현장 안전관리자 채용의건 | **[건설안전기사 명시]** 🌐 [복지(인터넷 조사): 노조] 학과: 안전관련학과 / 자격: 건설안전기사 / 학력: 학력무관 | • 관련 자격증 소지자 • 관련 직무 3년이상 • 하이테크현장 유경험자 🏠 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55161218) |
 | 경력무관 · 일반 산업<br>면접 후 결정 · 신입 초봉 4,465만원 (2022) | 🔴 **삼성물산 (주)** [대기업 계열] [코스피] | [삼성물산] 하이테크 해외현장(베트남,중국, 미국등) 채용의건 | **[건설안전기사 명시]** 🟣 **[외국어·영어 우대]** 🌐 [복지(인터넷 조사): 노조] 자격: 건설안전기사 / 영어: 영어가능 / 학력: 학력무관 | • 관련 자격증 소지자 • 하이테크현장 유경험자 • 어학 가능자 우대 🏠 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54908328) |
 | 경력무관 · 일반 산업<br>월급 350만원 | 🔴 **(주)방주산업** | 삼성반도체 직발(평택고덕,용인기흥,아산탕정)안전담당자 모집 | 학력: 학력무관 | • 삼성전자현장 근무경력자 우대 • 초보나 무관도 상관없습니다. 🏠 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55076851) |
-| 경력무관 · 일반 산업<br>36000000원 이상 | 🔴 **주식회사 페가수스** | 하이테크(하이닉스) BP사 환경안전팀 안전관리 업무보조 및 현장안전팀 채용 | 학력: 학력무관 | 지원자격: 학력·성별 무관 우대사항: 1) 반도체 팹(FAB), 플랜트, 일반 건설공사 안전관리 유경험자 2) 관련 법정 자격증 소지자 우대 (산업안전기사, 산업안전산업기사, 건설안전기사 등) 3) | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55118116) |
+| 경력무관 · 일반 산업<br>36000000원 이상 | 🔴 **주식회사 페가수스** | 하이테크(하이닉스) BP사 환경안전팀 안전관리 업무보조 및 현장안전팀 채용 | **[건설안전기사·산업안전기사 명시]** 및 우대사항 지원자격: 학력·성별 무관 | 산업안전기사, 산업안전산업기사, 건설안전기사 · 지원자격: 학력·성별 무관 우대사항: 1) 반도체 팹(FAB), 플랜트, 일반 건설공사 안전관리 유경험자 2) 관련 법정 자격증 소지자 우대 (산업안전기사, 산업안전산업기사, 건설안전기사 등) 3) | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55118116) |
 | 경력 요건 확인 필요 · 일반 산업<br>연봉 미기재 | 🔴 **Digital Edge DC** [외국계] | 안전관리자 | - | - | 채용 시 마감 | [LinkedIn](https://www.linkedin.com/jobs/view/4467167374/) |
+| 경력무관 · 건설<br>면접 후 결정 · 신입 초봉 4,726만원 (2025) | 🔵 **현대건설(주)** [대기업 계열] [코스피] (시평 2위) | [현대건설/송파구] 잠실주경기장 현장, 보건보조원 채용 | 🌐 [복지(인터넷 조사): 자녀학자금·기숙사·노조] 학력: 학력무관 | - | ⏰ **2026-10-22 (오늘 마감)** | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55097993) |
 | 신입 · 일반 산업<br>회사 내규에 따름 | 🔵 **두산퓨얼셀** [대기업 계열] [대기업 신입 공채] [코스피] | 기술 계약직 채용-안전/환경(군산) | 학력: 고졸이상 | - | 2026-10-26 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50202684?Oem_Code=C1) |
-| 경력무관 · 일반 산업<br>면접 후 결정 | 🔵 **(주)한솔이피씨** [대기업 계열] | 플랜트 건설현장 전기공사 안전관리자 모집 | 🏠 **[복지: 기숙사]** 학력: 학력무관 | • 건설 또는 플랜트 현장 안전관리 경험자 LNG시설·전기방식공사·전기공사 현장 경험자 위험성평가, 안전교육 및 원청 안전점검 대응 경험자 한글·엑셀 등 문서작성과 컴퓨터 활용이 원활한 분 운전 가 | 2026-11-13 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55276487) |
+| 신입 · 일반 산업<br>회사 내규에 따름 | 🔵 **에이치앤엘어드밴스드㈜** [대기업 계열] [대기업 신입 공채] | 2026년 하반기 전문직 신입 채용(서산시 지역인재전형) -... ⚠️ **[직무 확인 필요]** 안전 키워드에 걸렸지만 직무 확인 필요 | 학력: 고졸이상 | - | 2026-11-01 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50216085?Oem_Code=C1) |
+| 신입 · 일반 산업<br>회사 내규에 따름 | 🔵 **에이치앤엘어드밴스드㈜** [대기업 계열] [대기업 신입 공채] | 2026년 하반기 전문직 신입 채용(일반 전형) - 환경·안전 | 학력: 고졸이상 | - | 2026-11-01 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50215932?Oem_Code=C1) |
+| 신입·경력 · 일반 산업<br>회사 내규에 따름 · 신입 초봉 5,600만원 (2025) | 🔵 **현대엘리베이터** [대기업 계열] [코스피] | 승강기안전관리자 계약직 채용 | 🌐 [복지(인터넷 조사): 자녀학자금·기숙사·주택지원·노조] 학력: 고졸이상 | - | 2026-11-08 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50210879?Oem_Code=C1) |
+| 경력무관 · 일반 산업<br>면접 후 결정 | 🔵 **(주)한솔이피씨** [대기업 계열] | 플랜트 건설현장 전기공사 안전관리자 채용 | **[건설안전기사·산업안전기사 명시]** 🏠 **[복지: 기숙사]** 자격: 산업안전기사, 산업안전산업기사, 건설안전기사, 건설안전산업기사 / 학력: 학력무관 | • 건설 또는 플랜트 현장 안전관리 경험자 LNG시설·전기공사·계장공사 현장 경험자 위험성평가, 안전교육 및 원청 안전점검 대응 경험자 한글·엑셀 등 문서작성과 컴퓨터 활용이 원활한 분 운전 가능자 | 2026-11-12 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55276784) |
 | 경력무관 · 일반 산업<br>면접 후 결정 · 신입 초봉 4,750만원 (2025) | 🔵 **(주)한화** [대기업 계열] [코스피] | (주)한화 - 안전관리자 모집 | • 경력 무관 (신입 지원 가능) • 대학졸업(2,3년)이상 • 건설 분야 경력 보유자 / 학력: 초대졸↑ | • 안전관리자 자격증 보유자 우대 • 건설현장 경험자 우대 🏠 | 2026-11-15 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55306518) |
 | 신입·경력 · 건설<br>면접 후 결정 · 신입 초봉 3,515만원 (2025) | 🔵 **(주)포스코이앤씨** [대기업 계열] (시평 8위) | 포스코이앤씨 3,4소결광 야드 밀폐화 PJT 안전관리자 채용 | **[건설안전기사·산업안전기사 명시]** 자격: 건설안전기사, 건설안전산업기사 / 학력: 초대졸↑ | 산업안전기사 · • 자격증: 산업안전기사 🏠 | 2026-11-15 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55307893) |
 | 경력무관 · 건설<br>일급 130,000원 · 신입 초봉 4,726만원 (2025) | 🔵 **현대건설(주)** [대기업 계열] [코스피] (시평 2위) | 안전보건보조원 채용 공고(시티오씨엘 6단지현장) | 🌐 [복지(인터넷 조사): 자녀학자금·기숙사·노조] 학력: 학력무관 | • 자차 보유 및 인근 거주자 • 안전·보건 관련 학과 이수자 • MS Office(엑셀, 한글, PPT) 활용 가능자 🏠 | 2026-11-15 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55313465) |
 | 경력무관 · 건설<br>면접 후 결정 · 신입 초봉 3,515만원 (2025) | 🔵 **(주)포스코이앤씨** [대기업 계열] (시평 8위) | [안전] 포스코이앤씨 후판 대단중 프로젝트 인력 채용 | **[건설안전기사·산업안전기사 명시]** 학력: 학력무관 | 산업안전기사, 건설안전기사 · • 안전관련(산업안전기사, 건설안전기사 등) 자격증 보유 • 포항/광양제철소 내 시공 경력 • 건설현장 안전관리 업무 경력 🏠 | 2026-11-23 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55269610) |
+| 신입·경력 · 건설<br>면접 후 결정 · 신입 초봉 3,515만원 (2025) | 🔵 **(주)포스코이앤씨** [대기업 계열] (시평 8위) | 포스코이앤씨 상봉터미널 주상복합 현장 안전관리자, 자재관리자 | **[건설안전기사·산업안전기사 명시]** 자격: 건설안전산업기사, 산업안전산업기사 / 학력: 초대졸↑ | - | 2026-12-20 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55352324) |
 | 확인 필요 · 일반 산업<br>회사 내규에 따름 · 신입 초봉 4,500만원 (2025) | 🔵 **현대로템** [대기업 계열] [코스피] | 안전관리자 상시인재 Pool | 🌐 [복지(인터넷 조사): 자녀학자금·기숙사·노조] 경력 신입·경력 | - | 채용 시 마감 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50077074?Oem_Code=C1) |
 | 신입 · 일반 산업<br>회사 내규에 따름 · 신입 초봉 4,300만원 (2022) | 🔵 **케이티서비스남부** [대기업 계열] [대기업 신입 공채] | '26년 신입/경력사원 상시 채용 장애인/보훈 전형-강원권... ⚠️ **[직무 확인 필요]** 안전 키워드에 걸렸지만 직무 확인 필요 | 경력 신입·경력 | - | 채용 시 마감 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50169173?Oem_Code=C1) |
 | 경력무관 · 일반 산업<br>연봉 미기재 | 🌐 **볼보그룹코리아(주)** [외국계] | 안전보건관리자 채용 (계약직) | **[산업안전기사 명시]** 🏠 **[복지: 노조]** , 우대사항 1. 소방안전관리 엔지니어 주요 목적 • 창원공장의 소방안전관리 업무를 수행하여 화재를 예방하고 안전한 작업환경을 유지 • 소방관계법령 및 회사 기준에 따라 소방시설과 비상대응 체계 운 / 학력: 고졸↑ | 1. 소방안전관리 엔지니어 주요 목적 • 창원공장의 소방안전관리 업무를 수행하여 화재를 예방하고 안전한 작업환경을 유지 • 소방관계법령 및 회사 기준에 따라 소방시설과 비상대응 체계 운영 • 공사업 | 2026-10-28 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55286743) |
-| 경력무관 · 일반 산업<br>협의 | 🌐 **퍼솔코리아(유)** [외국계] | [평택/글로벌반도체사] 안전교육 운영지원 및 사무직 (신입가능) | 학력: 초대졸↑ | ] - 문서 작성 및 사무 업무 수행 가능자 - 원활한 커뮤니케이션 및 일정 관리 역량 보유자 - 전산 관련 자격증 보유자 - 안전교육 운영 및 예산관리 관련 업무 경험자 🏠 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55339380) |
 | 신입 · 일반 산업<br>면접 후 협의 · 신입 초봉 3,840만원 (2022) | 🌐 **프라다코리아** [외국계] | [PRADA Korea] Safety Officer 안전관리자 (Contract) | 자격: 산업안전지도사, 산업안전산업기사 | - | 채용 시 마감 | [피플앤잡](https://www.peoplenjob.com/jobs/6294220) |
-| 경력무관 · 일반 산업<br>연봉 4,500만원 | 퍼펙트커리어 주식회사 | 안산대기업 공채ㅣ안전환경&설비ㅣ2교대ㅣ상여금300 보너스40 | 🏠 **[복지: 주택지원·기숙사]** • 경력 무관 (신입 지원 가능) • 고등학교졸업이상 📋 모집요강 회사소개. "사람중심" "고객중심" Global No.1 Bare Board Test Company 설립일 : 1994년 07월 ( / 학력: 고졸↑ | . 신체건강한 분이라면 누구든 환영해요!! [ 우선 이정도면 어려운건 아니시죠?ㅋ ] 제조업특성상 연장,특근 진행하고있어요! 가능자 우대합니다. [ 월 | ⏰ **2026-10-21 (오늘 마감)** | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55094010) |
-| 신입·경력 · 일반 산업<br>면접 후 결정 | 디에스브이컨트랙트로지스틱스(주) | [DSV] 안전관리자 Health & Safety Assistant 채용 | **[산업안전기사 명시]** 자격: 산업안전기사, 산업안전산업기사 / 학력: 대졸↑ | ] ㆍ물류센터, 제조업, 산업현장 안전관리 경험 보유자 ㆍ위험성평가 및 산업재해 예방 활동 경험 보유자 [이런 분을 찾습니다] ㆍ안전을 최우선 가치로 생각하는 분 ㆍ현장 중심으로 문제를 발견하고 개 | ⏰ **2026-10-22 (D-1)** | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55114376) |
-| 신입·경력 · 일반 산업<br>연봉 4,000만원 | 인창기건(주) | 을지로3-1,2 업무시설 현장 안전관리자(계약직) | **[건설안전기사·산업안전기사 명시]** 🏠 **[복지: 기숙사]** 자격: 건설안전기사, 산업안전기사 / 학력: 초대졸↑ | 건축기사 · • 전공: 건축/토목/조경/도시공학 • 자격증: 건축기사 🏠 | ⏰ **2026-10-23 (D-2)** | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55111741) |
-| 경력무관 · 일반 산업<br>면접 후 결정 | (사)한국 안전보건 협회 | 안전보건진단/직원채용 | **[건설안전기사·산업안전기사 명시]** • 신입 / 경력 (연수 무관) • 대학졸업(2,3년)이상 📋 / 학력: 초대졸↑ | 건설안전기사, 산업안전기사 · • 보유역량: 문서작성 우수자 • 자격증: 건설안전기사, 산업안전기사외 🏠 | 2026-10-25 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55274561) |
-| 신입 · 일반 산업<br>내규에 따름 | 순천향대학교산학협력단 | 순천향대학교 산학협력단 신입직원(계약/산업안전) 채용(~10/28) | 학력: 대졸↑ | • 안전 관련 전공학위 소지자 • 산업안전(산업)기사, 건설안전(산업)기사 취득한 자 • 대학 및 산학협력단 구매·자산관리 등 관련 업무 경험자 • 취업지원대상자 및 장애인은 관련 법령에 따라 우대 | 2026-10-28 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55290494) |
+| 신입·경력 · 일반 산업<br>면접 후 결정 | 디에스브이컨트랙트로지스틱스(주) | [DSV] 안전관리자 Health & Safety Assistant 채용 | **[산업안전기사 명시]** 자격: 산업안전기사, 산업안전산업기사 / 학력: 대졸↑ | ] ㆍ물류센터, 제조업, 산업현장 안전관리 경험 보유자 ㆍ위험성평가 및 산업재해 예방 활동 경험 보유자 [이런 분을 찾습니다] ㆍ안전을 최우선 가치로 생각하는 분 ㆍ현장 중심으로 문제를 발견하고 개 | ⏰ **2026-10-22 (오늘 마감)** | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55114376) |
+| 신입·경력 · 일반 산업<br>연봉 4,000만원 | 인창기건(주) | 을지로3-1,2 업무시설 현장 안전관리자(계약직) | **[건설안전기사·산업안전기사 명시]** 🏠 **[복지: 기숙사]** 자격: 건설안전기사, 산업안전기사 / 학력: 초대졸↑ | 건축기사 · • 전공: 건축/토목/조경/도시공학 • 자격증: 건축기사 🏠 | ⏰ **2026-10-23 (D-1)** | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55111741) |
+| 경력무관 · 일반 산업<br>면접 후 결정 | (사)한국 안전보건 협회 | 안전보건진단/직원채용 | **[건설안전기사·산업안전기사 명시]** • 신입 / 경력 (연수 무관) • 대학졸업(2,3년)이상 📋 / 학력: 초대졸↑ | 건설안전기사, 산업안전기사 · • 보유역량: 문서작성 우수자 • 자격증: 건설안전기사, 산업안전기사외 🏠 | ⏰ **2026-10-25 (D-3)** | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55274561) |
 | 신입 · 일반 산업<br>연봉 3,000만원 이상 | ㈔한국생물안전협회 | 한국생물안전협회 사무국 직원 채용 | 학력: 학력무관 | 기본우대 생물안전 시설 관리 및 운영 경력자, 생명과학 관련 석사학위 이상 소지자, 생물안전관리자 자격증 보유자 | 2026-10-29 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50175597?Oem_Code=C1) |
 | 경력무관 · 일반 산업<br>면접 후 결정 | 극동산업(TENT PLAZA) | (신입&경력) 공사관리 | **[산업안전기사 명시]** 자격: 산업안전산업기사, 건축산업기사 / 학력: 학력무관 | - | 2026-10-29 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55145498) |
 | 신입·경력 · 일반 산업<br>월급 300~350만원 | ㈜코텍전자 | [2개월, 단기] 현장 안전관리자 신입/경력자 채용 | 학력: 초대졸이상 | 기본우대 차량소지자 자격증 | 2026-10-30 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50198356?Oem_Code=C1) |
 | 신입·경력 · 일반 산업<br>면접 후 결정 | 리강산업(주) | 리강산업(주) 현장 안전관리자 신입사원 및 경력직(초급) 채용 | **[건설안전기사·산업안전기사 명시]** 학력: 학력무관 | 건설안전기사, 산업안전기사 · • 건축, 건설, 토목 공학 전공자 우대 • 다수의 프로젝트 경험자 우대 • 건설안전기사, 산업안전기사 자격증 소지자 우대 🏠 | 2026-10-30 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55337520) |
 | 신입 · 일반 산업<br>면접 후 결정 | (주)오리엔트조선소 | [본점] 안전보건팀 구인(O명) | **[산업안전기사 명시]** • 신입 • 졸업 예정자 지원가능 📋 / 학력: 학력무관 | 산업안전기사 · • 안전관리 관련 학과 우대 • 산업안전기사, 소방안전관리자 자격증 우대 🏠 | 2026-10-30 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55261210) |
-| 경력무관 · 일반 산업<br>면접 후 결정 · 신입 초봉 3,400만원 (2022) | (주)신보 | (주)신보 분당 판교 안전관리자 채용 공고(NC RDI센터) | 학력: 학력무관 | • 안전관리자 선임 요건을 갖추신 분 • 대관 대응 및 점검 수검 경험 있으신 분 • 협력사 안전교육 운영 경험이 있으신 분 • 삼성물산 안전인정제 운영 경험 있으신 분은 특히 우대합니다! 🏠 | 2026-10-31 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55007232) |
+| 경력무관 · 일반 산업<br>4,720만원 | 신선대감만터미널(주) | 위험물안전관리자 (정규직) 및 보건관리자 (계약직) 채용 | 자격: 위험물산업기사, 보건관리자, 간호사 / 학력: 고졸↑ | 가스산업기사, 보건관리자 · • 위험물안전관리자 : 가스산업기사 자격증 소지자 • 보건관리자 : 컴퓨터활용능력 2급 이상, 운전 가능자 • 공통 : 보훈대상자, 장애인 🏠 | 2026-10-30 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55176472) |
+| 경력무관 · 일반 산업<br>월급 260만원 | 경희대학교 | 경희대학교 국제C 안전팀(산업안전 및 중대재해) 계약직 모집 | **[산업안전기사 명시]** 자격: 산업안전산업기사 / 학력: 학력무관 | • 유사 업무 경력 및 관련 학과 우대 • 대학교 캠퍼스 근무 경험 우대 🏠 | 2026-10-30 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55308411) |
 | 신입·경력 · 일반 산업<br>면접 후 결정 | 영동종합이엔시(주) | 건설안전 관리자 채용( 울산, 당진, 포항) | **[건설안전기사·산업안전기사 명시]** • 신입 / 경력 3년 이상 ~ 15년 이하 • 대학졸업(2,3년)이상 • 건설안전 기사 및 산업기사 • 산업안전 기사 및 산업기사 • PC 사용 능력 필수 🏠 / 학력: 초대졸↑ | - | 2026-10-31 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55071334) |
+| 경력무관 · 일반 산업<br>면접 후 결정 | 동남공영(주) | 동남공영(주) 기반시설(토목)현장 안전관리자(경기도 김포) 모집 | • 경력 무관 (신입 지원 가능) • 고등학교졸업이상 🏠 / 학력: 고졸↑ | - | 2026-10-31 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55213308) |
 | 신입·경력 · 일반 산업<br>연봉 미기재 | (주)메트로씨앤씨 | 안전관리자 채용(계약직) | **[건설안전기사 명시]** 학력: 초대졸이상 | ㆍ근무지 : 인천광역시 서해구 중봉대로 364, 지에스칼텍스 인천윤활유공장 내 ㆍ인천광역시 거주자 우선 | 2026-11-01 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54858188) |
+| 경력무관 · 일반 산업<br>면접 후 결정 | (주)한국공정안전환경센터 | 화학플랜트 정기보수 안전지원단 | **[건설안전기사·산업안전기사 명시]** • 경력 무관 (신입 지원 가능) • 대학졸업(2,3년)이상 • 보유역량: 인근거주자, 차량소지자, 해당직무 근무경험 📋 / 학력: 초대졸↑ | 산업안전산업기사, 건설안전기사, 산업안전기사 · • 자격증: 산업안전산업기사, 건설안전기사, 산업안전기사 🏠 | 2026-11-01 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55184686) |
 | 신입·경력 · 일반 산업<br>연봉 2,800~4,484만원 | 재단법인 백신안전기술지원센터 | 백신안전기술지원센터 2026년 제3차 기간제 직원 채용공고 | 학력: 초대졸이상 | - | 2026-11-02 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50200855?Oem_Code=C1) |
-| 신입·경력 · 일반 산업<br>3,436만원 | 그린에어(주) | [대기업] 그린에어㈜ 안전보건팀 탱크로리 충전관리 채용(계약직) | 학력: 학력무관 | 인원 탱크로리 충전 관리원 (계약직) ㆍ탱크로리 충전 작업 관리 및 충전 업무 지원 ㆍ충전 작업 시 안전수칙 준수 및 작업장 안전관리 ㆍ충전 관련 업무 기록 및 기타 현장 업무 지원 ㆍ기타 소속 부 | 2026-11-03 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55213208) |
-| 경력무관 · 일반 산업<br>면접 후 결정 | (주)다인맨파워 | (경기도 안양) GS건설 안양자이헤리티온 현장 안전순찰 모집 | 학력: 고졸↑ | - | 2026-11-03 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55325457) |
-| 경력무관 · 일반 산업<br>면접 후 결정 | (의)라움의료재단세웅병원 | (의)라움의료재단 세웅병원 안전관리자 신입 및 경력 모집 | **[산업안전기사 명시]** 자격: 산업안전산업기사, 산업안전기사 / 학력: 초대졸↑ | • 보훈대상자 및 장애인의 경우 관련 법에 의거 우대 • 병원급 의료기관 및 종합병원 근무 안전관리 경험이 있으신 분 • 위험성 평가 수행 경험이 있으신 분 • 의료기관 특유의 안전보건 대응 체계 | 2026-11-04 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55201745) |
-| 경력무관 · 일반 산업<br>면접 후 결정 | (주)안토 | 일산 그랜드백화점 (웨딩홀) 인테리어공사 안전관리자 채용 | 학력: 학력무관 | • 실내건축 공사 안전관리 경험 있으신 분 • 웨딩 등 상업시설 공사 경험 있으신 분 • 산업안전 관련 자격 보유하신 분 • 위험성평가 운영 경험 있으신 분 • 협력사 관리 및 교육 경험 있으신 분 | 2026-11-06 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55222259) |
+| 경력무관 · 일반 산업<br>면접 후 결정 | (주)석비계 | [안전보건관리자] 안전관리자 채용 | **[산업안전기사 명시]** 자격: 산업안전기사 / 학력: 학력무관 | - | 2026-11-05 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55212162) |
 | 경력무관 · 일반 산업<br>연봉 4,200만원 | (주)무경 | (주)무경 내포 퍼스트드림 현장 안전관리자 채용 | **[건설안전기사·산업안전기사·ISO 45001 명시]** 자격: 건설안전기사, 건설안전산업기사, 산업안전기사, 산업안전산업기사 / 학력: 초대졸↑ | • 인근거주자 • 건설현장 안전관리 직무 수행 경험이 있는 자 🏠 | 2026-11-06 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55227676) |
+| 경력무관 · 일반 산업<br>면접 후 결정 | (주)안토 | 일산 그랜드백화점 (웨딩홀) 인테리어공사 안전관리자 채용 | 학력: 학력무관 | • 실내건축 공사 안전관리 경험 있으신 분 • 웨딩 등 상업시설 공사 경험 있으신 분 • 산업안전 관련 자격 보유하신 분 • 위험성평가 운영 경험 있으신 분 • 협력사 관리 및 교육 경험 있으신 분 | 2026-11-06 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55222259) |
 | 경력무관 · 일반 산업<br>면접 후 결정 | 삼익전자공업(주) | 인천 국제공항 현장 안전관리자 모집 | **[산업안전기사 명시]** 자격: 산업안전기사, 산업안전산업기사 / 학력: 학력무관 | • 보유역량: 해당직무 근무경험, 문서작성 우수자, 엑셀 고급능력자 🏠 | 2026-11-11 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55258263) |
-| 경력무관 · 일반 산업<br>면접 후 결정 | (주)가야이에스씨 | 평택 P5 현장 안전관리자 모집 | 학력: 학력무관 | 철골 안전관리 경력자 우대 • 근무장소 : 경기도 평택시 - P5 1공구 현장 • 주 6일 근무 (격주 토요일 휴무) • 급 여 : 경력에 따른 협의 (희망 | 2026-11-14 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55297699) |
+| 신입·경력 · 일반 산업<br>연봉 미기재 | (주)듀어코리아 | [Health & Safety] Safety Assistant Engineer (3~6 months) | 학력: 대졸↑ | - | 2026-11-13 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55286479) |
+| 경력무관 · 일반 산업<br>면접 후 결정 | 광진전력 주식회사 | 광진전력 주식회사 안전관리자 모집 | **[건설안전기사·산업안전기사 명시]** 🏠 **[복지: 기숙사]** • 경력 무관 (신입 지원 가능) • 고등학교졸업이상 신입 / 경력 무관 (경력 5년 이하 / 학력: 고졸↑ | 건설현장 안전관리자 근무 경력 변전소 및 전력설비 건설현장 경험, 한전 발주 공사 경험 전기 관련 자격증 소지자 즉시 입사 가능자 부산(강서구)·김해·창원 인근 거주자 🏠 | 2026-11-14 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55300529) |
 | 신입·경력 · 일반 산업<br>시급 10,320원 | 대한공수도 | 학원차 운전 기사님 모집(운전 및 관리. 어린이 안전지도) | 학력: 학력무관 | - | 2026-11-18 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50201039?Oem_Code=C1) |
 | 경력무관 · 일반 산업<br>면접 후 결정 | (주)에스와이시스템 | (주)에스와이시스템 현장 안전관리자 신입 및 경력직 채용 | 학력: 학력무관 | • 전기설비 공사 현장 경험이 있으신 분 • 위험성평가 운영 경험이 있으신 분 • 안전보건 관련 자격을 보유하신 분 • 대관 대응 및 보고 경험이 있으신 분 • 안전관리 시스템 운영 경험이 있으신 | 2026-11-18 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55322979) |
 | 경력무관 · 일반 산업<br>면접 후 결정 | (주)강남 | 안전보건팀 가스 관리자 채용 | 🏠 **[복지: 자녀학자금·노조·주택지원]** • 신입 / 경력 (연수 무관) • 대학졸업(2,3년)이상 📋 / 학력: 초대졸↑ | • 전공: 금속/비금속공학, 화학공학, 생명/환경공학 🏠 | 2026-11-18 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55331046) |
-| 경력무관 · 일반 산업<br>연봉 미기재 | (주)씨앤씨라이트웨이 | 무대방송조명 안전관리자 신입/경력 | 요건 ㆍ학력 : 무관 무대방송조명 안전관리자 신입/경력 1명 담당업무 ㆍ 주요업무 지원자격 ㆍ 현장 안전관련 자격증 ㆍ기타 필수 사항 | ㆍ운전가능자 , 지방근무 가능자 , 해당 직무 근무 경험, 즉시출근 가능자 | 2026-11-18 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55328119) |
 | 경력무관 · 일반 산업<br>면접 후 결정 | 제너텍(주) | 울산 강동리조트 현장 안전관리자(신입/경력) 채용 | • 신입 / 경력 (연수 무관) • 고등학교졸업이상 🏠 / 학력: 고졸↑ | - | 2026-11-19 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55341492) |
 | 경력무관 · 일반 산업<br>면접 후 결정 | (주)하드우드 | 디에이치 클래스트(현대건설) 원목마루 시공 건설안전기사 ⚠️ **[직무 확인 필요]** 담당 업무 항목을 읽지 못함 — 안전 업무 포함 여부 확인 필요 | **[건설안전기사 명시]** 자격: 건설안전기사 / 학력: 학력무관 | - | 2026-11-19 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55344513) |
-| 경력무관 · 일반 산업<br>면접 후 결정 | 동부테크원(주) | 동부테크원(주) 한국에너지공과대학교 현장 안전관리자 채용 | **[건설안전기사·산업안전기사 명시]** 자격: 산업안전산업기사, 건설안전산업기사 / 학력: 초대졸↑ | • 건설현장 안전관리 경험 있으신 분 • 안전관리 관련 자격 보유하신 분 • 안전서류 작성에 익숙하신 분 🏠 | 2026-11-19 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55345124) |
-| 경력무관 · 일반 산업<br>연봉 미기재 | (주)선인 | [밀양공무] 안전한 설비 운영으로 동료들에게 기여할 인재 | 🏠 **[복지: 자녀학자금·기숙사]** 학력: 학력무관 | - | 2026-11-19 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55341556) |
 | 신입·경력 · 일반 산업<br>연봉 3,600만원 | (주)미래산업안전기술원 | 화학공장 현장상주 안전관리 감독관모집 | **[건설안전기사·산업안전기사 명시]** 학과: 화학공학, 토목/조경/도시공학 / 자격: 건설안전기사, 산업안전기사, 산업안전관리기사 / 학력: 학력무관 | • 보유역량: 인근거주자, 운전가능자, 차량소지자, 문서작성 우수자 🏠 | 2026-11-20 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55091933) |
-| 신입 · 일반 산업<br>연봉 미기재 | 하이브 [코스피] | [하이브] 안전관리지원* (중대재해처벌법 전담) | 자격: 산업안전기사 / 영어: 오픽, 토익스피킹 | ] -산업안전 관련 전공자 -중대재해처벌법 전담 조직 초기 구축 경험을 보유한 분 -안전 기획 업무 경험을 보유한 분 -글로벌 기업에서 HQ로써 안전관리 업무 경험을 보유한 분 -공연장, 촬영현장 | 2026-11-23 | [링커리어](https://linkareer.com/activity/345763) |
-| 경력무관 · 일반 산업<br>면접 후 결정 · 신입 초봉 3,150만원 (2022) | (주)머니투데이 | 안전, 보건 관리자 채용 (총 2명) | **[산업안전기사 명시]** 🏠 **[복지: 자녀학자금]** 학력: 학력무관 | - | 2026-11-27 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55132757) |
-| 경력무관 · 일반 산업<br>면접 후 결정 | (주)정도 | (주)정도 건설업 안전관리자 공개채용(전국) | 학력: 학력무관 | • 보유역량: 인근거주자, 해당직무 근무경험 • 유관업무 경력자 우대 🏠 | 2026-12-05 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55212612) |
+| 신입 · 일반 산업<br>연봉 미기재 | 하이브 [코스피] | [하이브] 안전관리지원* (중대재해처벌법 전담) | 자격: 산업안전기사 / 영어: 오픽 | ] -산업안전 관련 전공자 -중대재해처벌법 전담 조직 초기 구축 경험을 보유한 분 -안전 기획 업무 경험을 보유한 분 -글로벌 기업에서 HQ로써 안전관리 업무 경험을 보유한 분 -공연장, 촬영현장 | 2026-11-23 | [링커리어](https://linkareer.com/activity/345763) |
+| 경력무관 · 일반 산업<br>면접 후 결정 | (주)정도 | (주)정도 건설업 안전관리자 공개채용(전국) | • 지원서 내 희망 / 학력: 학력무관 | • 보유역량: 인근거주자, 해당직무 근무경험 • 유관업무 경력자 우대 🏠 | 2026-12-05 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55212612) |
 | 경력무관 · 건설<br>면접 후 결정 · 신입 초봉 4,180만원 (2025) | 계룡건설산업(주) [코스피] (시평 14위) | 계룡건설산업(주) 평택 고덕 아파트현장 안전관리자 구인 | 학력: 학력무관 | - | 2026-12-12 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55277439) |
 | 신입·경력 · 일반 산업<br>월급 330~350만원 | 에이치커넥트 | [ 평택/용인] 안전/화재 감시/ 동반,학력무관/기숙사제공... | 🏠 **[복지: 기숙사]** 학력: 학력무관 | - | 2026-12-13 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50157334?Oem_Code=C1) |
 | 신입·경력 · 일반 산업<br>면접 후 결정 | (주)유에스티 [코스닥] | 사업장 산업안전보건, ISO인증, 교육 및 일반총무 채용 | • 신입 / 경력 3년 이하 • 고등학교졸업이상 🏠 / 학력: 고졸↑ | - | 2026-12-19 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55341818) |
 | 신입 · 일반 산업<br>회사 내규에 따름 · 신입 초봉 5,000만원 (2025) | 피에스케이홀딩스 [코스닥] | 안전관리 분야 장애인 계약직 채용 | 학력: 고졸이상 | - | 채용 시 마감 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50167211?Oem_Code=C1) |
+| 경력무관 · 일반 산업<br>연봉 4,200만원 | 주식회사 무경 부산지점 | (주)무경 더현대광주 현장 안전관리자 채용 | **[건설안전기사·산업안전기사·ISO 45001 명시]** 자격: 건설안전기사, 산업안전기사, 건설안전산업기사, 산업안전산업기사 / 학력: 초대졸↑ | - | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55242304) |
+| 경력무관 · 일반 산업<br>면접 후 결정 | (주)상림기술 | 화성시 AI자율주행허브 안전관리자 모집 | **[건설안전기사·산업안전기사 명시]** 자격: 산업안전기사, 건설안전기사 / 학력: 학력무관 | • 산업안전보건법에 대해 이해도가 높으신 분 • 커뮤니케이션 능력 우수자 🏠 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55242656) |
+| 경력무관 · 일반 산업<br>면접 후 결정 | 사우스에스이(주) | 사우스에스이(주) 크린룸 현장 안전관리자 계약직 모집 | 학력: 학력무관 | - 크린룸 현장 안전관리자 경력 우대 🏠 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54978480) |
 | 경력무관 · 일반 산업<br>면접 후 결정 | 에스앤피씨앤씨(주) | 안전관리자 계약직 채용(경력무관) | 학력: 학력무관 | - | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54925288) |
 | 경력무관 · 일반 산업<br>면접 후 결정 | 제일이엔에스(주) 화성공장 | [제일E&S] 천안 현장 안전관리자 채용(10월 현장 근무 가능자) | **[건설안전기사·산업안전기사 명시]** 자격: 산업안전기사, 건설안전기사 / 학력: 초대졸↑ | 산업안전기사 · • 보유역량: 인근거주자 • 자격증: 산업안전기사 🏠 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54870613) |
-| 경력무관 · 일반 산업<br>면접 후 결정 | 사우스에스이(주) | 사우스에스이(주) 크린룸 현장 안전관리자 계약직 모집 | 학력: 학력무관 | - 크린룸 현장 안전관리자 경력 우대 🏠 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54978480) |
-| 경력무관 · 일반 산업<br>면접 후 협의 | 국제산공(주) | 국제산공(주) 울산 샤힌프로젝트 안전관리보조 계약직 채용 | 🏠 **[복지: 자녀학자금]** 모집부문 담당업무 자격요건 및 / 학력: 학력무관 | 인원 공사 관리부 안전관리보조 지원자격 ㆍ학력 : 무관 ㆍ경력 : 무관 (신입도 지원 가능) 우대사항 ㆍ해당직무 근무경험 ㆍ 자차출퇴근 가능자 ㆍ 인근거주자 ㆍ 엑셀 및 워드 활용우수 0명 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54928029) |
 | 경력무관 · 일반 산업<br>면접 후 결정 | 도양기업(주) | 도양기업(주) 동탄인덕원4공구 현장 안전관리자 모집(사원~대리) | 🏠 **[복지: 기숙사]** 학력: 학력무관 | • 관련학과 전공자 🏠 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54928850) |
 | 경력무관 · 일반 산업<br>연봉 미기재 | (사)대한영양사협회 | 소규모 사업장 안전보건 기술지원사업(위탁) 수행요원 채용 공고 | **[산업안전기사 명시]** 학력: 학력무관 | • 자차운전가능자 🏠 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54883418) |
 | 경력무관 · 일반 산업<br>면접 후 결정 | 몽고장유 | [산업 안전 기사] 주간근무 채용 공고 | 학력: 학력무관 | - | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54989454) |
-| 경력무관 · 일반 산업<br>면접 후 결정 | (주)지큐엘 | (주)지큐엘 원주공장 시설팀 (유틸리티) 담당 채용 | 학력: 학력무관 | • 반도체 공장 근무 경험 있으신 분 • 시설·환경·안전 업무 경험 가진 분 • 협력사 관리 경험 있으신 분 • 점검표·보고서 작성 익숙하신 분 • 위험성평가 참여 경험 있으신 분 • 공조냉동기계기 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55083596) |
 | 경력무관 · 건설<br>면접 후 결정 · 신입 초봉 4,180만원 (2025) | 계룡건설산업(주) [코스피] (시평 14위) | 용담댐 안전성강화사업 건설공사 공사담당 모집 | 🏠 **[복지: 기숙사]** 자격: 토목기사 / 학력: 초대졸↑ | - | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54895321) |
-| 경력무관 · 일반 산업<br>2500000원 이상 | (의)한마음국제의료재단 | 창원한마음병원 시설안전팀 시설안전직 채용 | 학력: 학력무관 | - | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54860269) |
+| 경력무관 · 일반 산업<br>면접 후 협의 | 국제산공(주) | 국제산공(주) 울산 샤힌프로젝트 안전관리보조 계약직 채용 | 🏠 **[복지: 자녀학자금]** 모집부문 담당업무 자격요건 및 / 학력: 학력무관 | 인원 공사 관리부 안전관리보조 지원자격 ㆍ학력 : 무관 ㆍ경력 : 무관 (신입도 지원 가능) 우대사항 ㆍ해당직무 근무경험 ㆍ 자차출퇴근 가능자 ㆍ 인근거주자 ㆍ 엑셀 및 워드 활용우수 0명 | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54928029) |
 
-## [인턴] 1건
-
-| 구분 · 연봉 | 업체명 | 공고명 | 지원 자격 (학과·자격·영어·학력) | 우대 사항 | 접수기한 | 출처 |
-|---|---|---|---|---|---|---|
-| 경력무관 · 일반 산업<br>면접 후 결정 | (주)바이오톡스텍 [코스닥] | (주)바이오톡스텍 안전성약리/일반독성시험담당자 공개채용 | 🏠 **[복지: 주택지원]** • 경력 무관 (신입 지원 가능) • 학력: 학사 이상 • 전공: 생물학, 생화학, 분자생물학, 실험동물학 전공자 📋 | • 실험동물(마우스, 랫드, 토끼, 비글견, 기니픽) 업무에 거부감이 없는 자 • 설치류, 비설치류 알러지 등 이상이 없는 자 • 주말근무 가능자 🏠 | 2026-11-12 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55276876) |
-
-## [고용형태 미표기] 17건
+## [고용형태 미표기] 15건
 
 | 구분 · 연봉 | 업체명 | 공고명 | 지원 자격 (학과·자격·영어·학력) | 우대 사항 | 접수기한 | 출처 |
 |---|---|---|---|---|---|---|
@@ -256,7 +291,7 @@
 | 신입 · 일반 산업<br>면접 후 협의 | 🌐 **에이피써치** [외국계] | EHS 위험물안전관리 환경안전 사원대리급 울산공장 외국계화학회사 | 영어: 영어 가능 / 학력: 4년제 대졸 -환경/안전 | - | 채용 시 마감 | [피플앤잡](https://www.peoplenjob.com/jobs/6290493) |
 | 신입·경력 · 일반 산업<br>면접 후 협의 · 신입 초봉 3,700만원 (2025, 잡코리아) | 🌐 **유엘코리아** [외국계] | 산업보건안전관리 (EHS) 담당자 채용 | 🌐 [복지(인터넷 조사): 자녀학자금] 학과: 환경공학, 화학공학, 기계공학 | (Preferred Qualifications) 산업안전기사, 산업위생관리기사, 화공기사, 대기환경기사, 수질환경기사, 인간공학기사, 안전관리사 등 관련 자격증 보유자 산업안전보건, 환경공학 또는 | 채용 시 마감 | [피플앤잡](https://www.peoplenjob.com/jobs/6273022) |
 | 신입 · 일반 산업<br>면접 후 협의 | 🌐 **피플렙** [외국계] | 외국계 케미칼 플랜트 EHS 엔지니어(신입-5년, 영어 필수) | 학과: 화학공학, 환경공학, 안전공학 | ★ 환경 및 안전 관련 자격증 보유 ★ 관련 직무 경험 BETA AI가 공고 원문에서 추출한 참고 정보입니다. Chat with GPT 신고하기 같은 회사의 채용공고를 확인중입니다... 본 정보는 | 채용 시 마감 | [피플앤잡](https://www.peoplenjob.com/jobs/6301548) |
-| 신입·경력 · 일반 산업<br>회사 내규에 따름 | HL만도 [코스피] | 10월 신입/경력 수시채용(판교) - 안전보건 | 학력: 대졸이상 | - | 2026-10-25 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50167066?Oem_Code=C1) |
+| 신입·경력 · 일반 산업<br>회사 내규에 따름 | HL만도 [코스피] | 10월 신입/경력 수시채용(판교) - 안전보건 | 학력: 대졸이상 | - | ⏰ **2026-10-25 (D-3)** | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50167066?Oem_Code=C1) |
 | 신입 · 일반 산업<br>회사 내규에 따름 | 무림그룹 | 2026년 하반기 신입 채용 - 안전보건관리 | 학력: 대졸이상 | - | 2026-10-28 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50198911?Oem_Code=C1) |
 | 경력무관 · 건설<br>월급 400만원 · 신입 초봉 5,500만원 (2024) | 에스케이에코플랜트(주) (시평 9위) | SK에코플랜트(주) 울산 라엘에스 안전시설원 채용 | 학력: 학력무관 | - | 2026-11-12 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=55276695) |
 | 확인 필요 · 일반 산업<br>회사 내규에 따름 · 신입 초봉 4,800만원 (2025) | 넥센타이어㈜ [코스피] | 상시채용 (인재Pool) - 생산(안전환경보건) | 🌐 [복지(인터넷 조사): 자녀학자금·기숙사] 경력 신입·경력 | - | 채용 시 마감 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50100942?Oem_Code=C1) |
@@ -264,8 +299,6 @@
 | 신입·경력 · 일반 산업<br>회사 내규에 따름 · 신입 초봉 4,950만원 (2025) | 성신양회㈜ [코스피] | 상시 인재 POOL (일반직군) - 안전보건 | 🌐 [복지(인터넷 조사): 자녀학자금·기숙사·주택지원] 학력: 대졸이상 | - | 채용 시 마감 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50047415?Oem_Code=C1) |
 | 확인 필요 · 일반 산업<br>회사 내규에 따름 | 한국항공서비스 | 상시 인력채용 (안전관리) | 경력 신입·경력 | - | 채용 시 마감 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50204949?Oem_Code=C1) |
 | 신입·경력 · 일반 산업<br>회사 내규에 따름 | 아세아제지㈜ [코스피] | 제지/판지계열 생산부문 신입/경력사원 상시채용(안전) | 학력: 대졸이상 | - | 채용 시 마감 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50175956?Oem_Code=C1) |
-| 신입·경력 · 일반 산업<br>회사 내규에 따름 · 신입 초봉 4,240만원 (2025) | 환인제약 [코스피] | 상시 인재pool 등록(환경안전관리) | 학력: 초대졸이상 | - | 채용 시 마감 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50148214?Oem_Code=C1) |
-| 경력무관 · 일반 산업<br>면접 후 결정 | 로고스아카데미(주) | [로고스 아카데미] 통학 셔틀 동승 안전관리 담당자 모집 | 학력: 학력무관 | - | 채용 시 마감 | [사람인](https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=54909472) |
 | 신입·경력 · 건설<br>회사 내규에 따름 · 신입 초봉 6,300만원 (2025) | 엘티삼보 (시평 50위) | 안전 관리직 인재 DB 등록 - 안전 | 학력: 대졸이상 | - | 채용 시 마감 | [잡코리아](https://www.jobkorea.co.kr/Recruit/GI_Read/50039897) |
 
 ---
@@ -275,22 +308,22 @@
 - 충북대 안전공학과: 수집 실패
 - 원티드: 수집 실패
 - 캐치: 수집 실패
-- 사람인 공채 모음: 글 109953 · 링크 132 · 후보 46, 목록 46, 채택 1, 담당 업무에 안전 없음 39, 안전 직무 아님 3, 다른 직무(배차·방사선·소방·간호·충전소) 1, 안전 주업무 아님 1, 안전 주업무 아님(여러 분야 모집) 1
-- 잡코리아: 목록 167, 채택 47, 사용자 삭제 27, 종합건설사 상위 15위 밖·전문건설 39, 안전 주업무 아님(복합업무) 2, 다른 직무(배차·방사선·소방·간호·충전소) 4, 영업직 2, 중복(상위 사이트 우선) 6, 제외 업체명 1, 감시단 13, 안전 직무 아님 2, 안전 주업무 아님 17, 전문건설(시공 현장) 1, 안전 주업무 아님(겸직) 5, 담당 업무에 안전 없음 1
-- 사람인: 목록 2337, 채택 169, 종합건설사 상위 15위 밖·전문건설 141, 전문건설업체 21, 경력직 22, 영업직 14, 사용자 삭제 209, 전문건설(시공 현장) 28, 안전 주업무 아님(겸직) 44, 중복(상위 사이트 우선) 17, 안전 직무 아님 629, 엔지니어링 상위 15개사 밖 20, 다른 직무(배차·방사선·소방·간호·충전소) 16, 감시단 35, 안전 주업무 아님 259, 안전 주업무 아님(복합업무) 19, 담당 업무에 안전 없음 635, 안전 주업무 아님(여러 분야 모집) 32, 보건관리자 20, 제외 업체명 6, 대리급 이상 1, 상세 미조회(한도) 236
-- 링커리어: 목록 37, 채택 3, 상세 미조회(한도) 37, 중복(상위 사이트 우선) 3, 종합건설사 상위 15위 밖·전문건설 1, 사용자 삭제 8, 안전 직무 아님 13, 다른 직무(배차·방사선·소방·간호·충전소) 1, 경력직 2, 안전 주업무 아님 6
-- 워커: 목록 239, 채택 0, 경력직 37, 안전 직무 아님 187, 상세 미조회(한도) 15, 종합건설사 상위 15위 밖·전문건설 3, 보건관리자 1, 사용자 삭제 7, 안전 주업무 아님(겸직) 2, 안전 주업무 아님 2
+- 사람인 공채 모음: 글 109953 · 링크 110 · 후보 36, 목록 36, 채택 1, 담당 업무에 안전 없음 31, 안전 직무 아님 2, 안전 주업무 아님 1, 안전 주업무 아님(여러 분야 모집) 1
+- 잡코리아: 목록 149, 채택 45, 종합건설사 상위 15위 밖·전문건설 38, 영업직 2, 안전 주업무 아님(겸직) 7, 사용자 삭제 17, 안전 주업무 아님(복합업무) 2, 다른 직무(배차·방사선·소방·간호·충전소) 4, 중복(상위 사이트 우선) 3, 제외 업체명 1, 안전 주업무 아님 13, 감시단 12, 전문건설업체 1, 안전 직무 아님 2, 전문건설(시공 현장) 1, 담당 업무에 안전 없음 1
+- 사람인: 목록 2156, 채택 208, 종합건설사 상위 15위 밖·전문건설 153, 사용자 삭제 192, 전문건설업체 17, 경력직 24, 영업직 15, 전문건설(시공 현장) 35, 중복(상위 사이트 우선) 22, 담당 업무에 안전 없음 599, 엔지니어링 상위 15개사 밖 23, 다른 직무(배차·방사선·소방·간호·충전소) 21, 안전 주업무 아님(겸직) 50, 안전 주업무 아님(복합업무) 25, 안전 주업무 아님 256, 감시단 33, 보건관리자 22, 안전 주업무 아님(여러 분야 모집) 24, 안전 직무 아님 425, 대리급 이상 4, 제외 업체명 8, 상세 미조회(한도) 36
+- 링커리어: 목록 38, 채택 2, 상세 미조회(한도) 38, 중복(상위 사이트 우선) 3, 종합건설사 상위 15위 밖·전문건설 1, 사용자 삭제 7, 안전 직무 아님 14, 다른 직무(배차·방사선·소방·간호·충전소) 1, 경력직 2, 안전 주업무 아님 8
+- 워커: 목록 242, 채택 0, 안전 직무 아님 188, 상세 미조회(한도) 14, 사용자 삭제 8, 경력직 40, 종합건설사 상위 15위 밖·전문건설 4, 보건관리자 1, 안전 주업무 아님(겸직) 1
 - 서울과기대 안전공학과: 목록 10, 채택 0, 상세 미조회(한도) 10, 안전 직무 아님 1, 오래된 게시글 9
 - 인천대 안전공학과: 목록 10, 채택 0, 상세 미조회(한도) 10, 사용자 삭제 3, 안전 직무 아님 3, 채용 공고 아님 1, 마감 1, 오래된 게시글 2
 - 부경대 안전공학과: 목록 20, 채택 0, 상세 미조회(한도) 20, 채용 공고 아님 1, 오래된 게시글 19
-- 피플앤잡: 목록 133, 채택 6, 상세 미조회(한도) 43, 중복(상위 사이트 우선) 1, 경력직 90, 안전 주업무 아님 1, 다른 직무(배차·방사선·소방·간호·충전소) 1, 안전 직무 아님 25, 사용자 삭제 8, 대리급 이상 1
+- 피플앤잡: 목록 133, 채택 8, 경력직 90, 상세 미조회(한도) 43, 중복(상위 사이트 우선) 1, 안전 주업무 아님 1, 다른 직무(배차·방사선·소방·간호·충전소) 1, 안전 직무 아님 24, 사용자 삭제 8
 - 기업 채용 페이지: 목록 27, 채택 0, 상세 미조회(한도) 27, 한국 근무 아님 24, 대리급 이상 1, 사용자 삭제 2
 - 직접 추가: 목록 91, 채택 11, 상세 미조회(한도) 84, 사용자 삭제 51, 안전 주업무 아님 4, 마감 9, 종합건설사 상위 15위 밖·전문건설 5, 안전 주업무 아님(겸직) 4, 중복(상위 사이트 우선) 5, 안전 주업무 아님(복합업무) 1, 다른 직무(배차·방사선·소방·간호·충전소) 1
 - 이미지 공고 읽기: tesseract 없음 — 생략
 
 **수집 실패**
 
-- 충북대 안전공학과: 학과 서버가 해외 접속(GitHub Actions)에 404를 반환 — 국내 IP에서만 열림 (학교 본 사이트는 정상)
+- 충북대 안전공학과: ConnectTimeout: timed out
 - 원티드: 사이트가 해외·자동 접속(GitHub Actions)을 403으로 차단 — 수집 불가
 - 캐치: 사이트가 해외·자동 접속(GitHub Actions)을 403으로 차단 — 수집 불가
 
