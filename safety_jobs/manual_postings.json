@@ -1178,6 +1178,18 @@
       "note": "SK Careers R262199 — 웹 검색으로 추정(원문 미확인). 마감 10/22 07:00(다른 안내 10/26)",
       "added": "2026-10-18",
       "user_pick": true
+    },
+    {
+      "company": "대한산업안전협회",
+      "title": "건설안전 / 안전보건관리 직무 신입·경력 정규직",
+      "url": "https://m.catch.co.kr/NCS/RecruitInfoDetails/576824",
+      "deadline": "2026-11-04",
+      "employment": "정규직",
+      "level": "신입/경력",
+      "safety_job": "no",
+      "via": "ChatGPT 웹 검색",
+      "note": "ChatGPT(gpt-5-search-api) 웹 검색으로 찾음 · 원문 미확인 · 대상 기업 기준 밖(안전 전문기관)이라 직무 확인 필요",
+      "added": "2026-10-25"
     }
   ]
 }
