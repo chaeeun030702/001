@@ -104,12 +104,12 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 <script>
 /* 작업 데이터 — 에이전트를 맡길 때마다 이 블록만 고친다 (progress: 0~100) */
 var JOB={
-  updated:"2026-10-25 00:37 KST",updatedISO:"2026-10-24T15:37:00Z",
+  updated:"2026-10-25 00:44 KST",updatedISO:"2026-10-24T15:44:00Z",
   main:{name:"메인 에이전트",task:"ChatGPT(웹 검색)로 최신 안전관리자 공고 받아 기준 검토 → 수정·추가 → 브리핑",note:"ChatGPT 결과는 웹 검색 기반이라 원문 확인 전 공고는 '직무 확인 필요'로 싣습니다. 기준은 safety_jobs/rules.md."},
   subs:[
-   {name:"ChatGPT 최신 공고 검색",order:"하청 1",status:"done",progress:100,task:"gpt-5-search-api 3회 (전체·공공/건설·EHS 대기업/외국계)",result:"5건 받음 → 중복 3 · 대상 밖 1 · 추가 1(대한산업안전협회, 직무 확인 필요)"},
-   {name:"기준 검토·수정",order:"하청 2",status:"done",progress:100,task:"rules.md 기준 대조 → manual_postings.json 추가, 일경험 프로그램 제외 규칙",result:"manual 1건 추가 · 일경험 프로그램·일경험 인턴 제외(TKG애강)"},
-   {name:"GitHub Actions 수집기",order:"하청 3",status:"run",progress:5,task:"PR 병합 후 safety-jobs-briefing 재실행",result:""},
+   {name:"ChatGPT 최신 공고 검색",order:"하청 1",status:"done",progress:100,task:"gpt-5-search-api · rules.md 기준 전달 · 대기업/공공·건설/외국계·빅테크",result:"1차 5건 → 1건 추가(대한산업안전협회) · 2차 8건 → 신규 0, 한국수산자원공단 마감 11/02 확인"},
+   {name:"기준 검토·수정",order:"하청 2",status:"done",progress:100,task:"rules.md 대조 → manual 추가, 일경험 제외, 직접 추가 마감일 보완",result:"PR #100·#101 병합 · 일경험 프로그램 제외 · 수산자원공단 마감 보완"},
+   {name:"GitHub Actions 수집기",order:"하청 3",status:"run",progress:5,task:"safety-jobs-briefing run #203 (#202는 이전 코드라 취소)",result:"",startedAt:"2026-10-24T15:42:04Z",etaMin:30},
    {name:"브리핑 게시",order:"하청 4",status:"wait",progress:0,task:"latest.html·날짜별 사본 게시, 최종 HTML 파일 전달",result:""}
   ]
 };
