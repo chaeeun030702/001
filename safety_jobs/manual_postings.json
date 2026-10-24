@@ -1190,6 +1190,18 @@
       "via": "ChatGPT 웹 검색",
       "note": "ChatGPT(gpt-5-search-api) 웹 검색으로 찾음 · 원문 미확인 · 대상 기업 기준 밖(안전 전문기관)이라 직무 확인 필요",
       "added": "2026-10-25"
+    },
+    {
+      "company": "한국수산자원공단",
+      "title": "2026년 제1차 직원(일반정규직) 채용(건설안전(안전관리자))",
+      "url": "https://job.alio.go.kr/recruitview.do?idx=306125",
+      "deadline": "2026-11-02",
+      "employment": "정규직",
+      "level": "신입/경력",
+      "safety_job": "yes",
+      "via": "ChatGPT 웹 검색(잡알리오)",
+      "note": "ChatGPT(gpt-5-search-api)가 잡알리오 공고에서 마감 2026-11-02 확인 · 사람인 공고의 '진행예정' 마감 보완",
+      "added": "2026-10-25"
     }
   ]
 }
