@@ -1603,15 +1603,20 @@ def norm_title(t, corp):
     return t.replace(corp, "") if corp else t
 
 
-def is_dup(p, kept):
+def dup_of(p, kept):
+    """kept 안에서 p와 같은 공고(업체 포함 관계 + 공고명 유사도 0.6 이상)를 찾는다."""
     c, t = norm_company(p.company), norm_title(p.title, norm_company(p.company))
     for q in kept:
         qc = norm_company(q.company)
         if c and qc and (c in qc or qc in c):
             qt = norm_title(q.title, qc)
             if difflib.SequenceMatcher(None, t, qt).ratio() >= 0.6:
-                return True
-    return False
+                return q
+    return None
+
+
+def is_dup(p, kept):
+    return dup_of(p, kept) is not None
 
 
 # ---------------------------------------------------------------- 출력
@@ -3227,7 +3232,11 @@ def main():
             if not ok:
                 counts[why] = counts.get(why, 0) + 1
                 continue
-            if is_dup(p, kept):
+            q = dup_of(p, kept)
+            if q:
+                if p.extra.get("manual") and p.deadline_date and not q.deadline_date:  # 직접 추가에서 확인한 마감일로 보완
+                    q.deadline, q.deadline_date = p.deadline, p.deadline_date
+                    counts["마감일 보완"] = counts.get("마감일 보완", 0) + 1
                 counts["중복(상위 사이트 우선)"] = counts.get("중복(상위 사이트 우선)", 0) + 1
                 continue
             counts["채택"] += 1
