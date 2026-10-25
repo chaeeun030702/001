@@ -281,10 +281,18 @@ def load_postings(paths):
         for x in data.get("postings", []) if isinstance(data, dict) else []:
             # 신입 채용 브리핑(newgrad/postings.json): starter 가 {pay, basis, url} → extra.starter 문자열로 맞춘다
             ns = x.get("starter")
-            if isinstance(ns, dict) and ns.get("pay") and not (x.get("extra") or {}).get("starter"):
-                yr = re.match(r"\d{4}", ns.get("basis") or "")
-                x = {**x, "extra": {**(x.get("extra") or {}),
-                                    "starter": f"신입 초봉 {ns['pay']}" + (f" ({yr.group()})" if yr else "")}}
+            if "starter" in x or "employees" in x:
+                ex = dict(x.get("extra") or {})
+                if isinstance(ns, dict) and ns.get("pay") and not ex.get("starter"):
+                    yr = re.match(r"\d{4}", ns.get("basis") or "")
+                    ex["starter"] = f"신입 초봉 {ns['pay']}" + (f" ({yr.group()})" if yr else "")
+                emp = x.get("employees")
+                if isinstance(emp, dict) and emp.get("count"):
+                    ex["employees"] = f"직원 {emp['count']}"
+                bn = [b.get("label") for b in x.get("benefits") or [] if isinstance(b, dict) and b.get("label")]
+                if bn:
+                    ex["benefits"] = "복지 " + ", ".join(dict.fromkeys(bn))
+                x = {**x, "extra": ex, "_newgrad": True}
             st = ((x.get("extra") or {}).get("starter") or "").strip()
             if x.get("url") and (x["url"] not in by_url or st):
                 by_url[x["url"]] = x
@@ -299,15 +307,17 @@ def load_postings(paths):
 
 
 def pay_of(m, postings):
-    """표시용 급여: 공고 기재 연봉 · 신입 초봉. 신입 초봉은 채용현황 브리핑(collect.py extra.starter) 값으로만
-    통일한다 — 같은 공고(url)의 값, 없으면 같은 업체의 다른 공고 값, 그래도 없으면 '확인 못 함'."""
+    """표시용 급여: 공고 기재 연봉 · 신입 초봉 · 직원 수 · 복지. 값은 --briefing 으로 받은 신입 채용 브리핑
+    (newgrad/postings.json 의 starter·employees·benefits, 2026-10-25 사용자 요청) 값으로 통일한다 — 같은 공고(url)의 값,
+    없으면 같은 업체의 다른 공고 값, 그래도 없으면 '확인 못 함'."""
     pst = postings["url"].get(m.get("url", ""))
     ex = (pst or {}).get("extra") or {}
-    pay = (ex.get("salary") or ("연봉 미기재" if pst else "")).strip()
+    # 신입 채용 브리핑 공고는 연봉 칸이 없어 '연봉 미기재'를 붙이지 않고, 직원 수·복지를 함께 보인다(2026-10-25 사용자 요청)
+    pay = (ex.get("salary") or ("연봉 미기재" if pst and not pst.get("_newgrad") else "")).strip()
     # 초안 머리말 starter: 는 사용자가 확인해 정한 값이라 브리핑보다 우선한다
     starter = (m.get("starter") or "").strip() or (ex.get("starter") or "").strip() or next(
         (postings["starter"][k] for k in company_keys(m.get("company", "")) if k in postings["starter"]), "")
-    return " · ".join(x for x in (pay, starter or "신입 초봉 확인 못 함") if x)
+    return " · ".join(x for x in (pay, starter or "신입 초봉 확인 못 함", ex.get("employees", ""), ex.get("benefits", "")) if x)
 
 
 def foreign_section(foreign, excluded, postings):
