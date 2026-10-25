@@ -147,6 +147,55 @@ def mquick(rows, M, rid, key, empty):
         for p in rows) + '</table>'
 
 
+def calendar(live, today, rid, M=None):
+    """채용 달력: 이번 주 일요일부터 마지막 접수 마감일이 있는 주까지(최대 10주). 칸마다 그날 마감 공고."""
+    ev = {}
+    for p in live:
+        try:
+            d = datetime.date.fromisoformat(p['deadline'])
+        except ValueError:
+            continue
+        ev.setdefault(d, []).append(p)
+    if not ev:
+        return '<p class="foot">접수 마감일이 있는 공고가 없습니다.</p>'
+    start = today - datetime.timedelta(days=(today.weekday() + 1) % 7)
+    end = min(max(ev), start + datetime.timedelta(weeks=10) - datetime.timedelta(days=1))
+    end = end + datetime.timedelta(days=(5 - end.weekday()) % 7)
+    wd = ''.join(f'<div class="cwd{" sun" if i == 0 else " sat" if i == 6 else ""}">{n}</div>' for i, n in enumerate('일월화수목금토'))
+    cells, d, gap = [], start, []
+    while d <= end:
+        wk = [d + datetime.timedelta(days=i) for i in range(7)]
+        if not any(ev.get(x) for x in wk) and not (wk[0] <= today <= wk[-1]):
+            gap.append(wk)
+            d += datetime.timedelta(days=7)
+            continue
+        if gap:
+            cells.append(f'<div class="cgap">{gap[0][0].month}/{gap[0][0].day} ~ {gap[-1][-1].month}/{gap[-1][-1].day} · 마감 공고 없음 ({len(gap)}주)</div>')
+            gap = []
+        for x in wk:
+            es = sorted(ev.get(x, []), key=lambda p: p['company'])
+            n = (x - today).days
+            cls = 'cday' + (' past' if n < 0 else '') + (' today' if n == 0 else '') + (' soon' if 0 <= n <= 3 else '') + (' sun' if x.weekday() == 6 else '')
+            lab = f'{x.month}/{x.day}' if (x.day == 1 or x == start) else f'{x.day}'
+            chips = ''
+            for p in es:
+                m = (M or {}).get(p['url']) or {}
+                dot = f'<i class="cb {m["bucket"]}" title="매칭 {m.get("now", "")}%"></i>' if m.get('bucket') in ('now', 'cert') else ''
+                new = ' new' if p.get('first_seen') == today.isoformat() and not p.get('baseline') else ''
+                name = re.sub(r'\(주\)|㈜|\(유\)|주식회사|\(사\)', '', p['company']).strip()
+                chips += f'<a class="cev{new}{" ct" if "계약" in p["employment"] else ""}" href="#{rid[p["url"]]}" title="{E(p["company"])} · {E(p["title"])} · {E(p["deadline"])}">{dot}{E(name)}</a>'
+            cnt = f'<span class="cc">{len(es)}건</span>' if es else ''
+            cells.append(f'<div class="{cls}"><div class="cdn"><span>{lab}</span>{cnt}</div>{chips}</div>')
+        d += datetime.timedelta(days=7)
+    leg = ('<div class="clg"><span class="l-soon">3일 이내 마감</span><span class="l-new">신규(파란 글씨)</span><span class="l-ct">계약직(주황 테두리)</span>'
+           + ('<span><i class="cb now"></i>매칭 지금 지원 가능</span><span><i class="cb cert"></i>기사 취득 후</span>' if M else '') + '<span>칸의 회사를 누르면 공고로 이동</span></div>')
+    nd = sum(1 for p in live if not p['deadline'][:4].isdigit())
+    if gap:
+        cells.append(f'<div class="cgap">{gap[0][0].month}/{gap[0][0].day} ~ {gap[-1][-1].month}/{gap[-1][-1].day} · 마감 공고 없음 ({len(gap)}주)</div>')
+    return (leg + f'<div class="calw"><div class="calg">{wd}{"".join(cells)}</div></div>'
+            + f'<p class="foot">{start.isoformat()} ~ {end.isoformat()} · 채용 시 마감(마감일 없음) {nd}건은 달력에 없고 조기 마감될 수 있습니다.</p>')
+
+
 def build(today, M=None, CR=None, out=None):
     data = json.load(open(os.path.join(HERE, 'postings.json')))
     exc = json.load(open(os.path.join(HERE, 'excluded.json')))['items']
@@ -220,6 +269,7 @@ def build(today, M=None, CR=None, out=None):
 <section class="card"><h2>구분별 공고</h2>{gb}</section>
 <section class="card" id="bnfchart"><h2>주요 복지 확인 건수</h2>{bb}<div class="legend" style="margin-top:8px"><a class="bp post">공고 명시</a><a class="bp web">인터넷 조사</a><span>배지를 누르면 근거가 열립니다</span></div></section>
 </div>
+<section class="card" id="cal"><div class="sh"><h2>채용 달력</h2><span class="cnt">접수 마감일 기준</span></div>{calendar(live, today, rid, M)}</section>
 <div class="viz">
 <section class="card" id="new"><div class="sh"><h2>신규 공고</h2><span class="cnt">{len(new)}건 · 오늘 ChatGPT로 새로 찾음</span></div>{quick([(p, rid[p['url']]) for p in new], today, '오늘 새로 찾은 공고가 없습니다.')}</section>
 <section class="card" id="urgent"><div class="sh"><h2>3일 이내 마감</h2><span class="cnt">{len(urgent)}건</span></div>{quick([(p, rid[p['url']]) for p in urgent], today, '3일 이내 마감 공고가 없습니다.')}</section>

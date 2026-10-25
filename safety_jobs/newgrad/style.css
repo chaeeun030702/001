@@ -93,3 +93,20 @@ details.md{margin-top:6px;font-size:12px} details.md summary{cursor:pointer;colo
 .crc{border:1px solid var(--border);border-radius:var(--r-md);padding:12px 14px;font-size:13px} .crc h3{margin:0 0 4px;font-size:15px} .crc h3 a{color:var(--text-strong)}
 .crc .crv{margin:0 0 6px;color:var(--text-sub)} .crc h4{margin:8px 0 2px;font-size:12px;color:var(--caption)} .crc ul{margin:0;padding-left:16px}
 .crc summary{cursor:pointer;color:var(--primary);font-weight:600}
+
+/* 채용 달력 */
+.calw{overflow-x:auto}
+.calg{display:grid;grid-template-columns:repeat(7,minmax(96px,1fr));gap:4px;min-width:700px}
+.cwd{font:600 12px var(--font);color:var(--caption);text-align:center;padding:4px 0} .cwd.sun{color:var(--error)} .cwd.sat{color:var(--primary)}
+.cday{min-height:76px;border:1px solid var(--border);border-radius:var(--r-sm);padding:4px 5px;background:var(--surface);display:flex;flex-direction:column;gap:3px}
+.cday.past{opacity:.45} .cday.today{border:2px solid var(--primary)} .cday.soon .cdn span:first-child{color:var(--error);font-weight:700}
+.cday.sun .cdn span:first-child{color:var(--error)}
+.cdn{display:flex;justify-content:space-between;font:600 12px var(--mono);color:var(--text-sub)} .cc{font:600 10px var(--font);color:var(--caption)}
+.cev{display:flex;align-items:center;gap:4px;font:600 11px var(--font);color:var(--text);text-decoration:none;background:var(--alt1);border-radius:6px;padding:2px 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border:1px solid transparent}
+.cev:hover{border-color:var(--primary)} .cev.new{color:var(--primary)} .cev.ct{border-color:var(--orange)}
+.cday.soon .cev{background:color-mix(in srgb,var(--error) 10%,var(--surface))}
+.cb{display:inline-block;width:7px;height:7px;border-radius:50%;flex:none} .cb.now{background:var(--success)} .cb.cert{background:var(--primary)}
+.clg{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--caption);margin-bottom:8px;align-items:center}
+.clg .l-soon{color:var(--error);font-weight:600} .clg .l-new{color:var(--primary);font-weight:600} .clg .l-ct{color:var(--orange);font-weight:600}
+@media print{.calg{min-width:0}}
+.cgap{grid-column:1/-1;text-align:center;font:600 12px var(--font);color:var(--caption);padding:6px;border:1px dashed var(--border-strong);border-radius:var(--r-sm)}
