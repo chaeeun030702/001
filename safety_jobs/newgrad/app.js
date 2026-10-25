@@ -1,3 +1,9 @@
+/* 편집: 저장한 편집본을 먼저 복원(다른 스크립트가 복원된 화면에 연결되도록 맨 앞에서 실행) */
+(function(){
+  var KEY='newgrad-edit-'+(document.body.dataset.date||''),m=document.querySelector('main'),saved=null;
+  try{saved=localStorage.getItem(KEY)}catch(e){}
+  if(saved&&m){m.innerHTML=saved;document.body.classList.add('edited')}
+})();
 (function(){
 var KEY='newgrad-brief-excluded',ex=[];
 try{ex=JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){ex=[]}
@@ -53,3 +59,27 @@ refresh();
 })();
 /* 바로가기 목록에서 행으로 이동하면 잠깐 강조 */
 document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#row-"]');if(!a)return;var r=document.querySelector(a.getAttribute('href'));if(r){setTimeout(function(){r.classList.remove('flash');void r.offsetWidth;r.classList.add('flash')},300)}});
+
+/* 편집 모드: 본문 글자를 직접 고치고(contenteditable) 이 브라우저에 저장하거나 HTML 파일로 내려받는다 */
+(function(){
+  var KEY='newgrad-edit-'+(document.body.dataset.date||''),m=document.querySelector('main');
+  var tg=document.getElementById('ed-toggle'),sv=document.getElementById('ed-save'),rs=document.getElementById('ed-reset'),fl=document.getElementById('ed-file'),em=document.getElementById('ed-msg');
+  if(!m||!tg)return;
+  function say(t){em.textContent=t}
+  function setEdit(on){m.contentEditable=on?'true':'false';document.body.classList.toggle('editing',on);tg.setAttribute('aria-pressed',on);tg.textContent=on?'편집 끝내기':'편집';sv.hidden=!on;rs.hidden=!(on||document.body.classList.contains('edited'));if(on){say('글자를 눌러 고치세요');m.focus()}}
+  tg.onclick=function(){setEdit(m.contentEditable!=='true')};
+  sv.onclick=function(){var c=m.cloneNode(true);c.removeAttribute('contenteditable');
+    try{localStorage.setItem(KEY,c.innerHTML);document.body.classList.add('edited');say('저장했습니다 · 이 브라우저에서 다시 열어도 유지됩니다')}catch(e){say('이 화면에서는 저장할 수 없습니다 · 파일로 저장을 쓰세요')}};
+  rs.onclick=function(){if(!confirm('편집한 내용을 지우고 원래 브리핑으로 되돌릴까요?'))return;try{localStorage.removeItem(KEY)}catch(e){}location.reload()};
+  if(document.body.classList.contains('edited')){rs.hidden=false;say('편집본을 보고 있습니다')}
+  /* 링크·체크박스는 편집 중에도 눌러지지 않게(글자 고치기용) */
+  m.addEventListener('click',function(e){if(m.contentEditable==='true'&&e.target.closest('a'))e.preventDefault()},true);
+  function snapshot(){var d=document.documentElement.cloneNode(true),mm=d.querySelector('main');if(mm)mm.removeAttribute('contenteditable');
+    d.querySelector('body').classList.remove('editing');return '<!doctype html>\n'+d.outerHTML}
+  fl.onclick=function(){var name='안전관리자_신입_채용_브리핑_'+(document.body.dataset.date||'')+'.html',html=snapshot();
+    function fallback(){var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([html],{type:'text/html'}));a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},1000);say('파일을 내려받았습니다')}
+    var p=(window.claude&&claude.use)?claude.use('downloads'):Promise.resolve(null);
+    p.then(function(dl){if(!dl){fallback();return}
+      return dl.save({filename:name,data:new Blob([html],{type:'text/html'})}).then(function(){say('파일로 저장했습니다')},function(e){say(e&&e.code==='declined'?'저장을 취소했습니다':'파일로 저장하지 못했습니다 ('+(e&&e.code||'error')+')')})
+    }).catch(fallback)};
+})();

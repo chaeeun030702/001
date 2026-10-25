@@ -119,9 +119,17 @@ details.md{margin-top:6px;font-size:12px} details.md summary{cursor:pointer;colo
 /* 되돌리기 */
 button.undo{background:var(--primary);border-color:var(--primary);color:#fff} button.undo:hover{background:var(--primary-hover)}
 button.xopen b{color:var(--error)} button.xall{margin-top:8px}
-</style></head><body>
-<header class="top"><h1>안전관리자 신입 채용 브리핑 ChatGPT</h1><span class="when">2026-10-25 19:52 KST · ChatGPT 웹 검색 + 수집분 대조</span>
-<div class="tools"><span class="selmsg" id="selmsg" role="status"></span><button type="button" id="del" class="danger" disabled>선택 삭제</button><span id="cfm" role="group" aria-label="제외 확인" hidden><button type="button" id="yes" class="danger">제외 확정</button> <button type="button" id="no">취소</button></span><button type="button" id="undo" class="undo" hidden>↶ 되돌리기</button><button type="button" id="xopen" class="xopen" hidden>제외 <b id="xcnt2">0</b>건</button><button type="button" id="print">A4 인쇄</button>
+
+/* 편집 모드 */
+.ebar{display:inline-flex;gap:6px}
+body.editing main{outline:2px dashed var(--primary);outline-offset:4px}
+body.editing main [contenteditable],body.editing main *:focus{outline:none}
+body.editing main td:hover,body.editing main p:hover,body.editing main h2:hover{background:color-mix(in srgb,var(--primary) 6%,transparent)}
+#ed-toggle[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:#fff}
+@media print{.ebar,#ed-msg{display:none}}
+</style></head><body data-date="2026-10-25">
+<header class="top"><h1>안전관리자 신입 채용 브리핑 ChatGPT</h1><span class="when">2026-10-25 21:11 KST · ChatGPT 웹 검색 + 수집분 대조</span>
+<div class="tools"><span class="selmsg" id="selmsg" role="status"></span><button type="button" id="del" class="danger" disabled>선택 삭제</button><span id="cfm" role="group" aria-label="제외 확인" hidden><button type="button" id="yes" class="danger">제외 확정</button> <button type="button" id="no">취소</button></span><button type="button" id="undo" class="undo" hidden>↶ 되돌리기</button><button type="button" id="xopen" class="xopen" hidden>제외 <b id="xcnt2">0</b>건</button><span class="ebar" role="group" aria-label="편집"><button type="button" id="ed-toggle" aria-pressed="false">편집</button><button type="button" id="ed-save" hidden>저장</button><button type="button" id="ed-reset" hidden>원래대로</button><button type="button" id="ed-file">파일로 저장</button></span><span id="ed-msg" class="selmsg" role="status"></span><button type="button" id="print">A4 인쇄</button>
 <button type="button" class="icon" id="theme" aria-label="라이트/다크 테마 전환" title="테마 전환"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button></div></header>
 <main>
 <div class="kpis"><a class="kpi " href="#big"><span class="kl">전체 공고</span><span class="kv" id=kv-total>32</span><span class="go">목록으로 ↓</span></a><a class="kpi k-new" href="#new"><span class="kl">신규</span><span class="kv">0</span><span class="go">목록으로 ↓</span></a><a class="kpi k-err" href="#urgent"><span class="kl">3일 이내 마감</span><span class="kv">7</span><span class="go">목록으로 ↓</span></a><a class="kpi " href="#big"><span class="kl">대기업 계열</span><span class="kv">11</span><span class="go">목록으로 ↓</span></a><a class="kpi " href="#foreign"><span class="kl">외국계</span><span class="kv">8</span><span class="go">목록으로 ↓</span></a><a class="kpi " href="#con"><span class="kl">종합건설</span><span class="kv">3</span><span class="go">목록으로 ↓</span></a><a class="kpi " href="#pub"><span class="kl">공공기관·협회</span><span class="kv">2</span><span class="go">목록으로 ↓</span></a><a class="kpi " href="#bnfchart"><span class="kl">복지 확인</span><span class="kv">12</span><span class="go">목록으로 ↓</span></a><a class="kpi k-cap" href="#exc"><span class="kl">조건 밖 제외</span><span class="kv">69</span><span class="go">목록으로 ↓</span></a></div>
@@ -142,7 +150,13 @@ button.xopen b{color:var(--error)} button.xall{margin-top:8px}
 <section class="card" id="exc"><div class="sh"><h2>조건 밖이라 뺀 공고</h2><span class="cnt">69건</span></div><div class="scroll"><table class="rules ex"><thead><tr><th>사유</th><th class="num">건수</th><th>공고</th></tr></thead><tbody><tr><td class="er">경력직 전용</td><td class="num">13</td><td>삼성물산 장비 전담(3년↑) · 현대제철 안전마스터(5년↑) · 템피드(1년↑) · 금호석유화학 · Digital Edge DC(3년↑) · Applied Materials(10년↑) · DL건설 PJT(2년↑) · GS건설 불광5구역(경력) · 코오롱글로벌(3년↑) · 삼성물산 아산현장(3년↑) · 포스코이앤씨 상봉터미널(5년↑) · 하이브 안전관리지원(3년↑) · 디스커버믹스테크(1년↑)</td></tr><tr><td class="er">감시·보조 성격</td><td class="num">2</td><td>KT서비스남부 안전보호관 · SK에코플랜트 안전시설원</td></tr><tr><td class="er">전기안전</td><td class="num">1</td><td>한솔이피씨 전기공사 안전관리자</td></tr><tr><td class="er">전문건설업체</td><td class="num">4</td><td>삼호개발 2건 · 다우산업개발 · 신성이엔지 · 국보디자인</td></tr><tr><td class="er">시평 순위 조건 밖</td><td class="num">3</td><td>(주)한화 건설부문 계약직(11위) · 계룡건설 계약직(14위) · 엘티삼보 인재DB(50위·마감)</td></tr><tr><td class="er">안전이 주업무 아님</td><td class="num">11</td><td>하이즈항공(총무 겸) · 유에스티(총무·ISO 겸) · 파인텍(설비 겸) · 드림HR(총무 겸) · 올릭스(연구행정 겸) · 퍼솔코리아(교육운영·사무) · 삼성다이나에이치백(환경기술인) · 현대엘리베이터(승강기) · 한국드레가(장비 기술자) · 에스엘(기능안전) · 아이언마운틴(CS)</td></tr><tr><td class="er">해외 근무·마감·교육</td><td class="num">8</td><td>3M 해외 4건 · Air Liquide 대만·프랑스 3건 · ASM EHS Engineer(3월 마감) · 한국쓰리엠(9월 마감) · EY한영 인턴(과거 공고) · 현대건설 교육생 프로그램 · LH E&amp;S(10/21 마감) · SK Careers(진행 공고 없음)</td></tr><tr><td class="er">공공기관 조건 밖</td><td class="num">6</td><td>한국도로공사 안전순찰원(순찰원) · 한국공항공사 산업안전관리자(경력 4년↑·마감) · 한국산업안전보건공단(8/24 마감) · 한국해양수산개발원(경력 5년↑) · 한국전력기술(체험형 인턴) · 경기콘텐츠진흥원(8월 마감)</td></tr><tr><td class="er">협회 조건 밖</td><td class="num">2</td><td>한국생물안전협회 사무국(행정) · 대한산업안전협회 실내공기질 측정(9/17 마감)</td></tr><tr><td class="er">대상 기업 범위 밖 (10/25 ChatGPT 신규 검색)</td><td class="num">1</td><td>대한재해예방기술(주) 안전관리자 신입·경력(안전관리 대행 중소기업)</td></tr><tr><td class="er">직접 제외(제외 확정)</td><td class="num">18</td><td>피에스케이홀딩스 · 안전관리 분야 장애인 계약직 채용 · ㈜에스씨디(SCD) · 안전환경그룹 사원 모집 · 엘비세미콘(주) · LB세미콘 구미 환경관리팀 안전관리자 모집 · (주)서전기전 · (주)서전기전 이천 본사 안전관리 부문 채용 · (주)포스코이앤씨 · [안전] 포스코이앤씨 후판 대단중 프로젝트 인력 채용 · (주)포스코이앤씨 · 포스코이앤씨 3,4소결광 야드 밀폐화 PJT 안전관리자 채용 · 현대건설(주) · 안전보건보조원 채용 공고(시티오씨엘 6단지현장) · 한국수산자원공단 · 2026년 제1차 직원(일반정규직) 채용(건설안전(안전관리자)) · 쿠팡풀필먼트서비스(유) · [쿠팡CFS] 경기도 안성 센터 안전관리자 채용(계약직) · 에이치앤엘어드밴스드㈜ · 2026년 하반기 전문직 신입 채용(일반 전형) - 환경·안전 · 에이피써치 · EHS 위험물안전관리 환경안전 사원대리급 울산공장 외국계화학회사 · 두산퓨얼셀 · 기술 계약직 채용-안전/환경(군산) · 포스코이앤씨 · [포스코이앤씨] 검단 레이크파크 안전 관리자 채용 · 에이치앤엘어드밴스드㈜ · 2026년 하반기 전문직 신입 채용(서산시 지역인재전형) -... · 한국안전보건협회 · 안전보건진단 직원 채용 (신입·경력, 초대졸↑) · (주)포스코이앤씨 · 포스코이앤씨_새만금연결2공구 안전관리(1명) · (사)대한영양사협회 · 소규모 사업장 안전보건 기술지원사업(위탁) 수행요원 채용 공고 · 에코심플렉스(주) · [에코심플렉스] 안전팀 신입직원(사원/대리급) 채용</td></tr></tbody></table></div>
 <p class="foot">신입 초봉·직원 수는 공시·알리오·잡코리아·캐치·자소설닷컴 등에서 기준 시점과 함께 확인(값을 누르면 근거). 신규 공고는 ChatGPT(gpt-5-search-api) 웹 검색으로 찾아 내용을 채웠습니다. 지원 전 원문 확인.</p></section>
 </main>
-<script>(function(){
+<script>/* 편집: 저장한 편집본을 먼저 복원(다른 스크립트가 복원된 화면에 연결되도록 맨 앞에서 실행) */
+(function(){
+  var KEY='newgrad-edit-'+(document.body.dataset.date||''),m=document.querySelector('main'),saved=null;
+  try{saved=localStorage.getItem(KEY)}catch(e){}
+  if(saved&&m){m.innerHTML=saved;document.body.classList.add('edited')}
+})();
+(function(){
 var KEY='newgrad-brief-excluded',ex=[];
 try{ex=JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){ex=[]}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(ex))}catch(e){}}
@@ -197,4 +211,28 @@ refresh();
 })();
 /* 바로가기 목록에서 행으로 이동하면 잠깐 강조 */
 document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#row-"]');if(!a)return;var r=document.querySelector(a.getAttribute('href'));if(r){setTimeout(function(){r.classList.remove('flash');void r.offsetWidth;r.classList.add('flash')},300)}});
+
+/* 편집 모드: 본문 글자를 직접 고치고(contenteditable) 이 브라우저에 저장하거나 HTML 파일로 내려받는다 */
+(function(){
+  var KEY='newgrad-edit-'+(document.body.dataset.date||''),m=document.querySelector('main');
+  var tg=document.getElementById('ed-toggle'),sv=document.getElementById('ed-save'),rs=document.getElementById('ed-reset'),fl=document.getElementById('ed-file'),em=document.getElementById('ed-msg');
+  if(!m||!tg)return;
+  function say(t){em.textContent=t}
+  function setEdit(on){m.contentEditable=on?'true':'false';document.body.classList.toggle('editing',on);tg.setAttribute('aria-pressed',on);tg.textContent=on?'편집 끝내기':'편집';sv.hidden=!on;rs.hidden=!(on||document.body.classList.contains('edited'));if(on){say('글자를 눌러 고치세요');m.focus()}}
+  tg.onclick=function(){setEdit(m.contentEditable!=='true')};
+  sv.onclick=function(){var c=m.cloneNode(true);c.removeAttribute('contenteditable');
+    try{localStorage.setItem(KEY,c.innerHTML);document.body.classList.add('edited');say('저장했습니다 · 이 브라우저에서 다시 열어도 유지됩니다')}catch(e){say('이 화면에서는 저장할 수 없습니다 · 파일로 저장을 쓰세요')}};
+  rs.onclick=function(){if(!confirm('편집한 내용을 지우고 원래 브리핑으로 되돌릴까요?'))return;try{localStorage.removeItem(KEY)}catch(e){}location.reload()};
+  if(document.body.classList.contains('edited')){rs.hidden=false;say('편집본을 보고 있습니다')}
+  /* 링크·체크박스는 편집 중에도 눌러지지 않게(글자 고치기용) */
+  m.addEventListener('click',function(e){if(m.contentEditable==='true'&&e.target.closest('a'))e.preventDefault()},true);
+  function snapshot(){var d=document.documentElement.cloneNode(true),mm=d.querySelector('main');if(mm)mm.removeAttribute('contenteditable');
+    d.querySelector('body').classList.remove('editing');return '<!doctype html>\n'+d.outerHTML}
+  fl.onclick=function(){var name='안전관리자_신입_채용_브리핑_'+(document.body.dataset.date||'')+'.html',html=snapshot();
+    function fallback(){var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([html],{type:'text/html'}));a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},1000);say('파일을 내려받았습니다')}
+    var p=(window.claude&&claude.use)?claude.use('downloads'):Promise.resolve(null);
+    p.then(function(dl){if(!dl){fallback();return}
+      return dl.save({filename:name,data:new Blob([html],{type:'text/html'})}).then(function(){say('파일로 저장했습니다')},function(e){say(e&&e.code==='declined'?'저장을 취소했습니다':'파일로 저장하지 못했습니다 ('+(e&&e.code||'error')+')')})
+    }).catch(fallback)};
+})();
 </script></body></html>

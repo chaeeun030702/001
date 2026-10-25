@@ -258,9 +258,9 @@ def build(today, M=None, CR=None, out=None):
 <title>안전관리자 신입 채용 브리핑 ChatGPT</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap">
-<style>{css}</style></head><body>
+<style>{css}</style></head><body data-date="{today.isoformat()}">
 <header class="top"><h1>안전관리자 신입 채용 브리핑 ChatGPT</h1><span class="when">{today.isoformat()} {now} KST · ChatGPT 웹 검색 + 수집분 대조</span>
-<div class="tools"><span class="selmsg" id="selmsg" role="status"></span><button type="button" id="del" class="danger" disabled>선택 삭제</button><span id="cfm" role="group" aria-label="제외 확인" hidden><button type="button" id="yes" class="danger">제외 확정</button> <button type="button" id="no">취소</button></span><button type="button" id="undo" class="undo" hidden>↶ 되돌리기</button><button type="button" id="xopen" class="xopen" hidden>제외 <b id="xcnt2">0</b>건</button><button type="button" id="print">A4 인쇄</button>
+<div class="tools"><span class="selmsg" id="selmsg" role="status"></span><button type="button" id="del" class="danger" disabled>선택 삭제</button><span id="cfm" role="group" aria-label="제외 확인" hidden><button type="button" id="yes" class="danger">제외 확정</button> <button type="button" id="no">취소</button></span><button type="button" id="undo" class="undo" hidden>↶ 되돌리기</button><button type="button" id="xopen" class="xopen" hidden>제외 <b id="xcnt2">0</b>건</button><span class="ebar" role="group" aria-label="편집"><button type="button" id="ed-toggle" aria-pressed="false">편집</button><button type="button" id="ed-save" hidden>저장</button><button type="button" id="ed-reset" hidden>원래대로</button><button type="button" id="ed-file">파일로 저장</button></span><span id="ed-msg" class="selmsg" role="status"></span><button type="button" id="print">A4 인쇄</button>
 <button type="button" class="icon" id="theme" aria-label="라이트/다크 테마 전환" title="테마 전환"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button></div></header>
 <main>
 <div class="kpis">{kp}</div>

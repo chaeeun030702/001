@@ -114,3 +114,11 @@ details.md{margin-top:6px;font-size:12px} details.md summary{cursor:pointer;colo
 /* 되돌리기 */
 button.undo{background:var(--primary);border-color:var(--primary);color:#fff} button.undo:hover{background:var(--primary-hover)}
 button.xopen b{color:var(--error)} button.xall{margin-top:8px}
+
+/* 편집 모드 */
+.ebar{display:inline-flex;gap:6px}
+body.editing main{outline:2px dashed var(--primary);outline-offset:4px}
+body.editing main [contenteditable],body.editing main *:focus{outline:none}
+body.editing main td:hover,body.editing main p:hover,body.editing main h2:hover{background:color-mix(in srgb,var(--primary) 6%,transparent)}
+#ed-toggle[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:#fff}
+@media print{.ebar,#ed-msg{display:none}}
