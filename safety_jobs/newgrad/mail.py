@@ -47,6 +47,20 @@ def build(today):
     tiles = [('전체', len(live), '#000'), ('신규', len(new), '#0F6FFF'), ('3일 이내 마감', len(urg), '#E63B3B'),
              ('대기업 계열', cnt['big'], '#000'), ('외국계', cnt['foreign'], '#000'), ('종합건설', cnt['con'], '#000'), ('공공기관·협회', cnt['pub'], '#000')]
     tl = ''.join(f'<td style="padding:10px;border:1px solid #E2E4E9;border-radius:8px;text-align:center"><div style="font-size:12px;color:#737373">{l}</div><div style="font-size:22px;font-weight:700;color:{c}">{v}</div></td>' for l, v, c in tiles)
+    mp = os.path.join(HERE, 'private', 'match.json')
+    M = json.load(open(mp)) if os.path.exists(mp) else {}
+    msec = ''
+    if M:
+        def mt(rows, key):
+            if not rows:
+                return '<p style="color:#737373;font-size:13px;margin:4px 0 0">해당 공고가 없습니다.</p>'
+            tr = ''.join(f'<tr><td style="padding:6px 8px;border-bottom:1px solid #E9EBEF;font-weight:700;color:{"#15B874" if M[p["url"]][key] >= 80 else "#E0901F" if M[p["url"]][key] >= 60 else "#E63B3B"}">{M[p["url"]][key]}%</td>'
+                         f'<td style="padding:6px 8px;border-bottom:1px solid #E9EBEF"><b>{E(p["company"])}</b></td><td style="padding:6px 8px;border-bottom:1px solid #E9EBEF"><a href="{E(p["url"])}" style="color:#1C1C1C;text-decoration:none">{E(p["title"])}</a></td>'
+                         f'<td style="padding:6px 8px;border-bottom:1px solid #E9EBEF;white-space:nowrap">{E(p["deadline"])}</td></tr>' for p in rows)
+            return f'<table style="border-collapse:collapse;width:100%;font-size:13px">{tr}</table>'
+        b = lambda k: [p for p in live if (M.get(p['url']) or {}).get('bucket') == k]
+        msec = (f'<h3 style="margin:16px 0 4px;color:#15B874">매칭 · 지금 지원 가능 {len(b("now"))}건</h3>' + mt(sorted(b('now'), key=lambda p: -M[p['url']]['now']), 'now')
+                + f'<h3 style="margin:16px 0 4px;color:#0F6FFF">매칭 · 산업안전기사 취득 후 {len(b("cert"))}건 (취득 후 매칭도)</h3>' + mt(sorted(b('cert'), key=lambda p: -M[p['url']]['aft']), 'aft'))
     names = [('big', '대기업·그룹 계열사'), ('foreign', '외국계'), ('con', '종합건설'), ('pub', '공공기관·협회'), ('etc', '상장사·중견')]
     key = lambda p: (0 if p['deadline'][:4].isdigit() else 1, p['deadline'])
     groups = ''.join(f'<h3 style="margin:18px 0 4px">{n} {cnt[g]}건</h3>' + table(sorted([p for p in live if p['group'] == g], key=key), today, 'all', new) for g, n in names)
@@ -56,6 +70,7 @@ def build(today):
 <table style="border-collapse:separate;border-spacing:6px;width:100%"><tr>{tl}</tr></table>
 <h3 style="margin:16px 0 4px;color:#0F6FFF">신규 공고 {len(new)}건</h3>{table(new, today, 'new')}
 <h3 style="margin:16px 0 4px;color:#E63B3B">3일 이내 마감 {len(urg)}건</h3>{table(urg, today, 'urg')}
+{msec}
 {groups}
 <p style="margin:16px 0 0;font-size:12px;color:#737373">파란 글씨 = 오늘 새로 찾은 공고 · 빨간 날짜 = 3일 이내 마감 · 주황 = 계약직. 지원 전 원문을 확인하세요.</p></div>'''
     os.makedirs(os.path.join(HERE, 'out'), exist_ok=True)
