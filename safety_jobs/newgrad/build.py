@@ -260,7 +260,7 @@ def build(today, M=None, CR=None, out=None):
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap">
 <style>{css}</style></head><body>
 <header class="top"><h1>안전관리자 신입 채용 브리핑 ChatGPT</h1><span class="when">{today.isoformat()} {now} KST · ChatGPT 웹 검색 + 수집분 대조</span>
-<div class="tools"><span class="selmsg" id="selmsg" role="status"></span><button type="button" id="del" class="danger" disabled>선택 삭제</button><span id="cfm" role="group" aria-label="제외 확인" hidden><button type="button" id="yes" class="danger">제외 확정</button> <button type="button" id="no">취소</button></span><button type="button" id="print">A4 인쇄</button>
+<div class="tools"><span class="selmsg" id="selmsg" role="status"></span><button type="button" id="del" class="danger" disabled>선택 삭제</button><span id="cfm" role="group" aria-label="제외 확인" hidden><button type="button" id="yes" class="danger">제외 확정</button> <button type="button" id="no">취소</button></span><button type="button" id="undo" class="undo" hidden>↶ 되돌리기</button><button type="button" id="xopen" class="xopen" hidden>제외 <b id="xcnt2">0</b>건</button><button type="button" id="print">A4 인쇄</button>
 <button type="button" class="icon" id="theme" aria-label="라이트/다크 테마 전환" title="테마 전환"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button></div></header>
 <main>
 <div class="kpis">{kp}</div>
@@ -277,7 +277,7 @@ def build(today, M=None, CR=None, out=None):
 {msec}
 <section class="card"><h2 style="font-size:18px;margin:0 0 8px">선별 조건</h2>{rules}</section>
 {secs}
-<section class="card"><details class="xl"><summary>제외한 공고 (직접 선택) <b id="xcnt" style="margin-left:6px">0</b>건 · 되돌리기</summary><ul id="xitems"></ul></details></section>
+<section class="card" id="xsec"><details class="xl" id="xl"><summary>제외한 공고 (직접 선택) <b id="xcnt" style="margin-left:6px">0</b>건 · 되돌리기</summary><ul id="xitems"></ul><button type="button" id="xall" class="xall" hidden>모두 되돌리기</button></details></section>
 <section class="card" id="exc"><div class="sh"><h2>조건 밖이라 뺀 공고</h2><span class="cnt">{exn}건</span></div><div class="scroll"><table class="rules ex"><thead><tr><th>사유</th><th class="num">건수</th><th>공고</th></tr></thead><tbody>{exrows}</tbody></table></div>
 <p class="foot">신입 초봉·직원 수는 공시·알리오·잡코리아·캐치·자소설닷컴 등에서 기준 시점과 함께 확인(값을 누르면 근거). 신규 공고는 ChatGPT(gpt-5-search-api) 웹 검색으로 찾아 내용을 채웠습니다. 지원 전 원문 확인.</p></section>
 </main>

@@ -110,3 +110,7 @@ details.md{margin-top:6px;font-size:12px} details.md summary{cursor:pointer;colo
 .clg .l-soon{color:var(--error);font-weight:600} .clg .l-new{color:var(--primary);font-weight:600} .clg .l-ct{color:var(--orange);font-weight:600}
 @media print{.calg{min-width:0}}
 .cgap{grid-column:1/-1;text-align:center;font:600 12px var(--font);color:var(--caption);padding:6px;border:1px dashed var(--border-strong);border-radius:var(--r-sm)}
+
+/* 되돌리기 */
+button.undo{background:var(--primary);border-color:var(--primary);color:#fff} button.undo:hover{background:var(--primary-hover)}
+button.xopen b{color:var(--error)} button.xall{margin-top:8px}
