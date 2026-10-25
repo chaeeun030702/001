@@ -104,14 +104,15 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 <script>
 /* 작업 데이터 — 에이전트를 맡길 때마다 이 블록만 고친다 (progress: 0~100) */
 var JOB={
-  updated:"2026-10-25 10:35 KST",updatedISO:"2026-10-25T01:35:00Z",
-  main:{name:"메인 에이전트",task:"신입 브리핑 보강: 선택 삭제(제외 확정) · 기업정보 링크 · 복지 · 공공기관 추가",note:"조건: 신입만 · 감시단/전기안전관리자/전문건설/비안전직무 제외 · 100대 그룹·외국계 포함 · 종합건설 정규직 도급 50위·계약직 10위 · 설계사 10위."},
+  updated:"2026-10-25 10:50 KST",updatedISO:"2026-10-25T01:50:00Z",
+  main:{name:"메인 에이전트",task:"신입 브리핑 보강: 선택 삭제(제외 확정) · 기업정보 링크 · 복지 · 공공기관·협회 추가",note:"조건: 신입만 · 감시단/전기안전관리자/전문건설/비안전직무 제외 · 100대 그룹·외국계 포함 · 종합건설 정규직 도급 50위·계약직 10위 · 설계사 10위."},
   subs:[
    {name:"ChatGPT 웹 검색",order:"하청 1",status:"done",progress:100,task:"gpt-5-search-api 7회 · 대기업/외국계/종합건설/설계사/공채/검증",result:"후보 15건 → 유효 3건(SK 도시가스 G2·DB하이텍·콜마비앤에이치), 나머지 마감·경력·해외"},
    {name:"조건 필터·검증",order:"하청 2",status:"done",progress:100,task:"경력·감시단·전기안전·전문건설·순위 밖 제외",result:"수집 DB 88건 + ChatGPT 대조 → 50건 포함, 38건 이상 제외"},
    {name:"ChatGPT 복지 조사",order:"하청 4",status:"done",progress:100,task:"39개사 기숙사·사택·자녀학자금·주택대출 웹 검색 (2갈래)",result:"5개사 확인(볼보·덴소·성신양회·코카콜라음료·두산퓨얼셀) · 공고 본문·기존 조사 합쳐 16건 복지 표시"},
    {name:"ChatGPT 공공기관 검색",order:"하청 5",status:"done",progress:100,task:"잡알리오·나라일터·사람인 공공기관 안전관리자 신입 (3회, 1회 429 재시도)",result:"접수 중 신입 공고 2건(한국수산자원공단 건설안전·산업안전) · 6건 조건 밖(경력·마감·순찰원·체험형)"},
-   {name:"브리핑 HTML 작성·게시",order:"하청 3",status:"done",progress:100,task:"브리핑 양식 HTML 한 파일 → render 전송 · 아티팩트 게시",result:"제외 확정 단계 · 공공기관 섹션 추가 · v4 게시 (51건)"}
+   {name:"ChatGPT 협회 검색",order:"하청 6",status:"done",progress:100,task:"안전 관련 협회·사단법인 신입 안전관리자 (2회) + 수집분 대조",result:"3건 추가(한국안전보건협회·대한산업안전협회·대한영양사협회 기술지원) · 2건 제외"},
+   {name:"브리핑 HTML 작성·게시",order:"하청 3",status:"done",progress:100,task:"브리핑 양식 HTML 한 파일 → render 전송 · 아티팩트 게시",result:"공공기관·협회 섹션 5건 · v5 게시 (54건)"}
   ]
 };
 
