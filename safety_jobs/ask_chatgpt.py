@@ -1,7 +1,7 @@
 """ChatGPT(OpenAI) 웹 검색 질문 — MCP 연결이 없는 예약 루틴에서도 쓰는 명령줄 도구.
 
-기본은 Responses API(gpt-5 + web_search 도구) — gpt-5-search-api(chat/completions)보다 분당 한도가 훨씬 크다
-(2026-10-25 확인: gpt-5 1,000,000 TPM, gpt-5-search-api 45,000 TPM). --api chat 이면 예전 방식.
+기본은 gpt-5-search-api(chat/completions, 2026-10-25 사용자 요청으로 예전 방식 복귀, 분당 45,000 토큰).
+많이 물을 때는 --api responses(gpt-5 + web_search, 분당 1,000,000 토큰, --effort low 면 빠름).
 OPENAI_API_KEY(환경 변수)가 있어야 한다. 표준 라이브러리만 쓴다.
 
     python3 safety_jobs/ask_chatgpt.py "대한유화 2026 신입 안전관리자 공고 마감일, 출처 URL"
@@ -49,7 +49,7 @@ def _post(url, body, key, retry):
             raise RuntimeError(f"연결 오류: {e}")
 
 
-def ask(prompt, model=None, system=None, max_tokens=None, retry=3, api="responses", effort=None):
+def ask(prompt, model=None, system=None, max_tokens=None, retry=3, api="chat", effort=None):
     key = os.environ.get("OPENAI_API_KEY", "").strip()
     if not key:
         raise RuntimeError("OPENAI_API_KEY 가 설정되어 있지 않습니다.")
@@ -78,8 +78,8 @@ def ask(prompt, model=None, system=None, max_tokens=None, retry=3, api="response
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("prompt", help="질문(‘-’ 이면 표준 입력)")
-    ap.add_argument("--model", help=f"기본 {DEFAULT_MODEL}(responses) / {CHAT_MODEL}(chat)")
-    ap.add_argument("--api", choices=["responses", "chat"], default="responses")
+    ap.add_argument("--model", help=f"기본 {CHAT_MODEL}(chat) / {DEFAULT_MODEL}(responses)")
+    ap.add_argument("--api", choices=["chat", "responses"], default="chat")
     ap.add_argument("--effort", choices=["minimal", "low", "medium", "high"], help="responses 생각 단계 길이(빠르게: low)")
     ap.add_argument("--system")
     ap.add_argument("--max-tokens", type=int)
