@@ -104,13 +104,13 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 <script>
 /* 작업 데이터 — 에이전트를 맡길 때마다 이 블록만 고친다 (progress: 0~100) */
 var JOB={
-  updated:"2026-10-25 12:05 KST",updatedISO:"2026-10-25T03:05:00Z",
-  main:{name:"메인 에이전트",task:"신입 브리핑: 공고명 아래 신입 초봉·전체 직원 수 (재시작)",note:"직원 수는 공시·알리오·국민연금·기업정보 순으로, 초봉은 잡코리아·캐치·자소설닷컴·알리오 순으로 확인하고 기준 시점·근거 링크를 붙입니다."},
+  updated:"2026-10-25 10:20 KST",updatedISO:"2026-10-25T01:20:00Z",
+  main:{name:"메인 에이전트",task:"신입 브리핑 매일 20시 예약 + 신규 파란 글씨 · 숫자 타일 이동 · 아티팩트 게시 · 메일 발송",note:"매일 19:49(KST) 예약 작업이 safety_jobs/newgrad/README.md 순서대로 ChatGPT 신규 검색 → 내용 채우기 → 게시 → 메일 발송을 합니다."},
   subs:[
-   {name:"1차 조사(이전 진행분)",order:"하청 1",status:"done",progress:100,task:"ChatGPT 6회 + 웹 검색 26회",result:"31개사 직원 수 · 초봉 보강 9곳"},
-   {name:"ChatGPT 남은 조사",order:"하청 2",status:"done",progress:100,task:"HL만도·볼보·하이브 초봉, 이터널그룹·디스커버믹스 직원 수, 오래된 초봉 갱신",result:"볼보 초봉·이터널그룹 직원 수 추가 · HL만도 초봉, 디스커버믹스 직원 수는 못 찾음"},
-   {name:"웹 검색 교차 확인",order:"하청 3",status:"done",progress:100,task:"협회 2곳·이케아·쿠팡CFS·코카콜라 초봉",result:"대한영양사협회·한국안전보건협회 직원 수 공개 자료 없음 · 이케아 등은 기존 값 유지"},
-   {name:"브리핑 반영·게시",order:"하청 4",status:"done",progress:100,task:"공고명 아래 초봉·직원 수 (근거 링크·기준 시점)",result:"50건 반영 · 확인 중 경력 요건 공고 4건 추가 제외"}
+   {name:"생성기 저장소 이전",order:"하청 1",status:"done",progress:100,task:"postings.json · excluded.json · build.py · mail.py · README",result:"공고 50건 기준 데이터 저장, 마감 지난 공고 자동 제외"},
+   {name:"브리핑 기능 추가",order:"하청 2",status:"done",progress:100,task:"신규 파란 글씨 · 숫자 타일 클릭 시 목록으로 이동 · 신규/3일 내 마감 바로가기",result:"브라우저에서 동작 확인"},
+   {name:"아티팩트·메일",order:"하청 3",status:"done",progress:100,task:"신입 브리핑 아티팩트 게시 · Gmail 시험 발송",result:"chaeeun075@gmail.com 발송 완료"},
+   {name:"매일 예약",order:"하청 4",status:"done",progress:100,task:"예약 작업 '안전관리자 신입 브리핑'",result:"매일 19:49 KST · 첫 실행 오늘 저녁"}
   ]
 };
 
