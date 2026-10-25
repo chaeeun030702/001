@@ -51,7 +51,7 @@ def build(today):
     key = lambda p: (0 if p['deadline'][:4].isdigit() else 1, p['deadline'])
     groups = ''.join(f'<h3 style="margin:18px 0 4px">{n} {cnt[g]}건</h3>' + table(sorted([p for p in live if p['group'] == g], key=key), today, 'all', new) for g, n in names)
     body = f'''<div style="font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;color:#1C1C1C;max-width:760px">
-<h2 style="margin:0 0 4px">안전관리자 신입 채용 브리핑 · {today.isoformat()}</h2>
+<h2 style="margin:0 0 4px">안전관리자 신입 채용 브리핑 ChatGPT · {today.isoformat()}</h2>
 <p style="margin:0 0 12px;color:#737373;font-size:13px">ChatGPT 웹 검색 + 수집분 대조 · 전체 내용(신입 초봉·직원 수·복지·선택 삭제)은 <a href="{ART}" style="color:#0F6FFF">브리핑 아티팩트</a>에서 보세요.</p>
 <table style="border-collapse:separate;border-spacing:6px;width:100%"><tr>{tl}</tr></table>
 <h3 style="margin:16px 0 4px;color:#0F6FFF">신규 공고 {len(new)}건</h3>{table(new, today, 'new')}

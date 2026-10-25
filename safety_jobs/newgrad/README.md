@@ -1,4 +1,4 @@
-# 안전관리자 신입 채용 브리핑 (매일 20시 예약 실행)
+# 안전관리자 신입 채용 브리핑 ChatGPT (매일 20시 예약 실행)
 
 예약 작업이 매일 20:00 KST 근처에 이 문서를 읽고 아래 순서대로 실행한다.
 
@@ -25,7 +25,7 @@
 5. **내용 채우기 (신규 공고)**: ChatGPT로 신입 초봉(대졸 초임·연도·근거 URL), 전체 직원 수(사업보고서·알리오·국민연금·기업정보, 기준 시점·URL), 주요 복지(기숙사·사택·자녀학자금·주택대출·주거지원, 근거 URL)를 찾아 채운다. 못 찾은 값은 비워 둔다(브리핑에 "확인 못 함").
 6. **생성**: `python3 safety_jobs/newgrad/build.py` · `python3 safety_jobs/newgrad/mail.py`
 7. **게시**: 브리핑 HTML을 신입 브리핑 아티팩트 https://claude.ai/artifact/6o7keJV5TZ5rTWA77iKfpw 에 같은 URL로 게시(`url` 지정, `capabilities`는 생략해 기존 db 선언 유지)하고 연다. SendUserFile(`display: "render"`)로도 보낸다.
-8. **메일**: Gmail `send_message`로 사용자 메일(chaeeun075@gmail.com)에 보낸다. 제목 `[안전관리자 신입 브리핑] YYYY-MM-DD · 신규 N건 · 3일 내 마감 M건`, `htmlBody`는 `out/mail_YYYY-MM-DD.html` 내용.
+8. **메일**: Gmail `send_message`로 사용자 메일(chaeeun075@gmail.com)에 보낸다. 제목 `[안전관리자 신입 채용 브리핑 ChatGPT] YYYY-MM-DD · 신규 N건 · 3일 내 마감 M건`, `htmlBody`는 `out/mail_YYYY-MM-DD.html` 내용.
 9. **커밋·푸시**: `postings.json`·`excluded.json`·`user_excluded.json`·브리핑 HTML·작업현황을 커밋하고 브랜치에 푸시한다.
 10. 작업현황을 완료로 바꿔 다시 게시하고, 답변에 작업현황 표와 신규·마감 임박 공고를 적는다.
 
