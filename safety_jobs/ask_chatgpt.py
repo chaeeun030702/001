@@ -49,7 +49,7 @@ def _post(url, body, key, retry):
             raise RuntimeError(f"연결 오류: {e}")
 
 
-def ask(prompt, model=None, system=None, max_tokens=None, retry=3, api="responses"):
+def ask(prompt, model=None, system=None, max_tokens=None, retry=3, api="responses", effort=None):
     key = os.environ.get("OPENAI_API_KEY", "").strip()
     if not key:
         raise RuntimeError("OPENAI_API_KEY 가 설정되어 있지 않습니다.")
@@ -63,6 +63,8 @@ def ask(prompt, model=None, system=None, max_tokens=None, retry=3, api="response
     body = {"model": model or DEFAULT_MODEL, "input": prompt, "tools": [{"type": "web_search"}]}
     if system:
         body["instructions"] = system
+    if effort:  # gpt-5 생각 단계 길이(minimal/low/medium/high) — low 면 빠르다
+        body["reasoning"] = {"effort": effort}
     if max_tokens:
         body["max_output_tokens"] = max_tokens
     data = _post(f"{base}/responses", body, key, retry)
@@ -78,13 +80,14 @@ def main():
     ap.add_argument("prompt", help="질문(‘-’ 이면 표준 입력)")
     ap.add_argument("--model", help=f"기본 {DEFAULT_MODEL}(responses) / {CHAT_MODEL}(chat)")
     ap.add_argument("--api", choices=["responses", "chat"], default="responses")
+    ap.add_argument("--effort", choices=["minimal", "low", "medium", "high"], help="responses 생각 단계 길이(빠르게: low)")
     ap.add_argument("--system")
     ap.add_argument("--max-tokens", type=int)
     ap.add_argument("--retry", type=int, default=3)
     a = ap.parse_args()
     prompt = sys.stdin.read() if a.prompt == "-" else a.prompt
     try:
-        print(ask(prompt, a.model, a.system, a.max_tokens, a.retry, a.api))
+        print(ask(prompt, a.model, a.system, a.max_tokens, a.retry, a.api, a.effort))
     except Exception as e:  # noqa: BLE001 — 명령줄 도구라 메시지만 남긴다
         print(f"[ask_chatgpt] {e}", file=sys.stderr)
         sys.exit(1)
