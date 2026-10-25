@@ -71,7 +71,7 @@ details.xl li{margin:4px 0} details.xl button{min-height:32px;margin-left:8px}
 @media print{.top{position:static}.tools{display:none}.card{box-shadow:none}body{background:#fff}}
 </style></head><body>
 <header class="top"><h1>안전관리자 신입 채용 브리핑</h1><span class="when">2026-10-25 10:10 KST · ChatGPT 웹 검색 + 00:43 수집분 대조</span>
-<div class="tools"><span class="selmsg" id="selmsg" role="status"></span><button type="button" id="del" class="danger" disabled>선택 삭제</button><button type="button" id="print">A4 인쇄</button>
+<div class="tools"><span class="selmsg" id="selmsg" role="status"></span><button type="button" id="del" class="danger" disabled>선택 삭제</button><span id="cfm" role="group" aria-label="제외 확인" hidden><button type="button" id="yes" class="danger">제외 확정</button> <button type="button" id="no">취소</button></span><button type="button" id="print">A4 인쇄</button>
 <button type="button" class="icon" id="theme" aria-label="라이트/다크 테마 전환" title="테마 전환"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button></div></header>
 <main>
 <div class="kpis"><div class="kpi "><span class="kl">전체 공고</span><span class="kv" id=kv-total>50</span></div><div class="kpi k-err"><span class="kl">3일 이내 마감</span><span class="kv" >9</span></div><div class="kpi "><span class="kl">대기업 계열</span><span class="kv" >15</span></div><div class="kpi "><span class="kl">외국계</span><span class="kv" >10</span></div><div class="kpi "><span class="kl">종합건설</span><span class="kv" >10</span></div><div class="kpi "><span class="kl">복지 확인</span><span class="kv" >16</span></div><div class="kpi k-cap"><span class="kl">조건 밖 제외</span><span class="kv" >38</span></div></div>
@@ -104,10 +104,14 @@ function refresh(){
 }
 document.addEventListener('change',function(e){
   if(e.target.classList.contains('all')){var s=e.target.closest('section');s.querySelectorAll('tr[data-url]:not([hidden]) .sel').forEach(function(c){c.checked=e.target.checked})}
-  if(e.target.matches('.sel,.all'))refresh();
+  if(e.target.matches('.sel,.all')){if(!cfm.hidden)ask(false);refresh()}
 });
-del.onclick=function(){var s=sel();if(!s.length)return;if(!confirm(s.length+'건을 목록에서 뺄까요? 아래 "제외한 공고"에서 되돌릴 수 있습니다.'))return;
-  s.forEach(function(r){ex.push({u:r.dataset.url,c:r.dataset.co,t:r.dataset.title})});save();refresh()};
+var cfm=document.getElementById('cfm'),yes=document.getElementById('yes');
+function ask(on){cfm.hidden=!on;del.hidden=on;if(on){msg.textContent=sel().length+'건을 제외할까요?';yes.focus()}else{del.focus()}}
+del.onclick=function(){if(sel().length)ask(true)};
+document.getElementById('no').onclick=function(){ask(false);refresh()};
+yes.onclick=function(){var s=sel();s.forEach(function(r){ex.push({u:r.dataset.url,c:r.dataset.co,t:r.dataset.title})});save();ask(false);refresh();msg.textContent=s.length+'건 제외 확정 · 아래에서 되돌릴 수 있습니다'};
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!cfm.hidden){ask(false);refresh()}});
 /* 접수기한 D-n: 오늘 기준으로 다시 계산 (3일 이내 빨간색) */
 var t0=new Date();t0.setHours(0,0,0,0);
 document.querySelectorAll('td.dl[data-dl]').forEach(function(td){var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(td.dataset.dl);if(!m)return;var dd=new Date(+m[1],m[2]-1,+m[3]),n=Math.round((dd-t0)/864e5);
