@@ -279,6 +279,12 @@ def load_postings(paths):
             print(f"[skip] 브리핑 {p} 읽기 실패", file=sys.stderr)
             continue
         for x in data.get("postings", []) if isinstance(data, dict) else []:
+            # 신입 채용 브리핑(newgrad/postings.json): starter 가 {pay, basis, url} → extra.starter 문자열로 맞춘다
+            ns = x.get("starter")
+            if isinstance(ns, dict) and ns.get("pay") and not (x.get("extra") or {}).get("starter"):
+                yr = re.match(r"\d{4}", ns.get("basis") or "")
+                x = {**x, "extra": {**(x.get("extra") or {}),
+                                    "starter": f"신입 초봉 {ns['pay']}" + (f" ({yr.group()})" if yr else "")}}
             st = ((x.get("extra") or {}).get("starter") or "").strip()
             if x.get("url") and (x["url"] not in by_url or st):
                 by_url[x["url"]] = x
