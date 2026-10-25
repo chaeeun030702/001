@@ -3,7 +3,7 @@
 postings.json(공고) · excluded.json(조건 밖 공고)을 읽어 한 파일 HTML을 만든다.
   python3 safety_jobs/newgrad/build.py [YYYY-MM-DD]   # 기본: 오늘(KST)
 출력: docs/안전관리자_신입_채용_브리핑_YYYY-MM-DD.html
-마감일이 지난 공고는 빼고, first_seen이 오늘인 공고는 '신규'(파란 글씨)로 표시한다.
+마감일이 지난 공고와 사용자가 '제외 확정'한 공고(user_excluded.json, 아티팩트 db의 excluded 컬렉션 사본)는 빼고, first_seen이 오늘인 공고는 '신규'(파란 글씨)로 표시한다.
 """
 import datetime, html, json, os, re, sys
 from collections import Counter
@@ -83,9 +83,14 @@ def quick(rows, today, empty):
 def build(today):
     data = json.load(open(os.path.join(HERE, 'postings.json')))
     exc = json.load(open(os.path.join(HERE, 'excluded.json')))['items']
+    uxp = os.path.join(HERE, 'user_excluded.json')
+    ux = json.load(open(uxp))['items'] if os.path.exists(uxp) else []
+    uxu = {x['url'] for x in ux}
+    if ux:
+        exc = exc + [{'reason': '직접 제외(제외 확정)', 'items': [f"{x.get('company', '')} · {x.get('title', '')}" for x in ux]}]
     css = open(os.path.join(HERE, 'style.css')).read()
     js = open(os.path.join(HERE, 'app.js')).read()
-    live = [p for p in data['postings'] if (dleft(p['deadline'], today) is None or dleft(p['deadline'], today) >= 0)]
+    live = [p for p in data['postings'] if p['url'] not in uxu and (dleft(p['deadline'], today) is None or dleft(p['deadline'], today) >= 0)]
     key = lambda p: (0 if p['deadline'][:4].isdigit() else 1, p['deadline'])
     rid = {p['url']: f'row-{i}' for i, p in enumerate(live)}
     by = {g: sorted([p for p in live if p['group'] == g], key=key) for g, _ in GROUPS}

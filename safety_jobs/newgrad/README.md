@@ -7,6 +7,7 @@
 |---|---|
 | `postings.json` | 브리핑에 싣는 공고 (url 기준 1건 1행). `first_seen`이 오늘이고 `baseline`이 아니면 **신규(파란 글씨)** |
 | `excluded.json` | 조건 밖이라 뺀 공고 (사유별) |
+| `user_excluded.json` | 사용자가 브리핑에서 **제외 확정**한 공고. 아티팩트 db `excluded` 컬렉션의 사본 — 다음 브리핑·메일·신규 검색에서 모두 뺀다 |
 | `build.py` | 브리핑 HTML 생성 → `docs/안전관리자_신입_채용_브리핑_YYYY-MM-DD.html` (마감 지난 공고 자동 제외) |
 | `mail.py` | 메일 본문 HTML 생성 → `out/mail_YYYY-MM-DD.html` |
 | `style.css` · `app.js` | 페이지 디자인·동작 (선택 삭제 → 제외 확정, 숫자 타일 → 목록 이동, D-n 계산) |
@@ -18,14 +19,15 @@
 
 ## 실행 순서
 1. **작업현황**: `docs/agent_status.html`의 `JOB`를 이번 실행으로 바꿔 https://claude.ai/artifact/89otDQXoXzXKDG8U1kpkd7 에 게시하고 연다 (CLAUDE.md 규칙).
-2. **ChatGPT 신규 공고 검색**: `mcp__openai__ask_chatgpt`(model `gpt-5-search-api`)로 위 조건의 "현재 접수 중인 안전관리자 신입" 공고를 대기업 계열 / 외국계 / 종합건설·설계사 / 공공기관·협회로 나눠 검색한다. 분당 한도(429)에 걸리면 웹 검색으로 대신 확인하고 다음 호출을 이어 간다.
-3. **검증·추가**: `postings.json`에 없는 url만 후보로 보고, 본문에서 경력 요건·마감일·고용형태를 확인한다. 조건에 맞으면 아래 형식으로 추가하고 `first_seen`=오늘, `via`="ChatGPT 웹 검색"으로 둔다. 안 맞으면 `excluded.json`에 사유와 함께 적는다.
-4. **내용 채우기 (신규 공고)**: ChatGPT로 신입 초봉(대졸 초임·연도·근거 URL), 전체 직원 수(사업보고서·알리오·국민연금·기업정보, 기준 시점·URL), 주요 복지(기숙사·사택·자녀학자금·주택대출·주거지원, 근거 URL)를 찾아 채운다. 못 찾은 값은 비워 둔다(브리핑에 "확인 못 함").
-5. **생성**: `python3 safety_jobs/newgrad/build.py` · `python3 safety_jobs/newgrad/mail.py`
-6. **게시**: 브리핑 HTML을 신입 브리핑 아티팩트 https://claude.ai/artifact/6o7keJV5TZ5rTWA77iKfpw 에 같은 URL로 게시(`url` 지정)하고 연다. SendUserFile(`display: "render"`)로도 보낸다.
-7. **메일**: Gmail `send_message`로 사용자 메일(chaeeun075@gmail.com)에 보낸다. 제목 `[안전관리자 신입 브리핑] YYYY-MM-DD · 신규 N건 · 3일 내 마감 M건`, `htmlBody`는 `out/mail_YYYY-MM-DD.html` 내용.
-8. **커밋·푸시**: `postings.json`·`excluded.json`·브리핑 HTML·작업현황을 커밋하고 브랜치에 푸시한다.
-9. 작업현황을 완료로 바꿔 다시 게시하고, 답변에 작업현황 표와 신규·마감 임박 공고를 적는다.
+2. **제외 확정 반영**: `ArtifactData` `list`(url https://claude.ai/artifact/6o7keJV5TZ5rTWA77iKfpw, collection `excluded`)로 사용자가 제외 확정한 공고를 읽어 `user_excluded.json`(`{"items":[{"url","company","title","at"}]}`)에 그대로 저장한다. 되돌리기한 공고는 db에서 지워지므로 목록을 통째로 덮어쓴다.
+3. **ChatGPT 신규 공고 검색**: `mcp__openai__ask_chatgpt`(model `gpt-5-search-api`)로 위 조건의 "현재 접수 중인 안전관리자 신입" 공고를 대기업 계열 / 외국계 / 종합건설·설계사 / 공공기관·협회로 나눠 검색한다. 분당 한도(429)에 걸리면 웹 검색으로 대신 확인하고 다음 호출을 이어 간다.
+4. **검증·추가**: `postings.json`·`user_excluded.json`에 없는 url만 후보로 보고, 본문에서 경력 요건·마감일·고용형태를 확인한다. 조건에 맞으면 아래 형식으로 추가하고 `first_seen`=오늘, `via`="ChatGPT 웹 검색"으로 둔다. 안 맞으면 `excluded.json`에 사유와 함께 적는다.
+5. **내용 채우기 (신규 공고)**: ChatGPT로 신입 초봉(대졸 초임·연도·근거 URL), 전체 직원 수(사업보고서·알리오·국민연금·기업정보, 기준 시점·URL), 주요 복지(기숙사·사택·자녀학자금·주택대출·주거지원, 근거 URL)를 찾아 채운다. 못 찾은 값은 비워 둔다(브리핑에 "확인 못 함").
+6. **생성**: `python3 safety_jobs/newgrad/build.py` · `python3 safety_jobs/newgrad/mail.py`
+7. **게시**: 브리핑 HTML을 신입 브리핑 아티팩트 https://claude.ai/artifact/6o7keJV5TZ5rTWA77iKfpw 에 같은 URL로 게시(`url` 지정, `capabilities`는 생략해 기존 db 선언 유지)하고 연다. SendUserFile(`display: "render"`)로도 보낸다.
+8. **메일**: Gmail `send_message`로 사용자 메일(chaeeun075@gmail.com)에 보낸다. 제목 `[안전관리자 신입 브리핑] YYYY-MM-DD · 신규 N건 · 3일 내 마감 M건`, `htmlBody`는 `out/mail_YYYY-MM-DD.html` 내용.
+9. **커밋·푸시**: `postings.json`·`excluded.json`·`user_excluded.json`·브리핑 HTML·작업현황을 커밋하고 브랜치에 푸시한다.
+10. 작업현황을 완료로 바꿔 다시 게시하고, 답변에 작업현황 표와 신규·마감 임박 공고를 적는다.
 
 ## postings.json 한 건 형식
 ```json
