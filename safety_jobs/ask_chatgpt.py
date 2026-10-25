@@ -42,6 +42,11 @@ def _post(url, body, key, retry):
                 time.sleep(60 if e.code == 429 else 10)
                 continue
             raise RuntimeError(f"OpenAI API 오류 {e.code}: {e.read().decode(errors='replace')[:300]}")
+        except (urllib.error.URLError, ConnectionError, TimeoutError) as e:  # 연결 끊김(긴 검색 응답) → 잠시 뒤 다시
+            if attempt < retry:
+                time.sleep(10)
+                continue
+            raise RuntimeError(f"연결 오류: {e}")
 
 
 def ask(prompt, model=None, system=None, max_tokens=None, retry=3, api="responses"):
