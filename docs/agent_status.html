@@ -104,13 +104,13 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 <script>
 /* 작업 데이터 — 에이전트를 맡길 때마다 이 블록만 고친다 (progress: 0~100) */
 var JOB={
-  updated:"2026-10-26 20:00 KST",updatedISO:"2026-10-26T11:00:00Z",
-  main:{name:"메인 에이전트",task:"매일 20시 예약 브리핑 · 안전관리자 신입 채용 브리핑 ChatGPT (10/26)",note:"제외 확정 27건 반영, 신규 1건(삼성물산 하이테크), 22건 게시·메일 발송 완료."},
+  updated:"2026-10-27 20:05 KST",updatedISO:"2026-10-27T11:05:00Z",
+  main:{name:"메인 에이전트",task:"매일 20시 예약 브리핑 · 안전관리자 신입 채용 브리핑 ChatGPT (10/27)",note:"제외 확정 반영 → 신규 검색(ChatGPT + 수집분) → 내용 채우기 → 매칭 → 게시·메일."},
   subs:[
-   {name:"제외 확정 반영",order:"하청 1",status:"done",progress:100,task:"아티팩트 db excluded 읽기",result:"27건 반영(어제보다 9건 추가)"},
-   {name:"신규 검색",order:"하청 2",status:"done",progress:100,task:"ChatGPT + 10/26 수집분 대조",result:"신규 1건(삼성물산 하이테크) · 범위 밖 2건 제외"},
-   {name:"내용 채우기·매칭",order:"하청 3",status:"done",progress:100,task:"초봉·직원 수 + 매칭 채점",result:"지금 지원 가능 1 · 기사 취득 후 5 · 신중 5 · 근거 부족 10"},
-   {name:"게시·메일",order:"하청 4",status:"done",progress:100,task:"아티팩트 게시 · Gmail 발송 · 커밋",result:"아티팩트 v17 · chaeeun075@gmail.com 발송"}
+   {name:"제외 확정 반영",order:"하청 1",status:"done",progress:100,task:"아티팩트 db excluded 읽기",result:"제외 확정 27건 반영 (변동 없음)"},
+   {name:"신규 검색",order:"하청 2",status:"done",progress:100,task:"ChatGPT + 10/27 수집분 대조",result:"신규 0건 (LH E&S 10/21 마감 · 하이즈항공·현대엘리베이터 기제외)"},
+   {name:"내용 채우기·매칭",order:"하청 3",status:"done",progress:100,task:"초봉·직원 수·복지 + 매칭 채점",result:"게시 21건 · 지금 지원 0 · 취득 후 5 · 신중 5"},
+   {name:"게시·메일",order:"하청 4",status:"done",progress:100,task:"아티팩트 게시 · Gmail 발송 · 커밋",result:"브리핑 v18 게시 · 메일 발송 · 커밋"}
   ]
 };
 
