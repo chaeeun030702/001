@@ -4233,7 +4233,7 @@
 "id": null,
 "pay": null,
 "year": "",
-"checked": "2026-10-15",
+"checked": "2026-10-30",
 "v": 2
 },
 "테크윙": {
@@ -4472,6 +4472,20 @@
 "pay": null,
 "year": null,
 "checked": "2026-10-29",
+"v": 2
+},
+"씨케이솔루션": {
+"id": null,
+"pay": null,
+"year": "",
+"checked": "2026-10-30",
+"v": 2
+},
+"제우스": {
+"id": "1373957",
+"pay": null,
+"year": null,
+"checked": "2026-10-30",
 "v": 2
 }
 }
