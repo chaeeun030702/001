@@ -122,6 +122,8 @@ def main():
         if p["url"] in done or pid in excluded or SKIP_TITLE.search(p.get("title", "")):
             continue
         tags = tags_of(p)
+        if not p.get("deadline_date") and re.fullmatch(r"\d{4}-\d{2}-\d{2}", p.get("deadline", "")):
+            p = {**p, "deadline_date": p["deadline"]}  # 신입 채용 브리핑(postings.json)은 마감일을 deadline 에 날짜로 둔다
         if p.get("deadline_date"):
             left = (dt.date.fromisoformat(p["deadline_date"]) - today).days
             if left < 0 or (left > args.days and pid not in requested):
