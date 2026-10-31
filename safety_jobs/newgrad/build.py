@@ -73,7 +73,7 @@ def meta(p, m=None):
 
 def empfmt(p):
     e = p['employment']
-    if '계약' in e:
+    if '계약' in e or '인턴' in e:
         return f'<b class=ow>{E(e)}</b>' + (' <span class=conv>(정규직 전환 가능)</span>' if p.get('conv') else '')
     return f'<b>{E(e)}</b>'
 

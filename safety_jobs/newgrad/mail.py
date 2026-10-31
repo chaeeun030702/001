@@ -25,7 +25,7 @@ def table(rows, today, red, new=()):
     for p in rows:
         n = dleft(p['deadline'], today)
         dc = '#E63B3B' if (n is not None and 0 <= n <= 3) else '#303030'
-        ec = '#FE6F3F' if '계약' in p['employment'] else '#1C1C1C'
+        ec = '#FE6F3F' if ('계약' in p['employment'] or '인턴' in p['employment']) else '#1C1C1C'
         nc = '#0F6FFF' if (red == 'new' or p in new) else '#1C1C1C'
         st, em = p.get('starter') or {}, p.get('employees') or {}
         sub = ' · '.join(x for x in [('초봉 ' + st['pay']) if st.get('pay') else '', ('직원 ' + em['count']) if em.get('count') else ''] if x)
