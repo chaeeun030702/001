@@ -196,6 +196,24 @@ def calendar(live, today, rid, M=None):
             + f'<p class="foot">{start.isoformat()} ~ {end.isoformat()} · 채용 시 마감(마감일 없음) {nd}건은 달력에 없고 조기 마감될 수 있습니다.</p>')
 
 
+def past_links(today, folder, prefix, href, n=7):
+    """같은 폴더의 지난 브리핑(오늘 이전, 최근 n개) 링크 줄"""
+    ds = []
+    for f in os.listdir(folder):
+        if f.startswith(prefix) and f.endswith('.html'):
+            try:
+                d = datetime.date.fromisoformat(f[len(prefix):-5])
+            except ValueError:
+                continue
+            if d < today:
+                ds.append(d)
+    ds = sorted(ds, reverse=True)[:n]
+    if not ds:
+        return ''
+    return ('<nav class="past" aria-label="지난 브리핑">지난 브리핑: '
+            + ' · '.join(f'<a href="{href(d)}">{d.strftime("%Y.%m.%d")}</a>' for d in ds) + '</nav>')
+
+
 def build(today, M=None, CR=None, out=None):
     data = json.load(open(os.path.join(HERE, 'postings.json')))
     exc = json.load(open(os.path.join(HERE, 'excluded.json')))['items']
@@ -253,6 +271,10 @@ def build(today, M=None, CR=None, out=None):
              '<tr><th class="no">제외</th><td>경력직 전용(경력 N년 이상) | 감시단·감시원 | 전기안전관리자 | 전문건설업체 | 안전이 주업무가 아닌 직종</td></tr>'
              '<tr><th>표시</th><td><b style="color:var(--primary)">파란 글씨 = 오늘 새로 찾은 공고</b> · <b class="no">빨간 접수기한 = 3일 이내 마감</b> · <b style="color:var(--orange)">주황 = 계약직</b> · 숫자 타일을 누르면 해당 목록으로 이동</td></tr></table>')
     now = datetime.datetime.now(KST).strftime('%H:%M')
+    if out:  # 비공개본: 아티팩트 안의 archive/날짜.html
+        past = past_links(today, os.path.dirname(out), '브리핑_', lambda d: f'archive/{d.isoformat()}.html')
+    else:  # 공개본: docs/ 날짜별 파일
+        past = past_links(today, os.path.join(ROOT, 'docs'), '안전관리자_신입_채용_브리핑_', lambda d: f'안전관리자_신입_채용_브리핑_{d.isoformat()}.html')
     doc = f'''<!doctype html>
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>안전관리자 신입 채용 브리핑 ChatGPT</title>
@@ -263,6 +285,7 @@ def build(today, M=None, CR=None, out=None):
 <div class="tools"><span class="selmsg" id="selmsg" role="status"></span><button type="button" id="del" class="danger" disabled>선택 삭제</button><span id="cfm" role="group" aria-label="제외 확인" hidden><button type="button" id="yes" class="danger">제외 확정</button> <button type="button" id="no">취소</button></span><button type="button" id="undo" class="undo" hidden>↶ 되돌리기</button><button type="button" id="xopen" class="xopen" hidden>제외 <b id="xcnt2">0</b>건</button><span class="ebar" role="group" aria-label="편집"><button type="button" id="ed-toggle" aria-pressed="false">편집</button><button type="button" id="ed-save" hidden>저장</button><button type="button" id="ed-reset" hidden>원래대로</button><button type="button" id="ed-file">파일로 저장</button></span><span id="ed-msg" class="selmsg" role="status"></span><button type="button" id="print">A4 인쇄</button>
 <button type="button" class="icon" id="theme" aria-label="라이트/다크 테마 전환" title="테마 전환"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button></div></header>
 <main>
+{past}
 <div class="kpis">{kp}</div>
 <div class="viz">
 <section class="card"><h2>접수 마감 분포</h2>{dl}</section>
