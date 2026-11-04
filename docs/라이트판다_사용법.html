@@ -1,0 +1,248 @@
+<title>라이트판다 사용 설명서</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: 한 줄 세로 읽기 흐름. 각 사용법은 '이럴 때 → 이렇게 친다 → 이렇게 나온다' 카드 */
+:root{
+  --bg:#f6f8f5; --paper:#ffffff; --ink:#1d2420; --muted:#5b6660;
+  --bamboo:#2f7a4f; --bamboo-soft:#e3f0e7; --line:#d7e0da;
+  --code-bg:#1f2723; --code-fg:#e8efe9; --warn:#a4561b; --warn-soft:#fbeee2;
+  --f-display:"Jua","Gowun Dodum",system-ui,sans-serif;
+  --f-body:"Gowun Dodum","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141a17; --paper:#1c2420; --ink:#e7eee9; --muted:#9fb0a6;
+  --bamboo:#6fcf97; --bamboo-soft:#22352a; --line:#2d3a33;
+  --code-bg:#0d1210; --code-fg:#dfe9e2; --warn:#f0a86a; --warn-soft:#33251a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141a17; --paper:#1c2420; --ink:#e7eee9; --muted:#9fb0a6;
+  --bamboo:#6fcf97; --bamboo-soft:#22352a; --line:#2d3a33;
+  --code-bg:#0d1210; --code-fg:#dfe9e2; --warn:#f0a86a; --warn-soft:#33251a; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.75;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main{max-width:760px;margin:0 auto;padding-block:40px 64px;display:flex;flex-direction:column;gap:40px}
+h1,h2,h3{font-family:var(--f-display);font-weight:400;text-wrap:balance;line-height:1.3;margin:0}
+h1{font-size:2.4rem}
+h2{font-size:1.65rem;display:flex;align-items:center;gap:10px}
+h3{font-size:1.2rem}
+p{margin:0}
+section{display:flex;flex-direction:column;gap:14px}
+.eyebrow{font-size:.8rem;letter-spacing:.08em;color:var(--bamboo);font-weight:700}
+.lead{font-size:1.1rem;color:var(--muted);max-width:62ch}
+.hero{display:flex;flex-direction:column;gap:14px}
+.compare{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.meter{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.meter b{font-family:var(--f-display);font-weight:400;font-size:1.1rem}
+.bar{display:grid;grid-template-columns:5.5em 1fr auto;align-items:center;gap:8px;font-size:.9rem;font-variant-numeric:tabular-nums}
+.track{height:12px;background:var(--bamboo-soft);border-radius:6px;overflow:hidden}
+.fill{height:100%;background:var(--muted);border-radius:6px}
+.fill.lp{background:var(--bamboo)}
+.analogy{background:var(--bamboo-soft);border-radius:12px;padding:16px 18px}
+.chip{display:inline-block;font-family:var(--f-mono);font-size:.78rem;background:var(--bamboo);color:var(--bg);padding:2px 9px;border-radius:999px;vertical-align:middle}
+.use{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:12px}
+.when{color:var(--muted);font-size:.95rem}
+.code{position:relative;background:var(--code-bg);color:var(--code-fg);border-radius:10px;overflow-x:auto}
+.code pre{margin:0;padding:14px 16px;font-family:var(--f-mono);font-size:.84rem;line-height:1.6;white-space:pre}
+.code .cm{color:#8fb7a0}
+.copy{position:absolute;top:8px;right:8px;font:inherit;font-size:.75rem;font-family:var(--f-body);background:transparent;color:var(--code-fg);border:1px solid #4a5a51;border-radius:6px;padding:2px 8px;cursor:pointer}
+.copy:hover,.copy:focus-visible{border-color:var(--code-fg);outline:none}
+ol.steps{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:12px}
+ol.steps li::marker{font-family:var(--f-display);color:var(--bamboo)}
+table{width:100%;border-collapse:collapse;font-size:.95rem}
+.tbl{overflow-x:auto;background:var(--paper);border:1px solid var(--line);border-radius:12px}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{font-family:var(--f-display);font-weight:400;color:var(--bamboo)}
+td code,p code,li code{font-family:var(--f-mono);font-size:.85em;background:var(--bamboo-soft);padding:1px 5px;border-radius:4px}
+.warn{background:var(--warn-soft);border-left:4px solid var(--warn);border-radius:0 10px 10px 0;padding:14px 18px;display:flex;flex-direction:column;gap:6px}
+.warn strong{color:var(--warn)}
+ul{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px}
+footer{color:var(--muted);font-size:.85rem;border-top:1px solid var(--line);padding-top:16px}
+a{color:var(--bamboo)}
+@media (max-width:480px){h1{font-size:1.9rem}body{font-size:16px}}
+</style>
+
+<main>
+  <header class="hero">
+    <span class="eyebrow">중학생도 따라 하는 설명서 · lightpanda-io/browser</span>
+    <h1>라이트판다(Lightpanda) 브라우저 쓰는 법</h1>
+    <p class="lead">라이트판다는 <b>화면이 없는 브라우저</b>예요. 사람이 보라고 만든 게 아니라, 프로그램이나 AI가 웹사이트를 대신 돌아다니고 내용을 가져오라고 만든 브라우저입니다.</p>
+  </header>
+
+  <section>
+    <h2>1. 라이트판다가 뭐예요?</h2>
+    <div class="analogy">
+      <p>크롬은 웹페이지를 <b>예쁘게 그려서 보여 주는 화가</b>라면, 라이트판다는 <b>그림은 안 그리고 글과 구조만 재빨리 읽는 로봇</b>이에요. 그림 그리는 시간이 없으니 훨씬 가볍고 빠릅니다.</p>
+    </div>
+    <p>이런 브라우저를 <b>헤드리스(headless, 머리 없는) 브라우저</b>라고 불러요. 화면(머리)은 없고 몸통만 일하는 거죠. 라이트판다는 크롬을 고쳐 만든 게 아니라 <b>Zig</b>라는 언어로 처음부터 새로 만들었어요.</p>
+    <div class="compare" aria-label="웹페이지 100개를 읽을 때 비교">
+      <div class="meter">
+        <b>메모리 사용량 (페이지 100개)</b>
+        <div class="bar"><span>라이트판다</span><div class="track"><div class="fill lp" style="width:6%"></div></div><span>123MB</span></div>
+        <div class="bar"><span>크롬</span><div class="track"><div class="fill" style="width:100%"></div></div><span>2GB</span></div>
+        <span class="when">약 16배 적게 써요</span>
+      </div>
+      <div class="meter">
+        <b>걸린 시간 (페이지 100개)</b>
+        <div class="bar"><span>라이트판다</span><div class="track"><div class="fill lp" style="width:11%"></div></div><span>5초</span></div>
+        <div class="bar"><span>크롬</span><div class="track"><div class="fill" style="width:100%"></div></div><span>46초</span></div>
+        <span class="when">약 9배 빨라요</span>
+      </div>
+    </div>
+    <p class="when">숫자 출처: 공식 README 벤치마크 (AWS m5.large에서 실제 웹페이지 요청)</p>
+  </section>
+
+  <section>
+    <h2>2. 어디에 쓰나요?</h2>
+    <ul>
+      <li><b>웹페이지 내용 뽑기</b> — 뉴스 기사, 상품 목록을 글(HTML·마크다운)로 저장</li>
+      <li><b>반복 작업 자동화</b> — 버튼 누르기, 입력칸 채우기를 프로그램이 대신</li>
+      <li><b>AI 비서에게 웹 쓰게 하기</b> — Claude 같은 AI가 인터넷을 직접 돌아다니게 연결</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>3. 설치하기</h2>
+    <p>명령어는 <b>터미널</b>(검은 창에 글자로 명령하는 프로그램)에 입력해요. 내 컴퓨터에 맞는 것 <b>하나만</b> 고르면 됩니다.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>내 컴퓨터</th><th>방법</th></tr></thead>
+      <tbody>
+        <tr><td>맥(Mac)</td><td>Homebrew 사용: <code>brew install lightpanda-io/browser/lightpanda</code></td></tr>
+        <tr><td>리눅스</td><td>아래 curl 명령으로 파일 내려받기</td></tr>
+        <tr><td>윈도우</td><td>윈도우용은 없어요. <b>WSL</b>(윈도우 안의 리눅스)을 설치한 뒤 리눅스 방법을 따라 해요. 관리자 창에서 <code>wsl --install</code></td></tr>
+        <tr><td>도커 사용자</td><td><code>docker run -d --name lightpanda -p 127.0.0.1:9222:9222 lightpanda/browser:latest</code></td></tr>
+      </tbody>
+    </table></div>
+    <ol class="steps">
+      <li>
+        <p>리눅스(또는 WSL)라면 이 명령으로 내려받고 실행할 수 있게 만들어요.</p>
+        <div class="code"><button class="copy" type="button">복사</button><pre>curl -L -o lightpanda https://github.com/lightpanda-io/browser/releases/download/nightly/lightpanda-x86_64-linux && \
+chmod a+x ./lightpanda</pre></div>
+      </li>
+      <li>
+        <p>잘 깔렸는지 확인해요. 버전 번호가 나오면 성공!</p>
+        <div class="code"><button class="copy" type="button">복사</button><pre>./lightpanda version</pre></div>
+      </li>
+    </ol>
+    <p class="when"><code>./</code>는 "지금 이 폴더에 있는 프로그램"이라는 뜻이에요. brew로 설치했다면 <code>./</code> 없이 <code>lightpanda</code>만 써도 돼요.</p>
+  </section>
+
+  <section>
+    <h2>4. 쓰는 방법 네 가지</h2>
+
+    <div class="use">
+      <h3><span class="chip">fetch</span> 웹페이지 한 장 가져오기</h3>
+      <p class="when">이럴 때: "이 사이트 내용을 글로 저장하고 싶어"</p>
+      <div class="code"><button class="copy" type="button">복사</button><pre>./lightpanda fetch --obey-robots --dump markdown https://demo-browser.lightpanda.io/campfire-commerce/</pre></div>
+      <p><code>--dump</code> 뒤에 무엇을 쓰느냐에 따라 결과 모양이 바뀌어요.</p>
+      <div class="tbl"><table>
+        <tbody>
+          <tr><td><code>html</code></td><td>웹페이지 원본 코드</td></tr>
+          <tr><td><code>markdown</code></td><td>읽기 쉬운 글 형태 (AI에게 주기 좋아요)</td></tr>
+          <tr><td><code>png &gt; page.png</code></td><td>그림 파일로 저장 (글자 위주로 그려져요)</td></tr>
+          <tr><td><code>pdf &gt; page.pdf</code></td><td>PDF 파일로 저장</td></tr>
+        </tbody>
+      </table></div>
+      <p><code>--obey-robots</code>는 "사이트 주인이 정한 규칙(robots.txt)을 지킬게요"라는 뜻이에요. 예의상 꼭 붙이세요.</p>
+    </div>
+
+    <div class="use">
+      <h3><span class="chip">serve</span> 다른 프로그램이 조종하게 열어 두기</h3>
+      <p class="when">이럴 때: "내가 짠 코드로 브라우저를 움직이고 싶어" (코딩 조금 아는 친구용)</p>
+      <p>라이트판다를 <b>대기 상태</b>로 켜 두면, Puppeteer·Playwright 같은 도구가 9222번 문(포트)으로 접속해서 조종해요. 크롬용으로 짠 코드를 거의 그대로 쓸 수 있어요.</p>
+      <div class="code"><button class="copy" type="button">복사</button><pre>./lightpanda serve --obey-robots --host 127.0.0.1 --port 9222</pre></div>
+      <p>그다음 자바스크립트에서 이렇게 연결해요.</p>
+      <div class="code"><button class="copy" type="button">복사</button><pre>import puppeteer from 'puppeteer-core';
+
+<span class="cm">// 라이트판다에 접속</span>
+const browser = await puppeteer.connect({ browserWSEndpoint: "ws://127.0.0.1:9222" });
+const context = await browser.createBrowserContext();
+const page = await context.newPage();
+
+<span class="cm">// 페이지를 열고 모든 링크 주소를 모으기</span>
+await page.goto('https://demo-browser.lightpanda.io/amiibo/', { waitUntil: "networkidle0" });
+const links = await page.evaluate(() =>
+  Array.from(document.querySelectorAll('a')).map(a => a.getAttribute('href')));
+console.log(links);
+
+await browser.disconnect();</pre></div>
+    </div>
+
+    <div class="use">
+      <h3><span class="chip">agent</span> 말로 시키기</h3>
+      <p class="when">이럴 때: "코딩은 몰라도 그냥 영어 문장으로 시키고 싶어"</p>
+      <p>AI(Claude, ChatGPT, Gemini 등)의 <b>API 키</b>가 있으면, 문장으로 일을 시킬 수 있어요. 브라우저가 알아서 페이지를 열고, 클릭하고, 정보를 찾아와요.</p>
+      <div class="code"><button class="copy" type="button">복사</button><pre><span class="cm"># 해커뉴스 1등 기사가 뭔지 물어보기</span>
+./lightpanda agent --task "top story on news.ycombinator.com?"
+
+<span class="cm"># 대화형으로 켜기 (API 키는 자동으로 찾아요)</span>
+./lightpanda agent</pre></div>
+      <p>대화하다가 <code>/save</code>를 입력하면 지금까지 한 일을 <b>대본 파일(.js)</b>로 저장해요. 다음부터는 AI 없이 그 대본만 다시 돌리면 똑같이 움직여요. 돈(토큰)도 안 들어요.</p>
+      <div class="code"><button class="copy" type="button">복사</button><pre>./lightpanda run session.js</pre></div>
+    </div>
+
+    <div class="use">
+      <h3><span class="chip">mcp</span> AI 비서에 연결하기</h3>
+      <p class="when">이럴 때: "Claude 데스크톱이나 Claude Code가 라이트판다로 인터넷을 쓰게 하고 싶어"</p>
+      <p>MCP는 AI와 도구를 이어 주는 <b>공용 콘센트</b> 같은 거예요. AI 프로그램의 MCP 설정 파일에 아래 내용을 넣으면 끝이에요. <code>/path/to/lightpanda</code>는 내 컴퓨터에서 라이트판다 파일이 있는 실제 위치로 바꿔요.</p>
+      <div class="code"><button class="copy" type="button">복사</button><pre>{
+  "mcpServers": {
+    "lightpanda": {
+      "command": "/path/to/lightpanda",
+      "args": ["mcp"]
+    }
+  }
+}</pre></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>5. 알아 두면 좋은 주의사항</h2>
+    <div class="warn">
+      <p><strong>사용 기록 전송</strong> 기본으로 사용 통계(텔레메트리)를 회사에 보내요. 싫다면 실행 전에 <code>export LIGHTPANDA_DISABLE_TELEMETRY=true</code> 를 입력하세요.</p>
+    </div>
+    <ul>
+      <li>윈도우에서 바로는 안 돌아가요. 꼭 WSL 안에서 쓰세요.</li>
+      <li>알파인(Alpine) 리눅스처럼 가벼운 리눅스에서는 실행이 안 될 수 있어요. 우분투 같은 일반 리눅스를 쓰세요.</li>
+      <li>아직 "nightly(매일 새로 나오는 시험판)" 버전이라 어떤 사이트는 제대로 안 열릴 수 있어요.</li>
+      <li>남의 사이트를 너무 많이, 빠르게 긁어 오면 민폐예요. <code>--obey-robots</code>를 붙이고 적당히 쓰세요.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>6. 낱말 사전</h2>
+    <div class="tbl"><table>
+      <thead><tr><th>낱말</th><th>쉬운 뜻</th></tr></thead>
+      <tbody>
+        <tr><td>헤드리스 브라우저</td><td>화면 없이 뒤에서 일하는 브라우저</td></tr>
+        <tr><td>터미널</td><td>글자로 컴퓨터에 명령하는 창</td></tr>
+        <tr><td>포트 (9222)</td><td>프로그램끼리 대화하는 문 번호</td></tr>
+        <tr><td>CDP</td><td>크롬을 조종할 때 쓰는 약속된 말. 라이트판다도 알아들어요</td></tr>
+        <tr><td>Puppeteer / Playwright</td><td>코드로 브라우저를 조종하는 도구</td></tr>
+        <tr><td>API 키</td><td>AI 서비스를 쓰기 위한 비밀 출입증</td></tr>
+        <tr><td>MCP</td><td>AI와 도구를 연결하는 공용 규격 (콘센트 같은 것)</td></tr>
+        <tr><td>robots.txt</td><td>"여기는 로봇이 오지 마세요" 같은 사이트 규칙표</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>한 줄 요약</h2>
+    <div class="analogy"><p><b>처음이라면</b> 설치 → <code>./lightpanda version</code>으로 확인 → <code>./lightpanda fetch --dump markdown 주소</code>로 웹페이지 하나 가져와 보기. 이것만 해 봐도 라이트판다가 뭘 하는지 감이 와요.</p></div>
+  </section>
+
+  <footer>출처: <a href="https://github.com/lightpanda-io/browser">github.com/lightpanda-io/browser</a> README (2026-11-04 기준) · 자세한 문서: <a href="https://lightpanda.io/docs">lightpanda.io/docs</a></footer>
+</main>
+
+<script>
+document.querySelectorAll('.copy').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    var pre=btn.parentElement.querySelector('pre'); var text=pre.innerText;
+    var done=function(){btn.textContent='복사됨';setTimeout(function(){btn.textContent='복사'},1500)};
+    var fallback=function(){var r=document.createRange();r.selectNodeContents(pre);var s=getSelection();s.removeAllRanges();s.addRange(r);btn.textContent='선택됨';};
+    try{navigator.clipboard.writeText(text).then(done,fallback)}catch(e){fallback()}
+  });
+});
+</script>
