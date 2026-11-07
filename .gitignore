@@ -16,3 +16,6 @@ venv/
 .DS_Store
 .idea/
 .vscode/
+
+# 매칭 개인 자료(프로필·채점·기업분석) — 비공개 아티팩트에서 받아 쓰고 커밋하지 않음
+safety_jobs/newgrad/private/
