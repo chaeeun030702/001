@@ -30,4 +30,8 @@
     [안전관리자 채용 달력](https://claude.ai/artifact/1pvKKJpGMY9Wc4cqH3AaAk)에 같은 URL로 게시하고,
     `docs/안전관리자_채용_달력_YYYY-MM-DD.html`로 복사해 render로도 보낸다.
   - 그 밖의 결과 → 결과 HTML 한 파일을 새 아티팩트로 게시(같은 주제를 다시 하면 그 URL을 갱신).
+    - **결과물은 예외 없이 항상 아티팩트에 게시한다.** 파일 전송(SendUserFile)이나 저장소 커밋만으로 끝내지 않는다.
+    - 지금까지 게시한 결과 아티팩트(같은 주제는 이 URL을 갱신):
+      - UTM-K 좌표 지도 → https://claude.ai/artifact/PWDf1TAfB3pZUhWr2NDWhG (원본 `docs/UTM-K_좌표지도.html`)
+      - 지번주소 위치 찾기(방법 비교) → https://claude.ai/artifact/5FumKm76MNjT2sPksqGzSL (원본 `docs/지번주소_위치표시_방법.html`)
 - 게시한 아티팩트는 `action: "open"`으로 연다.
