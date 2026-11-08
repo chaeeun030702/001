@@ -33,4 +33,5 @@
     - **결과물은 예외 없이 항상 아티팩트에 게시한다.** 파일 전송(SendUserFile)이나 저장소 커밋만으로 끝내지 않는다.
     - 지금까지 게시한 결과 아티팩트(같은 주제는 이 URL을 갱신):
       - UTM-K 좌표 지도 → https://claude.ai/artifact/PWDf1TAfB3pZUhWr2NDWhG (원본 `docs/UTM-K_좌표지도.html`)
+      - 지번주소 위치 찾기(방법 비교) → https://claude.ai/artifact/5FumKm76MNjT2sPksqGzSL (원본 `docs/지번주소_위치표시_방법.html`)
 - 게시한 아티팩트는 `action: "open"`으로 연다.

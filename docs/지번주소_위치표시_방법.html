@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>지번주소 위치 찾기</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* 레이아웃: 한 단 문서. 결론 → 방법 비교표 → 방법별 상세 → 지도에 붙이는 구조 → 확인 필요 항목 */
+:root{
+  --bg:#f4f7f8; --panel:#ffffff; --fg:#17242e; --muted:#5b6b77; --line:#d3dce2;
+  --accent:#0b6e99; --accent-ink:#fff; --good:#1d7a4c; --warn:#a15c00; --bad:#b0273a; --chip:#e7eff3;
+  --f-body:"IBM Plex Sans KR",system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f171d; --panel:#151f27; --fg:#e3eaee; --muted:#93a3ae; --line:#2a3843;
+  --accent:#4fb3dd; --accent-ink:#06141b; --good:#5fd39a; --warn:#f0b35a; --bad:#ff7d8c; --chip:#1f2c35; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f171d; --panel:#151f27; --fg:#e3eaee; --muted:#93a3ae; --line:#2a3843;
+  --accent:#4fb3dd; --accent-ink:#06141b; --good:#5fd39a; --warn:#f0b35a; --bad:#ff7d8c; --chip:#1f2c35; color-scheme:dark}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.65}
+.wrap{max-width:900px;margin:0 auto;padding-block:32px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:28px}
+h1{font-size:26px;line-height:1.3;margin:0;text-wrap:balance;letter-spacing:-.01em}
+h2{font-size:18px;margin:0 0 10px;text-wrap:balance}
+h3{font-size:15.5px;margin:0 0 6px}
+p{margin:0 0 10px;max-width:68ch}
+.lede{color:var(--muted);margin-top:6px}
+.answer{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:8px;padding:16px 18px}
+.answer p:last-child{margin-bottom:0}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;min-width:720px;font-size:13.5px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;color:var(--muted);font-weight:500;background:var(--chip)}
+tr:last-child td{border-bottom:0}
+.y{color:var(--good);font-weight:500}.m{color:var(--warn);font-weight:500}.n{color:var(--bad);font-weight:500}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px;display:flex;flex-direction:column;gap:4px}
+.card .tag{font-size:12px;color:var(--muted)}
+.card.rec{border-color:var(--accent)}
+.pill{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-weight:500;margin-left:6px;vertical-align:2px}
+ul{margin:4px 0 8px;padding-left:20px}
+li{margin:2px 0;max-width:66ch}
+code,pre{font-family:var(--f-mono);font-size:12.5px}
+code{background:var(--chip);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:var(--chip);border-radius:6px;padding:10px 12px;overflow-x:auto;margin:6px 0 4px;line-height:1.5}
+.flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.flow div{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:13.5px}
+.flow b{display:block;font-size:12px;color:var(--accent);margin-bottom:2px}
+.note{font-size:13.5px;color:var(--muted)}
+.check{background:var(--panel);border:1px dashed var(--warn);border-radius:8px;padding:14px 18px}
+@media (max-width:640px){.flow{grid-template-columns:1fr 1fr}h1{font-size:22px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>지번주소를 치면 지도에 위치 표시하기</h1>
+    <p class="lede">UTM-K 좌표 지도(아티팩트)에 지번 검색을 붙이는 방법을 비교했습니다. 2026-11-08 작성.</p>
+  </header>
+
+  <section class="answer">
+    <h2>결론</h2>
+    <p><b>필지 경계까지 정확히 보려면 연속지적도 shp를 지도에 불러와 지번을 찾는 방법을 권합니다.</b> 인터넷 API 없이 지도 페이지 안에서 바로 동작하고, 아티팩트의 보안 제한에도 걸리지 않습니다. 시군구 단위로 내려받아 쓰면 됩니다.</p>
+    <p>전국 어디든 지번 한 줄만 치면 나오게 하려면 <b>지오코딩 API(브이월드·행안부 주소·카카오)</b>가 필요합니다. 다만 아티팩트 페이지는 외부 API를 직접 부를 수 없으니, 중간에서 API를 대신 불러 줄 곳이 있어야 합니다. 이 Claude 세션이나 GitHub Actions, 작은 서버가 그 역할을 할 수 있습니다.</p>
+  </section>
+
+  <section>
+    <h2>방법 비교</h2>
+    <div class="tbl"><table>
+      <tr><th>방법</th><th>필요한 것</th><th>정확도</th><th>건물 없는 땅</th><th>아티팩트에서 바로</th><th>좌표계</th></tr>
+      <tr><td><b>A. 연속지적도 shp</b></td><td>시군구별 shp 파일 (무료)</td><td class="y">필지 경계</td><td class="y">됨</td><td class="y">됨</td><td>보통 EPSG:5186, .prj로 자동 변환</td></tr>
+      <tr><td><b>B. 브이월드 지오코더</b></td><td>인증키 (무료)</td><td class="y">필지 대표점</td><td class="y">됨 (지번 검색 지원)</td><td class="n">안 됨 (중계 필요)</td><td>요청할 때 좌표계 지정</td></tr>
+      <tr><td><b>C. 행안부 주소검색 + 좌표제공 API</b></td><td>인증키 2종 (무료)</td><td class="m">건물 출입구</td><td class="n">건물 없으면 못 찾음</td><td class="n">안 됨 (중계 필요)</td><td>UTM-K로 받음</td></tr>
+      <tr><td><b>D. 카카오 로컬 API</b></td><td>REST 키 (무료 한도)</td><td class="m">대표점</td><td class="m">대부분 됨</td><td class="n">안 됨 (중계 필요)</td><td>WGS84 → UTM-K 변환</td></tr>
+    </table></div>
+    <p class="note" style="margin-top:8px">"중계 필요": 아티팩트 페이지는 보안 정책상 외부 주소로 요청을 보낼 수 없습니다. 페이지 대신 API를 불러 결과를 넘겨 주는 곳이 있어야 합니다.</p>
+  </section>
+
+  <section class="card rec">
+    <div class="tag">방법 A</div>
+    <h3>연속지적도 shp를 지도에 불러와 지번 검색<span class="pill">추천</span></h3>
+    <ul>
+      <li><b>받는 곳</b>: 브이월드 오픈마켓·국가공간정보포털의 "연속지적도". 시군구별 shp로 받습니다. 파일 이름은 보통 <code>LSMD_CONT_LDREG_시군구코드.shp</code>입니다.</li>
+      <li><b>들어 있는 정보</b>: 필지 다각형과 <code>PNU</code>(19자리 필지고유번호), <code>JIBUN</code>(예: <code>123-4대</code>).</li>
+      <li><b>PNU 구조</b>: 법정동코드 10자리, 산 여부 1자리(1=일반, 2=산), 본번 4자리, 부번 4자리로 되어 있습니다. 예를 들어 "와우리 123-4"는 <code>법정동코드 + 1 + 0123 + 0004</code>입니다.</li>
+      <li><b>검색 방식</b>: 지번 숫자로 찾고, 같은 번지가 여러 동·리에 있으면 법정동코드 앞자리로 고르게 합니다.
+        <ul>
+          <li>동·리 이름으로 고르려면 법정동코드 목록(행정표준코드관리시스템의 법정동코드 전체자료)이 필요합니다.</li>
+          <li>이 목록을 페이지에 넣어 두면 <code>봉담읍 와우리 123-4</code>처럼 이름으로 칠 수 있습니다.</li>
+        </ul>
+      </li>
+      <li><b>좌표계</b>: 연속지적도는 대개 GRS80 중부원점(EPSG:5186)입니다. 지도가 함께 들어 있는 .prj를 읽어 UTM-K로 바꿔 겹칩니다. 이 변환 기능은 이미 만들어 둔 shp 불러오기에 들어 있습니다.</li>
+      <li><b>장점</b>: 필지 경계를 강조하고 면적·지목까지 보여 줄 수 있습니다. 키나 인터넷이 필요 없습니다.</li>
+      <li><b>한계</b>: 시군구 하나도 수십 MB가 될 수 있습니다. 전국 단위로는 무겁습니다.</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <div class="tag">방법 B</div>
+    <h3>브이월드 지오코더 API (주소 → 좌표)</h3>
+    <ul>
+      <li>국토교통부 공간정보 오픈플랫폼의 API로, 지번주소(필지)와 도로명주소를 모두 좌표로 바꿉니다.</li>
+      <li>요청 모양은 아래와 같습니다(기억 기준, 문서로 확인 필요).
+        <pre>https://api.vworld.kr/req/address?service=address&amp;request=getcoord&amp;version=2.0
+  &amp;type=parcel&amp;crs=epsg:5179&amp;format=json&amp;key=인증키
+  &amp;address=경기도 화성시 봉담읍 와우리 123-4</pre></li>
+      <li><code>type=parcel</code>이 지번, <code>type=road</code>가 도로명입니다. <code>crs</code>로 결과 좌표계를 고를 수 있어 UTM-K로 바로 받을 수 있습니다.</li>
+      <li>인증키는 무료지만 발급할 때 사용할 도메인이나 서비스를 등록합니다. 일일 호출 한도가 있습니다.</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <div class="tag">방법 C</div>
+    <h3>행정안전부 주소검색 API + 좌표제공 API</h3>
+    <ul>
+      <li>주소기반산업지원서비스(business.juso.go.kr)의 API입니다. 검색 API에 지번을 넣으면 도로명주소와 매칭된 결과를 줍니다.</li>
+      <li>이 결과의 행정구역코드, 도로명코드, 지하여부, 건물본번·부번을 좌표제공 API에 넘기면 UTM-K 좌표(<code>entX</code>, <code>entY</code>, 건물 출입구 기준)를 줍니다.</li>
+      <li>지도와 좌표계가 같아 변환이 필요 없습니다. 다만 <b>도로명주소가 부여된 건물이 있는 지번만</b> 찾을 수 있습니다. 논밭·임야 같은 빈 땅은 찾지 못합니다.</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <div class="tag">방법 D</div>
+    <h3>카카오 로컬 API (주소 검색)</h3>
+    <ul>
+      <li><code>/v2/local/search/address.json?query=지번주소</code>로 경위도(WGS84)를 받아, 지도의 proj4로 UTM-K로 바꿉니다.</li>
+      <li>주소를 덜 정확하게 쳐도 잘 찾습니다. 상용 서비스라 이용약관과 일일 한도를 따라야 합니다.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>API를 쓸 때 지도에 붙이는 구조</h2>
+    <div class="flow">
+      <div><b>1. 입력</b>지도 페이지에 지번 입력</div>
+      <div><b>2. 중계</b>이 Claude 세션·GitHub Actions·작은 서버가 API 호출</div>
+      <div><b>3. 저장</b>결과 좌표를 아티팩트 데이터(db)에 기록</div>
+      <div><b>4. 표시</b>페이지가 좌표를 받아 핀 표시</div>
+    </div>
+    <p class="note" style="margin-top:8px">한 번에 많은 지번을 처리할 때는 목록을 주시면 이 세션이 API로 일괄 변환해 지도 핀으로 넣는 방식이 가장 간단합니다. 이 경우 API 호스트를 이 작업 환경의 네트워크 허용 목록에 추가하고 인증키를 등록해야 합니다.</p>
+  </section>
+
+  <section class="check">
+    <h2>확인이 필요한 부분</h2>
+    <p>이 작업 환경에서는 vworld.kr과 juso.go.kr 문서에 접속할 수 없어, 아래 항목을 공식 문서로 직접 확인하지 못했습니다. 구현 전에 확인하겠습니다.</p>
+    <ul>
+      <li>브이월드 지오코더의 정확한 파라미터 이름, 받을 수 있는 좌표계 목록, 일일 한도, 브라우저에서 직접 부를 수 있는지(CORS)</li>
+      <li>행안부 좌표제공 API의 요청 필드 이름과 좌표 기준(출입구인지 건물 중심인지)</li>
+      <li>내려받은 연속지적도 shp의 실제 필드 구성과 .prj 좌표계(지역·배포처마다 다를 수 있음)</li>
+    </ul>
+  </section>
+</div>
+</body>
+</html>
