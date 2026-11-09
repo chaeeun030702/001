@@ -104,13 +104,13 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 <script>
 /* 작업 데이터 — 에이전트를 맡길 때마다 이 블록만 고친다 (progress: 0~100) */
 var JOB={
-  updated:"2026-11-09 KST",updatedISO:"2026-11-09T06:59:29Z",
-  main:{name:"메인 에이전트",task:"환경 민자, 턴키사업 동향 브리핑(10.30 양식) 새로 조사 → 브리핑 작성 → 아티팩트 게시 · 매주 목요일 예약",note:"원문을 직접 확인한 내용만 싣습니다. 절차는 env_brief/README.md."},
+  updated:"2026-11-09 16:07 KST",updatedISO:"2026-11-09T07:05:53Z",
+  main:{name:"메인 에이전트",task:"환경 민자, 턴키사업 동향 브리핑(10.30 양식) 새로 조사 → 브리핑 작성 → 아티팩트 게시 · 매주 목요일 예약",note:"완료 · 언론사 원문 접속이 막혀 검색 발췌와 ChatGPT 웹 검색으로 교차 확인했습니다. 절차는 env_brief/README.md."},
   subs:[
-   {name:"지자체 조사",order:"하청 1",status:"run",progress:5,startedAt:"2026-11-09T06:59:29Z",etaMin:12,task:"서울, 인천, 용인, 김포, 광주 등 19건 변화 + PIMAC 제3자 공고 신규",result:"조사 중"},
-   {name:"주요 기관 조사",order:"하청 2",status:"run",progress:5,startedAt:"2026-11-09T06:59:29Z",etaMin:12,task:"환경공단, K-water, LH, SL공사, 새만금개발공사 발주·유찰·수의계약",result:"조사 중"},
-   {name:"업체 동향 조사",order:"하청 3",status:"run",progress:5,startedAt:"2026-11-09T06:59:29Z",etaMin:12,task:"금호, 태영, 코오롱글로벌, 계룡 환경사업·공정위·실적",result:"조사 중"},
-   {name:"브리핑 작성·게시",order:"하청 4",status:"wait",progress:0,task:"latest.html 작성 → 아티팩트 게시 → 목요일 예약",result:"대기"}
+   {name:"지자체 조사",order:"하청 1",status:"done",progress:100,task:"서울, 인천, 용인, 김포, 광주 등 19건 변화 + 민투심, 제3자 공고 신규",result:"변경 4 · 신규 4(남양주 2, 군산, 인천 바이오가스) → 23건"},
+   {name:"주요 기관 조사",order:"하청 2",status:"done",progress:100,task:"환경공단, K-water, LH, SL공사, 새만금개발공사",result:"신규 3(춘천 소각, 환경공단 발주 현황, 고양창릉) · 수원 단독 응찰사 보도 엇갈림 → 19건"},
+   {name:"업체 동향 조사",order:"하청 3",status:"done",progress:100,task:"금호, 태영, 코오롱글로벌, 계룡",result:"4개사 각 4건 · 공정위 조사 12개사로 확대 · 3분기 실적 미발표"},
+   {name:"브리핑 작성·게시",order:"하청 4",status:"done",progress:100,task:"latest.html 작성 → 아티팩트 게시 → 목요일 예약",result:"아티팩트 v1 게시 · 매주 목 06:37 예약 생성"}
   ]
 };
 
