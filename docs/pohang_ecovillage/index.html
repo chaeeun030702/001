@@ -3,7 +3,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=IBM+Plex+Sans:wght@500;600;700&display=swap">
 <style>
-/* Layout: 16:9 slide pages stacked as a document; "발표 모드" shows one slide at a time with keys. */
+/* Layout: A4 가로(297×210mm) 페이지를 문서처럼 쌓고 화면 폭에 맞춰 축소. 편집 모드에서 글·사진 수정, HTML로 저장, A4 가로 인쇄. */
 :root{
   --bg:#eef1f5; --paper:#ffffff; --ink:#141b26; --muted:#5d6878; --line:#dde2ea;
   --soft:#f3f6fa; --accent:#1665e8; --accent-soft:#e8f0fe; --accent-ink:#0d47b3; --bar2:#9aa6b6;
@@ -24,7 +24,7 @@ h1,h2,h3,p{margin:0}
 .num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
 
 /* toolbar */
-.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;max-width:1120px;margin:0 auto;display:flex;gap:12px;align-items:center;
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;max-width:1123px;margin:0 auto;display:flex;gap:8px;align-items:center;
   padding:12px 0;background:var(--bg);flex-wrap:wrap}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
 .bar .brand{font-weight:700;font-size:13px;letter-spacing:.06em}
@@ -36,9 +36,10 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .btn:focus-visible,.bar a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
 /* slides */
-.deck{max-width:1120px;margin:0 auto;display:grid;gap:28px}
-.slide{background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:40px 48px 28px;min-height:min(630px,auto);
-  display:flex;flex-direction:column;gap:22px;position:relative;scroll-margin-top:72px}
+.deck{display:flex;flex-direction:column;align-items:center;gap:24px;--z:1}
+.slide{background:var(--paper);border:1px solid var(--line);border-radius:2px;padding:12mm 15mm 8mm;
+  width:297mm;height:210mm;flex:none;overflow:hidden;zoom:var(--z);box-shadow:0 2px 10px rgba(20,30,50,.08);
+  display:flex;flex-direction:column;gap:16px;position:relative;scroll-margin-top:72px}
 .slide>*{min-width:0}
 .deck>*{min-width:0}
 .head{display:flex;justify-content:space-between;gap:16px;align-items:flex-end;border-bottom:1px solid var(--ink);padding-bottom:12px;flex-wrap:wrap}
@@ -63,7 +64,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 ul.dots{margin:0;padding-left:18px;font-size:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:4px 16px}
 
 /* cover */
-.cover{gap:18px;min-height:520px;background:
+.cover{gap:18px;background:
   linear-gradient(135deg,var(--paper) 55%,var(--accent-soft) 100%)}
 .cover .co{font-size:13px;font-weight:700;letter-spacing:.12em;margin-bottom:auto;padding-bottom:40px}
 .cover .eyebrow{color:var(--accent);font-weight:600;font-size:14px;letter-spacing:.04em}
@@ -83,6 +84,9 @@ ul.dots{margin:0;padding-left:18px;font-size:14px;display:grid;grid-template-col
 /* figure */
 figure{margin:0;display:flex;flex-direction:column;gap:8px}
 figure img{width:100%;border-radius:6px;display:block}
+.mp img{width:auto;max-width:100%;height:118mm;object-fit:contain;margin:0 auto}
+.ref figure img{height:92mm;object-fit:cover}
+.pair img{height:62mm;width:100%;object-fit:cover}
 .mp{position:relative}
 .mp .pin{position:absolute;font-size:12px;font-weight:700;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:2px 7px;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.15)}
 
@@ -151,20 +155,37 @@ table.gantt{width:100%;min-width:680px;border-collapse:collapse;font-size:13px;t
 /* present mode */
 body.present .bar nav{display:none}
 body.present .slide{display:none}
-body.present .slide.cur{display:flex;min-height:calc(100vh - 140px)}
+body.present .slide.cur{display:flex}
 .pager{display:none;gap:8px;align-items:center;font-family:var(--f-num);font-size:13px;color:var(--muted)}
 body.present .pager{display:flex}
 
-@media (max-width:820px){
-  .slide{padding:28px 20px 20px}
-  .g3,.g4,.g5,.proc,.models,.split,.cap,.ref,.pair,.timeline,.toc{grid-template-columns:1fr}
-  .g2{grid-template-columns:1fr}
-  .flow{grid-template-columns:1fr}.flow .arrow{transform:rotate(90deg);justify-self:center}
-  ul.dots{grid-template-columns:1fr 1fr}
-  .mp .pin{display:none}
-  .src{flex-direction:column;gap:4px}
-}
+/* edit mode */
+body.editing .slide{outline:2px dashed var(--accent);outline-offset:4px}
+body.editing .slide img{cursor:pointer}
+body.editing .slide img:hover{outline:3px solid var(--accent)}
+[contenteditable]:focus{outline:none}
+.btn.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.edit-only{display:none}
+body.editing .edit-only{display:inline-flex}
+.status{font-size:12px;color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);
+  padding:10px 16px;border-radius:8px;font-size:13px;z-index:20;max-width:calc(100% - 32px)}
+.hint{max-width:1123px;margin:0 auto 12px;font-size:12.5px;color:var(--muted)}
+body:not(.editing) .hint{display:none}
+
 @media (prefers-reduced-motion:no-preference){.meter .track span{transition:width .8s ease}}
+
+/* A4 가로 인쇄 */
+@page{size:A4 landscape;margin:0}
+@media print{
+  :root:root:root{--bg:#fff;--paper:#fff;--ink:#141b26;--muted:#5d6878;--line:#dde2ea;--soft:#f3f6fa;--accent:#1665e8;--accent-soft:#e8f0fe;--accent-ink:#0d47b3;--bar2:#9aa6b6;color-scheme:light}
+  html,body{background:#fff;padding:0!important;margin:0}
+  body::before,.bar,.hint,.toast{display:none!important}
+  .deck{display:block;--z:1!important}
+  .slide{display:flex!important;zoom:1;border:0;border-radius:0;box-shadow:none;outline:0!important;break-after:page;page-break-after:always;margin:0}
+  .slide:last-child{break-after:auto;page-break-after:auto}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
 </style>
 
 <div class="bar">
@@ -174,8 +195,15 @@ body.present .pager{display:flex}
     <a href="#s8">05 절차</a><a href="#s9">06 초기계획</a><a href="#s10">07 역량</a><a href="#s11">08 실적</a>
   </nav>
   <div class="pager"><button class="btn" id="prev" aria-label="이전 장">‹</button><span id="pg">1 / 12</span><button class="btn" id="next" aria-label="다음 장">›</button></div>
+  <span class="status" id="status"></span>
+  <button class="btn edit-only" id="revert" hidden>원본으로 되돌리기</button>
+  <button class="btn" id="edit" aria-pressed="false">편집</button>
+  <button class="btn" id="save">HTML 저장</button>
+  <button class="btn" id="print">A4 인쇄</button>
   <button class="btn" id="mode">발표 모드</button>
 </div>
+<p class="hint">편집 모드: 글자를 눌러 바로 고치고, 사진을 누르면 다른 사진으로 바꿉니다. 수정 내용은 이 브라우저에 자동 보관되며, <b>HTML 저장</b>으로 편집본을 파일로 받습니다.</p>
+<input type="file" id="imgpick" accept="image/*" hidden>
 
 <main class="deck" id="deck">
 
@@ -452,30 +480,127 @@ body.present .pager{display:flex}
 
 <script>
 (function(){
-  const slides=[...document.querySelectorAll('.slide')];
-  const mode=document.getElementById('mode'), pg=document.getElementById('pg');
+  const KEY='pohang-ecovillage-a4-draft-v1';
+  const PAGE_W=1123, PAGE_H=794; // 297×210mm @96dpi
+  const deck=document.getElementById('deck');
+  const $=id=>document.getElementById(id);
+  const framed=(()=>{try{return window.self!==window.top}catch(e){return true}})();
+  const slides=()=>[...deck.querySelectorAll('.slide')];
   let i=0;
-  function show(n){i=Math.max(0,Math.min(slides.length-1,n));slides.forEach((s,k)=>s.classList.toggle('cur',k===i));pg.textContent=(i+1)+' / '+slides.length;}
-  function setPresent(on){document.body.classList.toggle('present',on);mode.textContent=on?'문서 보기':'발표 모드';if(on){show(i);window.scrollTo(0,0);}else{slides[i].scrollIntoView({block:'start'});}}
-  mode.addEventListener('click',()=>{
-    if(!document.body.classList.contains('present')){const y=window.scrollY+120;i=Math.max(0,slides.findIndex(s=>s.offsetTop+s.offsetHeight>y));}
+
+  function toast(msg){const t=document.createElement('div');t.className='toast';t.setAttribute('role','status');t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2600);}
+  function fit(){
+    const present=document.body.classList.contains('present');
+    const w=deck.clientWidth||document.body.clientWidth;
+    let z=Math.min(1,w/PAGE_W);
+    if(present) z=Math.min(w/PAGE_W,(window.innerHeight-90)/PAGE_H);
+    deck.style.setProperty('--z',Math.max(.2,z).toFixed(4));
+  }
+  window.addEventListener('resize',fit);
+
+  // 발표 모드
+  function show(n){const ss=slides();i=Math.max(0,Math.min(ss.length-1,n));ss.forEach((s,k)=>s.classList.toggle('cur',k===i));$('pg').textContent=(i+1)+' / '+ss.length;}
+  function setPresent(on){
+    if(on&&document.body.classList.contains('editing'))setEdit(false);
+    document.body.classList.toggle('present',on);$('mode').textContent=on?'문서 보기':'발표 모드';fit();
+    if(on){show(i);window.scrollTo(0,0);}else{slides()[i].scrollIntoView({block:'start'});}
+  }
+  $('mode').addEventListener('click',()=>{
+    if(!document.body.classList.contains('present')){const y=window.scrollY+120;const ss=slides();i=Math.max(0,ss.findIndex(s=>s.getBoundingClientRect().bottom+window.scrollY>y));}
     setPresent(!document.body.classList.contains('present'));
   });
-  document.getElementById('prev').onclick=()=>show(i-1);
-  document.getElementById('next').onclick=()=>show(i+1);
+  $('prev').onclick=()=>show(i-1);
+  $('next').onclick=()=>show(i+1);
   document.addEventListener('keydown',e=>{
     if(!document.body.classList.contains('present'))return;
     if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();show(i+1);}
     if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();show(i-1);}
     if(e.key==='Escape')setPresent(false);
   });
-  // in present mode, TOC links jump to slide
-  document.querySelectorAll('a[href^="#s"]').forEach(a=>a.addEventListener('click',e=>{
-    if(document.body.classList.contains('present')){e.preventDefault();show(slides.findIndex(s=>'#'+s.id===a.getAttribute('href')));}
-  }));
-  // highlight nav section
+  document.addEventListener('click',e=>{
+    const a=e.target.closest('a[href^="#s"]');if(!a)return;
+    if(document.body.classList.contains('editing')&&deck.contains(a)){e.preventDefault();return;}
+    if(document.body.classList.contains('present')){e.preventDefault();show(slides().findIndex(s=>'#'+s.id===a.getAttribute('href')));}
+  });
+
+  // 편집 모드
+  let timer=null;
+  function store(){try{localStorage.setItem(KEY,deck.innerHTML);$('revert').hidden=false;$('status').textContent='편집본 자동 보관됨';}catch(e){$('status').textContent='이 브라우저에서는 자동 보관이 안 됩니다. HTML 저장을 이용하세요.';}}
+  function setEdit(on){
+    if(on&&document.body.classList.contains('present'))setPresent(false);
+    document.body.classList.toggle('editing',on);
+    slides().forEach(s=>{if(on)s.setAttribute('contenteditable','true');else s.removeAttribute('contenteditable');});
+    $('edit').classList.toggle('on',on);$('edit').setAttribute('aria-pressed',on);$('edit').textContent=on?'편집 끝내기':'편집';
+    if(!on)$('status').textContent='';
+  }
+  $('edit').addEventListener('click',()=>setEdit(!document.body.classList.contains('editing')));
+  deck.addEventListener('input',()=>{clearTimeout(timer);timer=setTimeout(store,500);});
+
+  // 사진 바꾸기
+  let target=null;
+  deck.addEventListener('click',e=>{
+    if(!document.body.classList.contains('editing'))return;
+    const img=e.target.closest('img');if(!img)return;
+    e.preventDefault();target=img;$('imgpick').value='';$('imgpick').click();
+  });
+  $('imgpick').addEventListener('change',e=>{
+    const f=e.target.files&&e.target.files[0];if(!f||!target)return;
+    const r=new FileReader();r.onload=()=>{target.src=r.result;store();toast('사진을 바꿨습니다.');};r.readAsDataURL(f);
+  });
+
+  // 원본으로
+  const ORIGINAL=deck.innerHTML;
+  let restored=false;
+  try{const d=localStorage.getItem(KEY);if(d){deck.innerHTML=d;restored=true;}}catch(e){}
+  if(restored){$('revert').hidden=false;$('status').textContent='저장된 편집본을 불러왔습니다';}
+  $('revert').addEventListener('click',()=>{
+    const b=$('revert');
+    if(!b.dataset.armed){b.dataset.armed='1';b.textContent='한 번 더 누르면 되돌립니다';setTimeout(()=>{delete b.dataset.armed;b.textContent='원본으로 되돌리기';},3000);return;}
+    deck.innerHTML=ORIGINAL;try{localStorage.removeItem(KEY);}catch(e){}
+    b.hidden=true;delete b.dataset.armed;b.textContent='원본으로 되돌리기';
+    if(document.body.classList.contains('editing'))setEdit(true);
+    $('status').textContent='';toast('원본으로 되돌렸습니다.');observe();
+  });
+
+  // HTML 저장
+  function cleanHTML(){
+    const root=document.documentElement.cloneNode(true);
+    root.removeAttribute('style');
+    const b=root.querySelector('body');b.classList.remove('editing','present');
+    root.querySelectorAll('[contenteditable]').forEach(el=>el.removeAttribute('contenteditable'));
+    root.querySelectorAll('.slide.cur').forEach(el=>el.classList.remove('cur'));
+    root.querySelectorAll('.toast').forEach(el=>el.remove());
+    root.querySelectorAll('#nav a.on').forEach(el=>el.classList.remove('on'));
+    const d=root.querySelector('#deck');d.removeAttribute('style');
+    const st=root.querySelector('#status');if(st)st.textContent='';
+    const rv=root.querySelector('#revert');if(rv)rv.setAttribute('hidden','');
+    return '<!doctype html>\n'+root.outerHTML;
+  }
+  $('save').addEventListener('click',async()=>{
+    const html=cleanHTML();
+    const name='포항_에코빌리지_추진계획_A4_'+new Date().toISOString().slice(0,10)+'.html';
+    if(!framed){
+      const url=URL.createObjectURL(new Blob([html],{type:'text/html'}));
+      const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),1000);toast('편집본을 '+name+'(으)로 저장했습니다.');return;
+    }
+    try{await navigator.clipboard.writeText(html);toast('이 화면에서는 파일 저장이 막혀 있어 HTML을 클립보드에 복사했습니다. 메모장에 붙여 .html로 저장하세요.');}
+    catch(e){toast('이 화면에서는 저장할 수 없습니다. 내려받은 HTML 파일을 브라우저로 열어 저장하세요.');}
+  });
+
+  // 인쇄 (액자 안에서는 인쇄가 막혀 있으므로 숨김)
+  if(framed)$('print').hidden=true;
+  $('print').addEventListener('click',()=>{if(document.body.classList.contains('editing'))setEdit(false);window.print();});
+  window.addEventListener('beforeprint',()=>{if(document.body.classList.contains('present'))setPresent(false);});
+
+  // 목차 강조
   const links=[...document.querySelectorAll('#nav a')];
-  const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){const id='#'+en.target.id;links.forEach(l=>l.classList.toggle('on',l.getAttribute('href')===id));}}),{rootMargin:'-40% 0px -55% 0px'});
-  slides.forEach(s=>io.observe(s));
+  let io=null;
+  function observe(){
+    if(io)io.disconnect();
+    io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){const id='#'+en.target.id;links.forEach(l=>l.classList.toggle('on',l.getAttribute('href')===id));}}),{rootMargin:'-40% 0px -55% 0px'});
+    slides().forEach(s=>io.observe(s));
+  }
+  observe();fit();
 })();
 </script>
