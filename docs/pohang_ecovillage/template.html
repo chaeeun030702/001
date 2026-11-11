@@ -584,6 +584,11 @@ body:not(.editing) .hint{display:none}
       const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
       setTimeout(()=>URL.revokeObjectURL(url),1000);toast('편집본을 '+name+'(으)로 저장했습니다.');return;
     }
+    const dl=window.claude&&window.claude.use?await window.claude.use('downloads').catch(()=>null):null;
+    if(dl){
+      try{await dl.save({filename:name,data:html});toast('편집본을 '+name+'(으)로 저장했습니다.');return;}
+      catch(e){if(e&&e.code==='declined'){toast('저장을 취소했습니다.');return;}}
+    }
     try{await navigator.clipboard.writeText(html);toast('이 화면에서는 파일 저장이 막혀 있어 HTML을 클립보드에 복사했습니다. 메모장에 붙여 .html로 저장하세요.');}
     catch(e){toast('이 화면에서는 저장할 수 없습니다. 내려받은 HTML 파일을 브라우저로 열어 저장하세요.');}
   });
