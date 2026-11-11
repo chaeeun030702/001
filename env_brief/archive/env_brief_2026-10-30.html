@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>환경 민자, 턴키사업 동향 브리핑 (2026.10.30)</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  :root{
+    --primary:#0F6FFF; --primary-hover:#0E65E8; --primary-active:#0B4FB5;
+    --primary-tint:rgba(15,111,255,.08);
+    --bg-canvas:#EEF1F5;
+    --surface:#FFFFFF; --surface-alt1:#F2F3F6; --surface-alt2:#E2E4E9;
+    --text-strong:#000000; --text:#1C1C1C; --text-sub:#303030; --text-caption:#737373;
+    --border:#E2E4E9; --border-strong:#CCD0D6; --divider:#E9EBEF;
+    --r-sm:8px; --r-md:12px; --r-pill:9999px;
+    --sh-2:0 2px 8px rgba(0,0,0,.08);
+    --success:#15B874; --warning:#FFA833; --danger:#E63B3B;
+    --success-tint:rgba(21,184,116,.10); --warning-tint:rgba(255,168,51,.14); --danger-tint:rgba(230,59,59,.10);
+    --font:"Pretendard Variable","Pretendard","Apple SD Gothic Neo","Noto Sans KR","Segoe UI",Roboto,-apple-system,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --primary:#3F8CFF; --primary-hover:#0F6FFF; --primary-active:#0E65E8;
+      --primary-tint:rgba(63,140,255,.14);
+      --bg-canvas:#15171C;
+      --surface:#1D1F24; --surface-alt1:#282B33; --surface-alt2:#333741;
+      --text-strong:#FFFFFF; --text:#EBECED; --text-sub:#C4C4C4; --text-caption:#8A8A8A;
+      --border:#333741; --border-strong:#4A505F; --divider:#282B33;
+    }
+  }
+  :root[data-theme="dark"]{
+    --primary:#3F8CFF; --primary-hover:#0F6FFF; --primary-active:#0E65E8;
+    --primary-tint:rgba(63,140,255,.14);
+    --bg-canvas:#15171C;
+    --surface:#1D1F24; --surface-alt1:#282B33; --surface-alt2:#333741;
+    --text-strong:#FFFFFF; --text:#EBECED; --text-sub:#C4C4C4; --text-caption:#8A8A8A;
+    --border:#333741; --border-strong:#4A505F; --divider:#282B33;
+  }
+
+  *{box-sizing:border-box;}
+  h1,h2,h3,h4,p,ul,ol{margin:0;}
+  body{
+    background:var(--bg-canvas); color:var(--text);
+    font-family:var(--font); font-size:14px; line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    padding:20px 16px 48px;
+  }
+  a{color:var(--primary);text-decoration:none;}
+  a:hover{text-decoration:underline;}
+  :focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px;}
+  .ico{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;}
+
+  .appbar{
+    max-width:210mm; margin:0 auto 12px;
+    display:flex; flex-wrap:wrap; align-items:center; gap:8px 16px;
+    padding:10px 12px 10px 16px;
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--r-md);
+  }
+  .appbar .svc{font-size:15px;font-weight:700;color:var(--text-strong);}
+  .appbar .hint{flex:1 1 200px;font-size:12px;color:var(--text-caption);}
+  .btn{
+    display:inline-flex;align-items:center;gap:6px;
+    font:600 13px/1 var(--font); color:#FFFFFF; background:var(--primary);
+    border:0; border-radius:var(--r-sm); padding:10px 14px; min-height:40px; cursor:pointer;
+  }
+  .btn:hover{background:var(--primary-hover);}
+  .btn:active{background:var(--primary-active);}
+  .btn .ico{width:18px;height:18px;}
+
+  .sheet{
+    width:210mm; max-width:100%; min-height:297mm; margin:0 auto;
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--r-sm);
+    box-shadow:var(--sh-2);
+    padding:clamp(20px,4.5vw,12mm) clamp(16px,4.5vw,13mm);
+    display:flex; flex-direction:column; gap:16px;
+  }
+  .sheet:focus-visible{outline-offset:4px;}
+
+  .mast{display:flex;flex-direction:column;gap:6px;padding-bottom:12px;border-bottom:2px solid var(--text-strong);}
+  .mast-top{display:flex;justify-content:space-between;align-items:center;gap:8px 12px;flex-wrap:wrap;}
+  .eyebrow{font-size:12px;font-weight:600;letter-spacing:.08em;color:var(--primary);}
+  .chip{display:inline-flex;align-items:center;padding:3px 10px;border-radius:var(--r-pill);font-size:12px;font-weight:600;line-height:1.4;white-space:nowrap;font-variant-numeric:tabular-nums;}
+  .chip-blue{background:var(--primary-tint);color:var(--primary);}
+  .chip-neutral{background:var(--surface-alt1);color:var(--text-sub);}
+  h1.title{font-size:28px;font-weight:700;line-height:1.25;color:var(--text-strong);text-wrap:balance;}
+  .subtitle{font-size:14px;color:var(--text-sub);max-width:62ch;}
+
+  .summary{
+    background:var(--surface-alt1); border-radius:var(--r-md);
+    padding:12px 16px; display:flex; flex-direction:column; gap:6px;
+  }
+  .summary h2{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--primary);}
+  .summary h2 .ico{width:18px;height:18px;}
+  .summary ul{list-style:none;display:flex;flex-direction:column;gap:4px;margin:0;padding:0;}
+  .summary li{position:relative;padding-left:16px;font-size:14px;color:var(--text);}
+  .summary li::before{content:"";position:absolute;left:2px;top:.65em;width:6px;height:6px;border-radius:50%;background:var(--primary);}
+  .summary li b{color:var(--text-strong);font-weight:700;}
+
+  section{display:flex;flex-direction:column;gap:8px;}
+  .sec-head{display:flex;align-items:center;gap:8px;padding-bottom:6px;border-bottom:1px solid var(--border);color:var(--text-strong);}
+  .sec-head h3{font-size:17px;font-weight:700;}
+  .sec-head .chip{margin-left:auto;}
+  .items{display:flex;flex-direction:column;gap:6px;}
+
+  .item{
+    border:1px solid var(--border); border-radius:var(--r-md);
+    padding:10px 14px; display:flex; flex-direction:column; gap:3px;
+  }
+  .item h4{display:flex;gap:10px;align-items:flex-start;font-size:15px;font-weight:700;line-height:1.4;color:var(--text-strong);}
+  .item h4 .num{
+    flex:none;display:inline-grid;place-items:center;width:22px;height:22px;margin-top:1px;
+    border-radius:var(--r-pill);background:var(--primary-tint);color:var(--primary);
+    font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;
+  }
+  .item p{font-size:13.5px;line-height:1.55;color:var(--text-sub);padding-left:32px;}
+  .src{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;padding-left:32px;font-size:12px;color:var(--text-caption);}
+  .src .media{font-weight:600;color:var(--text-sub);}
+  .src a{font-weight:600;}
+  .note{color:var(--text-caption);}
+  .item.is-empty{border-style:dashed;}
+
+  .foot{border-top:1px solid var(--border);padding-top:12px;display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--text-caption);}
+  .foot .label{font-weight:600;color:var(--text-sub);}
+  .foot a{color:var(--text-sub);font-weight:600;}
+  .foot .meta{font-size:11px;}
+
+  @media (max-width:560px){
+    .item p,.src{padding-left:0;}
+  }
+
+  @media print{
+    :root,:root[data-theme="dark"]{
+      --primary:#0F6FFF; --primary-tint:rgba(15,111,255,.08);
+      --surface:#FFFFFF; --surface-alt1:#F2F3F6; --surface-alt2:#E2E4E9;
+      --text-strong:#000000; --text:#1C1C1C; --text-sub:#303030; --text-caption:#737373;
+      --border:#E2E4E9; --border-strong:#CCD0D6; --divider:#E9EBEF;
+    }
+    @page{size:A4 portrait;margin:12mm;}
+    body{background:#FFFFFF;padding:0;}
+    .appbar{display:none!important;}
+    .sheet{width:auto;max-width:none;min-height:0;margin:0;padding:0;border:0;box-shadow:none;border-radius:0;gap:12px;}
+    .item,.summary{break-inside:avoid;}
+    body{font-size:12px;line-height:1.45;}
+    h1.title{font-size:22px;}
+    .subtitle{font-size:12px;}
+    .mast{gap:4px;padding-bottom:8px;}
+    .summary{padding:8px 12px;gap:4px;}
+    .summary li{font-size:12px;}
+    .summary ul{gap:2px;}
+    section{gap:6px;}
+    .sec-head{padding-bottom:4px;}
+    .sec-head h3{font-size:14px;}
+    .items{gap:4px;}
+    .item{padding:7px 10px;gap:2px;border-radius:8px;}
+    .item h4{font-size:12.5px;gap:8px;}
+    .item h4 .num{width:18px;height:18px;font-size:10px;}
+    .item p{font-size:11.5px;line-height:1.45;padding-left:26px;}
+    .src{font-size:10.5px;padding-left:26px;}
+    .foot{padding-top:8px;gap:3px;font-size:10.5px;}
+
+    .tbl{font-size:10.5px;}
+    .tbl th{font-size:10px;padding:5px 7px;}
+    .tbl td{padding:5px 7px;}
+    .tbl td .sub,.tbl td a{font-size:9.5px;}
+    .st{font-size:9.5px;padding:1px 6px;}
+    .tbl tr,.co,.callout{break-inside:avoid;}
+    .tbl-wrap{overflow:visible;}
+    .co{padding:7px 10px;gap:4px;}
+    .co-head h4{font-size:12.5px;}
+    .co li{font-size:10.5px;line-height:1.42;}
+    .sub-head{font-size:12px;}
+    .callout{font-size:11px;padding:7px 10px;}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  }
+
+  /* 표 */
+  .tbl-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--r-md);}
+  table.tbl{width:100%;table-layout:fixed;border-collapse:collapse;font-size:12.5px;line-height:1.45;font-variant-numeric:tabular-nums;}
+  .tbl th{background:var(--surface-alt1);color:var(--text-sub);font-weight:600;font-size:12px;text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);white-space:nowrap;}
+  .tbl td{padding:8px 10px;border-bottom:1px solid var(--divider);vertical-align:top;color:var(--text);}
+  .tbl tr:last-child td{border-bottom:0;}
+  .tbl td.org{font-weight:700;color:var(--text-strong);}
+  .tbl td.num{text-align:right;}
+  .tbl td .sub{display:block;font-size:11.5px;color:var(--text-caption);}
+  .tbl td a{font-size:11.5px;font-weight:600;white-space:nowrap;}
+  .st{display:inline-block;white-space:normal;align-items:center;padding:2px 8px;border-radius:4px;font-size:11.5px;font-weight:600;white-space:nowrap;}
+  .st-blue{background:var(--primary-tint);color:var(--primary);}
+  .st-green{background:var(--success-tint);color:#0E8A57;}
+  .st-amber{background:var(--warning-tint);color:#A8650A;}
+  .st-red{background:var(--danger-tint);color:#B42525;}
+  .st-gray{background:var(--surface-alt1);color:var(--text-sub);}
+  .sub-head{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--text-strong);margin-top:4px;}
+  .sub-head::before{content:"";width:4px;height:14px;border-radius:2px;background:var(--primary);}
+  .sub-head .chip{margin-left:auto;}
+  /* 업체 카드 */
+  .co-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .co{border:1px solid var(--border);border-radius:var(--r-md);padding:10px 14px;display:flex;flex-direction:column;gap:6px;}
+  .co-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .co-head h4{font-size:15px;font-weight:700;color:var(--text-strong);}
+  .co-head .chip{margin-left:auto;}
+  .co ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:5px;}
+  .co li{position:relative;padding-left:12px;font-size:12.5px;line-height:1.5;color:var(--text-sub);}
+  .co li::before{content:"";position:absolute;left:1px;top:.62em;width:5px;height:5px;border-radius:50%;background:var(--border-strong);}
+  .co li b{color:var(--text-strong);font-weight:600;}
+  .co li .note a{font-weight:600;}
+  .callout{border:1px solid var(--border);border-left:4px solid var(--primary);border-radius:var(--r-sm);padding:10px 14px;font-size:13px;color:var(--text-sub);background:var(--surface);}
+  .callout b{color:var(--text-strong);}
+  .page-break{break-before:page;}
+  @media (max-width:720px){ .co-grid{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+
+<div class="appbar">
+  <span class="svc">환경 민자, 턴키 동향 브리핑</span>
+  <span class="hint">본문을 클릭해 바로 고치고 '편집본 저장'으로 HTML 파일을 내려받으세요. A4 세로 인쇄를 지원합니다.</span>
+  <button type="button" class="btn" id="print-btn" onclick="window.print()">
+    <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="7" rx="1"/></svg>
+    인쇄 / PDF 저장
+  </button>
+  <button type="button" class="btn" id="save-btn">
+    <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+    편집본 저장(HTML)
+  </button>
+</div>
+
+<article class="sheet" contenteditable="true" spellcheck="false" aria-label="환경 민자, 턴키사업 동향 브리핑 (편집 가능)">
+
+  <header class="mast">
+    <div class="mast-top">
+      <span class="eyebrow">ENVIRONMENT PPP &amp; TURNKEY BRIEF</span>
+      <span class="chip chip-blue">2026년 10월 30일 (금)</span>
+    </div>
+    <h1 class="title">환경 민자, 턴키사업 동향 브리핑</h1>
+    <p class="subtitle">지자체와 주요 기관(한국환경공단, 한국수자원공사, LH, 수도권매립지관리공사)의 환경 민자, 턴키사업 추진 현황, 그리고 금호건설, 태영건설, 코오롱글로벌, 계룡건설의 환경사업 동향</p>
+  </header>
+
+  <div class="summary">
+    <h2><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01"/><path d="M11 12h1v5h1"/></svg>핵심 요약</h2>
+    <ul>
+      <li>환경 턴키는 <b>단독 응찰, 유찰, 수의계약</b> 흐름이 굳어졌습니다. 10월에도 수원 하수찌꺼기 감량화(10.14)와 새만금 수변도시 하수처리시설(10.20)이 모두 계룡건설 단독 응찰로 유찰됐습니다.</li>
+      <li>지자체 민자는 <b>소각시설 BTO-a</b>가 중심입니다. 용인 그린에코파크(3,850억)가 8.25 민투심을 통과했고, GS건설이 제안한 구미 소각시설 증설과 가평은 제3자 제안공고 단계입니다. 경주 클린에너지센터(1,615억)도 BTO-a로 추진 중이나 주민 반발이 변수입니다.</li>
+      <li>소각장은 <b>재정사업 비중이 커졌습니다</b>. 인천 송도(2,648억)가 기본계획을 고시했고, 김포 광역소각장(4,400억)은 예타 면제, 전주(3,353억)는 민자 전환 논의 끝에 재정사업으로 확정했습니다. 광주, 진주, 파주는 아직 입지나 추진 방식을 정하는 단계입니다. 서울은 상암 신규 소각장이 소송 패소로 무산돼 기존 4곳 현대화로 방향을 틀었지만 자치구 반발에 막혀 있습니다.</li>
+      <li>대형 하수 민자로는 <b>서울 3개 물재생센터(합계 약 5.3조 원)</b>가 연말 적격성조사 완료를 앞두고 있고, 속초 하수처리시설도 적격성조사 간소화가 의결됐습니다.</li>
+      <li>LH는 하남교산 환경기초시설(3,294억)을 태영건설 팀에 맡겼고, <b>광명시흥(1,550억), 행복도시 수질복원센터C(1,119억)</b>는 2027년 상반기 턴키로 발주합니다. K-water는 용인 반도체 통합용수 1, 3공구(4,931억)를 공고했습니다.</li>
+      <li>과천 하수처리시설 현대화(2,249억)는 GS건설 팀과 경합한 끝에 <b>금호건설 컨소시엄</b>이 수주했습니다. 태영건설은 공공 환경 턴키로, 코오롱글로벌은 선별 참여로, 계룡건설은 수의계약 물량 위주로 움직이고 있습니다. 10.28에는 공정위가 계룡, 금호, 코오롱글로벌 등 6개사를 공공공사 담합 혐의로 현장조사해 향후 입찰 참여에 변수가 생겼습니다.</li>
+    </ul>
+  </div>
+
+  <section>
+    <div class="sec-head"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18"/><path d="M5 21V7l6-4v18"/><path d="M19 21V11l-8-4"/><path d="M9 9v.01M9 12v.01M9 15v.01M9 18v.01"/></svg><h3>지자체별 환경 민자, 턴키사업 및 소각, 하수시설 추진 현황</h3><span class="chip chip-neutral">19건</span></div>
+    <div class="tbl-wrap"><table class="tbl"><colgroup><col style="width:10%"><col><col style="width:9%"><col style="width:13%"><col style="width:13%"><col style="width:13%"></colgroup>
+<thead><tr><th scope="col">지자체</th><th scope="col">사업명 및 추진 내용</th><th scope="col">방식</th><th scope="col">사업비(추정)</th><th scope="col">단계</th><th scope="col">출처</th></tr></thead><tbody>
+<tr><td class="org">서울시</td><td><b>중랑(3단계), 난지, 탄천 물재생센터 시설현대화</b><span class="sub">4.17 민투심에서 적격성조사 간소화 의결. 3곳 모두 연말 조사 완료 예상. 탄천은 이전, 지하화와 부지 개발(청년주택) 구상이 함께 검토되며, 제3자 제안공고는 2027년 상반기 전망</span></td><td>BTO-a</td><td class="num">1조 645억<br>1조 7,070억<br>2조 4,967억</td><td><span class="st st-blue">적격성조사</span></td><td><a href="http://www.cennews.co.kr/news/articleView.html?idxno=26548" target="_blank" rel="noopener">건설산업신문</a><br><a href="https://www.hankyung.com/article/2026090945971" target="_blank" rel="noopener">한국경제</a></td></tr>
+<tr><td class="org">서울시</td><td><b>광역자원회수시설(소각) 신규 건립 무산과 기존 4곳 현대화</b><span class="sub">3월 상암동 신규 광역자원회수시설(1,000t/일) 계획 철회. 입지 선정 절차 하자로 1, 2심 패소 후 상고 포기. 강남, 노원, 마포, 양천 4곳 모두 노후화돼 강남은 효율 80%대로 하락. 현대화, 증설을 추진하지만 9.15 마포구청장이 재추진과 증설 반대를 재확인했고 강남구도 주민 부담을 이유로 반발</span></td><td>재정</td><td class="num">-</td><td><span class="st st-amber">현대화 검토</span></td><td><a href="https://news.mtn.co.kr/news-detail/2026091517102842365" target="_blank" rel="noopener">MTN</a><br><a href="https://biz.heraldcorp.com/article/10709448" target="_blank" rel="noopener">헤럴드경제</a><br><a href="https://www.kukinews.com/article/view/kuk202603030246" target="_blank" rel="noopener">쿠키뉴스</a></td></tr>
+<tr><td class="org">인천시</td><td><b>송도 자원순환센터 현대화(소각 265t/일 2기, 530t/일)</b><span class="sub">10.8 건설공사 기본계획 고시. 반입구역은 미추홀, 연수, 남동구. 2027년 10월 착공, 2030년 준공 목표. 청라 대체시설과 군, 구 주도 소각장 확충은 진전이 더딤</span></td><td>재정</td><td class="num">2,648억</td><td><span class="st st-blue">기본계획 고시</span></td><td><a href="https://www.kyeonggi.com/article/20261008580102" target="_blank" rel="noopener">경기일보</a><br><a href="https://news.ifm.kr/news/articleViewAmp.html?idxno=482031" target="_blank" rel="noopener">경인방송</a></td></tr>
+<tr><td class="org">인천시</td><td><b>승기 공공하수처리시설 현대화(27만㎥/일, 지하화)</b><span class="sub">1.6 착공식. 처리시설 지하화 후 상부 공원 조성, 차집관로 1.0km 개량과 남동산단 유입관로 4.8km 신설 포함. 2032년 10월 준공 목표</span></td><td>재정</td><td class="num">4,265억</td><td><span class="st st-green">공사 중</span></td><td><a href="https://www.incheon.go.kr/IC010205/view?repDt=2026-01-06&repSeq=DOM_0000000013870238" target="_blank" rel="noopener">인천시</a></td></tr>
+<tr><td class="org">용인시</td><td><b>용인 그린에코파크(소각 500t/일, 재활용 150t/일)</b><span class="sub">8.25 민투심에서 민자사업 지정과 제3자 제안공고 의결. 2027년 초 우선협상대상자 지정, 2028년 7월 착공, 2032년 6월 준공 목표</span></td><td>BTO-a</td><td class="num">3,850억</td><td><span class="st st-blue">제3자 공고</span></td><td><a href="https://www.yonginilbo.com/news/article.html?no=110457" target="_blank" rel="noopener">용인신문</a></td></tr>
+<tr><td class="org">파주시</td><td><b>신규 생활폐기물 소각시설(400t/일), 환경순환센터 현대화(바이오가스 160t/일)</b><span class="sub">소각시설은 탄현면 낙하리 후보지 전략환경영향평가 협의 완료, 2028년 착공, 2030년 준공 목표. 입지 확정 전 민간 제안서 접수를 두고 절차 논란. 환경순환센터는 11월 공사 완료 후 2027년 상반기 준공</span></td><td>미정</td><td class="num">-</td><td><span class="st st-amber">입지 협의</span></td><td><a href="http://www.pajutimes.com/news/articleView.html?idxno=51610" target="_blank" rel="noopener">파주타임스</a><br><a href="https://www.incheonilbo.com/news/articleView.html?idxno=1315111" target="_blank" rel="noopener">인천일보</a></td></tr>
+<tr><td class="org">파주시</td><td><b>금촌 공공하수처리시설 2차 증설(4.4만→5.2만㎥/일)</b><span class="sub">2021년 3월 설계 착수. 2027년 6월 착공, 2029년 6월 준공 예정</span></td><td>재정</td><td class="num">463억</td><td><span class="st st-blue">설계</span></td><td><a href="https://www.paju.go.kr/www/www_02/environment/environment_04/environment_04_02/environment_04_02_03.jsp" target="_blank" rel="noopener">파주시</a></td></tr>
+<tr><td class="org">김포시</td><td><b>친환경자원회수센터(광역소각장, 600t/일)</b><span class="sub">9월 예비타당성조사 면제 대상에 선정. 대곶면 대벽리 부지, 사업계획 적정성 검토 후 2027년 기본, 실시설계, 2029년 착공 목표. 통진, 고촌, 김포 레코파크 하수처리시설은 2030년까지 단계적 증설</span></td><td>재정</td><td class="num">4,400억</td><td><span class="st st-green">예타 면제</span></td><td><a href="http://www.gimpo.com/news/articleView.html?idxno=139546" target="_blank" rel="noopener">김포미래신문</a><br><a href="https://www.kihoilbo.co.kr/news/articleView.html?idxno=3022334" target="_blank" rel="noopener">기호일보</a></td></tr>
+<tr><td class="org">가평군</td><td><b>자원회수시설(85t/일, 생활폐기물 70t, 하수슬러지 15t)</b><span class="sub">5.19 제3자 제안공고 후 7.7 재공고. 군 공약 점검표상 공정률 85%, 2029년 12월 완료 목표</span></td><td>BTO-a</td><td class="num">696억</td><td><span class="st st-amber">재공고</span></td><td><a href="https://pimac.kdi.re.kr/notice/accept_list.jsp?pageNo=1&showListSize=30" target="_blank" rel="noopener">KDI PIMAC</a><br><a href="https://www.gp.go.kr/site/governor_2025/download/cts2519/2026_2/%E2%85%A4-10.pdf" target="_blank" rel="noopener">가평군</a></td></tr>
+<tr><td class="org">오산시</td><td><b>하수처리시설 증설(약 2,000억 규모)</b><span class="sub">10.23 시의회 행정사무감사에서 민자 추진 근거, 공법 변경 사유, 감사자료 누락 등을 추궁. 연 100억 원 규모 관리대행업체 선정 지연도 함께 지적</span></td><td>민자</td><td class="num">약 2,000억</td><td><span class="st st-red">의회 지적</span></td><td><a href="https://mobile.newsis.com/view_amp.html?ar_id=NISX20261023_0003839164" target="_blank" rel="noopener">뉴시스</a></td></tr>
+<tr><td class="org">속초시</td><td><b>하수처리시설 현대화(5.6만㎥/일, 신설)</b><span class="sub">8.25 민투심에서 적격성조사 간소화 의결. 경제성, 정책성 분석은 생략하고 민자 적격성만 분석</span></td><td>BTO-a</td><td class="num">-</td><td><span class="st st-blue">적격성조사</span></td><td><a href="https://www.dynews1.com/news/articleView.html?idxno=622930" target="_blank" rel="noopener">동양뉴스</a></td></tr>
+<tr><td class="org">구미시</td><td><b>생활폐기물 소각시설 증설(GS건설 제안)</b><span class="sub">8.12 민간투자대상사업 지정 및 제3자 제안공고(구미시 공고 제2026-2235호). 한국환경공단과 함께 사업자 선정 절차 진행, 2028년 하반기 착공 목표</span></td><td>BTO-a</td><td class="num">-</td><td><span class="st st-blue">제3자 공고</span></td><td><a href="https://pimac.kdi.re.kr/notice/accept_view.jsp?seq_no=22486" target="_blank" rel="noopener">KDI PIMAC</a><br><a href="https://news.mtn.co.kr/news-detail/2026081814312563031" target="_blank" rel="noopener">MTN</a></td></tr>
+<tr><td class="org">경주시</td><td><b>클린에너지센터(통합바이오가스화, 유기성 폐자원 300t/일)</b><span class="sub">천북면 공공하수처리장 내 유수지 부지에 건립. 국비 약 1,000억, 도비 200억, 민간 약 415억. 악취, 교통량 우려로 주민 반발이 커 반입, 전처리 시설 전면 지하화 대책 제시</span></td><td>BTO-a</td><td class="num">1,615억</td><td><span class="st st-red">주민 반발</span></td><td><a href="https://www.kyongbuk.co.kr/news/articleView.html?idxno=4078601" target="_blank" rel="noopener">경북일보</a></td></tr>
+<tr><td class="org">포항시</td><td><b>하수슬러지 에너지화시설(바이오가스 회수)</b><span class="sub">9.30 HL에코텍 컨소시엄을 실시설계적격자로 선정(CJ대한통운 건설부문 컨소시엄과 경합). 2027년 하반기 착공, 2029년 하반기 준공. 연 37억 원 절감 기대</span></td><td>턴키</td><td class="num">531억</td><td><span class="st st-green">적격자 선정</span></td><td><a href="https://www.yna.co.kr/view/AKR20261006043200053" target="_blank" rel="noopener">연합뉴스</a><br><a href="https://v.daum.net/v/zXXJw1SrHc" target="_blank" rel="noopener">대한경제</a></td></tr>
+<tr><td class="org">대구시</td><td><b>달서천 5구역 하수관로 정비</b><span class="sub">4.27 제3자 제안공고 후 6.1 재공고</span></td><td>BTL</td><td class="num">-</td><td><span class="st st-amber">재공고</span></td><td><a href="https://pimac.kdi.re.kr/notice/accept_list.jsp?pageNo=1&showListSize=10" target="_blank" rel="noopener">KDI PIMAC</a></td></tr>
+<tr><td class="org">전주시</td><td><b>전주권 광역소각자원센터(550t/일, 전주, 완주, 김제, 임실)</b><span class="sub">시장이 민자(BTO) 전환을 재검토했으나 8.31 공개토론회를 거쳐 9.2 기존 재정사업, 화격자 방식으로 확정. 2028년 상반기 착공 목표(공사 약 36개월)</span></td><td>재정</td><td class="num">3,353억</td><td><span class="st st-gray">재정 확정</span></td><td><a href="https://www.nocutnews.co.kr/news/6572094" target="_blank" rel="noopener">노컷뉴스</a><br><a href="https://www.jbsori.com/news/articleView.html?idxno=17815" target="_blank" rel="noopener">전북의소리</a></td></tr>
+<tr><td class="org">고창군</td><td><b>통합바이오가스화시설</b><span class="sub">4.28 민간투자대상사업 지정 및 제3자 제안공고</span></td><td>BTO-a</td><td class="num">-</td><td><span class="st st-blue">제3자 공고</span></td><td><a href="https://pimac.kdi.re.kr/notice/accept_list.jsp?pageNo=1&showListSize=30" target="_blank" rel="noopener">KDI PIMAC</a></td></tr>
+<tr><td class="org">광주시</td><td><b>광역자원회수시설(소각) 입지 4차 공모</b><span class="sub">삼거동 후보지가 위장전입으로 취소돼 4차 공모 진행. 9곳 신청 후 10.19 광산구 3곳, 북구 1곳으로 압축. 11월 2차 입지선정위원회, 최종 입지에 500억 지원</span></td><td>미정</td><td class="num">-</td><td><span class="st st-amber">입지 선정</span></td><td><a href="https://www.news1.kr/local/gwangju-jeonnam/6324697" target="_blank" rel="noopener">뉴스1</a><br><a href="https://www.yna.co.kr/view/AKR20260914169200054" target="_blank" rel="noopener">연합뉴스</a></td></tr>
+<tr><td class="org">진주시</td><td><b>생활폐기물 소각시설(진주 280t/일, 사천 광역화 검토)</b><span class="sub">7월 진주, 사천 시장이 광역화 협의 재개에 합의했지만 단독 입지선정 용역도 함께 진행 중. 9.11 시의회 행정사무감사에서 지연 우려 제기, 시는 연내 방향 발표 방침</span></td><td>미정</td><td class="num">-</td><td><span class="st st-amber">방향 미정</span></td><td><a href="https://www.gnnews.co.kr/news/articleView.html?idxno=645397" target="_blank" rel="noopener">경남일보</a><br><a href="https://www.mediagn.co.kr/news/articleView.html?idxno=28491" target="_blank" rel="noopener">경남미디어</a></td></tr>
+</tbody></table></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18"/><path d="M4 10h16"/><path d="m12 3 8 5H4l8-5Z"/><path d="M6 10v8M10 10v8M14 10v8M18 10v8"/></svg><h3>주요 기관별 환경 민자, 턴키사업 추진 현황</h3><span class="chip chip-neutral">17건</span></div>
+    <div class="sub-head">한국환경공단<span class="chip chip-neutral">6건</span></div>
+    <div class="tbl-wrap"><table class="tbl"><colgroup><col><col style="width:10%"><col style="width:13%"><col style="width:15%"><col style="width:14%"></colgroup>
+<thead><tr><th scope="col">사업명 및 추진 내용</th><th scope="col">방식</th><th scope="col">사업비(추정)</th><th scope="col">단계</th><th scope="col">출처</th></tr></thead><tbody>
+<tr><td><b>수원하수처리장 하수찌꺼기 감량화사업(바이오가스화 433t/일)</b><span class="sub">10.14 재공고 PQ에 계룡건설만 참여해 또 유찰. 유력 후보였던 코오롱글로벌이 불참했고, 공고문에 단독입찰자와 수의계약 가능 조항이 있어 수의계약이 유력. 11.2 현장설명, 입찰 마감은 2027.4.5</span></td><td>턴키</td><td class="num">719억<span class="sub">추정가격</span></td><td><span class="st st-red">2차 유찰</span></td><td><a href="https://news.mtn.co.kr/news-detail/2026101418142350196" target="_blank" rel="noopener">MTN</a><br><a href="https://www.kjebi.com/search/smart/bid/detail/R26BK01751959-000" target="_blank" rel="noopener">입찰공고</a></td></tr>
+<tr><td><b>과천 공공하수처리시설 현대화사업(6.1만㎥/일, 분뇨 30t, 바이오가스 75t)</b><span class="sub">GS건설 컨소시엄과 경합한 끝에 금호건설 컨소시엄(40%, 태영, 코오롱글로벌 등)이 7.1 수주. 하수처리시설을 지하화하고 상부는 공원으로 조성, 2031년 준공</span></td><td>턴키</td><td class="num">2,249억</td><td><span class="st st-green">수주 확정</span></td><td><a href="https://www.yna.co.kr/view/AKR20260701055700003" target="_blank" rel="noopener">연합뉴스</a><br><a href="https://v.daum.net/v/zXXJw1SrHc" target="_blank" rel="noopener">대한경제</a></td></tr>
+<tr><td><b>동부권 광역자원회수시설 증설(소각 300→500t/일)</b><span class="sub">두 차례 유찰 뒤 태영건설 컨소시엄(55%)과 수의계약 절차를 밟아 7.9 실시설계적격자 선정(98.68점), 8.4 수주</span></td><td>턴키</td><td class="num">1,002억</td><td><span class="st st-green">수주 확정</span></td><td><a href="https://v.daum.net/v/20260709172005926" target="_blank" rel="noopener">대한경제</a></td></tr>
+<tr><td><b>수원시 자원회수시설 개선사업</b><span class="sub">태영건설이 7.16 계약 공시. 공사기간 2026.7.31~2029.1.30</span></td><td>-</td><td class="num">675억</td><td><span class="st st-green">계약</span></td><td><a href="https://englishdart.fss.or.kr/report/eng/viewer.do?dcmNo=11481638&dtd=HTML&eleId=0&length=0&offset=0&rcpNo=20260716800861" target="_blank" rel="noopener">DART</a></td></tr>
+<tr><td><b>과천시 자원정화센터 현대화사업</b><span class="sub">두 차례 단독 응찰 뒤 코오롱글로벌 컨소시엄을 실시설계적격자로 선정(4월)</span></td><td>턴키</td><td class="num">1,039억</td><td><span class="st st-green">적격자 선정</span></td><td><a href="https://v.daum.net/v/zXXJw1SrHc" target="_blank" rel="noopener">대한경제</a></td></tr>
+<tr><td><b>용인 차집관로 개량, 김해 안동지구 도시침수 예방(2단계)</b><span class="sub">4분기 상하수도 대형공사 발주 계획에 포함된 일반경쟁 물량</span></td><td>적격심사</td><td class="num">각 255억</td><td><span class="st st-gray">10월 발주 예정</span></td><td><a href="http://www.cenews.co.kr/news/articleView.html?idxno=19914" target="_blank" rel="noopener">토목신문</a></td></tr>
+</tbody></table></div>
+    <div class="sub-head">한국수자원공사(K-water)<span class="chip chip-neutral">3건</span></div>
+    <div class="tbl-wrap"><table class="tbl"><colgroup><col><col style="width:10%"><col style="width:13%"><col style="width:15%"><col style="width:14%"></colgroup>
+<thead><tr><th scope="col">사업명 및 추진 내용</th><th scope="col">방식</th><th scope="col">사업비(추정)</th><th scope="col">단계</th><th scope="col">출처</th></tr></thead><tbody>
+<tr><td><b>용인 반도체 산단 통합용수공급사업(1단계) 1공구(하남, 광주), 3공구(용인)</b><span class="sub">10월 중순 입찰 공고. 11.2 PQ 서류 접수, 11.18 개찰, 12월 중순 공구별 낙찰자 확정 예정</span></td><td>종심제</td><td class="num">2,244억<br>2,687억</td><td><span class="st st-blue">입찰 진행</span></td><td><a href="https://m.dnews.co.kr/m_home/view.jsp?idxno=202610160947083740849" target="_blank" rel="noopener">대한경제</a></td></tr>
+<tr><td><b>같은 사업 2공구(도수관로 12.8km, 통합가압장 1곳)</b><span class="sub">코오롱글로벌 시공. 공사기간 2026.7.30~2030.1.4(1,620일)</span></td><td>종심제</td><td class="num">1,493억<span class="sub">부가세 포함</span></td><td><span class="st st-green">착공</span></td><td><a href="https://www.kwater.or.kr/news/sub01/download.do?downloadSeq=146860" target="_blank" rel="noopener">K-water 공고</a></td></tr>
+<tr><td><b>베트남 하노이 송둥정수장(30만㎥/일) AI 정수장 기술수출</b><span class="sub">10.22 계약. 호찌민 켄동정수장에 이은 2호 수출. 10.21 VIWASEEN, 베트남 상하수도협회와 상하수도 인프라 개발, 투자 협력 MOU 체결</span></td><td>해외</td><td class="num">19.4억</td><td><span class="st st-green">계약</span></td><td><a href="https://mobile.newsis.com/view_amp.html?ar_id=NISX20261027_0003842471" target="_blank" rel="noopener">뉴시스</a></td></tr>
+</tbody></table></div>
+    <p class="callout">이번 조사 범위(최근 3개월 보도, 공고)에서 K-water가 발주한 국내 하수도 턴키, 민자 신규 공고는 확인되지 않았습니다. 대형 물량은 용인 반도체 산업용수에 몰려 있습니다.</p>
+    <div class="sub-head">한국토지주택공사(LH)<span class="chip chip-neutral">4건</span></div>
+    <div class="tbl-wrap"><table class="tbl"><colgroup><col><col style="width:10%"><col style="width:13%"><col style="width:15%"><col style="width:14%"></colgroup>
+<thead><tr><th scope="col">사업명 및 추진 내용</th><th scope="col">방식</th><th scope="col">사업비(추정)</th><th scope="col">단계</th><th scope="col">출처</th></tr></thead><tbody>
+<tr><td><b>하남교산 환경기초시설(소각 80t, 바이오가스 130t, 하수 4.4만㎥/일)</b><span class="sub">단독 응찰로 진행된 심사에서 태영건설 컨소시엄(44%)이 96.20점으로 실시설계적격자 선정, 7월 수주. 코오롱글로벌, 금호건설(각 12.5%), 계룡건설(10%) 참여</span></td><td>턴키</td><td class="num">3,294억</td><td><span class="st st-green">수주 확정</span></td><td><a href="http://www.hanamilbo.net/news/articleView.html?idxno=12401" target="_blank" rel="noopener">하남일보</a></td></tr>
+<tr><td><b>남양주진건 푸른물센터 증설(3만㎥/일)</b><span class="sub">두 차례 단독 PQ로 유찰돼 코오롱글로벌 컨소시엄(53%)을 수의계약 대상자로 선정, 7월 말 입찰 마감 예정이었음. 별도로 「이전, 현대화 건설공사 기본계획 및 입찰안내서 작성용역」 입찰 진행(10.26 참가신청 마감)</span></td><td>턴키</td><td class="num">1,366억</td><td><span class="st st-amber">수의계약</span></td><td><a href="https://v.daum.net/v/zXXJw1SrHc" target="_blank" rel="noopener">대한경제</a><br><a href="https://ebid.lh.or.kr/ebid.et.tp.cmd.BidjoindocListCmd.dev" target="_blank" rel="noopener">LH 전자조달</a></td></tr>
+<tr><td><b>광명시흥 공공하수처리시설(6.4만㎥/일)</b><span class="sub">6.1 국토부 대형공사 입찰방법 심의에서 턴키 확정. 당초 업계 예상보다 발주 시점이 늦춰짐</span></td><td>턴키</td><td class="num">1,550억</td><td><span class="st st-gray">2027 상반기 발주</span></td><td><a href="https://news.mtn.co.kr/news-detail/2026060119103581896" target="_blank" rel="noopener">MTN</a></td></tr>
+<tr><td><b>행정중심복합도시 수질복원센터(C)(3.6만㎥/일)</b><span class="sub">광명시흥과 함께 턴키 방식, 2027년 상반기 발주로 확정</span></td><td>턴키</td><td class="num">1,119억</td><td><span class="st st-gray">2027 상반기 발주</span></td><td><a href="https://www.itbs1.co.kr/news/articleView.html?idxno=2867" target="_blank" rel="noopener">국토교통신문</a></td></tr>
+</tbody></table></div>
+    <div class="sub-head">수도권매립지관리공사(SL공사)<span class="chip chip-neutral">3건</span></div>
+    <div class="tbl-wrap"><table class="tbl"><colgroup><col><col style="width:10%"><col style="width:13%"><col style="width:15%"><col style="width:14%"></colgroup>
+<thead><tr><th scope="col">사업명 및 추진 내용</th><th scope="col">방식</th><th scope="col">사업비(추정)</th><th scope="col">단계</th><th scope="col">출처</th></tr></thead><tbody>
+<tr><td><b>대체매립지 4차 공모 후속 절차</b><span class="sub">2025년 10월 마감된 4차 공모에 민간 2곳이 응모했으나 1년째 최종 후보지 미선정. 9월 4자 협의체(기후부, 서울, 인천, 경기) 실무회의를 재개했지만 후보지 공유 없이 일정만 재확인</span></td><td>공모</td><td class="num">-</td><td><span class="st st-amber">후보지 미확정</span></td><td><a href="https://www.kyeongin.com/article/1770742" target="_blank" rel="noopener">경인일보</a><br><a href="https://www.incheonnews.com/news/articleView.html?idxno=440561" target="_blank" rel="noopener">인천뉴스</a></td></tr>
+<tr><td><b>수도권 생활폐기물 직매립 금지 시행에 따른 반입 구조 변화</b><span class="sub">1.1부터 수도권 생활폐기물 직매립 금지 시행. 예외규정 운영 속에 지자체 공공소각시설 확충이 늦어지며 민간 처리 의존과 재정 부담 우려가 커짐</span></td><td>제도</td><td class="num">-</td><td><span class="st st-blue">시행 중</span></td><td><a href="https://www.womentimes.co.kr/news/articleView.html?idxno=104242" target="_blank" rel="noopener">우먼타임스</a><br><a href="https://news.ifm.kr/news/articleViewAmp.html?idxno=482031" target="_blank" rel="noopener">경인방송</a></td></tr>
+<tr><td><b>50MW 매립가스 발전시설 운영사업자 신규 선정</b><span class="sub">8.31 새 위탁운영사업자 선정 착수. 기존 독점 운영 구조 변화 전망. 기후부 점검에서 변압기 관리 부실(수익 69억 감소) 지적</span></td><td>위탁운영</td><td class="num">-</td><td><span class="st st-blue">발주</span></td><td><a href="https://www.asiatoday.co.kr/kn/view.php?key=20260831010010553" target="_blank" rel="noopener">아시아투데이</a></td></tr>
+</tbody></table></div>
+    <div class="sub-head">참고: 기타 발주기관<span class="chip chip-neutral">1건</span></div>
+    <div class="tbl-wrap"><table class="tbl"><colgroup><col><col style="width:10%"><col style="width:13%"><col style="width:15%"><col style="width:14%"></colgroup>
+<thead><tr><th scope="col">사업명 및 추진 내용</th><th scope="col">방식</th><th scope="col">사업비(추정)</th><th scope="col">단계</th><th scope="col">출처</th></tr></thead><tbody>
+<tr><td><b>새만금 스마트 수변도시 공공하수처리시설(1.9만㎥/일, 재이용수 5,300㎥/일)</b><span class="sub">9.29 공고(설계 70%, 가격 30%). 10.20 PQ에 계룡건설 컨소시엄(동일기술공사, 유신, 건화)만 참여해 유찰, 10.21 재공고. 재공고도 단독이면 수의계약 검토. 착공 목표 2028년 상반기</span></td><td>턴키</td><td class="num">1,054억</td><td><span class="st st-red">유찰, 재공고</span></td><td><a href="https://www.engdaily.com/news/articleView.html?idxno=23648" target="_blank" rel="noopener">엔지니어링데일리</a><br><a href="https://v.daum.net/v/20261022060114056" target="_blank" rel="noopener">MTN</a></td></tr>
+</tbody></table></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/></svg><h3>환경 관련 업체 이슈, 동향</h3><span class="chip chip-neutral">4개사</span></div>
+    <div class="co-grid">
+      <div class="co"><div class="co-head"><h4>금호건설</h4><span class="chip chip-blue">환경 턴키 수주 확대</span></div><ul><li>공정위 건설에너지카르텔조사과가 10.28 계룡건설, 금호건설, 코오롱글로벌 등 6개사를 현장조사했습니다. LH 종합심사낙찰제 공사의 투찰가 사전 조율 여부가 핵심입니다. <span class="note">(10.28, <a href="https://newspim.com/news/view/20261028001483" target="_blank" rel="noopener">뉴스핌</a>)</span></li><li><b>과천 하수처리시설 현대화(2,249억) 대표사 수주</b>. 지분 40%로 태영건설, 코오롱글로벌, 환경에너지솔루션, 우호건설과 컨소시엄을 꾸렸고, GS건설 컨소시엄과의 경합에서 이겼습니다. <span class="note">(7.1, <a href="https://www.yna.co.kr/view/AKR20260701055700003" target="_blank" rel="noopener">연합뉴스</a>)</span></li><li>LH 청라 공촌하수처리시설 증설(1,210억)에 이어 환경 턴키 연속 수주. 하남교산 환경기초시설에도 12.5% 지분으로 참여했습니다. <span class="note">(1.16, <a href="https://www.dnews.co.kr/uhtml/view.jsp?idxno=202601151251584520828" target="_blank" rel="noopener">대한경제</a>)</span></li><li>새만금 수변도시 하수처리시설 참여 후보로 거론됐으나 PQ에 나서지 않았습니다. <span class="note">(10.21, <a href="https://www.engdaily.com/news/articleView.html?idxno=23648" target="_blank" rel="noopener">엔지니어링데일리</a>)</span></li><li>호남 반도체 클러스터 조성 기대감에 주가가 장중 <b>24% 급등</b>(1만 3,810원)했습니다. <span class="note">(10.12, <a href="https://www.newsis.com/view/NISX20261012_0003821886" target="_blank" rel="noopener">뉴시스</a>)</span></li></ul></div><div class="co"><div class="co-head"><h4>태영건설</h4><span class="chip chip-neutral">워크아웃 중 공공 집중</span></div><ul><li><b>환경 턴키를 잇달아 확보</b>했습니다. 하남교산 환경기초시설(3,294억, 지분 44%), 동부권 광역자원회수시설 증설(1,002억, 55%), 수원시 자원회수시설 개선(675억)이 대표적입니다. <span class="note">(7월, <a href="http://www.hanamilbo.net/news/articleView.html?idxno=12401" target="_blank" rel="noopener">하남일보</a>)</span></li><li>송도 공공하수처리시설 증설(3단계, 1,697억)도 태영건설 팀과 수의계약 절차에 들어갔습니다. <span class="note">(5.27, <a href="https://v.daum.net/v/zXXJw1SrHc" target="_blank" rel="noopener">대한경제</a>)</span></li><li>9.30 이사회에서 <b>234억 원 제3자배정 유상증자</b>(출자전환)를 결의했습니다. 대구 신천동 PF 보증채무 469억 원의 절반을 주식으로 바꾸며, 신주는 10.23 상장됐습니다. <span class="note">(10.1, <a href="https://www.wikileaks-kr.org/news/articleView.html?idxno=192721" target="_blank" rel="noopener">위키리크스한국</a>)</span></li><li>민간 개발보다 공공, 정비사업 위주로 수주 중입니다. 10.1 서부산의료원 신축(965억, 지분 58%)을 따냈습니다. <span class="note">(10.7, <a href="https://www.newspim.com/news/view/20261006001180" target="_blank" rel="noopener">뉴스핌</a>)</span></li></ul></div><div class="co"><div class="co-head"><h4>코오롱글로벌(코오롱건설)</h4><span class="chip chip-blue">수처리 선별 참여</span></div><ul><li>공정위 건설에너지카르텔조사과가 10.28 계룡건설, 금호건설, 코오롱글로벌 등 6개사를 현장조사했습니다. LH 종합심사낙찰제 공사의 투찰가 사전 조율 여부가 핵심입니다. <span class="note">(10.28, <a href="https://newspim.com/news/view/20261028001483" target="_blank" rel="noopener">뉴스핌</a>)</span></li><li>유력 후보였던 환경공단 <b>수원 하수찌꺼기 감량화사업 입찰을 포기</b>했고, 이 사업은 계룡건설 단독 응찰로 유찰됐습니다. <span class="note">(10.14, <a href="https://news.mtn.co.kr/news-detail/2026101418142350196" target="_blank" rel="noopener">MTN</a>)</span></li><li>K-water 용인 반도체 통합용수 2공구(1,493억)를 시공 중입니다. 환경공단 과천시 자원정화센터 현대화(1,039억) 적격자, LH 남양주진건 푸른물센터 증설(1,366억) 수의계약 대상자이기도 합니다. <span class="note">(8월, <a href="https://www.kwater.or.kr/news/sub01/download.do?downloadSeq=146860" target="_blank" rel="noopener">K-water</a>)</span></li><li>탄자니아 다르에스살람 하수처리시설(990억) 공정률이 40%(9.14 기준)에 이르렀고, 2028년 완공이 목표입니다. <span class="note">(9.23, <a href="https://www.press9.kr/news/articleView.html?idxno=83280" target="_blank" rel="noopener">프레스나인</a>)</span></li><li>비환경 부문에서는 번동3구역 가로주택정비(742억, 10.23)와 금호타이어 함평공장(1,384억, 10.26)을 공시했습니다. <span class="note">(10.26, <a href="https://www.newsis.com/view/NISX20261026_0003841614" target="_blank" rel="noopener">뉴시스</a>)</span></li></ul></div><div class="co"><div class="co-head"><h4>계룡건설</h4><span class="chip chip-neutral">수의계약 물량 공략</span></div><ul><li>공정위 건설에너지카르텔조사과가 10.28 계룡건설, 금호건설, 코오롱글로벌 등 6개사를 현장조사했습니다. LH 종합심사낙찰제 공사의 투찰가 사전 조율 여부가 핵심입니다. <span class="note">(10.28, <a href="https://newspim.com/news/view/20261028001483" target="_blank" rel="noopener">뉴스핌</a>)</span></li><li><b>환경 턴키 2건을 수의계약으로 확보할 전망</b>입니다. 수원 하수찌꺼기 감량화(환경공단)와 새만금 수변도시 하수처리시설(새만금개발공사) 모두 단독으로 응찰했습니다. <span class="note">(10.22, <a href="https://v.daum.net/v/20261022060114056" target="_blank" rel="noopener">MTN</a>)</span></li><li>업계에서는 경쟁사와 물밑 협상으로 경쟁을 피한다는 ‘체리피커’ 비판이 나오고, 남부내륙철도 1공구와 관련한 경찰 수사설도 보도됐습니다. <span class="note">(10.22, <a href="https://v.daum.net/v/20261022060114056" target="_blank" rel="noopener">MTN</a>)</span></li><li>상반기 연결 영업이익 1,000억 원을 넘겼고, 6월 말 본사 수주잔고는 13조 7,987억 원입니다. 하남교산 환경기초시설에는 10% 지분으로 참여했습니다. <span class="note">(10.23, <a href="http://www.paxetv.com/news/articleView.html?idxno=285062&replyAll=&reply_sc_order_by=I" target="_blank" rel="noopener">팍스경제TV</a>)</span></li><li>10.26 화성 능동 공공지원민간임대 현장에서 협력업체 근로자 1명이 숨져 중대재해를 공시했습니다. 회사는 지병으로 추정하며, 원인은 조사 중입니다. <span class="note">(10.26, <a href="https://www.newstnt.com/news/articleView.html?idxno=725018" target="_blank" rel="noopener">뉴스티앤티</a>)</span></li></ul></div>
+    </div>
+    <p class="callout"><b>공통 흐름.</b> 4개사가 같은 컨소시엄에 함께 들어가는 사례(하남교산, 과천 하수)가 늘면서 환경 턴키의 실질 경쟁이 줄고 있습니다. 단독 응찰 뒤 수의계약으로 넘어가는 물량이 많아, 경쟁 입찰을 노린다면 PQ 단계부터 대응해야 합니다.</p>
+  </section>
+
+  <section>
+    <div class="sec-head"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg><h3>향후 주요 일정</h3><span class="chip chip-neutral">10건</span></div>
+    <div class="tbl-wrap"><table class="tbl"><colgroup><col style="width:14%"><col style="width:18%"><col></colgroup>
+<thead><tr><th scope="col">시점</th><th scope="col">기관</th><th scope="col">내용</th></tr></thead><tbody><tr><td class="num" style="text-align:left">11.2</td><td class="org">한국환경공단</td><td>수원하수처리장 하수찌꺼기 감량화 현장설명(수의계약 전환 여부 확인)</td></tr><tr><td class="num" style="text-align:left">11.2</td><td class="org">한국수자원공사</td><td>용인 반도체 통합용수 1단계 1, 3공구 PQ 서류 접수(11.18 개찰)</td></tr><tr><td class="num" style="text-align:left">11월 초</td><td class="org">새만금개발공사</td><td>새만금 수변도시 하수처리시설 재공고 PQ 결과(단독 시 수의계약 검토)</td></tr><tr><td class="num" style="text-align:left">11월</td><td class="org">광주시</td><td>광역자원회수시설 2차 입지선정위원회(후보지 4곳)</td></tr><tr><td class="num" style="text-align:left">12월 중순</td><td class="org">한국수자원공사</td><td>용인 반도체 통합용수 1, 3공구 낙찰자 확정 및 계약</td></tr><tr><td class="num" style="text-align:left">연말</td><td class="org">서울시(PIMAC)</td><td>중랑, 난지, 탄천 물재생센터 민자 적격성조사 완료 예상</td></tr><tr><td class="num" style="text-align:left">2027 상반기</td><td class="org">LH</td><td>광명시흥 공공하수처리시설(1,550억), 행복도시 수질복원센터(C)(1,119억) 턴키 발주</td></tr><tr><td class="num" style="text-align:left">2027 상반기</td><td class="org">서울시</td><td>탄천 물재생센터 이전, 현대화 민자 제3자 제안공고 전망</td></tr><tr><td class="num" style="text-align:left">2027 초</td><td class="org">용인시</td><td>그린에코파크 우선협상대상자 지정</td></tr><tr><td class="num" style="text-align:left">2027.10</td><td class="org">인천시</td><td>송도 자원순환센터 현대화 착공 목표(2,648억)</td></tr></tbody></table></div>
+  </section>
+
+  <footer class="foot">
+    <span class="label">참고 출처</span>
+    <span><a href="https://pimac.kdi.re.kr/notice/accept_list.jsp" target="_blank" rel="noopener">KDI 공공투자관리센터(제3자 제안공고)</a>, <a href="https://ebid.lh.or.kr/" target="_blank" rel="noopener">LH 전자조달</a>, <a href="https://www.kwater.or.kr/news/repoList.do?brdId=KO26&s_mid=36" target="_blank" rel="noopener">K-water 보도자료</a>, 대한경제, MTN, 엔지니어링데일리, 연합뉴스, 뉴시스 등</span>
+    <span class="meta">2026년 10월 30일 웹 검색으로 기사와 공고를 찾고 원문을 확인해 작성했습니다. 사업비는 보도된 추정금액 기준이며 발주처 공고와 다를 수 있습니다. 인용 전 원문 확인을 권장합니다.</span>
+  </footer>
+
+</article>
+
+<script>
+document.getElementById('save-btn').addEventListener('click',function(){
+  var html='<!doctype html>\n'+document.documentElement.outerHTML;
+  var blob=new Blob([html],{type:'text/html;charset=utf-8'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='환경_민자턴키_동향브리핑_2026.10.30.html';
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(function(){URL.revokeObjectURL(a.href);},1000);
+});
+</script>
+
+</body></html>
