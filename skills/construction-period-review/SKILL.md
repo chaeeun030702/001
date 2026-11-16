@@ -8,6 +8,8 @@ description: 공사기간 적정성 검토 실행 — 「적정 공사기간 확
 이 스킬은 `references/construction-period-reviewer.md`(원본: `.claude/agents/construction-period-reviewer.md`)의 절차를 그대로 따른다. 먼저 그 파일을 읽고 0~5단계를 수행한다.
 
 - 계산 엔진은 저장소 https://github.com/thesuk74-hub/construction-period-agent 의 `cpa/` 패키지다. 저장소가 없으면 클론하고 `pip install -r requirements.txt` 후 저장소 루트에서 명령을 실행한다.
+- **성과품은 수정·편집 가능한 HTML(A4 세로) 4개를 각각 작성한다**: ① `01_공사기간산정보고서.html` ② `02_보고서부록.html` ③ `03_검토과정_워크북.html` ④ `04_입력.html`.
+  계산(`cpa run`/`cpa qty`) 뒤 `python3 scripts/make_html.py output/<사업명> --input <입력서식.xlsx>`(스킬 폴더의 스크립트)로 만들고, 4개 파일을 사용자에게 각각 보낸다.
 - 참고 문서: `references/README.md`(처리 흐름·웹 화면·명령줄·성과품), `references/CLAUDE.md`(프로젝트 지침·코드 구조).
 
 빠른 실행:
@@ -15,6 +17,7 @@ description: 공사기간 적정성 검토 실행 — 「적정 공사기간 확
 ```bash
 # 예제 실행(첨부 샘플보고서 사업)
 python3 -m cpa run examples/예제_대죽공공폐수_입력.xlsx -o output/예제_대죽
+python3 <스킬폴더>/scripts/make_html.py output/예제_대죽 --input examples/예제_대죽공공폐수_입력.xlsx   # HTML 4개
 
 # 신규 사업
 cp templates/입력서식_템플릿.xlsx output/<사업명>/입력_<사업명>.xlsx   # 작성 후
@@ -29,4 +32,4 @@ python3 -m cpa db 콘크리트 타설      # 부록4 1일작업량 DB
 python3 -m cpa fill 입력.xlsx --items 수량.csv --acts 공정.csv --cases 사례.csv
 ```
 
-인자가 주어지면(예: 입력파일 경로) 그 파일로 바로 2단계(실행)부터 진행하고, 3단계 검토와 5단계 보고를 반드시 수행한다.
+인자가 주어지면(예: 입력파일 경로) 그 파일로 바로 2단계(실행)부터 진행하고, 3단계 검토, 4단계 HTML 4개 작성, 5단계 보고를 반드시 수행한다.
