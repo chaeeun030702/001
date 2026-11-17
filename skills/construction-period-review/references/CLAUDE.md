@@ -1,10 +1,36 @@
-# 공사기간 적정성 검토 에이전트 — 프로젝트 지침
+# 공사기간 적정성 검토 에이전트 — 프로젝트 지침 (Claude 직접 수행판)
 
-- 공사기간 적정성 검토·공사기간 산정 보고서·주공정 공정표 요청은 `.claude/agents/construction-period-reviewer.md` 절차로 수행한다(스킬 `/construction-period-review`).
-- 계산은 `python3 -m cpa run <입력.xlsx> -o output/<사업명>` 으로만 수행하고, 결과 수치를 임의 수정하지 않는다. 입력을 고쳐 재실행한다.
-- 기준: 「적정 공사기간 확보를 위한 가이드라인(2026, 국토교통부)」 원문 `cpa/data/reference_guideline_2026.pdf`.
-- 수량첨부 검토(웹 기본 화면·`python3 -m cpa qty`): `qtyparse.py`(수량파일 해석) → `wizard.py`(공정 자동구성·간접/보정일수 → 입력서식) → 아래 엔진. 웹: `web/app.py`(공통 API)·`web/wiz.py`(수량첨부 API)·`web/static/index.html`(기본)·`classic.html`(입력서식 업로드).
-- 성과품: 보고서 HWPX(`hwpxbuild.py`)·부록 XLSX(`xlsxbuild.py`) — 본문은 `report.py`·`appendix.py`를 `doc_cls`로 공유, PDF는 숨김 DOCX(`docbuild.py`)를 변환.
-- 사용자에게 주는 성과품은 수정·편집 가능한 HTML(A4 세로) 4개: `01_공사기간산정보고서.html`·`02_보고서부록.html`·`03_검토과정_워크북.html`·`04_입력.html` — 실행 후 `python3 scripts/make_html.py output/<사업명> --input <입력서식.xlsx>`로 작성.
-- 코드 구조: `refdata.py`(기준값) → `project.py`(입력서식) → `nonwork.py`·`calendar_cap.py`(②) → `workdays.py`(③④) → `schedule.py`(⑤ CPM) → `compress.py`(⑤-1) → `adequacy.py`(⑦) → `pipeline.py`(순서·작업경과) → `report.py`·`appendix.py`·`gantt.py`·`network.py`·`workbook.py`(성과품).
-- 변경 후 확인: `python3 tools/make_example.py && python3 -m cpa run examples/예제_대죽공공폐수_입력.xlsx -o output/예제_대죽`
+이 지침은 원본 Python 프로그램(`cpa/`)을 **쓰지 않고** Claude가 직접 공사기간을 산정하도록 다시 쓴 것이다.
+`python3 -m cpa …` 명령, `cpa` 패키지 import·실행, 저장소 클론·`pip install`은 **하지 않는다.** 필요한 모든 식·규칙·기준 데이터가 이 스킬 폴더에 들어 있다.
+
+## 1. 기본 원칙
+- 공사기간 적정성 검토·공사기간 산정 보고서·주공정 공정표 요청은 `references/construction-period-reviewer.md` 절차로 수행한다(스킬 `/construction-period-review`).
+- 계산은 `references/계산절차.md`의 식과 `references/기준값.md`·`references/data/*.json`으로만 한다. 결과 수치를 임의로 고치지 않고, 입력을 고쳐 다시 계산한다.
+- 수치를 지어내지 않는다. 판단값(보정계수·수동 1일작업량·직접작업일수)은 근거를 비고에 적고, 사용자가 준 값과 계산 결과를 구분해 보고한다.
+- 검산용 임시 스크립트는 허용하지만 이 문서의 식을 옮긴 것이어야 하며(스크래치 폴더, `cpa` 코드 미사용) 산출물에 넣지 않는다.
+- 기준: 「적정 공사기간 확보를 위한 가이드라인(2026, 국토교통부)」, 「공공 건설공사의 공사기간 산정기준(국토교통부 고시 제2024-1021호)」. 원문 PDF는 원본 저장소(`cpa/data/reference_guideline_2026.pdf`)에 있으며, 계산에 필요한 부록1·3·4·5 값은 `references/data/`·`기준값.md`에 옮겨 두었다.
+
+## 2. 문서 지도 (읽는 순서)
+| 문서 | 내용 |
+|---|---|
+| `construction-period-reviewer.md` | 작업 절차 0~5단계(자료확인→입력서식→계산→검토→산출물→보고) |
+| `계산절차.md` | ②비작업일수 → ③④작업일수 → ⑤CPM → ⑤-1공기조정 → ⑥종합 → ⑦적정성 → 동절기, 수량파일 해석·공정 자동구성 |
+| `기준값.md` | 기상조건·프로필·보정계수·준비기간·부록5 공식·건설사업관리기간·환경공단·간접/보정일수·자동매칭 규칙·공정 템플릿 |
+| `data/holidays.json` | 부록1 법정공휴일(2026~2035, 월별) |
+| `data/weather_db.json` | 부록3 95개 관측지점 × 기상조건 1~13 월평균 비작업일수 |
+| `data/productivity_db.json` | 부록4 1일작업량 251항목(no·공종·조건·rate·unit·출처) |
+| `산출물작성.md`, `html_template.html` | 결과물 HTML 4개의 구성과 A4 세로 편집용 템플릿 |
+| `예제_검증값.md` | 서산 예제 값(비작업일수·C10 종료일) — 계산이 맞는지 대조 |
+| `README.md` | 원본 프로그램 사용 설명서(개념 참고용, 명령 실행 금지) |
+
+## 3. 처리 순서 요약 (검토엑셀 ①→⑦)
+① 공사개요 → ② 비작업일수(A+B−C, 주40시간 월 8일 하한) → ③ 1일작업량 결정(수동>DB지정>자동매칭)·보정계수 → ④ 작업일수 ROUNDUP → ⑤ 주공정 CPM(FS/SS/FF, 공정별 가동률 달력) → ⑤-1 공기조정(작업조 증원·공정 중첩) → ⑥ 종합(준비+비작업+작업+정리) → ⑦ 적정성(부록5/동종공사 ±20%) → 추가검토(동절기 공사중지).
+수량파일만 있으면 `계산절차.md` §10(수량첨부 검토)로 입력서식을 먼저 만든다.
+
+## 4. 성과품 — 수정·편집 가능한 HTML 4개 (A4 세로)
+`01_공사기간산정보고서.html`·`02_보고서부록.html`·`03_검토과정_워크북.html`·`04_입력.html` — `산출물작성.md`와 `html_template.html`로 Claude가 직접 작성하고 사용자에게 각각 보낸다. (HWPX·XLSX·PDF는 만들지 않는다.)
+
+## 5. 자체 점검 (작성 후)
+- `예제_검증값.md`와 같은 방식으로 월별 비작업일수 1~2개월과 첫 공정 종료일을 손으로 재계산해 맞는지 확인한다.
+- 경고(1일작업량 미결정·단위 불일치·공정ID 누락·선행 오류·순환·목표기간 미충족)를 보고서에 남기고, 해소하지 못한 가정은 숨기지 않는다.
+- 준비·정리기간에는 비작업일수를 계상하지 않는다. 부록5 값(Y)은 비작업일수 포함이므로 준비·정리기간만 더한다.

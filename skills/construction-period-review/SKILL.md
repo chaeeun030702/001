@@ -1,35 +1,28 @@
 ---
 name: construction-period-review
-description: 공사기간 적정성 검토 실행 — 「적정 공사기간 확보를 위한 가이드라인(2026)」 기준으로 입력서식을 작성·실행하여 공사기간 산정 보고서, 보고서 부록, 주공정(Critical Path) 공정표, 검토과정 워크북을 만든다. 사용자가 공사기간 적정성 검토, 적정공기 산정, 공사기간 산정 보고서, 주공정 공정표를 요청하거나 /construction-period-review 를 입력하면 사용.
+description: 공사기간 적정성 검토 — 「적정 공사기간 확보를 위한 가이드라인(2026)」 기준으로 프로그램 없이 Claude가 직접 비작업일수·작업일수·주공정(CPM)·적정성을 계산하고, 공사기간 산정보고서·보고서 부록·검토과정 워크북·입력을 수정·편집 가능한 A4 세로 HTML 4개로 만든다. 사용자가 공사기간 적정성 검토, 적정공기 산정, 공사기간 산정 보고서, 주공정 공정표를 요청하거나 /construction-period-review 를 입력하면 사용.
 ---
 
-# 공사기간 적정성 검토
+# 공사기간 적정성 검토 (Claude 직접 수행판)
 
-이 스킬은 `references/construction-period-reviewer.md`(원본: `.claude/agents/construction-period-reviewer.md`)의 절차를 그대로 따른다. 먼저 그 파일을 읽고 0~5단계를 수행한다.
+원본 Python 프로그램(`cpa/`)을 쓰지 않는다. 이 스킬 폴더의 문서와 데이터만으로 Claude가 계산하고 결과물을 만든다.
+(`python3 -m cpa …`·저장소 클론·`pip install` 불필요)
 
-- 계산 엔진은 저장소 https://github.com/thesuk74-hub/construction-period-agent 의 `cpa/` 패키지다. 저장소가 없으면 클론하고 `pip install -r requirements.txt` 후 저장소 루트에서 명령을 실행한다.
-- **성과품은 수정·편집 가능한 HTML(A4 세로) 4개를 각각 작성한다**: ① `01_공사기간산정보고서.html` ② `02_보고서부록.html` ③ `03_검토과정_워크북.html` ④ `04_입력.html`.
-  계산(`cpa run`/`cpa qty`) 뒤 `python3 scripts/make_html.py output/<사업명> --input <입력서식.xlsx>`(스킬 폴더의 스크립트)로 만들고, 4개 파일을 사용자에게 각각 보낸다.
-- 참고 문서: `references/README.md`(처리 흐름·웹 화면·명령줄·성과품), `references/CLAUDE.md`(프로젝트 지침·코드 구조).
+## 읽는 순서
+1. `references/CLAUDE.md` — 지침·문서 지도·원칙
+2. `references/construction-period-reviewer.md` — 작업 절차 0~5단계
+3. `references/계산절차.md` — 모든 계산식·규칙(비작업일수, 작업일수, CPM, 공기조정, 적정성, 수량파일 해석)
+4. `references/기준값.md` + `references/data/*.json` — 기준 상수·규칙표와 부록1·3·4 데이터
+5. `references/산출물작성.md` + `references/html_template.html` — 결과물 4개 작성
+6. `references/예제_검증값.md` — 계산이 맞는지 손으로 대조
+7. `references/mindmap.md` — 전체 구조 마인드맵 (개요 파악용)
+(`references/README.md`는 원본 프로그램 설명으로 개념 참고용)
 
-빠른 실행:
+## 수행 요약
+- 입력 확인(총공사비·착공일·위치·수량·목표기간…) → 부족한 핵심값은 사용자에게 묻고, 추정은 추정이라고 밝힌다.
+- 계산: ② 비작업일수 → ③ 1일작업량·보정 → ④ 작업일수 → ⑤ 주공정 CPM → ⑤-1 공기조정 → ⑥ 종합 → ⑦ 적정성(±20%) → 동절기 추가검토.
+- 수량파일(엑셀)만 있으면 `계산절차.md` §10으로 공정·수량 입력을 먼저 구성한다.
+- **성과품은 수정·편집 가능한 HTML(A4 세로) 4개를 각각 작성**한다: ① `01_공사기간산정보고서.html` ② `02_보고서부록.html` ③ `03_검토과정_워크북.html` ④ `04_입력.html` (`output/<사업명>/`). 4개를 사용자에게 각각 보낸다.
+- 마지막에 공사기간(일·개월)과 구성(준비·비작업·작업·정리), 착공~준공일, 주공정, 목표기간 대비 조정, 적정성 판정, 동절기 반영 시 기간, 남은 경고·가정, 성과품 경로를 간결히 보고한다.
 
-```bash
-# 예제 실행(첨부 샘플보고서 사업)
-python3 -m cpa run examples/예제_대죽공공폐수_입력.xlsx -o output/예제_대죽
-python3 <스킬폴더>/scripts/make_html.py output/예제_대죽 --input examples/예제_대죽공공폐수_입력.xlsx   # HTML 4개
-
-# 신규 사업
-cp templates/입력서식_템플릿.xlsx output/<사업명>/입력_<사업명>.xlsx   # 작성 후
-python3 -m cpa run output/<사업명>/입력_<사업명>.xlsx -o output/<사업명>
-
-# 공정별 수량파일만 있는 경우(수량첨부 검토)
-python3 -m cpa qty --work 처리시설공사 토공.xlsx 구조물공.xlsx --work 관공사 관로공.xlsx --start 2027-03-01 --end 2028-10-31 --cost 9800 --loc "충청남도 서산시" -o output/<사업명>
-
-# 보조 명령
-python3 -m cpa stations 충청남도     # 기상관측지점
-python3 -m cpa db 콘크리트 타설      # 부록4 1일작업량 DB
-python3 -m cpa fill 입력.xlsx --items 수량.csv --acts 공정.csv --cases 사례.csv
-```
-
-인자가 주어지면(예: 입력파일 경로) 그 파일로 바로 2단계(실행)부터 진행하고, 3단계 검토, 4단계 HTML 4개 작성, 5단계 보고를 반드시 수행한다.
+인자가 주어지면(예: 수량파일·입력 표) 그 자료로 바로 계산 단계부터 진행한다.

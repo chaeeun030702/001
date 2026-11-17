@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{문서제목}}</title>
+<style>
+:root{--ink:#111;--line:#888;--head:#eef2f7;--accent:#1f4e79}
+*{box-sizing:border-box}
+html,body{margin:0;background:#d9dde3;color:var(--ink);
+  font-family:"Malgun Gothic","맑은 고딕","Noto Sans KR","Apple SD Gothic Neo",sans-serif}
+.toolbar{position:sticky;top:0;z-index:9;display:flex;gap:8px;align-items:center;flex-wrap:wrap;
+  padding:8px 16px;background:#24313f;color:#fff;font-size:13px}
+.toolbar b{margin-right:auto}
+.toolbar button{border:0;border-radius:4px;padding:6px 12px;font-size:13px;cursor:pointer;background:#fff;color:#24313f}
+.toolbar .hint{opacity:.75;font-size:12px}
+.page{width:210mm;min-height:297mm;margin:12px auto;padding:20mm 18mm;background:#fff;
+  box-shadow:0 1px 4px rgba(0,0,0,.25);font-size:10pt;line-height:1.55}
+.page[contenteditable=true]:focus{outline:2px solid #6aa0d8;outline-offset:-2px}
+p{margin:0 0 4pt}
+h1{font-size:18pt;color:var(--accent);margin:0 0 10pt;border-bottom:2px solid var(--accent);padding-bottom:4pt}
+h2{font-size:13pt;color:var(--accent);margin:14pt 0 6pt}
+table{border-collapse:collapse;width:100%;margin:4pt 0 10pt;font-size:8.5pt;table-layout:auto}
+th,td{border:1px solid var(--line);padding:2pt 3pt;vertical-align:middle;word-break:keep-all;overflow-wrap:anywhere}
+th{background:var(--head)}
+table.w2{font-size:7pt} table.w3{font-size:5.5pt} table.w3 td,table.w3 th{padding:1pt}
+img{max-width:100%;height:auto}
+.num{text-align:right}
+.sheet{break-before:page} .sheet:first-of-type{break-before:auto}
+.pb{break-before:page}
+@page{size:A4 portrait;margin:15mm 12mm}
+@media print{
+  html,body{background:#fff}
+  .toolbar{display:none}
+  .page{width:auto;min-height:0;margin:0;padding:0;box-shadow:none}
+  tr,img{break-inside:avoid}
+  thead{display:table-header-group}
+}
+</style></head>
+<body>
+<div class="toolbar"><b>{{문서제목}}</b>
+<span class="hint">본문을 눌러 바로 고칠 수 있습니다 · A4 세로</span>
+<button onclick="toggleEdit(this)">편집 끄기</button>
+<button onclick="saveHtml()">저장(HTML)</button>
+<button onclick="window.print()">인쇄 / PDF</button></div>
+<div class="page" contenteditable="true" spellcheck="false">
+<!-- 본문: h1(문서제목) · h2(장/절) · p · table(<thead> 머리글 행, 숫자 칸은 class="num", 열이 10개 초과면 table class="w2", 20개 초과면 class="w3") · 쪽 나눔은 <div class="pb"></div> 또는 <section class="sheet"> -->
+{{본문}}
+<p style="margin-top:14pt;font-size:8pt;color:#666">작성일 {{작성일}}</p>
+</div>
+<script>
+function saveHtml(){
+  var d=document.documentElement.cloneNode(true);
+  var pg=d.querySelector('.page'); if(pg) pg.setAttribute('contenteditable','true');
+  var blob=new Blob(['<!doctype html>\n'+d.outerHTML],{type:'text/html;charset=utf-8'});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download=decodeURIComponent((location.pathname.split('/').pop()||document.title+'.html'));
+  document.body.appendChild(a); a.click(); a.remove();
+}
+function toggleEdit(btn){
+  var pg=document.querySelector('.page'); var on=pg.getAttribute('contenteditable')!=='true';
+  pg.setAttribute('contenteditable',on?'true':'false'); btn.textContent=on?'편집 끄기':'편집 켜기';
+}
+</script>
+</body></html>
