@@ -3158,6 +3158,52 @@
    "first_seen": "2026-11-17",
    "via": "사용자 요청 추가(11/17)",
    "hilite": "B"
+  },
+  {
+   "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/50382648?Oem_Code=C1",
+   "company": "㈜삼표시멘트",
+   "title": "[삼표시멘트] 안전/보건팀 신입사원 채용",
+   "group": "big",
+   "who": "삼표그룹",
+   "note": "강원 삼척 삼척공장 · 안전/보건팀 · 신입 · 정규직(수습 6개월) · 대졸 이상",
+   "employment": "정규직",
+   "level": "신입",
+   "qualification": "신입 · 대졸(4년) 이상",
+   "deadline": "2026-11-29",
+   "preferred": "안전계열 전공자, 산업안전·건설안전·산업위생·위험물·소방 자격증 소지자, 영어 가능자, 유관업무 경력자 우대",
+   "benefits": [
+    {
+     "label": "기숙사·사택",
+     "kind": "web",
+     "url": "https://www.saramin.co.kr/zf_user/jobs/view?rec_idx=54040293",
+     "title": "이전 삼표시멘트 공고 복리후생(ChatGPT 웹 조사)"
+    },
+    {
+     "label": "자녀학자금",
+     "kind": "web",
+     "url": "https://www.saramin.co.kr/zf_user/jobs/view?rec_idx=54040293",
+     "title": "이전 삼표시멘트 공고 복리후생(ChatGPT 웹 조사)"
+    }
+   ],
+   "employees": {
+    "count": "약 629명 (501~1,000명)",
+    "basis": "잡코리아 기업정보",
+    "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/50382648?Oem_Code=C1"
+   },
+   "starter": {
+    "pay": "3,250만원",
+    "basis": "잡코리아 기업정보 · 연도 미표기",
+    "url": "https://www.jobkorea.co.kr/company/1496827"
+   },
+   "detail_text": "㈜삼표시멘트 안전/보건팀 신입사원 채용. 주요업무: 사업장 안전보건 관리계획 수립 및 시스템 이행 점검, 중대재해처벌법·산업안전보건법 대응, 현장 안전 점검 및 임직원 안전 교육. 자격: 신입, 대졸(4년) 이상. 우대: 안전계열 전공, 산업안전·건설안전·산업위생·위험물·소방 자격증, 영어 가능자, 유관업무 경력자. 정규직(수습 6개월), 주5일 08:00~17:00, 근무지 강원 삼척시 동양길 20(삼척공장). 접수 마감 2026.11.29. (11/18 수집분 · 잡코리아 · ChatGPT 웹 검색 요약)",
+   "conv": false,
+   "listed": "코스피",
+   "source": "잡코리아",
+   "company_url": "https://www.jobkorea.co.kr/company/1496827",
+   "search_firm": false,
+   "first_seen": "2026-11-18",
+   "via": "11/18 수집분",
+   "hilite": "B"
   }
  ]
 }
