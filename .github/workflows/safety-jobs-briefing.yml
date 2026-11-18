@@ -6,10 +6,7 @@ on:
   schedule:
     - cron: "7 10 * * *"  # 19:07 KST
     - cron: "27 10 * * *" # 19:27 KST
-  workflow_dispatch:
-  push:
-    branches: [claude/safety-manager-job-openings-ab59yi]
-    paths: [safety_jobs/**, .github/workflows/safety-jobs-briefing.yml]
+  workflow_dispatch:  # 작업 브랜치 push 트리거는 제거 (규칙 조정안 5, 2026-10-20) — 규칙 변경 후에는 기본 브랜치에서 직접 실행
 permissions:
   contents: write
 concurrency:
@@ -18,7 +15,7 @@ concurrency:
 jobs:
   collect:
     runs-on: ${{ vars.COLLECT_RUNNER || 'ubuntu-latest' }}
-    timeout-minutes: 30
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
@@ -26,8 +23,20 @@ jobs:
         # push로 시작된 실행은 트리거 커밋을 체크아웃하므로, 그 뒤에 올라온 최신 브리핑을 이어받는다
         run: |
           git fetch -q origin "${GITHUB_REF_NAME}" && git checkout "origin/${GITHUB_REF_NAME}" -- briefings || true
+      - name: Install OCR (이미지 공고 읽기 — tesseract 한글)
+        continue-on-error: true
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq tesseract-ocr tesseract-ocr-kor >/dev/null
       - name: Collect
         run: uv run safety_jobs/collect.py --out briefings
+      - name: Notify (신규 공고 이메일)
+        # MAIL_* 시크릿이 없으면 건너뛰고, 실패해도 브리핑 커밋은 계속한다. 보낸 공고는 briefings/notified.json 에 기록
+        continue-on-error: true
+        env:
+          MAIL_USER: ${{ secrets.MAIL_USER }}
+          MAIL_APP_PASSWORD: ${{ secrets.MAIL_APP_PASSWORD }}
+          MAIL_TO: ${{ secrets.MAIL_TO }}
+          SITE_URL: ${{ vars.SITE_URL || 'https://e-safety.vercel.app/' }}
+        run: python3 safety_jobs/notify.py --briefings briefings
       - name: Commit briefing
         run: |
           git config user.name github-actions
@@ -37,6 +46,7 @@ jobs:
           for i in 1 2 3 4; do
             git fetch -q origin "${GITHUB_REF_NAME}"
             git reset -q --hard "origin/${GITHUB_REF_NAME}"
+            rm -rf briefings/archive  # 날짜별 사본은 이번 실행 결과(최근 3일)와 똑같이 맞춘다 — 지난 사본 삭제 반영
             mkdir -p briefings && cp -r "$out"/. briefings/
             git add briefings
             if git diff --cached --quiet; then echo "no changes"; exit 0; fi

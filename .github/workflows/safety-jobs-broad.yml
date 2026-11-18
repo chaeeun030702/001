@@ -1,0 +1,42 @@
+# 안전 신입 채용 전체 수집 — 대기업·상장·시평 제한 없이 신입 지원이 가능한 국내 안전 공고 전체
+# 결과는 briefings/broad/ 에 커밋한다 (일일 브리핑 briefings/latest.* 는 건드리지 않는다).
+name: safety-jobs-broad
+on:
+  workflow_dispatch:
+  push:
+    branches: [claude/loving-mayer-awelta]
+    paths: [safety_jobs/collect.py, .github/workflows/safety-jobs-broad.yml]
+permissions:
+  contents: write
+concurrency:
+  group: safety-jobs-broad-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 110
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Seed caches (상장사 목록·신입 초봉 캐시)
+        run: |
+          mkdir -p briefings/broad
+          cp -n briefings/krx_listed.json briefings/starter_salary.json briefings/broad/ 2>/dev/null || true
+      - name: Collect (전체 모드)
+        run: uv run safety_jobs/collect.py --out briefings/broad --broad --max-detail 2600
+      - name: Commit result
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@users.noreply.github.com
+          out=$(mktemp -d); cp -r briefings/broad/. "$out"/
+          for i in 1 2 3 4; do
+            git fetch -q origin "${GITHUB_REF_NAME}"
+            git reset -q --hard "origin/${GITHUB_REF_NAME}"
+            mkdir -p briefings/broad && cp -r "$out"/. briefings/broad/
+            git add briefings/broad
+            if git diff --cached --quiet; then echo "no changes"; exit 0; fi
+            git commit -q -m "briefing(broad): $(TZ=Asia/Seoul date +%F)"
+            if git push -q origin "HEAD:${GITHUB_REF_NAME}"; then echo "pushed"; exit 0; fi
+            sleep $((i * 5))
+          done
+          echo "::error::broad briefing push failed"; exit 1

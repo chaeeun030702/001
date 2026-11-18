@@ -1,0 +1,274 @@
+{
+  "note": "인터넷 조사(검색 결과 요약 기준) 신입 초봉 — 잡코리아 수집값보다 우선. suppress=true는 근거 없는 수집값 숨김",
+  "items": [
+    {
+      "company": "엠이엠씨코리아(주)",
+      "pay": "4,445만원",
+      "source": "캐치",
+      "url": "https://www.catch.co.kr/Comp/CompSummary/452556",
+      "note": "대졸 초임(2026년판 기업정보), 사이트별 3,900~4,561만원",
+      "checked": "2026-10-04"
+    },
+    {
+      "company": "에이치엘비제넥스(주)",
+      "pay": "3,950만원",
+      "source": "잡코리아",
+      "url": "https://m.jobkorea.co.kr/company/43563493",
+      "note": "대졸초임, 기준연도 미표기",
+      "checked": "2026-10-04"
+    },
+    {
+      "company": "(주)이터널그룹",
+      "pay": "3,100만원",
+      "source": "캐치",
+      "url": "https://m.catch.co.kr/Comp/CompSummary/JJ8511",
+      "note": "대졸초임, 기준연도 미표기",
+      "checked": "2026-10-04"
+    },
+    {
+      "company": "(주)삼우에프앤지",
+      "pay": "3,025만원",
+      "source": "캐치",
+      "url": "https://www.catch.co.kr/Comp/CompSummary/170724",
+      "note": "초봉, 기준연도 미표기",
+      "checked": "2026-10-04"
+    },
+    {
+      "company": "(주)제닉",
+      "pay": "2,951만원",
+      "year": "2019",
+      "source": "사람인",
+      "url": "https://www.saramin.co.kr/zf_user/company-info/view-inner-salary/csn/UDlCc1dQa1VjMndXcnlhLzlhRUhEQT09/company_nm/제닉",
+      "note": "대졸초임, 2019년 수치(오래됨)",
+      "checked": "2026-10-04"
+    },
+    {
+      "company": "(주)한독크린텍",
+      "pay": "3,180만원",
+      "year": "2025",
+      "source": "잡코리아",
+      "url": "https://www.jobkorea.co.kr/company/45026253/salary/",
+      "note": "신입사원 초봉",
+      "checked": "2026-10-04"
+    },
+    {
+      "company": "금호건설(주)",
+      "pay": "4,030만원",
+      "year": "2022",
+      "source": "사람인",
+      "url": "https://www.saramin.co.kr/zf_user/company-info/view-inner-salary/csn/QllGSkRDK3pmLzZDbUF6a2EvcjJUQT09/company_nm/%EA%B8%88%ED%98%B8%EA%B1%B4%EC%84%A4",
+      "note": "대졸초임, 최신 수치 없음",
+      "checked": "2026-10-04"
+    },
+    {
+      "company": "LG유플러스",
+      "aliases": [
+        "(주)엘지유플러스",
+        "엘지유플러스"
+      ],
+      "pay": "4,241만원",
+      "year": "2020",
+      "source": "LG유플러스 채용공고",
+      "url": "https://linkareer.com/activity/43551",
+      "note": "2020년 IT 신입 공고 초봉(오래됨)",
+      "checked": "2026-10-04"
+    },
+    {
+      "company": "에스디바이오센서",
+      "aliases": [
+        "에스디바이오센서(주)"
+      ],
+      "pay": "3,360만원",
+      "source": "인크루트",
+      "url": "https://www.incruit.com/company/20647190/salary/",
+      "note": "대졸초임, 신뢰도 낮음",
+      "checked": "2026-10-04"
+    },
+    {
+      "company": "IPARK현대산업개발",
+      "aliases": [
+        "에이치디씨현대산업개발(주)",
+        "HDC현대산업개발"
+      ],
+      "pay": "약 4,553만원",
+      "source": "자소설닷컴 추정",
+      "url": "https://jasoseol.com/companies/2128",
+      "note": "신입 연봉 추정치",
+      "checked": "2026-10-04"
+    },
+    {
+      "company": "한국드레가(주)",
+      "pay": "4,800만원",
+      "source": "잡코리아",
+      "url": "https://www.jobkorea.co.kr/recruit/co_read/c/draegerhr",
+      "note": "대졸초임",
+      "checked": "2026-10-04"
+    },
+    {
+      "company": "유엘코리아",
+      "pay": "3,700만원",
+      "year": "2025",
+      "source": "잡코리아",
+      "url": "https://www.jobkorea.co.kr/recruit/co_read/c/uldhkd3",
+      "note": "대졸초임, 다른 잡코리아 페이지는 3,000만원",
+      "checked": "2026-10-04"
+    },
+    {
+      "company": "노보노디스크제약",
+      "pay": "3,400만원",
+      "year": "2026",
+      "source": "잡코리아",
+      "url": "https://www.jobkorea.co.kr/recruit/co_read/c/nnpk12",
+      "note": "대졸초임",
+      "checked": "2026-10-04"
+    },
+    {
+      "company": "Applied Materials",
+      "aliases": [
+        "어플라이드머티어리얼즈코리아(주)",
+        "어플라이드머티어리얼즈코리아"
+      ],
+      "pay": "4,761만원",
+      "year": "2026",
+      "source": "자소설닷컴",
+      "url": "https://jasoseol.com/companies/3070",
+      "note": "한국법인 초봉",
+      "checked": "2026-10-04"
+    },
+    {
+      "company": "(주)에이프로",
+      "pay": "3,800만원",
+      "year": "2025",
+      "source": "잡코리아",
+      "url": "https://www.jobkorea.co.kr/recruit/co_read/c/apro4020",
+      "note": "대졸초임",
+      "checked": "2026-10-04"
+    },
+    {
+      "company": "(주)에스엠세이프",
+      "pay": "3,300만원",
+      "year": "2026",
+      "source": "잡코리아",
+      "url": "https://www.jobkorea.co.kr/Recruit/Co_Read/C/kyk3636",
+      "note": "대졸초임",
+      "checked": "2026-10-04"
+    },
+    {
+      "company": "대영포장(주)",
+      "pay": "3,600만원",
+      "year": "2026",
+      "source": "리멤버",
+      "url": "https://career.rememberapp.co.kr/job/company/101406",
+      "note": "대졸초임",
+      "checked": "2026-10-04"
+    },
+    {
+      "company": "(주)삼호이앤에프",
+      "pay": "3,350만원",
+      "year": "2025",
+      "source": "잡코리아",
+      "url": "https://www.jobkorea.co.kr/company/43768704",
+      "note": "대졸초임",
+      "checked": "2026-10-04"
+    },
+    {
+      "company": "(주)심텍",
+      "pay": "4,142만원",
+      "source": "캐치",
+      "url": "https://www.catch.co.kr/Comp/CompSummary/HG8194",
+      "note": "초봉, 자소설닷컴 약 4,061만원",
+      "checked": "2026-10-04"
+    },
+    {
+      "company": "(주)실리콘투",
+      "pay": "3,815만원",
+      "source": "캐치",
+      "url": "https://www.catch.co.kr/Comp/CompSummary/427048",
+      "note": "초봉, 출처마다 다름",
+      "checked": "2026-10-04"
+    },
+    {
+      "company": "두산로지스틱스솔루션(주)",
+      "pay": "약 4,622만원",
+      "source": "자소설닷컴 추정",
+      "url": "https://jasoseol.com/companies/7685",
+      "note": "신입 연봉 추정치",
+      "checked": "2026-10-04"
+    },
+    {
+      "company": "대명에너지(주)",
+      "pay": "3,700만원",
+      "source": "잡코리아",
+      "url": "https://m.jobkorea.co.kr/Recruit/Co_Read/C/dmeng0410",
+      "note": "초봉",
+      "checked": "2026-10-04"
+    },
+    {
+      "company": "(주)에스앤더블류",
+      "pay": "3,109만원",
+      "source": "캐치",
+      "url": "https://www.catch.co.kr/Comp/CompSummary/453676",
+      "note": "초봉",
+      "checked": "2026-10-04"
+    },
+    {
+      "company": "에스트라오토모티브시스템(주)",
+      "pay": "4,274만원",
+      "source": "캐치",
+      "url": "https://www.catch.co.kr/Comp/CompSummary/361003",
+      "note": "초봉",
+      "checked": "2026-10-04"
+    },
+    {
+      "company": "(주)케어젠",
+      "pay": "3,312만원",
+      "source": "캐치",
+      "url": "https://www.catch.co.kr/Comp/CompSummary/204432",
+      "note": "초봉",
+      "checked": "2026-10-04"
+    },
+    {
+      "company": "(주)에이치알에스",
+      "pay": "3,448만원",
+      "source": "캐치",
+      "url": "https://www.catch.co.kr/Comp/CompSummary/018961",
+      "note": "초봉(실리콘고무 제조사)",
+      "checked": "2026-10-04"
+    },
+    {
+      "company": "(주)하이테크엔지니어링",
+      "pay": "3,693만원",
+      "source": "캐치",
+      "url": "https://www.catch.co.kr/Comp/CompSummary/118925",
+      "note": "초봉, 잡코리아 대졸초임 3,780만원",
+      "checked": "2026-10-04"
+    },
+    {
+      "company": "에이치디현대중공업(주)",
+      "aliases": [
+        "HD현대중공업"
+      ],
+      "suppress": true,
+      "note": "잡코리아 2,534만원은 근거 확인 못 해 숨김",
+      "pay": null,
+      "checked": "2026-10-04"
+    },
+    {
+      "company": "행정안전부",
+      "pay": "3,428만원",
+      "year": "2026",
+      "source": "인사혁신처(뉴스1)",
+      "url": "https://www.news1.kr/amp/politics/president/6023826",
+      "note": "9급 공무원 1호봉 연간 보수",
+      "checked": "2026-10-04"
+    },
+    {
+      "company": "(주)승일",
+      "pay": "2,880만원",
+      "source": "잡코리아",
+      "url": "https://www.jobkorea.co.kr/company/1456234",
+      "note": "대졸초임",
+      "checked": "2026-10-04"
+    }
+  ]
+}

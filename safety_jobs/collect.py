@@ -3,6 +3,7 @@
 # dependencies = [
 #     "httpx>=0.27.0",
 #     "beautifulsoup4>=4.12.0",
+#     "pillow>=10.0.0",
 # ]
 # ///
 #!/usr/bin/env python3
@@ -23,7 +24,10 @@ import difflib
 import gzip
 import html
 import json
+import io
 import re
+import shutil
+import subprocess
 import sys
 import time
 from dataclasses import asdict, dataclass, field
@@ -36,7 +40,12 @@ from bs4 import BeautifulSoup
 KST = dt.timezone(dt.timedelta(hours=9))
 Q = quote("안전관리자")
 # 검색어: 안전관리자 + 업종 무관 HSE/EHS 직무 + 자격증 명시 공고
-KEYWORDS = ["안전관리자", "HSE", "EHS", "안전보건", "산업안전기사", "건설안전기사", "NEBOSH", "IOSH", "ISO45001", "안전공학"]
+KEYWORDS = ["안전관리자", "HSE", "EHS", "안전보건", "산업안전기사", "건설안전기사", "NEBOSH", "IOSH", "ISO45001", "안전공학", "안전",
+            "해외 안전관리자", "해외현장 안전", "해외 HSE", "해외현장", "해외 상시채용", "하이테크 해외"]  # 해외 근무 공고도 찾는다 (사용자 요청 2026-10-13)
+# 전체 모드(--broad): 대기업·상장·시평·계약직 관심 기업 제한을 풀고, 신입 지원이 가능한 국내 안전 직무 공고를 모두 싣는다 (사용자 요청 2026-10-14)
+BROAD = False
+BROAD_EXTRA_KEYWORDS = ["환경안전", "안전담당", "안전팀", "안전보건관리", "안전관리 신입", "EHS 신입", "산업안전 신입", "건설안전"]
+BROAD_EXCLUDE_RE = re.compile("학원|교육원|감시단")  # 전체 모드에서도 안전관리자 채용이 아닌 곳만 뺀다
 # 우대 강조(보라색): 외국어·영어 능통 / NEBOSH / IOSH / CSP
 LANG_RE = re.compile(r"(?:영어|외국어|어학|English|중국어|일본어|베트남어|스페인어)\s*(?:회화\s*)?(?:능통|능숙|우수|가능|원활|비즈니스|원어민|fluent|business)"
                      r"|(?:TOEIC|토익|OPIc|오픽|TEPS|텝스|TOEIC\s*Speaking|토익\s*스피킹)\s*[:：]?\s*(?:\d{2,3}|IM|IH|AL|Lv|Level)"
@@ -56,7 +65,10 @@ DUTY_HEAD = r"담당\s*업무|주요\s*업무|업무\s*내용|직무\s*내용|�
 PREF_IN_TITLE_RE = re.compile(r"[\(\[【][^\)\]】]*우대[^\)\]】]*[\)\]】]|[^\s/,]*\s*우대")
 NON_HSE_SAFETY_RE = re.compile(r"Functional\s*Safety|안전\s*인증|Drug\s*Safety|Pharmacovigilance|Patient\s*Safety|Food\s*Safety|Product\s*Safety|Clinical|"
                                r"약물\s*감시|의약품\s*안전|식품\s*안전|안전성\s*(?:평가|정보)", re.I)
-WATCH_RE = re.compile(r"감시\s*단")  # 안전감시단 등 감시 인력 모집은 제외
+WATCH_RE = re.compile(r"감시\s*(?:단|원)")  # 안전감시단 등 감시 인력 모집은 제외
+# 안전관리자가 아닌 직무는 제목에 있으면 제외 (배차사무원·방사선안전·소방안전·소방/응급구조·간호사·수소충전소 안전관리). '…우대' 괄호는 보지 않는다
+CERT_NAME_RE = re.compile(r"(?:산업|건설|가스|전기|소방|화공|기계)?안전(?:관리)?(?:산업기사|기사|기술사|지도사)|소방안전관리자\s*\d급|산업위생관리(?:산업)?기사|산업보건지도사")
+OTHER_ROLE_RE = re.compile(r"배차|방사선\s*안전|소방\s*안전|소방\s*[/·,&]?\s*응급|응급\s*구조|간호|(?<![A-Za-z])Nurse|(?:수소|전기차|LPG|CNG|가스)?\s*충전소", re.I)  # 간호사·수소충전소 제외 (사용자 요청 2026-10-16)
 # 회사명에 이 용어가 있으면 제외 (안전·소방 전문 용역사, 학원·교육기관 등). 공백은 무시하고 비교한다
 EXCLUDE_CORP_TERMS = ("소방", "조경", "구조엔지니어링", "감시단", "재해예방", "구조안전", "세이프티", "안전관리", "학원",
                       "소방기술단", "교육원", "안전시스템", "방재", "무사퇴근", "보건안전", "호남산업")
@@ -197,11 +209,14 @@ def soup_text(html_: str) -> str:
 
 class Fetcher:
     def __init__(self):
-        self.c = httpx.Client(headers=HEADERS, follow_redirects=True, timeout=40)
+        self.c = httpx.Client(headers=HEADERS, follow_redirects=True, timeout=25)
+        self.deadline = None  # 사이트 단위 시간 한도 (time.time() 기준)
 
     def get(self, url, encoding=None, tries=3):
         last = None
         for i in range(tries):
+            if self.deadline and time.time() > self.deadline:
+                raise TimeoutError("사이트 수집 시간 한도 초과")
             try:
                 r = self.c.get(url, headers={"Referer": url})
                 r.raise_for_status()
@@ -233,7 +248,8 @@ def parse_deadline(text: str, today: dt.date):
         if d:
             return f"{d:%Y-%m-%d}", d
     m = re.search(r"~\s*(\d{1,2})\s*[/.월]\s*(\d{1,2})", t) or re.search(r"\((\d{1,2})/(\d{1,2})\)", t) \
-        or re.search(r"(\d{1,2})\s*월\s*(\d{1,2})\s*일", t) or re.fullmatch(r"(\d{1,2})/(\d{1,2})", t)
+        or re.search(r"(\d{1,2})\s*월\s*(\d{1,2})\s*일", t) or re.fullmatch(r"(\d{1,2})/(\d{1,2})", t) \
+        or re.search(r"(?<![\d.])(\d{1,2})\s*\.\s*(\d{1,2})\s*(?:\(\s*[월화수목금토일]\s*\))?\s*(?:\d{1,2}\s*:\s*\d{2}\s*)?마감", t)
     if m:
         mo, da = int(m.group(1)), int(m.group(2))
         d = safe_date(today.year, mo, da)
@@ -284,8 +300,9 @@ def src_saramin(f: Fetcher):
     out, seen = [], set()
     # 사용자 지정 검색 URL + 검색어별 신입/경력무관 필터 100건
     urls = [("안전관리자", f"https://www.saramin.co.kr/zf_user/search?searchword={Q}&go=&flag=n&searchMode=1&searchType=search&search_done=y&search_optional_item=n")]
+    pages = (1, 2, 3) if BROAD else (1,)  # 전체 모드는 검색어마다 300건까지
     urls += [(kw, f"https://www.saramin.co.kr/zf_user/search?searchword={quote(kw)}&searchType=search&exp_cd=1&exp_none=y"
-                  "&recruitPageCount=100&recruitSort=relation") for kw in KEYWORDS]
+                  f"&recruitPageCount=100&recruitSort=relation&recruitPage={pg}") for kw in KEYWORDS for pg in pages]
     for kw, url in urls:
         s = BeautifulSoup(f.get(url), "html.parser")
         for it in s.select("div.item_recruit"):
@@ -303,6 +320,10 @@ def src_saramin(f: Fetcher):
                         text_of(it))
             bold = " ".join(text_of(b) for b in it.select(".job_sector b"))
             p.extra = {"rec_idx": rec.group(1), "cond": cond, "sector": bold, "query": kw}
+            ca = it.select_one(".corp_name a")
+            csn = re.search(r"csn=([^&\"']+)", (ca.get("href", "") if ca else ""))
+            if csn:
+                p.extra["csn"] = csn.group(1)  # 사람인 기업정보 (업체명 링크)
             p.level = cond[1] if len(cond) > 1 else ""
             p.employment = cond[3] if len(cond) > 3 else ""
             p.deadline = text_of(it.select_one(".job_date .date"))
@@ -310,9 +331,59 @@ def src_saramin(f: Fetcher):
     return out
 
 
+GONGCHAE_NOTICE = "https://www.saramin.co.kr/zf_user/help/live/view?idx=109953&listType=notice"  # [NOW] 2026 하반기 대기업 신입·인턴 공채 일정 모음
+GONGCHAE_LIST = "https://www.saramin.co.kr/zf_user/help/live?listType=notice"
+GONGCHAE_PICK_RE = re.compile(r"안전|보건|환경|HSE|EHS|SHE|공채|공개\s*채용|신입\s*사원|신입\s*직원|대졸|채용형\s*인턴|채용연계|인턴|각\s*부문|부문별|수시\s*채용", re.I)
+GONGCHAE_STATUS = {}
+
+
+def src_saramin_gongchae(f: Fetcher):
+    """사람인 「하반기 대기업 신입·인턴 공채 일정 모음」(사용자 요청 2026-10-13: 항상 조사).
+    공고 링크를 모아 상세 본문으로 안전 직무 여부를 판정한다(제목에 안전이 없는 공채는 담당 업무로 판정)."""
+    url = GONGCHAE_NOTICE
+    try:  # 다음 시즌 글로 바뀌었으면 공지 목록에서 최신 '공채 일정 모음'을 찾는다
+        lst = BeautifulSoup(f.get(GONGCHAE_LIST, tries=1), "html.parser")
+        base_idx = int(re.search(r"idx=(\d+)", GONGCHAE_NOTICE).group(1))
+        for a in lst.find_all("a", href=True):
+            m = re.search(r"[?&]idx=(\d+)", a["href"])
+            if m and int(m.group(1)) > base_idx and re.search(r"공채\s*일정\s*모음", a.get_text(" ")):
+                url = urljoin("https://www.saramin.co.kr", a["href"])  # 더 새 시즌 글
+                break
+    except Exception as e:
+        GONGCHAE_STATUS["목록"] = f"공지 목록 실패({type(e).__name__}) — 기본 글 사용"
+    s = BeautifulSoup(f.get(url), "html.parser")
+    out, seen, n_link = [], set(), 0
+    for a in s.find_all("a", href=re.compile(r"rec_idx(?:=|%3D)\d+")):
+        rec = re.search(r"rec_idx(?:=|%3D)(\d+)", a["href"]).group(1)
+        n_link += 1
+        if rec in seen:
+            continue
+        seen.add(rec)
+        box = a.find_parent(["li", "tr"]) or a.find_parent("div") or a
+        texts = [t for t in (clean(x) for x in box.stripped_strings) if t]
+        title = clean(a.get("title") or a.get_text(" ")) or (texts[1] if len(texts) > 1 else "")
+        company = next((t for t in texts if t != title and t not in title and not re.search(
+            r"^D-|마감|~|\d{1,2}[./]\d{1,2}|지원하기|더보기|채용\s*중|^(?:채용\s*(?:전환|연계)형|체험형|신입|경력|인턴|정규직|계약직|NEW|HOT|공채|수시)$", t)), "")
+        if not company:  # 제목 머리의 [회사명] 표기
+            m = re.match(r"\s*\[([^\]]{2,20})\]", title)
+            company = m.group(1) if m else ""
+        if len(title) < 4 or not GONGCHAE_PICK_RE.search(title):
+            continue
+        p = Posting("사람인", title, company, f"https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx={rec}", " ".join(texts)[:400])
+        p.company_type = "대기업"  # 대기업 신입·인턴 공채 모음에 실린 공고
+        dl = next((t for t in texts if re.search(r"~\s*\d{1,2}[./]\d{1,2}|\d{1,2}[./]\d{1,2}\s*\(|마감", t)), "")
+        p.deadline = dl
+        p.extra = {"rec_idx": rec, "query": "공채 모음", "via": "사람인 공채 모음"}
+        out.append(p)
+    GONGCHAE_STATUS["공채 모음"] = f"글 {url.split('idx=')[-1].split('&')[0]} · 링크 {n_link} · 후보 {len(out)}"
+    if not n_link:
+        raise RuntimeError("공채 모음 글에서 공고 링크를 찾지 못함(페이지 구조 변경 가능)")
+    return out
+
+
 def src_linkareer(f: Fetcher):
     acts = {}
-    for kw in ("안전관리자", "HSE", "EHS", "산업안전기사"):
+    for kw in ("안전관리자", "HSE", "EHS", "산업안전기사", "안전"):
         url = f"https://linkareer.com/search?direction=DESC&page=1&q={quote(kw)}&sort=RELEVANCE&tab=open-activity"
         m = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', f.get(url), re.S)
         if not m:
@@ -515,13 +586,19 @@ def last_report_date(today):
 
 
 def is_new(p, today):
-    fs = p.extra.get("first_seen")
-    return bool(fs) and fs > last_report_date(today).isoformat()
+    """오늘 처음 찾은 공고 → '신규 공고'에만 싣고, 삭제하지 않으면 다음 날 고용형태 묶음으로 옮긴다."""
+    return p.extra.get("first_seen") == today.isoformat()
 PREV_TOTAL = None   # 직전 브리핑 공고 수 (KPI 변화량)
 
 
 def _html_text(h):
     return clean(BeautifulSoup(h or "", "html.parser").get_text(" "))
+
+
+EN_SENIOR_RE = re.compile(r"(?<![A-Za-z])(?:Senior|Sr\.?|Manager|Lead|Principal|Director|Head|Supervisor|Superintendent|Expert|Chief|VP|Staff|III|IV)(?![A-Za-z])", re.I)
+CAREERS_OVERSEAS = False  # 외국계 기업 채용 페이지의 해외 근무 공고 (사용자 요청으로 제외, 2026-10-13)
+OVERSEAS_PER_COMPANY = 15  # 켤 경우 회사당 최대 15건
+OVERSEAS_TITLE_RE = re.compile(r"해외|Overseas|중동|사우디|UAE|카타르|베트남|인도네시아|미국\s*(?:현장|법인)|유럽")
 
 
 def _workday(f: Fetcher, name, tenant, wd, site, sector):
@@ -530,6 +607,8 @@ def _workday(f: Fetcher, name, tenant, wd, site, sector):
     found = {}
     for q in ("Korea", "EHS", "HSE", "Safety", "Environmental Health Safety", "안전"):
         for off in range(0, 200, 20):
+            if f.deadline and time.time() > f.deadline:
+                raise TimeoutError("사이트 수집 시간 한도 초과")
             r = f.c.post(api, json={"appliedFacets": {}, "limit": 20, "offset": off, "searchText": q},
                          headers={"Accept": "application/json", "Content-Type": "application/json"})
             r.raise_for_status()
@@ -542,20 +621,25 @@ def _workday(f: Fetcher, name, tenant, wd, site, sector):
             if len(posts) < 20 or (q != "Korea" and off >= 40):
                 break
             time.sleep(0.3)
-    out = []
+    out, n_overseas = [], 0
     for path, jp in found.items():
         title = clean(jp.get("title", ""))
         loc = clean(jp.get("locationsText", ""))
         if not EN_SAFETY_TITLE_RE.search(title):
             continue
         multi = re.search(r"\d+\s*(?:Locations|개\s*근무지)", loc)
-        if not (KOREA_LOC_RE.search(f"{loc} {title}") or multi):
+        overseas = not (KOREA_LOC_RE.search(f"{loc} {title}") or multi)
+        if overseas and not CAREERS_OVERSEAS:  # 외국계 회사의 해외 근무 공고는 싣지 않는다 (사용자 요청 2026-10-13)
             continue
+        if overseas:
+            if EN_SENIOR_RE.search(title) or n_overseas >= OVERSEAS_PER_COMPANY:
+                continue
+            n_overseas += 1
         p = Posting("기업 채용 페이지", title, name, f"{base}/{site}{path}", f"{title} {loc} {jp.get('postedOn', '')}")
         p.company_type = "외국계"
         p.deadline = "채용 시 마감"  # Workday 공고에는 마감일이 없다
         p.extra = {"query": "Workday", "sector": sector, "loc": loc,
-                   "detail_api": f"{base}/wday/cxs/{tenant}/{site}{path}", "need_korea": bool(multi and not KOREA_LOC_RE.search(loc))}
+                   "detail_api": f"{base}/wday/cxs/{tenant}/{site}{path}", "need_korea": bool(multi and not KOREA_LOC_RE.search(loc)), "overseas": overseas}
         out.append(p)
     return out
 
@@ -591,7 +675,7 @@ def _rmk_basf(f: Fetcher):
 
 
 def src_company_careers(f: Fetcher):
-    """외국계 기업 채용 페이지(Workday 등)에서 한국 근무 HSE/EHS/Safety 공고."""
+    """외국계 기업 채용 페이지(Workday 등)의 HSE/EHS/Safety 공고 (한국 근무 + 해외 근무)."""
     out = []
     targets = list(WORKDAY)
     for name, home, sector in WORKDAY_DISCOVER:
@@ -607,7 +691,7 @@ def src_company_careers(f: Fetcher):
     for name, tenant, wd, site, sector in targets:
         try:
             got = _workday(f, name, tenant, wd, site, sector)
-            CAREER_STATUS[name] = f"한국 HSE {len(got)}건"
+            CAREER_STATUS[name] = f"HSE {len(got)}건 (해외 {sum(1 for q in got if q.extra.get('overseas'))}건)"
             out += got
         except Exception as e:
             CAREER_STATUS[name] = f"실패({type(e).__name__})"
@@ -625,7 +709,7 @@ def src_company_careers(f: Fetcher):
 def src_wanted(f: Fetcher):
     """원티드 — 공개 API (GitHub Actions에서는 403 차단 중)."""
     out = []
-    for q in ("안전관리자", "HSE", "EHS"):
+    for q in ("안전관리자", "HSE", "EHS", "안전"):
         d = json.loads(f.get(f"https://www.wanted.co.kr/api/v4/jobs?country=kr&query={quote(q)}&years=0&limit=50&offset=0&job_sort=job.latest_order"))
         for j in d.get("data", []):
             p = Posting("원티드", clean(j.get("position", "")), clean((j.get("company") or {}).get("name", "")),
@@ -639,7 +723,7 @@ def src_wanted(f: Fetcher):
 def src_catch(f: Fetcher):
     """캐치 — 검색 결과 (GitHub Actions에서는 403 차단 중)."""
     out, seen = [], set()
-    for q in ("안전관리자", "HSE", "EHS"):
+    for q in ("안전관리자", "HSE", "EHS", "안전"):
         s = BeautifulSoup(f.get(f"https://www.catch.co.kr/NCS/RecruitSearch?Keyword={quote(q)}"), "html.parser")
         for a in s.select('a[href*="RecruitInfoDetails"]'):
             link = urljoin("https://www.catch.co.kr", a["href"])
@@ -652,7 +736,64 @@ def src_catch(f: Fetcher):
     return out
 
 
+MANUAL_POSTINGS_PATH = Path(__file__).with_name("manual_postings.json")
+
+
+def manual_urls() -> set:
+    """지금 manual_postings.json에 남아 있는 공고 주소 (지운 공고는 이전 브리핑에서 이어 싣지 않는다)."""
+    try:
+        items = json.loads(MANUAL_POSTINGS_PATH.read_text(encoding="utf-8")).get("items", [])
+    except (OSError, ValueError):
+        return set()
+    return {it.get("url") or f"manual:{it['company']}:{it.get('title', '')}" for it in items if it.get("company")}
+
+
+def src_manual(f: Fetcher):
+    """다른 브리핑·채용 달력에서 넘겨받은 공고 (safety_jobs/manual_postings.json). 직무 확인이 필요하면 표시."""
+    try:
+        items = json.loads(MANUAL_POSTINGS_PATH.read_text(encoding="utf-8")).get("items", [])
+    except (OSError, ValueError):
+        return []
+    out = []
+    for it in items:
+        if not it.get("company") and not it.get("fill_from_detail"):  # 회사명은 상세에서 채우는 공고만 비워 둘 수 있다
+            continue
+        # source가 '사람인'이면 다른 세션이 사람인에서 직접 찾아 넘긴 공고 → 사람인 공고로 싣고 상세 본문도 읽는다
+        src = it.get("source") or ""
+        if not src:  # DB(manual)에서 옮겨 온 항목은 source가 없을 수 있다 → 주소로 판단
+            u = it.get("url") or ""
+            src = ("사람인" if re.search(r"saramin\.co\.kr/.*rec_idx=\d+", u)
+                   else "잡코리아" if re.search(r"jobkorea\.co\.kr/Recruit/GI_Read/\d+", u)
+                   else "LinkedIn" if "linkedin.com/jobs/" in u else "직접 추가")
+        p = Posting(src, clean(it.get("title") or f"{it['company']} 채용"), clean(it["company"]),
+                    it.get("url") or f"manual:{it['company']}:{it.get('title', '')}", clean(it.get("title", "")))
+        p.deadline = it.get("deadline") or "확인 필요"
+        p.employment = it.get("employment") or ""
+        p.level = it.get("level") or "신입"
+        p.extra = {"manual": True, "needs_check": it.get("safety_job") != "yes",
+                   "check_note": it.get("note", ""), "via": it.get("via", ""),
+                   "user_pick": bool(it.get("user_pick")), "fill_from_detail": bool(it.get("fill_from_detail")),
+                   "memo": it.get("memo", "")}  # 자소서 문항 등 공고 아래에 늘 보여 줄 메모
+        if it.get("csn"):  # 메일 루틴이 메일 링크에서 모은 사람인 기업정보 번호 (업체명 링크, 규칙 조정안 6)
+            p.extra["csn"] = str(it["csn"])[:120]
+        if src == "LinkedIn":
+            p.listing_text = clean(f"{p.title} {it.get('note', '')}")
+            p.extra["check_note"] = ""
+            p.company_type = it.get("company_type") or "외국계"  # LinkedIn 한국 HSE 공고는 대부분 외국계 기업·헤드헌팅
+        rec = re.search(r"rec_idx=(\d+)", p.url)
+        if src == "사람인" and rec:
+            p.extra["rec_idx"] = rec.group(1)
+        if it.get("added"):
+            p.extra["first_seen"] = it["added"]  # 처음 찾은 날 (오늘 찾은 신규 판정)
+        out.append(p)
+    return out
+
+
 def fetch_detail(f: Fetcher, p: Posting) -> str:
+    if p.url.startswith("manual:") or p.source == "LinkedIn":  # LinkedIn은 자동 접속하지 않는다 (브라우저 작업이 DB에 넣은 값만 씀)
+        return ""
+    if HAS_TESSERACT:
+        p.extra["ocr_v"] = 1
     if p.extra.get("detail_api"):  # Workday: JSON 상세
         r = f.c.get(p.extra["detail_api"], headers={"Accept": "application/json"})
         r.raise_for_status()
@@ -665,7 +806,188 @@ def fetch_detail(f: Fetcher, p: Posting) -> str:
     url = p.url
     if p.source == "사람인":
         url = f"https://www.saramin.co.kr/zf_user/jobs/relay/view-detail?rec_idx={p.extra['rec_idx']}&rec_seq=0"
-    return soup_text(f.get(url, encoding="cp949" if p.source == "워커" else None))
+        raw = f.get(url)
+        body = soup_text(raw)
+        if not p.extra.get("csn"):
+            m = re.search(r"company-info/view[^\"']*?csn=([^&\"']+)", raw)
+            if m:
+                p.extra["csn"] = m.group(1)
+        return f"{body} {saramin_benefits(f, p)} {ocr_images(f, p, raw, url)}".strip()
+    raw = f.get(url, encoding="cp949" if p.source == "워커" else None)
+    body, extra = soup_text(raw), ""
+    if p.source == "잡코리아":  # 잡코리아 상세 본문(글·이미지)은 iframe(GI_Read_Comt_Ifrm) 안에 있다
+        m = re.search(r"""src=["']([^"']*GI_Read_Comt_Ifrm[^"']*)""", raw)
+        if m:
+            try:
+                iurl = urljoin(url, html.unescape(m.group(1)))
+                iraw = f.get(iurl, tries=1)
+                extra = f"{soup_text(iraw)} {ocr_images(f, p, iraw, iurl)}"
+            except Exception as e:
+                print(f"[jobkorea-iframe] {p.url}: {e}", file=sys.stderr)
+    return f"{body} {extra} {ocr_images(f, p, raw, url) if not extra else ''}".strip()
+
+
+# ---------------------------------------------------------------- 이미지 공고 읽기 (OCR)
+# 공고 본문이 통이미지인 경우가 많아, 본문 이미지를 tesseract(한글+영어)로 글자로 읽어 상세 본문 뒤에 붙인다 (사용자 요청 2026-10-14).
+# 읽은 결과는 briefings/ocr_cache.json 에 이미지 주소별로 저장해 다음 수집 때 다시 읽지 않는다.
+OCR_CACHE = {}           # 이미지 URL → 읽은 글자
+OCR_STATS = collections.Counter()
+OCR_BUDGET_SEC = 12 * 60  # 한 번 수집에서 새 이미지 읽기에 쓰는 시간 한도
+OCR_USED = [0.0]
+OCR_MAX_PER_POSTING = 4
+OCR_SKIP_RE = re.compile(r"logo|icon|btn|button|banner|blank|spacer|bullet|arrow|sns|share|badge|emoticon|\.svg|\.gif$|tracking|pixel|/ad/|favicon", re.I)
+HAS_TESSERACT = bool(shutil.which("tesseract"))
+
+
+def _img_urls(raw: str, base: str):
+    s = BeautifulSoup(raw, "html.parser")
+    out = []
+    for im in s.find_all("img"):
+        src = im.get("data-src") or im.get("data-original") or im.get("src") or ""
+        if not src or src.startswith("data:") or OCR_SKIP_RE.search(src):
+            continue
+        try:  # 작게 표시되는 이미지(아이콘·로고)는 건너뛴다
+            w, h = int(re.sub(r"\D", "", str(im.get("width") or 0)) or 0), int(re.sub(r"\D", "", str(im.get("height") or 0)) or 0)
+        except ValueError:
+            w = h = 0
+        if (w and w < 200) or (h and h < 120):
+            continue
+        u = urljoin(base, html.unescape(src))
+        if u.startswith("http") and u not in out:
+            out.append(u)
+    return out
+
+
+def _ocr_bytes(data: bytes) -> str:
+    from PIL import Image  # 지연 import: OCR을 안 쓰면 Pillow 없이도 돈다
+    im = Image.open(io.BytesIO(data))
+    im.seek(0)
+    im = im.convert("L")
+    if im.width < 300 or im.height < 150 or im.width * im.height < 120_000:
+        return ""  # 아이콘·작은 배너
+    if im.width < 1000:  # 작은 글씨는 키우면 더 잘 읽힌다
+        r = 1000 / im.width
+        im = im.resize((1000, int(im.height * r)))
+    texts = []
+    step = 2400  # 세로로 긴 통이미지는 잘라서 읽는다
+    for top in range(0, min(im.height, step * 8), step):
+        part = im.crop((0, top, im.width, min(im.height, top + step)))
+        buf = io.BytesIO()
+        part.save(buf, format="PNG")
+        r = subprocess.run(["tesseract", "stdin", "stdout", "-l", "kor+eng", "--psm", "6"],
+                           input=buf.getvalue(), capture_output=True, timeout=60)
+        texts.append(r.stdout.decode("utf-8", errors="ignore"))
+    return clean(" ".join(texts))
+
+
+def ocr_images(f: Fetcher, p: Posting, raw: str, base: str) -> str:
+    """상세 HTML 안의 본문 이미지를 읽어 글자로 돌려준다. tesseract가 없으면 빈 문자열."""
+    if not HAS_TESSERACT or not raw:
+        return ""
+    try:
+        urls = _img_urls(raw, base)[:OCR_MAX_PER_POSTING]
+    except Exception:
+        return ""
+    out = []
+    for u in urls:
+        if u in OCR_CACHE:
+            OCR_STATS["저장본"] += 1
+            out.append(OCR_CACHE[u])
+            continue
+        if OCR_USED[0] > OCR_BUDGET_SEC:
+            OCR_STATS["시간 한도"] += 1
+            continue
+        t0 = time.time()
+        try:
+            r = f.c.get(u, headers={"Referer": base}, timeout=20)
+            r.raise_for_status()
+            if len(r.content) < 15_000 or "image" not in r.headers.get("content-type", "image"):
+                OCR_CACHE[u] = ""
+                continue
+            txt = _ocr_bytes(r.content)
+            ok = len(re.findall(r"[가-힣]", txt)) >= 20  # 글자가 거의 없는 사진은 버린다
+            OCR_CACHE[u] = txt[:6000] if ok else ""
+            OCR_STATS["읽음" if ok else "글자 없음"] += 1
+            if ok:
+                out.append(OCR_CACHE[u])
+        except Exception as e:
+            OCR_STATS["오류"] += 1
+            print(f"[ocr] {u}: {type(e).__name__}: {e}", file=sys.stderr)
+        finally:
+            OCR_USED[0] += time.time() - t0
+    out = [x for x in out if x]
+    if out:
+        p.extra["ocr"] = len(out)
+        return "[이미지 본문] " + " ".join(out)
+    return ""
+
+
+def load_ocr_cache(path: Path):
+    try:
+        OCR_CACHE.update(json.loads(path.read_text(encoding="utf-8")))
+    except (OSError, ValueError):
+        pass
+
+
+def save_ocr_cache(path: Path):
+    if len(OCR_CACHE) > 4000:  # 오래된 것부터 버린다 (dict는 넣은 순서 유지)
+        for k in list(OCR_CACHE)[:len(OCR_CACHE) - 4000]:
+            OCR_CACHE.pop(k)
+    path.write_text(json.dumps(OCR_CACHE, ensure_ascii=False), encoding="utf-8")
+
+
+def saramin_benefits(f: Fetcher, p: Posting) -> str:
+    """사람인 공고의 '복리후생' 칸. 상세 본문(view-detail)과 공고 화면 HTML에는 없고,
+    화면이 열린 뒤 view-ajax 요청으로 불러오는 본문 묶음 안에 들어 있다."""
+    rec = p.extra.get("rec_idx")
+    view = f"https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx={rec}&view_type=list"
+    h = ""
+    try:
+        r = f.c.post("https://www.saramin.co.kr/zf_user/jobs/relay/view-ajax",
+                     data={"rec_idx": rec, "rec_seq": "0", "view_type": "list", "t_ref": "", "t_ref_content": ""},
+                     headers={"X-Requested-With": "XMLHttpRequest", "Referer": view,
+                              "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"})
+        if r.status_code == 200:
+            h = r.text
+        else:
+            SR_BNF[f"ajax {r.status_code}"] += 1
+    except Exception as e:  # 복리후생 칸을 못 읽어도 본문은 쓴다
+        print(f"[saramin-benefit] {p.url}: {e}", file=sys.stderr)
+        SR_BNF["ajax 오류"] += 1
+    txt, how = "", "없음"
+    if h:
+        soup = BeautifulSoup(h, "html.parser")
+        el = soup.select_one(".jv_benefit") or soup.select_one("[class*=benefit]")
+        if el:
+            txt, how = clean(el.get_text(" "))[:3000], "칸"
+        else:
+            m = re.search(r"복리\s*후생(.{0,1500})", soup_text(h))
+            if m:
+                txt, how = m.group(1), "본문검색"
+    if not txt:  # 예비: 공고 화면 HTML 원문(스크립트 포함)에서 찾기
+        try:
+            raw = f.get(view, tries=1)
+            i = raw.find("jv_benefit")
+            if i < 0:
+                i = raw.find("복리후생")
+            if i >= 0:
+                seg = clean(re.sub(r"<[^>]+>", " ", raw[i:i + 6000]))
+                if re.search(r"[가-힣]{2}", seg):
+                    txt, how = seg[:3000], "화면원문"
+            if not txt:
+                p.extra["bnf_html"] = f"view {len(raw)}B, 복리후생 {raw.count('복리후생')}회, jv_benefit {raw.count('jv_benefit')}회, view-ajax {raw.count('view-ajax')}회"
+        except Exception as e:
+            print(f"[saramin-benefit-view] {p.url}: {e}", file=sys.stderr)
+    SR_BNF[how] += 1
+    p.extra["bnf_raw"] = txt[:400]  # 확인용: 복리후생 칸 앞부분
+    if not txt and h:
+        p.extra["bnf_html"] = (p.extra.get("bnf_html", "") + f" | ajax {len(h)}B " + clean(re.sub(r"<[^>]+>", " ", h))[:300]).strip(" |")
+    elif txt:
+        p.extra.pop("bnf_html", None)
+    return ("복리후생 " + txt) if txt else ""
+
+
+SR_BNF = collections.Counter()  # 사람인 복리후생 칸을 찾은 방법별 건수 (수집 현황에 표시)
 
 
 EN_YEARS_RE = re.compile(r"(\d{1,2})\s*\+?\s*(?:or\s+more\s+|\+\s*)?years?(?:'|’)?\s*(?:of\s+)?(?:\w+\s+){0,4}?(?:experience|exp\.)", re.I)
@@ -692,6 +1014,7 @@ def foreign_level(p: Posting):
 
 # (이름, 수집 함수, 게시판 여부) — 순서 = 중복 시 우선순위
 SOURCES = [
+    ("사람인 공채 모음", src_saramin_gongchae, False),  # 상세 조회 시간 한도 안에 들도록 맨 앞에 둔다 (공고 수 100여 건)
     ("잡코리아", src_jobkorea, False),
     ("사람인", src_saramin, False),
     ("링커리어", src_linkareer, False),
@@ -708,6 +1031,7 @@ SOURCES = [
     ("기업 채용 페이지", src_company_careers, False),
     ("원티드", src_wanted, False),
     ("캐치", src_catch, False),
+    ("직접 추가", src_manual, False),
 ]
 
 
@@ -754,6 +1078,11 @@ def summarize_qual(qual_txt, whole):
 
 def detail_fields(p: Posting):
     t = p.detail_text
+    if p.source == "잡코리아" and p.extra.get("fill_from_detail"):  # 주소만 받은 공고: 상세 머리의 '회사 채용 - 공고명'으로 채운다
+        m = re.match(r"\s*(.{2,40}?)\s*채용\s*-\s*(.{4,120}?)\s*(?:\||잡코리아)", t)
+        if m:
+            p.company, p.title = clean(m.group(1)), clean(m.group(2))
+            p.extra["fill_from_detail"] = False
     if p.source == "잡코리아":
         m = re.search(r"고용형태\s*([가-힣·,/ ]{2,20}?)\s*(?:직급|급여|근무)", t)
         if m:
@@ -844,8 +1173,18 @@ def senior_rank(p: Posting) -> bool:
     return bool(SENIOR_RANK_RE.search(field_) and not JUNIOR_RANK_RE.search(field_))
 
 
+LINKEDIN_EXEC_RE = re.compile(r"(?<![A-Za-z])(?:Director|Head\s+of|VP|Vice\s+President|Chief)(?![A-Za-z])", re.I)
+
+
 def level_of(p: Posting, text):
     lv = p.level
+    if p.source == "LinkedIn":
+        # 브라우저 작업이 넘긴 값을 그대로 쓴다. 'Manager'는 외국계에서 실무 담당 직함이라 제외하지 않고,
+        # Director 이상만 경력으로 본다. 경력 요건을 아직 못 읽은 공고('경력 요건 확인 필요')는 싣는다.
+        if LINKEDIN_EXEC_RE.search(p.title):
+            p.extra["senior"] = True
+            return "경력"
+        return lv or "경력 요건 확인 필요"
     if senior_rank(p):
         p.extra["senior"] = True
         return "경력"
@@ -966,6 +1305,7 @@ def analyze(p: Posting, today):
     p.deadline = disp or p.deadline or "확인 필요"
     p.deadline_date = d.isoformat() if d else ""
     p.hilite = classify_company(p, text)
+    p.extra["salary"] = "" if salary_of(p) == NO_SALARY else salary_of(p)
     p.extra["listed"] = listed_market(p)
     p.certs = sorted({f"{m.group(1)}안전기사" for m in CERT_KEY_RE.finditer(f"{p.title} {p.listing_text} {text}")})
     if ISO45001_RE.search(f"{p.title} {text}"):
@@ -974,6 +1314,8 @@ def analyze(p: Posting, today):
     p.prefs = [lab for lab, rx in (("외국어·영어", LANG_RE), ("NEBOSH", NEBOSH_RE), ("IOSH", IOSH_RE), ("CSP", CSP_RE)) if rx.search(blob)]
     pref_sec = section(text, PREF_HEAD, 600)
     p.extra["ai"] = bool(AI_RE.search(pref_sec) or AI_NEAR_PREF_RE.search(text))
+    p.extra["benefits"] = benefits_of(f"{p.listing_text} {text}")
+    p.extra["bnf_v"] = BNF_V
     rank = top100_rank(p.company)
     p.extra["top100"] = rank
     sector = f"{p.listing_text[:12]} {p.extra.get('biz', '')}"
@@ -1016,6 +1358,54 @@ def relevant(p: Posting):
     return False
 
 
+# 담당 업무 항목에 '안전'이 있는지 (정보보안·안전하게·안전벨트 같은 말과 단순 '안전수칙 준수'는 빼고 본다)
+DUTY_SAFETY_RE = re.compile(r"(?<!보)안전(?![하한히]|벨트|유리|용품|장치|성\s*(?:평가|시험|정보))|보건\s*관리|산업\s*위생|유해\s*요인|근골격|작업\s*환경\s*측정|"
+                            r"(?<![A-Za-z])(?:HSE|EHS|EH&S|SHE|HSEQ|QHSE|HSSE|[Ss]afety|SAFETY)(?![A-Za-z])")
+DUTY_COMPLY_RE = re.compile(r"(?:안전|EHS|HSE)[^.\n·•\-]{0,20}(?:규정|수칙|규칙|요구\s*사항|정책)[^.\n·•\-]{0,20}(?:준수|기반|따라|따른)", re.I)
+DUTY_STOP_RE = re.compile(rf"{STOP}|{QUAL_HEAD}")
+
+
+def duty_text(t: str) -> str:
+    """본문의 모든 담당 업무(주요 업무·업무 내용·모집 분야) 항목을 이어 붙인다."""
+    out = []
+    for m in re.finditer(rf"(?:{DUTY_HEAD})\s*[:：]?", t):
+        body = t[m.end():m.end() + 800]
+        st = DUTY_STOP_RE.search(body, 5)
+        out.append(body[:st.start()] if st else body)
+    return clean(" ".join(out))
+
+
+def title_safe(p: Posting) -> bool:
+    """제목에 안전 직무가 있는지. 자격증 이름(산업안전기사 등)만 있으면 직무가 아니므로 담당 업무로 다시 판정한다."""
+    title = CERT_NAME_RE.sub(" ", PREF_IN_TITLE_RE.sub(" ", p.title))
+    return bool(SAFETY_RE.search(title))
+
+
+def other_role(p: Posting) -> bool:
+    return bool(OTHER_ROLE_RE.search(PREF_IN_TITLE_RE.sub(" ", p.title)))
+
+
+def duty_verdict(p: Posting):
+    """제목에 안전 직무가 없을 때 담당 업무로 판정. True(안전 있음) / False(없음) / None(본문·항목을 못 읽음)."""
+    if title_safe(p) or not p.detail_text:
+        return None
+    d = duty_text(p.detail_text[:12000])
+    if len(re.sub(r"\W", "", d)) < 10:
+        return None
+    return bool(DUTY_SAFETY_RE.search(DUTY_COMPLY_RE.sub(" ", d)))
+
+
+DUTY_CHECK_NOTE = "담당 업무 항목을 읽지 못함 — 안전 업무 포함 여부 확인 필요"
+
+
+def duty_gate(p: Posting) -> str:
+    """담당 업무 기준 판정: 'ok'(싣기) / 'drop'(제외) / 'check'(직무 확인 필요) / ''(제목으로 이미 안전 직무)."""
+    if p.extra.get("manual") or p.extra.get("posted") is not None or title_safe(p):
+        return ""
+    v = duty_verdict(p)
+    return "ok" if v else "drop" if v is False else "check"
+
+
 def relevant_after_detail(p: Posting) -> bool:
     r = relevant(p)
     if r is not None:
@@ -1050,8 +1440,98 @@ def excluded_corp(p: Posting) -> bool:
     return not ("공공" in p.company_type or PUBLIC_CORP_RE.search(name))
 
 
+# 브리핑 화면에서 체크 후 삭제한 공고 (Routine이 페이지 DB에서 safety_jobs/excluded.json으로 옮겨 둔다)
+EXCLUDED_PATH = Path(__file__).with_name("excluded.json")
+EXCLUDED_URLS: set = set()
+EXCLUDED_KEYS: set = set()
+
+
+def _ex_key(company, title):
+    return norm_company(company or "") + "|" + norm_title(title or "", company or "")
+
+
+def load_excluded():
+    try:
+        items = json.loads(EXCLUDED_PATH.read_text(encoding="utf-8")).get("items", [])
+    except (OSError, ValueError):
+        return 0
+    for it in items:
+        if it.get("url"):
+            EXCLUDED_URLS.add(it["url"])
+        if it.get("company") or it.get("title"):
+            EXCLUDED_KEYS.add(_ex_key(it.get("company"), it.get("title")))
+            c = norm_company(it.get("company") or "")
+            if c:
+                EXCLUDED_FUZZY.append((c, it.get("title") or ""))
+    return len(items)
+
+
+EXCLUDED_FUZZY: list = []  # (회사, 공고명) — 다른 사이트에 같은 공고가 다시 올라와도 제외하기 위한 비교용
+
+
+def _ex_title(t):
+    return re.sub(r"\.{2,}|…", "", t or "")  # 목록에서 잘린 공고명(…)
+
+
+def user_excluded(p: Posting) -> bool:
+    """브리핑에서 삭제한 공고. 같은 주소·같은 회사+공고명은 물론, 다른 사이트에 올라온 같은 공고
+    (회사가 같고 공고명이 비슷함)도 제외한다."""
+    if p.url in EXCLUDED_URLS or _ex_key(p.company, p.title) in EXCLUDED_KEYS:
+        return True
+    c = norm_company(p.company)
+    if not c:
+        return False
+    for qc, qt0 in EXCLUDED_FUZZY:
+        if not (c in qc or qc in c):
+            continue
+        short = c if len(c) <= len(qc) else qc  # 공고명 속 회사명(짧은 쪽)도 지우고 비교
+        t, qt = _ex_norm(p.title, short), _ex_norm(qt0, short)
+        if not t or not qt or _ROLE_RE.findall(t) and set(_ROLE_RE.findall(t)) != set(_ROLE_RE.findall(qt)):
+            continue  # 안전·보건·환경·소방 등 직무가 다르면 다른 공고
+        if t in qt or qt in t or difflib.SequenceMatcher(None, t, qt).ratio() >= 0.85:  # 지역만 다른 공고는 살린다
+            return True
+    return False
+
+
+_ROLE_RE = re.compile(r"안전|보건|환경|소방|전기|가스|품질|시설")
+
+
+def _ex_norm(title, corp):
+    t = re.sub(r"[—–―]|\(공고링크\s*수정\)|모집합니다|합니다|선생님", "", _ex_title(title))
+    return norm_title(t, corp)
+
+
+PUBLIC_NAME_RE = re.compile(r"(?:공사|공단|발전|공기업|진흥원|기술원)(?:\(주\)|㈜)?$|^한국")
+ENERGY_CHEM_RE = re.compile(r"에너지|화학|케미칼|정유|오일|가스|발전|석유|플랜트|원자력|전력")
+GONGCHAE_RE = re.compile(r"공채|공개\s*채용|신입\s*사원|하반기\s*(?:신입|채용)|대졸\s*신입|채용형\s*인턴")
+
+
+def needs_check_reason(p: Posting) -> str:
+    """안전 직무로 확정되진 않았지만 놓치면 안 되는 공고인가 → '직무 확인 필요'로 남긴다."""
+    name = re.sub(r"\s|\(주\)|㈜|주식회사", "", p.company or "")
+    focus = bool(p.extra.get("groups") or p.extra.get("listed") or p.extra.get("top100") or PUBLIC_NAME_RE.search(name))
+    if not focus:
+        return ""
+    t = (p.detail_text or "")[:12000]
+    text = " ".join([p.title, p.listing_text] + [section(t, h, 400) for h in (DUTY_HEAD, QUAL_HEAD, PREF_HEAD)])
+    if GONGCHAE_RE.search(p.title) and (p.industry == "건설" or ENERGY_CHEM_RE.search(f"{name} {p.extra.get('biz', '')}")):
+        return "건설·에너지 공채 — 안전 직무 포함 여부 확인 필요"
+    if p.extra.get("query") and SAFETY_RE.search(text):
+        return "안전 키워드에 걸렸지만 직무 확인 필요"
+    return ""
+
+
 def keep(p: Posting, today) -> tuple[bool, str]:
-    if excluded_corp(p):
+    if user_excluded(p):
+        return False, "사용자 삭제"
+    if p.extra.get("user_pick"):  # 사용자가 직접 골라 넣은 공고는 마감만 본다
+        if p.deadline_date and p.deadline_date < today.isoformat():
+            return False, "마감"
+        return True, ""
+    if BROAD:
+        if BROAD_EXCLUDE_RE.search(re.sub(r"\s|\(주\)|㈜|주식회사", "", p.company or "")):
+            return False, "제외 업체명"
+    elif excluded_corp(p):
         return False, "제외 업체명"
     blob = f"{p.title} {p.listing_text} {p.extra.get('sector', '')}"
     if p.extra.get("posted") is not None:  # 학과 게시판: 최근 글 + 채용 공고 + 안전 직무
@@ -1064,21 +1544,50 @@ def keep(p: Posting, today) -> tuple[bool, str]:
             return False, "채용 공고 아님"
         if not SAFETY_RE.search(f"{blob} {p.detail_text[:8000]}"):
             return False, "안전 직무 아님"
-    elif not relevant_after_detail(p):
-        return False, "안전 직무 아님"
+    elif p.extra.get("manual"):
+        pass
+    else:
+        g = duty_gate(p)
+        if g == "drop":
+            return False, "담당 업무에 안전 없음"
+        if g == "ok":
+            pass  # 담당 업무에 '안전'이 있으면 안전 직무로 싣는다
+        elif not relevant_after_detail(p):
+            why = needs_check_reason(p)
+            if not why:
+                return False, "안전 직무 아님"
+            p.extra["needs_check"] = True
+            p.extra["check_note"] = why
+        elif g == "check":
+            p.extra["needs_check"] = True
+            p.extra["check_note"] = DUTY_CHECK_NOTE
     if NON_HSE_SAFETY_RE.search(p.title):
         return False, "안전 직무 아님"
     if p.extra.get("need_korea") and not KOREA_LOC_RE.search(p.extra.get("loc", "")):
         return False, "한국 근무 아님"
     if SALES_RE.search(p.title):
         return False, "영업직"
+    if p.extra.get("posted") is None:
+        why = safety_main_reason(p)
+        if why:
+            return False, why
+        if not BROAD and not target_company(p):
+            return False, "대상 기업 아님"
+    if BROAD and p.source == "기업 채용 페이지" and not KOREA_LOC_RE.search(f"{p.extra.get('loc', '')} {(p.detail_text or '')[:600]}"):
+        return False, "한국 근무 아님"
+    if other_role(p):
+        return False, "다른 직무(배차·방사선·소방·간호·충전소)"
     if WATCH_RE.search(f"{p.title} {p.listing_text} {p.detail_text}"):
         return False, "감시단"
-    if p.industry == "건설" and not p.extra.get("top100"):
+    if BROAD:
+        why = broad_scope_reason(p)
+        if why:
+            return False, why
+    elif p.industry == "건설" and not p.extra.get("top100"):
         return False, "건설사(시평 100위 밖)"
     if p.level == "경력":
         return False, "대리급 이상" if p.extra.get("senior") else "경력직"
-    if p.employment == "계약직" and not contract_ok(p):
+    if not BROAD and p.employment == "계약직" and not contract_ok(p):
         return False, "계약직(관심 기업 외)"
     if p.deadline_date and p.deadline_date < today.isoformat():
         return False, "마감"
@@ -1094,20 +1603,228 @@ def norm_title(t, corp):
     return t.replace(corp, "") if corp else t
 
 
-def is_dup(p, kept):
+def dup_of(p, kept):
+    """kept 안에서 p와 같은 공고(업체 포함 관계 + 공고명 유사도 0.6 이상)를 찾는다."""
     c, t = norm_company(p.company), norm_title(p.title, norm_company(p.company))
     for q in kept:
         qc = norm_company(q.company)
         if c and qc and (c in qc or qc in c):
             qt = norm_title(q.title, qc)
             if difflib.SequenceMatcher(None, t, qt).ratio() >= 0.6:
-                return True
-    return False
+                return q
+    return None
+
+
+def is_dup(p, kept):
+    return dup_of(p, kept) is not None
 
 
 # ---------------------------------------------------------------- 출력
+# ---------------------------------------------------------------- 연봉 · 대기업 신입 공채
+_AMT = r"\d[\d,\.]*(?:\s*(?:만\s*원|만원|원|억))?(?:\s*[~\-–]\s*\d[\d,\.]*)?\s*(?:만\s*원|만원|원|억)(?:\s*(?:이상|이하|내외|수준|부터|전후))?"
+_WON = r"₩\s*\d[\d,]*"
+SALARY_AMT_RE = re.compile(rf"(?:연봉|연\s*급|급여|월\s*급여|월급|초봉|초임)\s*(?:조건|기준)?\s*[:：]?\s*(?:\(?\s*)?((?:(?:일급|월급|시급|주급|연봉)\s*)?(?:약\s*)?(?:{_AMT}|{_WON}))")
+_DECIDE = (r"회사\s*내규(?:에\s*(?:따[라른름]\w*|의\w*))?|내규에\s*(?:따[라른름]\w*)|면접\s*[후시]\s*(?:연봉\s*)?(?:결정|협의)|"
+           r"추후\s*(?:협의|결정)|협의\s*후\s*결정|협의\s*결정|협의")
+SALARY_TXT_RE = re.compile(rf"(?:연봉|연\s*급|급여|보수|월급)[^.\n]{{0,12}}?({_DECIDE})")
+SALARY_LOOSE_RE = re.compile(r"(회사\s*내규(?:에\s*(?:따[라른름]\w*))?|면접\s*후\s*(?:연봉\s*)?(?:결정|협의))")
+NO_SALARY = "연봉 미기재"
+
+
+def salary_of(p):
+    """공고 본문에서 연봉(금액 · 회사 내규 · 면접 후 결정 등)을 찾는다. 없으면 '연봉 미기재'."""
+    if "salary" in p.extra:
+        return p.extra["salary"] or NO_SALARY
+    for t in (p.detail_text, p.listing_text):
+        t = clean(t)
+        for rx in (SALARY_AMT_RE, SALARY_TXT_RE, SALARY_LOOSE_RE):
+            m = rx.search(t)
+            if m:
+                return re.sub(r"^면접\s*([후시])\s*", r"면접 \1 ", clean(m.group(1)))[:40]
+    return NO_SALARY
+
+
+# ---------------------------------------------------------------- 기업별 신입사원 초봉 (잡코리아 기업 연봉정보)
+STARTER: dict = {}          # norm_corp(업체명) → {"id", "pay", "year", "checked"}
+STARTER_MAX_LOOKUPS = 250   # 실행당 새로 조회할 기업 수 (나머지는 다음 실행)
+STARTER_MATCH_V = 2         # 매칭 규칙 버전 — 이전 규칙으로 못 찾은 업체는 바로 다시 조회
+STARTER_TTL_DAYS, STARTER_MISS_DAYS = 30, 14
+
+
+def _jk_company_id(f, name):
+    """잡코리아 기업 검색에서 업체명이 같은 기업의 urlId."""
+    q = re.sub(r"\(.*?\)|㈜|주식회사|유한회사", "", name).strip()
+    if not q:
+        return None
+    t = f.get(f"https://www.jobkorea.co.kr/Search/?stext={quote(q)}&tabType=corp", tries=2).replace('\\"', '"')
+    want = norm_corp(name)
+    cands = [(norm_corp(m.group(1)), m.group(2))
+             for m in re.finditer(r'"name":"([^"]+)","businessNo":"[^"]*".{0,600}?"urlId":"(\d+)"', t)]
+    cands += [(norm_corp(BeautifulSoup(m.group(2), "html.parser").get_text()), m.group(1))
+              for m in re.finditer(r'href="https://www\.jobkorea\.co\.kr/Company/(\d+)"[^>]*>(.{0,300}?)</a>', t, re.S)]
+    for n, cid in cands:  # 1) 정규화 이름 일치
+        if n == want:
+            return cid
+    # 2) 완화: 한쪽 이름이 다른 쪽에 포함(짧은 쪽 3자 이상, 길이 차 6자 이내) — 가장 비슷한 것
+    best, score = None, 0.0
+    for n, cid in cands:
+        if not n:
+            continue
+        short, long_ = sorted((n, want), key=len)
+        if len(short) >= 3 and short in long_ and len(long_) - len(short) <= 6:
+            r = difflib.SequenceMatcher(None, n, want).ratio()
+            if r > score:
+                best, score = cid, r
+    if best:
+        return best
+    # 3) 검색 결과 기업이 하나뿐이고 이름이 매우 비슷하면 채택
+    uniq = {cid: n for n, cid in cands if n}
+    if len(uniq) == 1:
+        cid, n = next(iter(uniq.items()))
+        if difflib.SequenceMatcher(None, n, want).ratio() >= 0.75:
+            return cid
+    return None
+
+
+def _jk_starter_pay(f, cid):
+    """기업 연봉정보 페이지의 '신입사원 초봉 N 만원'과 기준 연도."""
+    txt = soup_text(f.get(f"https://www.jobkorea.co.kr/company/{cid}/salary", tries=2))
+    m = re.search(r"신입\s*사원\s*초봉\s*([\d,]+)\s*만\s*원", txt)
+    if not m or m.group(1).replace(",", "") in ("", "0"):
+        return None, None
+    y = re.search(r"(20\d{2})년\s*기준", txt)
+    return f"{m.group(1)}만원", (y.group(1) if y else "")
+
+
+# 인터넷 조사로 확인한 신입 초봉 (잡코리아 값보다 우선). safety_jobs/starter_manual.json
+STARTER_MANUAL_PATH = Path(__file__).with_name("starter_manual.json")
+STARTER_MANUAL: dict = {}
+
+
+def load_starter_manual():
+    try:
+        items = json.loads(STARTER_MANUAL_PATH.read_text(encoding="utf-8")).get("items", [])
+    except (OSError, ValueError):
+        return
+    for it in items:
+        if it.get("pay") or it.get("suppress"):  # suppress: 근거 없는 잡코리아 값 숨김
+            for name in [it.get("company", "")] + list(it.get("aliases", [])):
+                if norm_corp(name):
+                    STARTER_MANUAL[norm_corp(name)] = it
+
+
+def load_starter(cache: Path):
+    try:
+        STARTER.update(json.loads(cache.read_text(encoding="utf-8")))
+    except (OSError, ValueError):
+        pass
+
+
+def fill_starter(f, postings, today, cache: Path):
+    """공고 업체별 신입 초봉을 채운다 (캐시 30일, 못 찾은 업체는 14일 뒤 재조회)."""
+    looked = 0
+    for p in postings:
+        key = norm_corp(p.company)
+        if not key or len(key) < 2:
+            continue
+        hit = STARTER.get(key)
+        if hit:
+            age = (today - dt.date.fromisoformat(hit["checked"])).days
+            stale_miss = not hit.get("id") and hit.get("v", 1) < STARTER_MATCH_V
+            if not stale_miss and age <= (STARTER_TTL_DAYS if hit.get("pay") else STARTER_MISS_DAYS):
+                continue
+        if looked >= STARTER_MAX_LOOKUPS:
+            continue
+        looked += 1
+        rec = {"id": None, "pay": None, "year": "", "checked": today.isoformat(), "v": STARTER_MATCH_V}
+        try:
+            rec["id"] = (hit or {}).get("id") or _jk_company_id(f, p.company)
+            if rec["id"]:
+                rec["pay"], rec["year"] = _jk_starter_pay(f, rec["id"])
+            time.sleep(0.3)
+        except Exception as e:
+            print(f"[starter] {p.company}: {e}", file=sys.stderr)
+            continue
+        STARTER[key] = rec
+    load_starter_manual()
+    for p in postings:
+        man = STARTER_MANUAL.get(norm_corp(p.company))
+        if man and man.get("suppress") and not man.get("pay"):
+            p.extra["starter"] = ""
+            p.extra.pop("starter_url", None)
+            continue
+        if man:  # 인터넷 조사 값 우선
+            p.extra["starter"] = f"신입 초봉 {man['pay']}" + (f" ({man['year']}, {man.get('source', '웹 조사')})" if man.get("year") else f" ({man.get('source', '웹 조사')})")
+            p.extra["starter_url"] = man.get("url", "")
+            continue
+        hit = STARTER.get(norm_corp(p.company)) or {}
+        p.extra["starter"] = (f"신입 초봉 {hit['pay']}" + (f" ({hit['year']})" if hit.get("year") else "")) if hit.get("pay") else ""
+        if hit.get("pay"):
+            p.extra["starter_url"] = f"https://www.jobkorea.co.kr/company/{hit['id']}/salary"
+    cache.write_text(json.dumps(STARTER, ensure_ascii=False, indent=0), encoding="utf-8")
+    return looked
+
+
+def pay_text(p):
+    """표시용: 공고 기재 연봉 + 기업 신입 초봉."""
+    return " · ".join(x for x in (salary_of(p), p.extra.get("starter", "")) if x)
+
+
+BIGCORP_TITLE_RE = re.compile(r"공채|공개\s*채용|신입\s*사원|하반기\s*신입|채용\s*연계")
+
+
+def is_bigcorp_entry(p):
+    """대기업 신입 공채: 대기업 계열이면서 경력직이 아니고, 신입이거나 제목에 공채류 표기가 있는 공고."""
+    return ("대기업 계열" in p.extra.get("groups", []) and p.level != "경력"
+            and (p.level == "신입" or bool(BIGCORP_TITLE_RE.search(p.title))))
+
+
 BADGE = {"A": "🔴 ", "B": "🔵 ", "F": "🌐 ", "": ""}
 GROUPS = [("정규직", "[정규직]"), ("계약직", "[계약직]"), ("인턴", "[인턴]"), ("기타/미표기", "[고용형태 미표기]")]
+def group_key(p):
+    """공고 표 묶음 키. 대기업 신입 공채는 계약직·인턴이 아니면 정규직에 넣는다."""
+    if is_bigcorp_entry(p) and p.employment not in ("계약직", "인턴"):
+        return "정규직"
+    return p.employment if p.employment in dict(GROUPS) else "기타/미표기"
+
+
+def md_check(p):
+    if not p.extra.get("needs_check"):
+        return ""
+    return " ⚠️ **[직무 확인 필요]** " + md_cell(p.extra.get("check_note", ""))
+
+
+def md_src(p):
+    return p.source if p.url.startswith("manual:") else f"[{p.source}]({p.url})"
+
+
+def employment_groups(postings, today):
+    """공고 표 묶음: 정규직·계약직·(인턴)·고용형태 미표기. 직무 확인 필요 공고도 여기에 표시와 함께 싣고,
+    오늘 처음 찾은 공고는 '신규 공고'에만 싣는다 (삭제하지 않으면 다음 날 이 묶음으로 옮겨진다)."""
+    rest = [p for p in postings if not is_new(p, today)]
+    out = [(key, tag, sorted([p for p in rest if group_key(p) == key], key=sort_key)) for key, tag in GROUPS]
+    return [g for g in out if g[2]]
+
+
+def check_pill(p):
+    if not p.extra.get("needs_check"):
+        return ""
+    e = html.escape
+    note = p.extra.get("check_note", "")
+    return '<span class="pill pck">직무 확인 필요</span>' + (f'<small class="ckn">{e(note)}</small>' if note else "")
+
+
+def memo_html(p):
+    m = p.extra.get("memo", "")
+    return f'<small class="memo">📝 {html.escape(m)}</small>' if m else ""
+
+
+def big_pill(p):
+    return '<span class="pill pb">대기업 신입 공채</span>' if is_bigcorp_entry(p) else ""
+
+
+def href(p):
+    return "" if p.url.startswith("manual:") else p.url
 LEGEND = ("🔴 데이터센터·하이테크·삼성·하이닉스 관련 · 🔵 대기업 계열사 · 🌐 외국계 회사 (여럿 해당하면 🔴 > 🔵 > 🌐, 업체명 옆에 [대기업 계열]/[외국계] 표기) · "
           "🟣 외국어·영어 능통 / NEBOSH / IOSH / CSP 우대 (🔴·🔵와 함께 표시될 수 있음) · [코스피]/[코스닥] 상장사 · 🤖 AI 역량 우대")
 
@@ -1138,33 +1855,33 @@ def render_md(postings, failures, now, stats):
              f"일반 산업체 {n_gen}건 · 건설 {len(postings) - n_gen}건 · 산업/건설안전기사·ISO 45001 명시 {n_cert}건 · "
              f"🟣 외국어·NEBOSH·IOSH·CSP 우대 {n_pref}건")
     L += ["", "건설사는 2026년 시공능력평가 상위 100개사(토목건축)만 싣습니다."]
-    L += ["", f"범례: {LEGEND} · 🆕 지난 보고({last_report_date(now.date()):%m/%d}) 이후 추가", ""]
+    L += ["", f"범례: {LEGEND} · 🆕 오늘({now:%m/%d}) 새로 찾은 공고 (다음 날 고용형태 묶음으로 이동)", ""]
     new = sorted([p for p in postings if is_new(p, now.date())], key=sort_key)
-    L += [f"## 🆕 신규 공고 {len(new)}건 (지난 보고 {last_report_date(now.date()):%m/%d} 이후)", ""]
+    L += [f"## 🆕 신규 공고 {len(new)}건 (오늘 {now:%m/%d} 새로 찾음 · 삭제하지 않으면 내일 고용형태 묶음으로 이동)", ""]
     if new:
-        L += ["| 업체명 | 공고명 | 고용형태 | 접수기한 | 출처 |", "|---|---|---|---|---|"]
-        L += [f"| {BADGE[p.hilite]}{md_cell(p.company)} | {md_cell(p.title)} | {p.employment} | {deadline_md(p, now.date())} | [{p.source}]({p.url}) |" for p in new]
+        L += ["| 업체명 | 공고명 | 고용형태 · 연봉 | 접수기한 | 출처 |", "|---|---|---|---|---|"]
+        L += [f"| {BADGE[p.hilite]}{md_cell(p.company)}{' [대기업 신입 공채]' if is_bigcorp_entry(p) else ''} | {md_cell(p.title)}{md_check(p)} | {p.employment}<br>{md_cell(pay_text(p))} | {deadline_md(p, now.date())} | {md_src(p)} |" for p in new]
     else:
         L.append("_새로 추가된 공고가 없습니다._")
     L.append("")
-    for key, tag in GROUPS:
-        rows = sorted([p for p in postings if p.employment == key], key=sort_key)
-        if not rows:
-            continue
+    for key, tag, rows in employment_groups(postings, now.date()):
         L += [f"## {tag} {len(rows)}건", ""]
-        L.append("| 구분 | 업체명 | 공고명 | 지원 자격 (학과·자격·영어·학력) | 우대 사항 | 접수기한 | 출처 |")
+        L.append("| 구분 · 연봉 | 업체명 | 공고명 | 지원 자격 (학과·자격·영어·학력) | 우대 사항 | 접수기한 | 출처 |")
         L.append("|---|---|---|---|---|---|---|")
         for p in rows:
             corp = ("🆕 " if is_new(p, now.date()) else "") + BADGE[p.hilite] + (f"**{md_cell(p.company)}**" if p.hilite else md_cell(p.company))
             corp += "".join(f" [{g}]" for g in p.extra.get("groups", []))
+            corp += " [대기업 신입 공채]" if is_bigcorp_entry(p) else ""
             corp += f" [{p.extra['listed']}]" if p.extra.get("listed") else ""
             if p.industry == "건설" and p.extra.get("top100"):
                 corp += f" (시평 {p.extra['top100']}위)"
             cert = f"**[{'·'.join(p.certs)} 명시]** " if p.certs else ""
             cert += f"🟣 **[{'·'.join(p.prefs)} 우대]** " if p.prefs else ""
             cert += "🤖 **[AI 우대]** " if p.extra.get("ai") else ""
-            L.append(f"| {md_cell(p.level)} · {md_cell(p.industry)} | {corp} | {md_cell(p.title)} | {cert}{md_cell(p.qualification)} "
-                     f"| {md_cell(p.preferred)} | {deadline_md(p, now.date())} | [{p.source}]({p.url}){' (이전 수집)' if p.extra.get('carried') else ''} |")
+            cert += f"🏠 **[복지: {'·'.join(p.extra['benefits'])}]** " if p.extra.get("benefits") else ""
+            cert += f"🌐 [복지(인터넷 조사): {'·'.join(web_benefits(p)[0])}] " if web_benefits(p)[0] else ""
+            L.append(f"| {md_cell(p.level)} · {md_cell(p.industry)}<br>{md_cell(pay_text(p))} | {corp} | {md_cell(p.title)}{md_check(p)} | {cert}{md_cell(p.qualification)} "
+                     f"| {md_cell(p.preferred)} | {deadline_md(p, now.date())} | {md_src(p)}{' (이전 수집)' if p.extra.get('carried') else ''} |")
         L.append("")
     L += ["---", "", "**사이트별 수집 현황**", ""]
     for name, st in stats.items():
@@ -1214,6 +1931,29 @@ body{background:var(--canvas);color:var(--text);font:400 14px/1.55 var(--font);m
 .edit-bar button:hover{background:var(--alt1)} .edit-bar button[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:#FFFFFF}
 .edit-bar #edit-msg{font-size:12px;color:var(--caption)}
 .icon-btn{width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;border:0;background:none;color:var(--text-sub);border-radius:var(--r-sm);cursor:pointer}
+th.pickcell,td.pickcell{width:44px;text-align:center;padding-left:8px;padding-right:4px}
+.pickcell input{width:16px;height:16px;margin:2px 0 0;cursor:pointer;accent-color:var(--primary)}
+tr.xd{display:none!important} .ev.xd{display:none!important}
+tr.xon{outline:2px solid var(--error);outline-offset:-2px}
+.xbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:8px;position:relative}
+.top .xbar .xmsg{max-width:320px;text-align:right;line-height:1.35}
+.xbar li button{white-space:nowrap;flex:none}
+@media (max-width:719px){.top .xbar .xmsg:not(.ask){display:none}.top .xbar{width:100%;justify-content:flex-start}}
+.xbar button{height:40px;padding:0 14px;border:1px solid var(--border-strong);border-radius:var(--r-sm);background:var(--surface);color:var(--text-sub);font:600 13px var(--font);cursor:pointer}
+.xbar button.danger{border-color:var(--error);color:var(--error)} .xbar button.danger:not(:disabled):hover{background:color-mix(in srgb,var(--error) 10%,var(--surface))}
+.xgrp{display:inline-flex;flex-wrap:wrap;align-items:center;gap:8px}
+.xmsg{font-size:12px;color:var(--caption)} .xmsg.ask{font-size:14px;font-weight:600;color:var(--text-strong)}
+.xlist{font-size:13px;color:var(--text-sub);position:relative}
+.xlist summary{cursor:pointer;color:var(--text-sub);font-size:12px;font-weight:600;height:40px;display:flex;align-items:center;gap:4px;padding:0 10px;border:1px solid var(--border-strong);border-radius:var(--r-sm);list-style:none}
+.xlist summary::-webkit-details-marker{display:none}
+.xlist[open] ul{position:absolute;right:0;top:46px;z-index:6;width:min(420px,calc(100vw - 32px));background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--sh2,0 2px 8px rgba(0,0,0,.08));padding:10px;margin:0}
+.xlist ul:empty::before{content:"제외한 공고가 없습니다.";color:var(--caption);font-size:12px}
+.xbar button.danger.solid{background:var(--error);border-color:var(--error);color:#FFFFFF}
+.xbar button.danger.solid:not(:disabled):hover{background:var(--error);filter:brightness(.9)}
+.xbar button:disabled{opacity:.45;cursor:not-allowed}
+.xbar ul{list-style:none;display:grid;gap:4px;max-height:300px;overflow:auto}
+.xbar li{display:flex;gap:8px;align-items:center;font-size:13px}
+.xbar li button{height:28px;padding:0 10px;font-size:12px}
 .icon-btn:hover{background:var(--alt1);color:var(--text-strong)}
 .edit-bar .icon-btn{width:40px;height:40px;padding:0;border:0;background:none}
 body.editing main [contenteditable="true"]{outline:1px dashed var(--border-strong);outline-offset:2px;cursor:text}
@@ -1257,6 +1997,14 @@ main{padding:20px;display:grid;gap:16px;min-width:0;max-width:1400px}
 .seg button:hover{background:var(--alt1)}
 .seg button[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:#FFFFFF}
 .scroll{overflow-x:auto;border:1px solid var(--border);border-radius:var(--r-sm)}
+/* 열 너비: 대기업 신입 공채·신규 공고(5열 .t5)와 본문 표(7열 .t7) */
+table.t5,table.t7{table-layout:fixed;overflow-wrap:anywhere}
+table.t5{min-width:920px} table.t7{min-width:1100px}
+.t5 th,.t7 th,.t5 td.lv,.t7 td.lv,.t5 td.dl,.t7 td.dl,.t5 td.src,.t7 td.src{white-space:normal}
+.t5 th:nth-child(1){width:44px}.t5 th:nth-child(2){width:20%}.t5 th:nth-child(3){width:31%}.t5 th:nth-child(4){width:25%}.t5 th:nth-child(5){width:14%}.t5 th:nth-child(6){width:8%}
+.t7 th:nth-child(1){width:44px}.t7 th:nth-child(2){width:9%}.t7 th:nth-child(3){width:15%}.t7 th:nth-child(4){width:19%}.t7 th:nth-child(5){width:20%}.t7 th:nth-child(6){width:16%}.t7 th:nth-child(7){width:11%}.t7 th:nth-child(8){width:8%}
+td.lv small.sal{color:var(--text-sub);font-weight:600}
+td.lv small.sal a.starter{color:var(--primary);text-decoration:none} td.lv small.sal a.starter:hover{text-decoration:underline}
 table{border-collapse:collapse;width:100%;min-width:1000px}
 th,td{padding:10px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--divider)}
 th{font-size:12px;font-weight:600;color:var(--caption);background:var(--alt1);white-space:nowrap}
@@ -1297,6 +2045,10 @@ td.src{white-space:nowrap}
 .day .dn{font-size:12px;font-weight:600;color:var(--text-sub);font-variant-numeric:tabular-nums;display:flex;justify-content:space-between;gap:4px}
 .day .dn .mo{color:var(--primary)} .day .dn .cnt{color:var(--caption);font-weight:600}
 .day.out{background:var(--alt1)} .day.out .dn{color:var(--caption);opacity:.6}
+.day.m1{background:color-mix(in srgb,var(--primary) 3.5%,var(--surface))}
+.day.mstart{box-shadow:inset 3px 0 0 color-mix(in srgb,var(--primary) 30%,transparent)}
+.day.past .dn{color:var(--caption)} .ev.closed{opacity:.5} .ev.closed span{text-decoration:line-through}
+.cal-legend .lc::before{background:none;border:1px solid var(--border-strong)}
 .day.today{box-shadow:inset 0 0 0 2px var(--primary)} .day.soon .dn{color:var(--error)}
 .day.sun .dn{color:var(--error)}
 .ev{display:flex;align-items:center;gap:4px;font-size:12px;line-height:1.35;color:var(--text);text-decoration:none;min-width:0;border-radius:4px;padding:1px 2px}
@@ -1308,11 +2060,20 @@ td.src{white-space:nowrap}
 .ev .tg.b{color:var(--primary)} .ev .tg.f{color:var(--sky)} .ev .tg.k{color:var(--text-sub)} .ev .tg.ai{color:var(--orange)}
 .pill.pn{border-color:var(--success);background:color-mix(in srgb,var(--success) 14%,transparent);color:var(--text-strong)} .pill.pn::before{background:var(--success)}
 .ev .tg.n,.cal-legend .tgl .tg.n{color:var(--success)}
+.bnf{display:flex;flex-wrap:wrap;gap:0 4px;margin-top:2px}
+.pill.pw{margin:4px 0 0;border-color:var(--warning);background:color-mix(in srgb,var(--warning) 14%,transparent);color:var(--text-strong)} .pill.pw::before{background:var(--warning)}
+.pill.pw.web{border-style:dashed;background:transparent} a.bnfsrc{text-decoration:none;color:inherit}
+.pill.pck{margin:0 0 4px;border-color:var(--warning);color:var(--text-strong)} .pill.pck::before{background:var(--warning)}
+small.ckn{display:block;font-size:12px;color:var(--caption)}
+small.memo{display:block;font-size:12px;color:var(--text-sub);white-space:pre-line;margin-top:2px}
+nav.archive{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:13px;margin:0 0 12px;color:var(--caption)}
+nav.archive a{color:var(--primary)}
 .pill.pai{margin:4px 4px 0 0;border-color:var(--orange);background:color-mix(in srgb,var(--orange) 12%,transparent);color:var(--text-strong)} .pill.pai::before{background:var(--orange)}
 .cal-legend .tgl .tg.ai{color:var(--orange)}
 .day details summary{font-size:12px;color:var(--primary);cursor:pointer;list-style:none} .day details summary::-webkit-details-marker{display:none}
 .day details[open] summary{margin-bottom:2px}
 td.corp a.co{color:var(--text-strong);text-decoration:none} td.corp a.co:hover{color:var(--primary);text-decoration:underline}
+a.tl{color:var(--text);text-decoration:none;font-weight:600} a.tl:hover{color:var(--primary);text-decoration:underline} a.tl:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
 @media (max-width:719px){
   .cal{display:block;border:0}.cal .wd,.day.empty,.day.out{display:none}
   .day{min-height:0;border:1px solid var(--border);border-radius:var(--r-sm);margin-bottom:8px;padding:10px}
@@ -1321,9 +2082,46 @@ td.corp a.co{color:var(--text-strong);text-decoration:none} td.corp a.co:hover{c
 @media (max-width:1023px){.shell{grid-template-columns:1fr}.side{display:none}.chipnav{display:flex}}
 @media (max-width:480px){main{padding:16px}.kpi .v{font-size:28px}}
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+/* A4 세로 인쇄 (사용자 요청 2026-10-20) */
+@page{size:A4 portrait;margin:12mm 10mm}
+@media print{
+  :root{color-scheme:light}
+  body{background:#fff!important;font-size:10pt}
+  .top{position:static!important;box-shadow:none!important}
+  .side,.chipnav,.xbar,.edit-bar button,.icon-btn,.tools,.charts,#flow,.pickcell,th.pickcell,nav.archive{display:none!important}
+  .shell{display:block!important}
+  main{padding:0!important;max-width:none!important}
+  .card{break-inside:avoid;box-shadow:none!important;border-color:#ccc!important}
+  table,table.t5,table.t7{width:100%!important;min-width:0!important;font-size:8pt;border-collapse:collapse;table-layout:auto}
+  td.corp{min-width:0!important} td.dl,td.lv,td.src,th{white-space:normal!important}
+  .scroll{overflow:visible!important;border:0!important}
+  .kpis{grid-template-columns:repeat(4,1fr)!important;gap:6px!important} .kpi{padding:6px 8px!important} .kpi .v{font-size:16pt!important}
+  tr{break-inside:avoid}
+  th,td{padding:3px 4px!important}
+  a{color:#000!important;text-decoration:none!important}
+  .tw,.scroll,.tbl-wrap{overflow:visible!important}
+}
 """
 
 HTML_JS = """
+(function(){
+  /* KPI: 페이지에서 삭제(제외)한 공고는 빼고 숫자를 다시 센다 */
+  var el=document.getElementById('kpi-data'); if(!el) return;
+  var rows; try{rows=JSON.parse(el.textContent)}catch(e){return}
+  function recount(){
+    var gone={};
+    document.querySelectorAll('tr.xd[data-url]').forEach(function(tr){gone[tr.dataset.url]=1});
+    var c={};
+    rows.forEach(function(r){ if(gone[r.u]) return; r.k.forEach(function(k){c[k]=(c[k]||0)+1}); });
+    var tot=c.all||0;
+    document.querySelectorAll('.kpi .v[data-k]').forEach(function(v){
+      v.textContent=v.dataset.k.split('+').reduce(function(a,k){return a+(c[k]||0)},0);
+      var sub=v.parentNode.querySelector('.s[data-sub]'); if(!sub) return;
+      sub.textContent=sub.dataset.sub.replace(/\{(\w+)(%?)\}/g,function(_,k,pc){var n=c[k]||0;return pc?Math.floor(n*100/Math.max(tot,1))+'%':n});
+    });
+  }
+  document.addEventListener('brief-refilter',recount);
+})();
 (function(){
   /* 테마 전환: 다크 토큰을 직접 쓰는 data-theme 전환, 선택은 이 브라우저에만 기억 */
   var b=document.getElementById('theme-toggle'), r=document.documentElement; if(!b) return;
@@ -1358,6 +2156,27 @@ HTML_JS = """
     setEdit(true);
   });
   rs.addEventListener('click',function(){ try{store().removeItem(key)}catch(e){} location.reload(); });
+  var fb=document.getElementById('edit-file');
+  /* 아티팩트 화면에서는 downloads 기능으로, 내려받은 파일·일반 브라우저에서는 바로 내려받는다 */
+  var dlP=(window.claude&&window.claude.use)?window.claude.use('downloads').catch(function(){return null}):Promise.resolve(null);
+  if(fb) fb.addEventListener('click',function(){
+    var was=document.body.classList.contains('editing'); if(was) setEdit(false);
+    var doc='<!doctype html>\\n'+document.documentElement.outerHTML;
+    if(was) setEdit(true);
+    var name='안전관리자_채용_브리핑_'+key.replace('brief-','').slice(0,8)+'.html';
+    dlP.then(function(dl){
+      if(dl){
+        return dl.save({filename:name,data:doc}).then(function(){ say('HTML 파일로 저장했습니다 — 파일을 열어 [편집]으로 계속 고칠 수 있습니다'); },
+          function(err){ say(err&&err.code==='declined'?'저장을 취소했습니다':'이 화면에서는 저장할 수 없습니다'); });
+      }
+      try{
+        var a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([doc],{type:'text/html'}));
+        a.download=name; document.body.appendChild(a); a.click(); a.remove();
+        say('HTML 파일로 저장했습니다 — 파일을 열어 [편집]으로 계속 고칠 수 있습니다');
+      }catch(e){ say('이 화면에서는 내려받기가 막혀 있습니다'); }
+    });
+  });
+  var pb=document.getElementById('print-a4'); if(pb) pb.addEventListener('click',function(){ window.print(); });
 })();
 (function(){
   var q=document.getElementById('q'), mode='all';
@@ -1367,19 +2186,102 @@ HTML_JS = """
     document.querySelectorAll('section.grp').forEach(function(sec){
       var n=0;
       sec.querySelectorAll('tbody tr').forEach(function(tr){
-        var ok=(!t||tr.textContent.toLowerCase().indexOf(t)>=0)&&
+        var ok=!tr.classList.contains('xd')&&(!t||tr.textContent.toLowerCase().indexOf(t)>=0)&&
           (mode==='all'||(mode==='A'&&tr.classList.contains('hA'))||(mode==='B'&&tr.dataset.grp.indexOf('대기업')>=0)||(mode==='F'&&tr.dataset.grp.indexOf('외국계')>=0)||(mode==='K'&&tr.dataset.listed!=='')||
            (mode==='soon'&&tr.querySelector('td.dl.soon'))||(mode==='gen'&&tr.dataset.ind==='일반 산업')||
-           (mode==='cert'&&tr.dataset.cert==='1')||(mode==='pref'&&tr.dataset.pref==='1')||(mode==='ai'&&tr.dataset.ai==='1')||(mode==='new'&&tr.dataset.new==='1'));
+           (mode==='cert'&&tr.dataset.cert==='1')||(mode==='pref'&&tr.dataset.pref==='1')||(mode==='ai'&&tr.dataset.ai==='1')||(mode==='new'&&tr.dataset.new==='1')||(mode==='bnf'&&tr.dataset.bnf==='1'));
         tr.hidden=!ok; if(ok)n++;
       });
       sec.querySelector('.n').textContent=n+'건';
       sec.querySelector('.empty').hidden=n>0; sec.querySelector('.scroll').hidden=n===0;
     });
   }
-  q.addEventListener('input',apply);
+  q.addEventListener('input',apply); document.addEventListener('brief-refilter',apply);
   btns.forEach(function(b){b.addEventListener('click',function(){
     mode=b.dataset.mode; btns.forEach(function(x){x.setAttribute('aria-pressed',String(x===b))}); apply();});});
+})();
+(function(){
+  /* 선택 삭제: 업체 왼쪽 체크 → '선택 삭제' → 게시 페이지의 공유 DB(excluded)에 기록, 다음 리포트부터 수집에서 제외.
+     DB가 없는 환경(내려받은 HTML)은 이 브라우저에서만 숨긴다. */
+  var LS='brief-excluded', db=null, col=null, ex={};
+  var del=document.getElementById('x-del'); if(!del) return;
+  var cEl=document.getElementById('x-cnt'), ul=document.getElementById('x-items'), msg=document.getElementById('x-msg');
+  var HINT='체크한 공고는 이 목록에서 빠지고 다음 리포트부터 제외됩니다.';
+  function say(t,ask){msg.textContent=t||HINT; msg.classList.toggle('ask',!!ask)}
+  function sel(){return Array.prototype.slice.call(document.querySelectorAll('input.xsel:checked'))}
+  function sync(){
+    var urls={}; sel().forEach(function(c){urls[c.dataset.url]=1});
+    var n=Object.keys(urls).length; del.disabled=!n;
+    document.querySelectorAll('tr[data-url]').forEach(function(tr){tr.classList.toggle('xon',!!urls[tr.dataset.url])});
+    document.querySelectorAll('input.pickall').forEach(function(a){
+      var bs=Array.prototype.filter.call(a.closest('table').querySelectorAll('tbody tr'),function(tr){return !tr.hidden&&!tr.classList.contains('xd')})
+        .map(function(tr){return tr.querySelector('input.xsel')}).filter(Boolean);
+      var on=bs.filter(function(b){return b.checked}).length;
+      a.checked=bs.length>0&&on===bs.length; a.indeterminate=on>0&&on<bs.length;
+    });
+  }
+  function render(){
+    var keys=Object.keys(ex);
+    document.querySelectorAll('tr[data-url]').forEach(function(tr){tr.classList.toggle('xd',!!ex[tr.dataset.url])});
+    document.querySelectorAll('a.ev').forEach(function(a){a.classList.toggle('xd',!!ex[a.getAttribute('href')])});
+    cEl.textContent=keys.length; ul.textContent='';
+    keys.forEach(function(u){
+      var li=document.createElement('li'), s=document.createElement('span'), b=document.createElement('button');
+      s.textContent=(ex[u].company||'-')+' · '+(ex[u].title||'');
+      b.type='button'; b.textContent='되돌리기'; b.addEventListener('click',function(){restore(u)});
+      li.appendChild(b); li.appendChild(s); ul.appendChild(li);
+    });
+    document.dispatchEvent(new Event('brief-refilter')); sync();
+  }
+  function hid(u){var h=0;for(var i=0;i<u.length;i++){h=(h*31+u.charCodeAt(i))|0}return 'x'+(h>>>0).toString(36)+u.length.toString(36)}
+  function loadLocal(){try{ex=JSON.parse(localStorage.getItem(LS)||'{}')||{}}catch(e){ex={}}}
+  function saveLocal(){try{localStorage.setItem(LS,JSON.stringify(ex))}catch(e){}}
+  document.addEventListener('change',function(ev){if(ev.target.classList&&ev.target.classList.contains('pickall')){
+    var on=ev.target.checked;
+    Array.prototype.forEach.call(ev.target.closest('table').querySelectorAll('tbody tr'),function(tr){
+      if(tr.hidden||tr.classList.contains('xd')) return; var b=tr.querySelector('input.xsel'); if(!b) return;
+      document.querySelectorAll('input.xsel').forEach(function(c){if(c.dataset.url===b.dataset.url)c.checked=on});
+    }); sync(); return;}
+    if(ev.target.classList&&ev.target.classList.contains('xsel')){
+    var u=ev.target.dataset.url, on=ev.target.checked;
+    document.querySelectorAll('input.xsel').forEach(function(c){if(c.dataset.url===u)c.checked=on}); sync();}});
+  var conf=document.getElementById('x-confirm'), yes=document.getElementById('x-yes'), no=document.getElementById('x-no');
+  function picked(){var m={}; sel().forEach(function(c){m[c.dataset.url]={url:c.dataset.url,company:c.dataset.company,title:c.dataset.title}}); return m}
+  function askClose(){conf.hidden=true; del.hidden=false; say(''); del.focus()}
+  del.addEventListener('click',function(){
+    var n=Object.keys(picked()).length; if(!n) return;
+    del.hidden=true; conf.hidden=false; say(n+'건을 다음 리포트부터 제외할까요?',true); yes.focus();
+  });
+  no.addEventListener('click',askClose);
+  conf.addEventListener('keydown',function(ev){if(ev.key==='Escape')askClose()});
+  yes.addEventListener('click',async function(){
+    var pick=picked(); var list=Object.keys(pick); if(!list.length){askClose(); return;}
+    yes.disabled=true; no.disabled=true; say('저장 중…');
+    var done=0;
+    for(var i=0;i<list.length;i++){
+      var it=pick[list[i]]; it.at=new Date().toISOString();
+      if(col){ try{ await col.doc(hid(it.url)).set(it); ex[it.url]=it; done++; }catch(e){ say('저장하지 못했습니다 ('+(e&&e.code||'error')+'). 편집 권한이 있는 계정으로 열어 주세요.'); break; } }
+      else { ex[it.url]=it; done++; }
+    }
+    if(!col){ saveLocal(); render(); say(done+'건을 이 브라우저에서 숨겼습니다. 다음 리포트에 반영하려면 게시된 브리핑 페이지에서 삭제하세요.'); }
+    else { render(); if(done===list.length) say(done+'건을 제외했습니다 — 다음 리포트부터 빠집니다.'); }
+    sel().forEach(function(c){c.checked=false}); sync();
+    yes.disabled=false; no.disabled=false; conf.hidden=true; del.hidden=false;
+  });
+  async function restore(u){
+    if(col){ try{ await col.doc(hid(u)).delete(); say('되돌렸습니다. 다음 리포트부터 다시 수집합니다.'); }catch(e){ say('복원하지 못했습니다 ('+(e&&e.code||'error')+').'); } }
+    else { delete ex[u]; saveLocal(); render(); say('되돌렸습니다.'); }
+  }
+  loadLocal(); render();
+  if(window.claude&&typeof window.claude.use==='function'){
+    window.claude.use('db').then(function(d){
+      if(!d){ say('공유 저장소를 쓸 수 없어 이 브라우저에서만 숨깁니다.'); return; }
+      db=d; col=db.collection('excluded');
+      col.onSnapshot(function(snap){
+        var m={}; snap.docs.forEach(function(doc){var v=doc.data(); if(v&&v.url) m[v.url]=v}); ex=m; render();
+      }, function(){ col=null; say('공유 저장소 연결이 끊겨 이 브라우저에서만 숨깁니다.'); });
+    }).catch(function(){});
+  }
 })();
 """
 
@@ -1403,43 +2305,275 @@ def calendar_eligible(p):
     return bool(SEMI_DC_RE.search(f"{p.company} {p.title} {p.listing_text} {p.extra.get('sector', '')} {(p.detail_text or '')[:4000]}"))
 
 
-CONTRACT_TOP_RANK = 15  # 계약직 건설사는 시공능력평가(도급순위) 15위 이내도 인정
+# 브리핑 대상 기업 (사용자 지정 2026-10-13): 대기업·대기업 계열사, 외국계, 코스피·코스닥 상장사, 공기업·공공기관,
+# 시공능력평가 15위 이내 종합건설사, 국내 엔지니어링(설계·감리) 수주 상위 15개사
+TARGET_CONSTR_RANK = 15
+TARGET_CONSTR_RANK_REGULAR = 50  # 사용자 추가 2026-10-14: 16~50위 종합건설사는 정규직 공고만
+ENGINEERING_TOP15 = ("도화엔지니어링", "유신", "한국종합기술", "건화", "동명기술공단", "삼안", "이산", "다산컨설턴트",
+                     "경동엔지니어링", "평화엔지니어링", "수성엔지니어링", "동부엔지니어링", "서영엔지니어링",
+                     "선진엔지니어링", "삼성이앤에이", "삼성E&A", "현대엔지니어링")
+ENGINEERING_TOP15_RE = re.compile("|".join(re.escape(re.sub(r"\s", "", n)) for n in ENGINEERING_TOP15))
+
+
+# 전체 수집(--broad) 범위 (사용자 요청 2026-10-14): 종합건설사·엔지니어링은 상위 15개사만, 전문건설업체는 제외
+ENGINEERING_NAME_RE = re.compile(r"엔지니어링|엔지니어|이엔지|E&G|ENG(?![A-Za-z])|기술단|기술공단|종합기술|건축사사무소|컨설턴트|감리|기술사사무소")
+SPECIALTY_TITLE_RE = re.compile(r"전기\s*공사|설비\s*공사|소방\s*공사|통신\s*공사|배관|철콘|철근\s*콘크리트|토공|방수|도장|해체\s*공사|가설|비계|금속\s*창호|조경|기계\s*설비|클린룸|HVAC|공조|훅업|SET-?UP|셋업|PC\s*제작|플랜트\s*(?:건설\s*)?현장|토목\s*현장|건축\s*현장|시공\s*현장|건설\s*현장|공사\s*현장|신축\s*공사|증개축|철거")
+SPECIALTY_NAME_RE = re.compile(r"(?:전기|설비|소방|배관|통신|방수|도장|조경|토건|기초|지반|해체|테크|기공|산전)(?:\(주\)|㈜)?$|전기공사|설비공사|기술공업|이앤씨|이엔씨|E&C|건설|개발|토목")
+
+
+def broad_scope_reason(p) -> str:
+    """전체 수집에서 범위 밖이면 제외 사유, 대상이면 ''. 대기업 계열·상장사는 건설·시공 업종이 아니면 그대로 둔다."""
+    name = re.sub(r"\(주\)|㈜|주식회사|\(유\)|\s", "", p.company or "")
+    rank = p.extra.get("top100")
+    if p.industry == "건설":
+        return "" if rank and rank <= TARGET_CONSTR_RANK else "종합건설사 상위 15위 밖·전문건설"
+    if ENGINEERING_TOP15_RE.search(name):
+        return ""
+    if ENGINEERING_NAME_RE.search(name):
+        return "엔지니어링 상위 15개사 밖"
+    if p.extra.get("groups"):
+        return ""
+    if SPECIALTY_TITLE_RE.search(p.title or ""):
+        return "전문건설(시공 현장)"
+    if SPECIALTY_NAME_RE.search(name) and not p.extra.get("listed"):
+        return "전문건설업체"
+    return ""
+
+
+# 공기업·공공기관 (사용자 추가 2026-10-13)
+PUBLIC_HOST_RE = re.compile(r"중소벤처기업진흥공단|중소기업진흥공단|워크넷")  # 민간 공고를 대신 올리는 공공 채용 게시판
+PUBLIC_TARGET_RE = re.compile(r"^(?:한국|국가|국립|국민|서울|부산|인천|대구|대전|광주|울산|경기|강원|충북|충남|전북|전남|경북|경남|제주|세종)"
+                              r"[가-힣]*(?:공사|공단|발전|원자력|기술원|진흥원|공기업)$|^[가-힣]+(?:공사|공단)$|코레일|^에스알$|한국전력|한국수력원자력|국민연금")
+PUBLIC_TEXT_RE = re.compile(r"기업\s*(?:구분|형태)\s*[:：]?\s*(?:공기업|공공기관)")
+
+
+def public_company(p) -> bool:
+    raw = p.company or ""
+    name = re.sub(r"\(주\)|㈜|주식회사|\s", "", raw)
+    if PUBLIC_HOST_RE.search(name):
+        return False
+    if re.search(r"\(주\)|㈜|주식회사", raw) and not re.match(r"(?:한국|코레일)", name):
+        return bool(PUBLIC_TEXT_RE.search((p.detail_text or "")[:6000]))  # (주)○○공사 같은 민간 업체
+    return bool(p.company_type in ("공기업", "공공기관") or PUBLIC_TARGET_RE.search(name)
+                or PUBLIC_TEXT_RE.search((p.detail_text or "")[:6000]))
+
+
+# 빅테크 (사용자 추가 2026-10-14): 국내 IT 플랫폼·게임사와 글로벌 빅테크
+BIG_TECH = ("네이버", "NAVER", "카카오", "쿠팡", "우아한형제들", "배달의민족", "비바리퍼블리카", "토스", "라인", "LINE", "당근",
+            "크래프톤", "넥슨", "엔씨소프트", "NC소프트", "넷마블", "스마일게이트", "구글", "Google", "마이크로소프트", "Microsoft",
+            "아마존", "Amazon", "AWS", "메타플랫폼", "Meta Platforms", "페이스북", "애플", "Apple", "엔비디아", "NVIDIA", "오라클", "Oracle", "테슬라", "Tesla")
+BIG_TECH_RE = re.compile("|".join(rf"(?<![가-힣A-Za-z]){re.escape(n)}" for n in BIG_TECH))
+
+
+def is_bigtech(p) -> bool:
+    name = re.sub(r"\(주\)|㈜|주식회사|\(유\)|유한회사|\s", "", p.company or "")
+    return bool(BIG_TECH_RE.match(name) or re.match(r"\s*\[(?:" + "|".join(map(re.escape, BIG_TECH)) + r")", p.title or ""))
+
+
+def target_company(p) -> bool:
+    """대기업·계열사·외국계·상장사·공기업·시평 15위 건설사·엔지니어링 상위 15개사인지."""
+    if p.extra.get("groups") or p.extra.get("listed") or p.company_type in ("대기업", "외국계"):
+        return True
+    if is_bigtech(p):
+        return True
+    if public_company(p):
+        return True
+    rank = p.extra.get("top100")
+    if rank and rank <= TARGET_CONSTR_RANK:
+        return True
+    if rank and rank <= TARGET_CONSTR_RANK_REGULAR and p.employment == "정규직":  # 시평 50위 내는 정규직 안전관리자 모집이면 싣는다
+        return True
+    return bool(ENGINEERING_TOP15_RE.search(re.sub(r"\(주\)|㈜|주식회사|\s", "", p.company or "")))
+
+
+# 안전(건설안전·산업안전)이 주업무가 아닌 공고: 보건관리자 단독, 다른 직무와 겸하는 공고, 채용이 아닌 글
+HEALTH_ONLY_RE = re.compile(r"보건\s*(?:관리자?|관리|직|담당|PJT)|(?<![A-Za-z])(?:Nurse|Industrial\s*Hygien\w*)(?![A-Za-z])|간호", re.I)
+SAFETY_ROLE_RE = re.compile(r"(?<![보])안전(?!\s*(?:진단|지원|용품|장치|인증|요원))|(?<![A-Za-z])(?:HSE|EHS|EH&S|SHE|HSEQ|QHSE|HSSE|[Ss]afety|SAFETY)(?![A-Za-z])")
+MIXED_ROLE = r"총무|생산|품질|공사|공무|시설|설비|기계|물류|공정|사무|행정|보전|시공|정비|유지보수|구매|인사|경영지원"
+MIXED_ROLE_RE = re.compile(rf"(?:{MIXED_ROLE})\s*(?:관리자?|담당자?|팀|직)?\s*(?:/|및|,|·|&|와|과)\s*안전|안전\s*(?:관리자?|담당자?)?\s*(?:/|및|,|·|&)\s*(?:{MIXED_ROLE})")
+NOT_SAFETY_JOB_RE = re.compile(r"안전\s*지킴이|(?:실무형|교육|양성|연수|체험형|일\s*경험)\s*프로그|일\s*경험\s*(?:형\s*)?인턴|아카데미|부트\s*캠프|(?:양성|교육|연수)\s*과정|공모전|선착순|무료\s*교육|교육생|사진\s*공모|경진\s*대회|설명회|안전\s*(?:관리\s*)?요원|안전\s*진단|개발자|개발\s*(?:연구)?직|연구원|연구직|설치\s*파트너|강사")
+AGENCY_SAFETY_RE = re.compile(r"[가-힣]*안전[가-힣]*(?:교육원|심판원|진흥원|연구원|공단|공사|체험장|체험관)(?![가-힣])")
+BIZ_UNIT_SAFETY_RE = re.compile(r"안전(?:\s*[/·&]\s*[가-힣A-Za-z]+)?\s*사업\s*(?:본부|부문|부)")  # '안전/모션 사업본부'처럼 사업부 이름의 '안전'
+MULTI_FIELD_RE = re.compile(r"분야별|부문별|직무별|직종별|각\s*(?:부문|분야|직무)")  # 여러 분야를 한꺼번에 뽑는 공고
+# 공고 내용(제목·담당 업무)이 총무+안전, 전기+안전처럼 복합업무인 공고 (사용자 요청 2026-10-13, 환경안전은 포함)
+COMPOSITE_RE = re.compile(r"총무\s*(?:업무\s*)?(?:[/·,&]|및|겸)?\s*안전|안전\s*(?:관리\s*)?(?:[/·,&]|및|겸)\s*총무|"
+                          r"전기\s*(?:[/·,&]|및|겸)?\s*안전|안전\s*(?:관리\s*)?(?:[/·,&]|및|겸)\s*전기|전기\s*[·/,]\s*[가-힣]{1,6}\s*안전\s*관리|"
+                          r"전기\s*(?:안전\s*)?(?:관리자?\s*)?선임")  # 환경안전부(전기선임·공무·대관)처럼 전기 선임을 겸하는 공고
+OPEN_CALL_RE = re.compile(r"공채|공개\s*채용|신입\s*사원|각\s*부문|인재\s*(?:pool|풀)|상시\s*채용", re.I)
+
+
+def duty_safety_share(p) -> float:
+    """담당 업무 항목(ㆍ•-▶ 등으로 나뉜 줄) 중 안전 업무가 차지하는 비율. 항목을 못 읽으면 0."""
+    d = DUTY_COMPLY_RE.sub(" ", duty_text((p.detail_text or "")[:12000]))
+    d = re.split(rf"{QUAL_HEAD}|자격\s*요건|지원\s*자격|우대\s*사항", d)[0]
+    items = [x.strip() for x in re.split(r"[ㆍ•·▶■□○●◆◇※\n]|\s-\s|(?<!\d)\d{1,2}\.\s", d) if len(re.sub(r"\W", "", x)) >= 3]
+    if not items:
+        return 0.0
+    return sum(1 for x in items if DUTY_SAFETY_RE.search(x)) / len(items)
+
+
+def safety_main_reason(p) -> str:
+    """안전이 주업무가 아니면 제외 사유, 아니면 ''."""
+    t = PREF_IN_TITLE_RE.sub(" ", p.title)
+    core = re.sub(r"\(주\)|㈜|주식회사|\(.*?\)|\s", "", p.company or "")
+    if len(core) >= 3:  # 제목에 들어간 회사 이름(○○안전공단 등)의 '안전'은 직무로 보지 않는다
+        t = re.sub(r"\s*".join(map(re.escape, core)), " ", t)
+    t = AGENCY_SAFETY_RE.sub(" ", t)  # 국가재난안전교육원·해양안전심판원 같은 기관 이름
+    t = BIZ_UNIT_SAFETY_RE.sub(" ", t)  # 안전/모션 사업본부 같은 사업부 이름 (사용자 요청 2026-10-17)
+    if NOT_SAFETY_JOB_RE.search(t):
+        return "안전 주업무 아님"
+    if MIXED_ROLE_RE.search(t):
+        return "안전 주업무 아님(겸직)"
+    if COMPOSITE_RE.search(t) or COMPOSITE_RE.search(duty_text((p.detail_text or "")[:12000])):
+        return "안전 주업무 아님(복합업무)"
+    has_safety = SAFETY_ROLE_RE.search(CERT_NAME_RE.sub(" ", t))
+    if not has_safety and HEALTH_ONLY_RE.search(t):
+        return "보건관리자"
+    if not has_safety and MULTI_FIELD_RE.search(t):  # '플랜트 건설 관련 분야별 모집'처럼 제목에 안전이 없는 여러 분야 모집 (사용자 요청 2026-10-17)
+        return "안전 주업무 아님(여러 분야 모집)"
+    if not has_safety:
+        # 대기업 공채처럼 직무가 여러 개인 공고는 담당 업무에 안전 직무가 있을 때만 남긴다
+        # (제목 끝에 생산·항만운영 같은 다른 모집 분야를 지정한 공채는 제외)
+        if (OPEN_CALL_RE.search(t) and not re.search(r"\([^)]*\)\s*$|-\s*\S+\s*$", t)
+                and duty_safety_share(p) > 0.5):
+            return ""
+        # '하이테크 해외현장 채용의건'처럼 제목에 직무가 없어도 담당 업무가 안전(안전기획·안전관리)이면 싣는다
+        if duty_safety_share(p) > 0.5:  # 제목의 다른 직무 이름이 아니라 담당 업무 내용으로 판정 — 안전 업무가 절반을 넘어야 주업무
+            return ""
+        return "안전 주업무 아님"
+    return ""
+
+
+CONTRACT_TOP_RANK = 20  # 건설사 계약직은 시공능력평가 20위 이내 종합건설사만 싣는다
 
 
 def contract_ok(p):
-    """계약직 유지 조건: 관심 기업이거나, 도급순위 15위 이내 건설사."""
+    """계약직 유지 조건: 건설사는 시평 20위 이내만, 그 밖의 업체는 관심 기업만."""
     rank = p.extra.get("top100")
-    return calendar_eligible(p) or (p.industry == "건설" and bool(rank) and rank <= CONTRACT_TOP_RANK)
+    if p.industry == "건설":
+        return bool(rank) and rank <= CONTRACT_TOP_RANK
+    return calendar_eligible(p)
 
 
-def render_calendar(postings, today, months=2, show=5):
-    """접수기한 달력: 오늘부터 2개월, 주 단위. 업체명을 누르면 공고로 이동."""
+CLOSED_RECENT: list = []  # 지난주 일요일 ~ 어제 마감된 관심 기업 공고 (달력에 흐리게 표시)
+
+
+def cal_start(today):
+    """달력 시작일: 지난주 일요일."""
+    return today - dt.timedelta(days=(today.weekday() + 1) % 7 + 7)
+
+
+def load_recent_closed(hist_dir: Path, today, kept):
+    """날짜별 보관본(history/*.json.gz)에서 지난주부터 어제까지 마감된 공고를 모은다."""
+    start = cal_start(today)
+    live = {p.url for p in kept}
+    mu = manual_urls()
+    found = {}
+    for f in sorted(hist_dir.glob("*.json.gz")):
+        try:
+            day = dt.date.fromisoformat(f.name[:10])
+        except ValueError:
+            continue
+        if day < start - dt.timedelta(days=60) or day >= today:
+            continue
+        try:
+            with gzip.open(f, "rt", encoding="utf-8") as fh:
+                rows = json.load(fh).get("postings", [])
+        except (OSError, ValueError):
+            continue
+        for d in rows:
+            try:
+                p = Posting(**d)
+            except TypeError:
+                continue
+            if not p.deadline_date or p.url in live:
+                continue
+            dd = dt.date.fromisoformat(p.deadline_date)
+            if not (start <= dd < today) or user_excluded(p) or (p.extra.get("manual") and p.url not in mu):
+                continue
+            if not calendar_eligible(p) or p.extra.get("needs_check"):
+                continue
+            # 지금 규칙(담당 업무·대리급 이상·비HSE·건설사 시평·계약직)을 다시 적용
+            if (duty_gate(p) == "drop" or senior_rank(p) or NON_HSE_SAFETY_RE.search(p.title)
+                    or (p.industry == "건설" and not p.extra.get("top100"))
+                    or (p.employment == "계약직" and not contract_ok(p))):
+                continue
+            found[p.url] = p  # 뒤 날짜 보관본이 덮어씀 (최신 정보)
+    out = []
+    for p in sorted(found.values(), key=lambda p: p.deadline_date):
+        if not is_dup(p, out):
+            out.append(p)
+    return out
+
+
+CAL_HIDE_RE = re.compile(r"안전\s*인증|인증\s*엔지니어|시험\s*엔지니어|시험원|안전성\s*평가|안전\s*평가|제품\s*안전|Product\s*Safety", re.I)
+
+
+def cal_hidden(p):
+    """달력에서 빼는 공고: LinkedIn 공고, 제품 안전인증 직무 (사용자 요청 2026-10-06, 원래 ⚡ 루틴이 게시본에서 지우던 것)."""
+    return "linkedin.com" in (p.url or "") or bool(CAL_HIDE_RE.search(p.title or ""))
+
+
+def render_calendar_page(postings, now):
+    """채용 달력만 담은 완전한 HTML 한 파일 (briefings/calendar.html, 사용자 요청 2026-10-21)."""
+    today = now.date()
+    cal = render_calendar(postings, today)
+    page = (f'<title>안전관리자 채용 달력</title>\n'
+            '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
+            '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap">\n'
+            f'<style>{HTML_CSS}\n.calpage{{max-width:1200px;margin:0 auto;padding-block:20px 40px;'
+            'padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}'
+            '.calpage .sub{color:var(--caption);font-size:13px;margin:4px 0 14px}</style>\n'
+            f'<div class="calpage"><h1 style="margin:0">안전관리자 채용 달력</h1>'
+            f'<p class="sub">{now:%Y-%m-%d %H:%M} KST 수집 · 업체명을 누르면 공고가 열립니다 · '
+            f'<a href="https://claude.ai/artifact/8vwqioKkr5ADyBJnbVDQZA" target="_blank" rel="noopener">전체 브리핑</a></p>{cal}</div>')
+    return ('<!doctype html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n'
+            '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
+            + page.replace("</style>", "</style>\n</head>\n<body>", 1) + "\n</body>\n</html>\n")
+
+
+def render_calendar(postings, today, months=2, show=5, closed=None):
+    """접수기한 달력: 지난주 일요일부터 2개월 뒤까지, 주 단위. 지난 날짜(마감)는 흐리게, 달은 배경색으로 약하게 구분.
+    업체명을 누르면 공고로 이동."""
     e = html.escape
+    closed = CLOSED_RECENT if closed is None else closed
     end_m, end_y = today.month + months, today.year
     while end_m > 12:
         end_m, end_y = end_m - 12, end_y + 1
     end = safe_date(end_y, end_m, min(today.day, 28)) or today + dt.timedelta(days=61)
     by_day = collections.defaultdict(list)
+    postings = [p for p in postings if not cal_hidden(p)]
+    closed = [p for p in closed if not cal_hidden(p)]
     for p in postings:
         if p.deadline_date and calendar_eligible(p):
             d = dt.date.fromisoformat(p.deadline_date)
             if today <= d <= end:
                 by_day[d].append(p)
-    start = today - dt.timedelta(days=(today.weekday() + 1) % 7)  # 일요일 시작
+    start = cal_start(today)  # 지난주 일요일 시작
+    n_closed = 0
+    for p in closed:
+        d = dt.date.fromisoformat(p.deadline_date)
+        if start <= d < today:
+            by_day[d].append(p)
+            n_closed += 1
     last = end + dt.timedelta(days=(5 - end.weekday()) % 7)        # 토요일 끝
     wd = "".join(f'<div class="wd{" sun" if i == 0 else ""}">{w}</div>' for i, w in enumerate("일월화수목금토"))
     cells = []
     d = start
     while d <= last:
         items = sorted(by_day.get(d, []), key=lambda p: ({"A": 0, "B": 1, "F": 2}.get(p.hilite, 3 if not p.prefs else 2.5), p.company))
-        cls = ["day"]
-        if d < today or d > end:
+        cls = ["day", f"m{d.month % 2}"]  # 달마다 배경을 번갈아 약하게
+        if d > end:
             cls.append("out")
+        if d < today:
+            cls.append("past")
+        if d.day == 1:
+            cls.append("mstart")
         if not items:
             cls.append("empty")
         if d == today:
             cls.append("today")
-        if items and (d - today).days <= 3:
+        if items and 0 <= (d - today).days <= 3:
             cls.append("soon")
         if d.weekday() == 6:
             cls.append("sun")
@@ -1455,8 +2589,11 @@ def render_calendar(postings, today, months=2, show=5):
                 tags += f'<i class="tg k" title="{e(p.extra["listed"])} 상장">{ab}</i>'
             if p.extra.get("ai"):
                 tags += '<i class="tg ai" title="AI 우대">AI</i>'
-            if is_new(p, today):
-                tags += '<i class="tg n" title="지난 보고 이후 신규">N</i>'
+            if is_new(p, today) and d >= today:
+                tags += '<i class="tg n" title="오늘 새로 찾은 공고">N</i>'
+            if d < today:
+                c += " closed"
+                tip += " · 마감"
             return (f'<a class="{c}" href="{e(p.url)}" target="_blank" rel="noopener" title="{e(tip)}">'
                     f'<span>{e(p.company or p.title)}</span>{tags}</a>')
         body = "".join(ev(p) for p in items[:show])
@@ -1468,14 +2605,24 @@ def render_calendar(postings, today, months=2, show=5):
         mo2 = f'<span class="mo2">{d.month}월 </span>'
         cells.append(f'<div class="{" ".join(cls)}"><div class="dn"><span>{mo}{mo2}{d.day}일{wdn}</span>{cnt}</div>{body}</div>')
         d += dt.timedelta(days=1)
-    n = sum(len(v) for v in by_day.values())
-    return (f'<section class="card" id="calendar"><div class="cal-head"><h2>채용 달력<span class="n">{n}건</span></h2>'
-            f'<span class="range">{today:%Y-%m-%d} ~ {end:%Y-%m-%d} 접수 마감 · 대기업 계열·외국계·코스피/코스닥 상장·데이터센터/반도체 관련만</span></div>'
+    n = sum(len(v) for v in by_day.values()) - n_closed
+    return (f'<section class="card" id="calendar"><div class="cal-head"><h2>채용 달력<span class="n">접수 중 {n}건 · 지난주부터 마감 {n_closed}건</span></h2>'
+            f'<span class="range">{start:%Y-%m-%d} ~ {end:%Y-%m-%d} 접수 마감 · 지난 날짜(마감)는 흐리게 · 대기업 계열·외국계·코스피/코스닥 상장·데이터센터/반도체 관련만</span></div>'
             '<div class="cal-legend"><span class="la">데이터센터·하이테크·삼성·하이닉스</span><span class="lb">대기업 계열</span><span class="lf">외국계</span>'
-            '<span class="lp">외국어·NEBOSH·IOSH·CSP 우대</span><span>상장사·반도체 관련</span>'
+            '<span class="lp">외국어·NEBOSH·IOSH·CSP 우대</span><span>상장사·반도체 관련</span><span class="lc"><s>흐린 취소선</s> 마감</span>'
             '<em class="tgl"><i class="tg b">대</i> 대기업 계열 <i class="tg f">외</i> 외국계 '
             '<i class="tg k">KS</i> 코스피 <i class="tg k">KQ</i> 코스닥 <i class="tg ai">AI</i> AI 우대 <i class="tg n">N</i> 신규</em></div>'
             f'<div class="cal">{wd}{"".join(cells)}</div></section>')
+
+
+PICK_TH = '<th class="pickcell"><input type="checkbox" class="pickall" aria-label="전체 선택"></th>'
+
+
+def xsel(p):
+    """맨 왼쪽 선택 칸 (체크 → 선택 삭제 → 제외 확정 시 다음 리포트부터 제외)."""
+    e = html.escape
+    return (f'<td class="pickcell"><input type="checkbox" class="xsel" data-url="{e(p.url)}" data-company="{e(p.company)}" '
+            f'data-title="{e(p.title)}" aria-label="{e((p.company or "") + " 선택")}"></td>')
 
 
 def new_pill(p, today):
@@ -1485,6 +2632,11 @@ def new_pill(p, today):
 def group_pills(p):
     cls = {"대기업 계열": "pb", "외국계": "pf"}
     out = "".join(f'<span class="pill {cls[g]}">{g}</span>' for g in p.extra.get("groups", []))
+    if is_bigtech(p):
+        out += '<span class="pill pb">빅테크</span>'
+    if p.extra.get("overseas") or OVERSEAS_TITLE_RE.search(p.title):
+        loc = p.extra.get("loc", "") if p.extra.get("overseas") else ""
+        out += f'<span class="pill pf" title="{html.escape(loc)}">해외 근무{(" · " + html.escape(loc[:24])) if loc else ""}</span>'
     if p.extra.get("listed"):
         out += f'<span class="pill pk">{p.extra["listed"]} 상장</span>'
     return out
@@ -1493,6 +2645,64 @@ def group_pills(p):
 def rank_pill(p):
     r = p.extra.get("top100")
     return f'<span class="pill">시평 {r}위</span>' if p.industry == "건설" and r else ""
+
+
+# 복지 표시: 공고 본문에 명시된 경우만 (자녀학자금 · 노조 · 주택지원 · 기숙사)
+BENEFIT_RES = [
+    ("자녀학자금", re.compile(r"자녀\s*(?:대학\s*|중\s*[·,]?\s*고\s*등?\s*)?(?:학자금|학비|교육비|교육\s*지원|장학금?|등록금)|학자금\s*(?:지원|보조|대출|지급)?|"
+                         r"학비\s*(?:지원|보조)|(?:대학\s*)?등록금\s*지원|장학금\s*지원|유치원\s*(?:비|학비)\s*지원|(?:중|고|대)\s*학\s*자녀")),
+    ("노조", re.compile(r"노동\s*조합|노조(?!\s*(?:없|미가입))|노사\s*협의회?\s*(?:및|/)?\s*노조")),
+    ("주택지원", re.compile(r"주택\s*(?:자금|구입|지원|대출|임차|융자)|주거\s*(?:비\s*)?지원|주거\s*안정|주거비|사택|관사|전세\s*(?:자금|대출|지원|보증)|"
+                        r"임차\s*(?:보증금|지원)|월세\s*지원|사원\s*(?:아파트|임대)|이주\s*(?:비|정착)\s*지원")),
+    ("기숙사", re.compile(r"기숙사|숙소\s*(?:제공|지원|운영|무상)|숙식\s*(?:제공|지원)|합숙소|원룸\s*(?:제공|지원)|숙박\s*(?:시설\s*)?(?:제공|지원)")),
+]
+BNF_V = 4  # 복지 판정 규칙 버전 — 올라가면 이전 수집 공고도 본문 전체를 다시 읽어 판정한다
+
+
+def benefits_of(text):
+    return [lab for lab, rx in BENEFIT_RES if rx.search(text or "")]
+
+
+# 공고에 복지가 안 적힌 회사는 인터넷으로 조사한 결과를 쓴다 (safety_jobs/benefits_web.json)
+BENEFITS_WEB_PATH = Path(__file__).with_name("benefits_web.json")
+BENEFITS_WEB: dict = {}
+
+
+def load_benefits_web():
+    try:
+        items = json.loads(BENEFITS_WEB_PATH.read_text(encoding="utf-8")).get("items", [])
+    except (OSError, ValueError):
+        return 0
+    for it in items:
+        labs = [x for x in it.get("labels", []) if x in dict(BENEFIT_RES)]
+        if it.get("company") and labs:
+            BENEFITS_WEB[norm_company(it["company"])] = {"labels": labs, "evidence": it.get("evidence", {}), "source": it.get("source", "")}
+    return len(BENEFITS_WEB)
+
+
+def web_benefits(p):
+    """공고에 없는 복지 중 인터넷 조사로 확인한 것: (라벨 목록, 근거, 출처)."""
+    w = BENEFITS_WEB.get(norm_company(p.company))
+    if not w:
+        return [], {}, ""
+    have = set(p.extra.get("benefits") or [])
+    return [x for x in w["labels"] if x not in have], w["evidence"], w["source"]
+
+
+def has_benefit(p):
+    return bool(p.extra.get("benefits") or web_benefits(p)[0])
+
+
+def benefit_pills(p):
+    e = html.escape
+    b = p.extra.get("benefits") or []
+    out = "".join(f'<span class="pill pw" title="공고에 명시">{x}</span>' for x in b)
+    wl, ev, src = web_benefits(p)
+    for x in wl:
+        tip = f"인터넷 조사: {ev.get(x, '')}".strip()
+        pill = f'<span class="pill pw web" title="{e(tip)}">{x}</span>'
+        out += f'<a class="bnfsrc" href="{e(src)}" target="_blank" rel="noopener">{pill}</a>' if src else pill
+    return f'<span class="bnf">{out}</span>' if out else ""
 
 
 def ai_pill(p):
@@ -1509,6 +2719,30 @@ def cert_pills(p):
     return "".join(f'<span class="pill pc">{html.escape(c)} 명시</span> ' for c in p.certs)
 
 
+COMPANY_CSN: dict = {}  # 업체명(정규화) → 사람인 기업정보 csn (이번·이전 수집에서 모은 값)
+
+
+def company_info_url(p):
+    csn = p.extra.get("csn") or COMPANY_CSN.get(norm_company(p.company or ""))
+    if csn:
+        return f"https://www.saramin.co.kr/zf_user/company-info/view?csn={csn}"
+    name = re.sub(r"\(주\)|㈜|주식회사|\(유\)|\(재\)|\(사\)", "", p.company or "").strip()
+    return f"https://www.saramin.co.kr/zf_user/search/company?searchword={quote(name)}" if name else ""
+
+
+ARCHIVE_KEEP_DAYS = 3  # 오늘 포함 최근 3일치 사본만 남긴다 (사용자 요청 2026-10-18)
+ARCHIVE_DATES: list = []  # 날짜별 브리핑 보관본 (briefings/archive/briefing_YYYY-MM-DD.html) — 최신이 앞
+
+
+def archive_nav(today):
+    """이전 브리핑 링크. 아티팩트에 같은 이름(briefing_날짜.html)의 파일로 함께 올린다 (사용자 요청 2026-10-18)."""
+    ds = [d for d in ARCHIVE_DATES if d < today.isoformat()][:ARCHIVE_KEEP_DAYS - 1]
+    if not ds:
+        return ""
+    links = " ".join(f'<a href="briefing_{d}.html">{d[5:7]}/{d[8:]}</a>' for d in ds)
+    return f'<nav class="archive" aria-label="이전 브리핑"><b>이전 브리핑</b> {links}</nav>'
+
+
 def render_html(postings, failures, now, stats):
     e = html.escape
     today = now.date()
@@ -1517,8 +2751,8 @@ def render_html(postings, failures, now, stats):
         return (dt.date.fromisoformat(p.deadline_date) - today).days if p.deadline_date else None
 
     soon = {id(p) for p in postings if days_left(p) is not None and days_left(p) <= 3}
-    groups = [(key, tag, sorted([p for p in postings if p.employment == key], key=sort_key)) for key, tag in GROUPS]
-    groups = [g for g in groups if g[2]]
+    postings_all = postings  # 직무 확인 필요 공고도 고용형태 묶음에 표시와 함께 싣는다
+    groups = employment_groups(postings, today)
     sid = {"정규직": "regular", "계약직": "contract", "인턴": "intern"}
     n_a = sum(p.hilite == "A" for p in postings)
     n_b = sum("대기업 계열" in p.extra.get("groups", []) for p in postings)
@@ -1536,26 +2770,56 @@ def render_html(postings, failures, now, stats):
     else:
         dv = len(postings) - PREV_TOTAL
         delta_txt = f"직전 대비 {'▲' if dv > 0 else '▼' if dv < 0 else '–'}{abs(dv) if dv else ''} (경력직·마감 제외)"
-    def kpi(label, value, sub="", dot=""):
+    def kpi(label, value, sub="", dot="", key="", subt=""):
         d = f'<span class="dot" style="background:var({dot})"></span>' if dot else ""
-        return f'<div class="kpi"><span class="l">{d}{e(label)}</span><span class="v">{value}</span><span class="s">{e(sub)}</span></div>'
-    by = {k: len(r) for k, _, r in groups}
+        dk = f' data-k="{key}"' if key else ""
+        ds = f' data-sub="{e(subt)}"' if subt else ""
+        return f'<div class="kpi"><span class="l">{d}{e(label)}</span><span class="v"{dk}>{value}</span><span class="s"{ds}>{e(sub)}</span></div>'
+    # 공고별 KPI 해당 여부 — 페이지에서 공고를 삭제하면 숫자를 다시 센다
+    flags = []
+    for p in postings:
+        g = group_key(p)
+        f = ["all"]
+        f += ["new"] if is_new(p, today) else []
+        f += ["reg"] if g == "정규직" else []
+        f += ["con"] if g == "계약직" else []
+        f += ["ind"] if p.industry == "일반 산업" else []
+        f += ["cert"] if p.certs else []
+        f += ["pref"] if p.prefs else []
+        f += ["bnf"] if has_benefit(p) else []
+        f += ["bnfp"] if p.extra.get("benefits") else []
+        f += ["ai"] if p.extra.get("ai") else []
+        f += ["soon"] if id(p) in soon else []
+        f += ["a"] if p.hilite == "A" else []
+        f += ["b"] if "대기업 계열" in p.extra.get("groups", []) else []
+        f += ["f"] if "외국계" in p.extra.get("groups", []) else []
+        f += ["fch"] if p.source in ("피플앤잡", "기업 채용 페이지") else []
+        f += ["ks"] if p.extra.get("listed") == "코스피" else []
+        f += ["kq"] if p.extra.get("listed") == "코스닥" else []
+        flags.append({"u": p.url, "k": f})
+    cnt = collections.Counter(k for x in flags for k in x["k"])
+    tot = max(len(postings), 1)
     kpis = "".join([
-        kpi("전체 공고", len(postings), delta_txt),
-        kpi("신규", n_new, f"지난 보고({last_report_date(today):%m/%d}) 이후 추가", "--success"),
-        kpi("정규직", by.get("정규직", 0), f"{by.get('정규직', 0) * 100 // max(len(postings), 1)}%"),
-        kpi("계약직", by.get("계약직", 0), f"{by.get('계약직', 0) * 100 // max(len(postings), 1)}%"),
-        kpi("일반 산업체", sum(p.industry == "일반 산업" for p in postings), "건설 외 제조·서비스 등"),
-        kpi("산업·건설안전기사·ISO 45001 명시", sum(bool(p.certs) for p in postings), "공고에 자격·인증 기재"),
-        kpi("외국어·NEBOSH·IOSH·CSP 우대", sum(bool(p.prefs) for p in postings), "우대 조건 기재", "--purple"),
-        kpi("AI 우대", sum(bool(p.extra.get("ai")) for p in postings), "우대 조건에 AI 역량", "--orange"),
-        kpi("3일 내 마감", len(soon), "접수 서두름", "--error"),
-        kpi("데이터센터·하이테크·삼성·하이닉스", n_a, "집중 관심", "--error"),
-        kpi("대기업 계열", n_b, "그룹 계열사", "--primary"),
-        kpi("외국계", n_f, "외국계 기업", "--sky"),
-        kpi("외국계 채널", sum(p.source in ("피플앤잡", "기업 채용 페이지") for p in postings), "피플앤잡·기업 채용 페이지", "--sky"),
-        kpi("코스피·코스닥 상장", n_ks + n_kq, f"코스피 {n_ks} · 코스닥 {n_kq}", "--text-strong"),
+        kpi("전체 공고", len(postings), delta_txt, key="all"),
+        kpi("신규", cnt["new"], f"오늘({today:%m/%d}) 새로 찾음", "--success", key="new"),
+        kpi("정규직", cnt["reg"], f"{cnt['reg'] * 100 // tot}%", key="reg", subt="{reg%}"),
+        kpi("계약직", cnt["con"], f"{cnt['con'] * 100 // tot}%", key="con", subt="{con%}"),
+        kpi("일반 산업체", cnt["ind"], "건설 외 제조·서비스 등", key="ind"),
+        kpi("산업·건설안전기사·ISO 45001 명시", cnt["cert"], "공고에 자격·인증 기재", key="cert"),
+        kpi("외국어·NEBOSH·IOSH·CSP 우대", cnt["pref"], "우대 조건 기재", "--purple", key="pref"),
+        kpi("복지 확인", cnt["bnf"], f"공고 명시 {cnt['bnfp']} · 인터넷 조사 점선", "--warning", key="bnf",
+            subt="공고 명시 {bnfp} · 인터넷 조사 점선"),
+        kpi("AI 우대", cnt["ai"], "우대 조건에 AI 역량", "--orange", key="ai"),
+        kpi("3일 내 마감", cnt["soon"], "접수 서두름", "--error", key="soon"),
+        kpi("데이터센터·하이테크·삼성·하이닉스", cnt["a"], "집중 관심", "--error", key="a"),
+        kpi("대기업 계열", cnt["b"], "그룹 계열사", "--primary", key="b"),
+        kpi("외국계", cnt["f"], "외국계 기업", "--sky", key="f"),
+        kpi("외국계 채널", cnt["fch"], "피플앤잡·기업 채용 페이지", "--sky", key="fch"),
+        kpi("코스피·코스닥 상장", cnt["ks"] + cnt["kq"], f"코스피 {cnt['ks']} · 코스닥 {cnt['kq']}", "--text-strong", key="ks+kq",
+            subt="코스피 {ks} · 코스닥 {kq}"),
     ])
+    kpi_json = json.dumps(flags, ensure_ascii=False).replace("</", "<\\/")
+    kpis += f'<script type="application/json" id="kpi-data">{kpi_json}</script>'
 
     # 막대 차트(단일 계열, primary 한 색)
     def bars(items, cls=lambda k: ""):
@@ -1591,8 +2855,8 @@ def render_html(postings, failures, now, stats):
         agg.update(parse_stat(v))
     total = agg.get("목록", 0)
     steps = [("수집 목록", total, "")]
-    for lab, keys in (("안전 직무 외", ["안전 직무 아님", "채용 공고 아님"]), ("경력직·대리급 이상", ["경력직", "대리급 이상"]),
-                      ("대상 기준 외", ["건설사(시평 100위 밖)", "계약직(관심 기업 외)", "영업직", "감시단", "한국 근무 아님"]),
+    for lab, keys in (("안전 직무 외", ["안전 직무 아님", "담당 업무에 안전 없음", "채용 공고 아님"]), ("경력직·대리급 이상", ["경력직", "대리급 이상"]),
+                      ("대상 기준 외", ["건설사(시평 100위 밖)", "계약직(관심 기업 외)", "영업직", "다른 직무(배차·방사선·소방안전)", "감시단", "한국 근무 아님"]),
                       ("마감·오래된 글", ["마감", "오래된 게시글"]), ("중복", ["중복(상위 사이트 우선)"])):
         c = sum(agg.get(k, 0) for k in keys)
         if c:
@@ -1604,6 +2868,28 @@ def render_html(postings, failures, now, stats):
     arrow = '<span class="arrow" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>'
     flow = arrow.join(f'<div class="step {c}"><span class="l">{e(l)}</span><span class="v">{v}</span></div>' for l, v, c in steps)
 
+    def sal_small(p):
+        st = p.extra.get("starter", "")
+        link = (f'<a class="starter" href="{e(p.extra.get("starter_url", ""))}" target="_blank" rel="noopener">{e(st)}</a>' if st else "")
+        return f'<small class="sal">{e(salary_of(p))}</small>' + (f'<small class="sal">{link}</small>' if link else "")
+
+    def co_link(p):  # 업체명을 누르면 사람인 기업정보(없으면 사람인 기업 검색)가 열린다 (사용자 요청 2026-10-20)
+        u = company_info_url(p)
+        if not u:
+            return e(p.company or "-")
+        return f'<a class="co" href="{e(u)}" target="_blank" rel="noopener" title="기업정보 보기">{e(p.company or "-")}</a>'
+
+    def ttl_link(p):  # 공고명을 누르면 채용 사이트의 공고가 새 탭으로 열린다
+        if not href(p):
+            return e(p.title)
+        return f'<a class="tl" href="{e(p.url)}" target="_blank" rel="noopener" title="채용 사이트에서 공고 열기">{e(p.title)}</a>'
+
+    def src_link(p):
+        via = f'<small>{e(p.extra["via"])}</small>' if p.extra.get("via") else ""
+        if not href(p):
+            return e(p.source) + via
+        return f'<a href="{e(p.url)}" target="_blank" rel="noopener">{e(p.source)}</a>' + via
+
     # 공고 표
     pill = {"A": '<span class="pill pa">데이터센터·하이테크·삼성·하이닉스</span>', "B": "", "F": "", "": ""}
     secs, nav = [], []
@@ -1611,17 +2897,17 @@ def render_html(postings, failures, now, stats):
         i = sid.get(key, "other")
         nav.append((i, tag, len(rows)))
         trs = "".join(
-            f'<tr class="h{p.hilite}" data-ind="{e(p.industry)}" data-cert="{1 if p.certs else 0}" data-pref="{1 if p.prefs else 0}" data-ai="{1 if p.extra.get("ai") else 0}" data-grp="{e(" ".join(p.extra.get("groups", [])))}" data-listed="{e(p.extra.get("listed", ""))}" data-new="{1 if is_new(p, today) else 0}"><td class="lv">{e(p.level)}<small>{e(p.industry)}</small></td>'
-            f'<td class="corp"><strong><a class="co" href="{e(p.url)}" target="_blank" rel="noopener">{e(p.company or "-")}</a></strong>{new_pill(p, today)}{pill[p.hilite]}{group_pills(p)}{rank_pill(p)}</td>'
-            f"<td class=\"ttl\">{e(p.title)}{pref_pills(p)}{ai_pill(p)}</td><td>{cert_pills(p)}{e(p.qualification or '-')}</td><td>{e(p.preferred or '-')}</td>"
+            f'<tr class="h{p.hilite}" data-url="{e(p.url)}" data-ind="{e(p.industry)}" data-cert="{1 if p.certs else 0}" data-pref="{1 if p.prefs else 0}" data-ai="{1 if p.extra.get("ai") else 0}" data-grp="{e(" ".join(p.extra.get("groups", [])))}" data-listed="{e(p.extra.get("listed", ""))}" data-new="{1 if is_new(p, today) else 0}" data-bnf="{1 if has_benefit(p) else 0}">{xsel(p)}<td class="lv">{e(p.level)}<small>{e(p.industry)}</small>{sal_small(p)}</td>'
+            f'<td class="corp"><strong>{co_link(p)}</strong>{new_pill(p, today)}{big_pill(p)}{pill[p.hilite]}{group_pills(p)}{rank_pill(p)}</td>'
+            f"<td class=\"ttl\">{ttl_link(p)}{check_pill(p)}{memo_html(p)}{pref_pills(p)}{ai_pill(p)}{benefit_pills(p)}</td><td>{cert_pills(p)}{e(p.qualification or '-')}</td><td>{e(p.preferred or '-')}</td>"
             f'<td class="dl{" soon" if id(p) in soon else ""}">{e(p.deadline)}</td>'
-            f'<td class="src"><a href="{e(p.url)}" target="_blank" rel="noopener">{e(p.source)}</a>'
+            f'<td class="src">{src_link(p)}'
             f'{"<small>이전 수집</small>" if p.extra.get("carried") else ""}</td></tr>'
             for p in rows)
         secs.append(
             f'<section class="card grp" id="{i}"><h2>{e(tag)}<span class="n">{len(rows)}건</span></h2>'
             '<p class="empty" hidden>조건에 맞는 공고가 없습니다.</p>'
-            '<div class="scroll"><table><thead><tr><th>구분</th><th>업체명</th><th>공고명</th>'
+            '<div class="scroll"><table class="t7"><thead><tr>' + PICK_TH + '<th>구분 · 연봉</th><th>업체명</th><th>공고명</th>'
             "<th>지원 자격 (학과·자격·영어·학력)</th><th>우대 사항</th><th>접수기한</th><th>출처</th></tr></thead>"
             f"<tbody>{trs}</tbody></table></div></section>")
 
@@ -1653,14 +2939,15 @@ def render_html(postings, failures, now, stats):
     careers = ('<section class="card" id="careers"><h2>기업 채용 페이지 현황<span class="n">한국 근무 HSE·EHS·Safety 공고 기준</span></h2>'
                '<div class="scroll"><table style="min-width:560px"><thead><tr><th>기업</th><th>상태</th><th>한국 HSE 공고</th><th>비고</th></tr></thead>'
                f'<tbody>{"".join(crows)}</tbody></table></div></section>') if crows else ""
-    nrows = "".join(
-        f'<tr class="h{p.hilite}"><td class="corp"><strong><a class="co" href="{e(p.url)}" target="_blank" rel="noopener">{e(p.company or "-")}</a></strong>'
-        f'{group_pills(p)}</td><td>{e(p.title)}</td><td class="lv">{e(p.employment)}<small>{e(p.level)}</small></td>'
-        f'<td class="dl{" soon" if id(p) in soon else ""}">{e(p.deadline)}</td><td class="src"><a href="{e(p.url)}" target="_blank" rel="noopener">{e(p.source)}</a></td></tr>'
-        for p in new_rows)
-    newsec = (f'<section class="card" id="new"><h2>신규 공고<span class="n">{n_new}건 · 지난 보고({last_report_date(today):%m/%d}) 이후 추가</span></h2>'
-              + ('<div class="scroll"><table style="min-width:720px"><thead><tr><th>업체명</th><th>공고명</th><th>고용형태</th><th>접수기한</th><th>출처</th></tr></thead>'
-                 f'<tbody>{nrows}</tbody></table></div>' if new_rows else '<p class="empty">새로 추가된 공고가 없습니다.</p>')
+    def rows5(rows, pill_new=False):
+        return "".join(
+            f'<tr class="h{p.hilite}" data-url="{e(p.url)}">{xsel(p)}<td class="corp"><strong>{co_link(p)}</strong>'
+            f'{new_pill(p, today) if pill_new else ""}{big_pill(p)}{group_pills(p)}</td><td class="ttl">{ttl_link(p)}{check_pill(p)}{memo_html(p)}{benefit_pills(p)}</td><td class="lv">{e(p.employment)}<small>{e(p.level)}</small>{sal_small(p)}</td>'
+            f'<td class="dl{" soon" if id(p) in soon else ""}">{e(p.deadline)}</td><td class="src">{src_link(p)}</td></tr>'
+            for p in rows)
+    head5 = '<div class="scroll"><table class="t5"><thead><tr>' + PICK_TH + '<th>업체명</th><th>공고명</th><th>고용형태 · 연봉</th><th>접수기한</th><th>출처</th></tr></thead>'
+    newsec = (f'<section class="card" id="new"><h2>신규 공고<span class="n">{n_new}건 · 오늘({today:%m/%d}) 새로 찾음 · 삭제하지 않으면 내일 정규직·계약직 등으로 이동</span></h2>'
+              + (f'{head5}<tbody>{rows5(new_rows)}</tbody></table></div>' if new_rows else '<p class="empty">새로 추가된 공고가 없습니다.</p>')
               + '</section>')
     side = ('<div class="sec">요약</div><a href="#new">신규 공고 <b>' + str(n_new) + '</b></a><a href="#summary">지표·차트</a><a href="#calendar">채용 달력</a><a href="#flow">수집 흐름</a>'
             '<div class="sec">공고</div>' + "".join(f'<a href="#{i}">{e(t)} <b>{c}</b></a>' for i, t, c in nav)
@@ -1676,10 +2963,18 @@ def render_html(postings, failures, now, stats):
 <header class="top"><h1>안전관리자 채용 브리핑</h1>
   <span class="when">{now:%Y-%m-%d %H:%M} KST 수집</span>
   <span class="pill {'ok' if not failed else 'keep'} chip">{ok_sites}/{len(SOURCES)} 사이트 수집</span>
+  <div class="xbar" role="group" aria-label="선택 공고 삭제">
+    <span id="x-msg" class="xmsg" role="status">체크한 공고는 이 목록에서 빠지고 다음 리포트부터 제외됩니다.</span>
+    <button type="button" id="x-del" class="danger solid" disabled>선택 삭제</button>
+    <span id="x-confirm" class="xgrp" role="group" aria-label="제외 확인" hidden><button type="button" id="x-yes" class="danger solid">제외 확정</button> <button type="button" id="x-no">취소</button></span>
+    <details id="x-list" class="xlist"><summary>제외한 공고 <b id="x-cnt">0</b>건 · 되돌리기</summary><ul id="x-items"></ul></details>
+  </div>
   <div class="edit-bar" data-key="brief-{now:%Y%m%d%H%M}">
     <button type="button" id="edit-toggle" aria-pressed="false">편집</button>
     <button type="button" id="edit-save" hidden>저장</button>
     <button type="button" id="edit-reset" hidden>원래대로</button>
+    <button type="button" id="edit-file" title="편집한 내용을 HTML 파일로 내려받기">파일로 저장</button>
+    <button type="button" id="print-a4" title="A4 세로로 인쇄·PDF 저장">A4 인쇄</button>
     <span id="edit-msg" role="status"></span>
   <button type="button" class="icon-btn" id="theme-toggle" aria-label="라이트/다크 테마 전환" title="테마 전환">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
@@ -1688,9 +2983,10 @@ def render_html(postings, failures, now, stats):
 <nav class="side" aria-label="섹션">{side}</nav>
 <main>
 <nav class="chipnav" aria-label="섹션">{chipnav}<a href="#status">사이트 현황</a></nav>
+{archive_nav(today)}
 <div class="kpis" id="summary">{kpis}</div>
 {newsec}
-{render_calendar(postings, today)}
+{render_calendar(postings_all, today)}
 <div class="charts">{charts}</div>
 <div class="card" id="flow"><h2>수집에서 채택까지</h2><div class="flow">{flow}</div></div>
 <div class="card tools" role="search">
@@ -1708,6 +3004,8 @@ def render_html(postings, failures, now, stats):
     <button type="button" data-mode="pref" aria-pressed="false">외국어·NEBOSH·IOSH·CSP 우대</button>
     <button type="button" data-mode="ai" aria-pressed="false">AI 우대</button>
     <button type="button" data-mode="soon" aria-pressed="false">3일 내 마감</button>
+    <button type="button" data-mode="bnf" aria-pressed="false">복지: 학자금·노조·주택·기숙사</button>
+  </div>
   </div></div>
 {''.join(secs)}
 <section class="card" id="status"><h2>사이트별 수집 현황</h2>{status}</section>
@@ -1728,6 +3026,8 @@ def carry_over(prev_path, failed, kept, stats, today):
     접수기한이 남은 공고는 리스트에 남긴다. 마감일이 없는 공고는 처음 수집 후
     UNDATED_KEEP_DAYS 일까지만 유지한다. 지금 규칙(건설사 시평 100위 등)은 다시 적용한다.
     """
+    if BROAD:  # 전체 모드는 매번 새로 수집한다
+        return
     try:
         prev = json.loads(prev_path.read_text(encoding="utf-8"))
     except (OSError, ValueError):
@@ -1739,6 +3039,10 @@ def carry_over(prev_path, failed, kept, stats, today):
             p = Posting(**d)
         except TypeError:  # 이전 형식 필드
             continue
+        if not p.deadline_date and p.deadline:  # 예전 파서가 못 읽은 마감(예: '10.13(화) 마감') 다시 읽기
+            disp, dd = parse_deadline(p.deadline, today)
+            if dd:
+                p.deadline, p.deadline_date = disp, dd.isoformat()
         if p.deadline_date:
             if p.deadline_date < today.isoformat():
                 continue
@@ -1750,12 +3054,27 @@ def carry_over(prev_path, failed, kept, stats, today):
             continue
         if p.industry == "건설" and not p.extra.get("top100"):
             continue
+        if user_excluded(p):  # 브리핑에서 삭제한 공고
+            continue
+        if p.extra.get("overseas") and not CAREERS_OVERSEAS:  # 외국계 해외 근무 공고
+            continue
+        if p.extra.get("manual") and p.url not in manual_urls():  # 직접 추가 목록에서 지운 공고
+            continue
         if senior_rank(p) or NON_HSE_SAFETY_RE.search(p.title):  # 대리급 이상·비HSE 제외 재적용
             continue
+        g = duty_gate(p)  # 담당 업무 기준 재적용
+        if g == "drop":
+            continue
+        if g == "ok":
+            p.extra.pop("needs_check", None)
+            p.extra.pop("check_note", None)
+        elif g == "check" and not p.extra.get("needs_check"):
+            p.extra["needs_check"] = True
+            p.extra["check_note"] = DUTY_CHECK_NOTE
         yrs = [int(m.group(1) or m.group(2)) for m in TITLE_YEARS_RE.finditer(p.title)]
         if yrs and min(yrs) >= 2 and not NEWBIE_RE.search(p.title):
             continue
-        if SALES_RE.search(p.title) or WATCH_RE.search(f"{p.title} {p.detail_text}"):  # 영업직·감시단 제외 재적용
+        if SALES_RE.search(p.title) or other_role(p) or WATCH_RE.search(f"{p.title} {p.detail_text}") or safety_main_reason(p) or not target_company(p):  # 영업직·다른 직무·감시단 제외 재적용
             continue
         if any(q.url == p.url for q in kept) or is_dup(p, kept):
             continue
@@ -1764,6 +3083,8 @@ def carry_over(prev_path, failed, kept, stats, today):
         p.extra["listed"] = listed_market(p)
         if p.employment == "계약직" and not contract_ok(p):  # 계약직은 관심 기업만
             continue
+        if "benefits" not in p.extra:
+            p.extra["benefits"] = benefits_of(f"{p.listing_text} {p.detail_text}")
         if "ai" not in p.extra:
             t = p.detail_text or ""
             p.extra["ai"] = bool(AI_RE.search(section(t, PREF_HEAD, 600)) or AI_NEAR_PREF_RE.search(t))
@@ -1823,8 +3144,13 @@ def listed_market(p: Posting):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="briefings", help="출력 디렉터리")
-    ap.add_argument("--max-detail", type=int, default=500, help="상세 페이지 최대 조회 수")
+    ap.add_argument("--max-detail", type=int, default=1600, help="상세 페이지 최대 조회 수")
+    ap.add_argument("--broad", action="store_true", help="전체 모드: 대기업·상장·시평 제한 없이 신입 가능한 국내 안전 공고 전체")
     args = ap.parse_args()
+    global BROAD
+    BROAD = args.broad
+    if BROAD:
+        KEYWORDS.extend(k for k in BROAD_EXTRA_KEYWORDS if k not in KEYWORDS)
 
     now = dt.datetime.now(KST)
     today = now.date()
@@ -1840,15 +3166,24 @@ def main():
                 PREV_SEEN.setdefault(norm_company(d.get("company", "")) + "|" + norm_title(d.get("title", ""), d.get("company", "")), fs)
     except (OSError, ValueError, KeyError):
         pass
+    load_ocr_cache(Path(args.out) / "ocr_cache.json")
+    if not HAS_TESSERACT:
+        print("[ocr] tesseract 없음 — 이미지 공고 읽기 생략", file=sys.stderr)
+    n_ex = load_excluded()
+    load_benefits_web()  # 인터넷 조사 복지
+    if n_ex:
+        print(f"[excluded] 사용자 삭제 {n_ex}건 적용", file=sys.stderr)
     raw, failures, stats = [], [], {}
+    SOURCE_BUDGET = 1200 if BROAD else 420  # 사이트 하나에 최대 7분(전체 모드 20분) — 느린 사이트가 전체 실행을 막지 않게
     for name, fn, _ in SOURCES:
         for attempt in (1, 2):
+            f.deadline = time.time() + SOURCE_BUDGET
             try:
                 raw.append((name, fn(f)))
                 break
             except Exception as e:  # 사이트 하나가 실패해도 나머지는 계속
                 client_err = isinstance(e, httpx.HTTPStatusError) and e.response.status_code < 500
-                if attempt == 1 and not client_err:
+                if attempt == 1 and not client_err and "시간 한도" not in str(e):
                     time.sleep(30)  # 사이트 단위로 한 번 더
                     continue
                 msg = f"{type(e).__name__}: {e}".splitlines()[0][:160]
@@ -1860,12 +3195,14 @@ def main():
                 stats[name] = "수집 실패"
                 break
 
+    f.deadline = None
+    t_detail_end = time.time() + (50 if BROAD else 22) * 60  # 상세 조회 전체 한도 22분(전체 모드 50분)
     kept, n_detail = [], 0
     for name, found in raw:
         counts = {"목록": len(found), "채택": 0}
         for p in found:
             # 목록 단계에서 명백히 무관한 것은 상세 조회 전에 거른다
-            if p.extra.get("posted") is None and relevant(p) is False:
+            if p.extra.get("posted") is None and not p.extra.get("manual") and relevant(p) is False:
                 counts["안전 직무 아님"] = counts.get("안전 직무 아님", 0) + 1
                 continue
             # 목록에 '경력 n년'만 있는 공고(사람인·워커)는 경력직으로 보고 상세 조회 없이 제외
@@ -1873,23 +3210,33 @@ def main():
             if p.source in ("사람인", "워커", "피플앤잡") and lv.startswith("경력") and not NEWBIE_RE.search(lv):
                 counts["경력직"] = counts.get("경력직", 0) + 1
                 continue
-            if n_detail < args.max_detail:
-                try:
-                    t = fetch_detail(f, p)
-                    if p.extra.get("posted") is not None:  # 게시판: 메뉴 등 사이트 공통부 제거, 본문만
-                        i = t.find(p.title[:12])
-                        t = t[i:] if i >= 0 else t
-                    p.detail_text = t[:15000]
-                    n_detail += 1
-                    time.sleep(0.3)
-                except Exception as e:
-                    print(f"[detail] {p.url}: {e}", file=sys.stderr)
+            must = p.extra.get("user_pick") or p.extra.get("fill_from_detail")  # 사용자가 지정한 공고는 한도와 관계없이 상세를 읽는다
+            if (n_detail < args.max_detail and time.time() < t_detail_end) or (must and not p.url.startswith("manual:")):
+                for attempt in (1, 2):  # 상세 본문이 없으면 자격·우대·복지·연봉을 못 읽으므로 한 번 더 시도
+                    try:
+                        t = fetch_detail(f, p)
+                        if p.extra.get("posted") is not None:  # 게시판: 메뉴 등 사이트 공통부 제거, 본문만
+                            i = t.find(p.title[:12])
+                            t = t[i:] if i >= 0 else t
+                        p.detail_text = t[:15000]
+                        n_detail += 1
+                        time.sleep(0.3)
+                        break
+                    except Exception as e:
+                        print(f"[detail] {p.url}: {e}", file=sys.stderr)
+                        time.sleep(2)
+            elif not p.url.startswith("manual:"):
+                counts["상세 미조회(한도)"] = counts.get("상세 미조회(한도)", 0) + 1
             analyze(p, today)
             ok, why = keep(p, today)
             if not ok:
                 counts[why] = counts.get(why, 0) + 1
                 continue
-            if is_dup(p, kept):
+            q = dup_of(p, kept)
+            if q:
+                if p.extra.get("manual") and p.deadline_date and not q.deadline_date:  # 직접 추가에서 확인한 마감일로 보완
+                    q.deadline, q.deadline_date = p.deadline, p.deadline_date
+                    counts["마감일 보완"] = counts.get("마감일 보완", 0) + 1
                 counts["중복(상위 사이트 우선)"] = counts.get("중복(상위 사이트 우선)", 0) + 1
                 continue
             counts["채택"] += 1
@@ -1897,6 +3244,8 @@ def main():
                                      or p.extra.get("first_seen") or today.isoformat())
             kept.append(p)
         stats[name] = ", ".join(f"{k} {v}" for k, v in counts.items())
+        if name == "사람인 공채 모음" and GONGCHAE_STATUS:
+            stats[name] = " · ".join(GONGCHAE_STATUS.values()) + ", " + stats[name]
 
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
@@ -1906,24 +3255,75 @@ def main():
     except (OSError, ValueError):
         PREV_TOTAL = None
     carry_over(out / "latest.json", [n for n, _ in failures], kept, stats, today)
+    # 본문 없이 실린 공고(이전 수집 포함)는 남은 한도 안에서 상세를 다시 읽어 복지·연봉·자격을 채운다
+    for p in kept:
+        if n_detail >= args.max_detail or time.time() > t_detail_end + 12 * 60:  # 이전 공고 재조회 한도
+            break
+        stale_bnf = p.extra.get("bnf_v") != BNF_V and p.source != "LinkedIn"  # 복지 규칙이 바뀐 뒤 처음 → 본문 전체로 다시 판정
+        no_ocr = HAS_TESSERACT and not p.extra.get("ocr_v") and p.source != "LinkedIn"  # 이미지 읽기 전에 실린 공고는 한 번 다시 읽는다
+        if (len(p.detail_text or "") >= 600 and not stale_bnf and not no_ocr) or p.url.startswith("manual:") or p.extra.get("posted") is not None:
+            continue
+        try:
+            t = fetch_detail(f, p)
+        except Exception as e:
+            print(f"[detail-refill] {p.url}: {e}", file=sys.stderr)
+            continue
+        n_detail += 1
+        if stale_bnf and t:
+            p.extra["benefits"] = benefits_of(f"{p.listing_text} {t}")
+            p.extra["bnf_v"] = BNF_V
+        if len(t) <= len(p.detail_text or ""):
+            continue
+        p.detail_text = t[:15000]
+        p.extra["benefits"] = benefits_of(f"{p.listing_text} {t}")
+        p.extra["bnf_v"] = BNF_V
+        p.extra.pop("salary", None)
+        sal = salary_of(p)
+        p.extra["salary"] = "" if sal == NO_SALARY else sal
+        if not p.qualification or p.qualification == "-":
+            p.qualification = summarize_qual(section(t, QUAL_HEAD), t[:6000])
+        if not p.preferred:
+            pref = section(t, PREF_HEAD, 180)
+            p.preferred = pref[:110] if pref else ""
+        time.sleep(0.3)
     uniq_kept, seen_url = [], set()  # 같은 공고(URL) 중복 방지
     for p in kept:
         if p.url not in seen_url:
             seen_url.add(p.url)
             uniq_kept.append(p)
     kept[:] = uniq_kept
+    load_starter(out / "starter_salary.json")
+    n_look = fill_starter(f, kept, today, out / "starter_salary.json")
+    print(f"[starter] 신규 조회 {n_look}개사, 초봉 확인 {sum(bool(p.extra.get('starter')) for p in kept)}/{len(kept)}건", file=sys.stderr)
+    save_ocr_cache(out / "ocr_cache.json")
+    stats["이미지 공고 읽기"] = (", ".join(f"{k} {v}" for k, v in OCR_STATS.items()) + f" · 이미지 글자를 붙인 공고 {sum(bool(p.extra.get('ocr')) for p in kept)}건"
+                                 if HAS_TESSERACT else "tesseract 없음 — 생략")
     md = render_md(kept, failures, now, stats)
     (out / f"{today:%Y-%m-%d}.md").write_text(md, encoding="utf-8")
     (out / "latest.md").write_text(md, encoding="utf-8")
+    if SR_BNF:
+        stats["사람인"] = stats.get("사람인", "") + ", " + ", ".join(f"복리후생 {k} {v}" for k, v in SR_BNF.items())
+    for p in kept:  # 같은 업체의 다른 공고(잡코리아 등)도 사람인 기업정보로 연결
+        if p.extra.get("csn"):
+            COMPANY_CSN.setdefault(norm_company(p.company or ""), p.extra["csn"])
+    CLOSED_RECENT[:] = load_recent_closed(out / "history", today, kept)  # 달력: 지난주 마감 공고
+    cutoff = (today - dt.timedelta(days=ARCHIVE_KEEP_DAYS - 1)).isoformat()  # 날짜별 사본은 최근 3일만
+    for f in (out / "archive").glob("briefing_*.html"):
+        if f.stem.removeprefix("briefing_") < cutoff:
+            f.unlink()
+    ARCHIVE_DATES[:] = sorted((f.stem.removeprefix("briefing_") for f in (out / "archive").glob("briefing_*.html")), reverse=True)
     page = render_html(kept, failures, now, stats)
     (out / "latest.html").write_text(page, encoding="utf-8")
     # 내려받아 편집기·브라우저에서 고칠 수 있는 완전한 HTML 문서
-    (out / "latest_edit.html").write_text(
-        '<!doctype html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n'
-        '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
-        + page.replace("</style>", "</style>\n</head>\n<body>", 1) + "\n</body>\n</html>\n", encoding="utf-8")
+    full_doc = ('<!doctype html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n'
+                '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
+                + page.replace("</style>", "</style>\n</head>\n<body>", 1) + "\n</body>\n</html>\n")
+    (out / "latest_edit.html").write_text(full_doc, encoding="utf-8")
+    (out / "calendar.html").write_text(render_calendar_page(kept, now), encoding="utf-8")  # 채용 달력 한 파일
+    (out / "archive").mkdir(exist_ok=True)  # 날짜별 보관본: 같은 날 다시 수집하면 그날 파일을 덮어쓴다
+    (out / "archive" / f"briefing_{today:%Y-%m-%d}.html").write_text(full_doc, encoding="utf-8")
     for p in kept:
-        p.detail_text = p.detail_text[:1500]
+        p.detail_text = p.detail_text[: 6000 if BROAD else 1500]  # 전체 모드는 자격요건·우대를 다시 읽을 수 있게 길게 남긴다
     (out / "latest.json").write_text(json.dumps(
         {"generated_at": now.isoformat(), "postings": [asdict(p) for p in kept], "failures": failures, "stats": stats,
          "careers": CAREER_STATUS},
