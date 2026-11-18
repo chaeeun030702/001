@@ -1,0 +1,43 @@
+<title>스킬 zip 패키지</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+/* 한 단 문서형: 요약 → 구성 표 → 참고 */
+:root{--bg:#f6f7f9;--fg:#1d2330;--muted:#5d6676;--line:#d9dde4;--accent:#c4321f;--panel:#ffffff;
+--body:"Noto Sans KR",system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14171d;--fg:#e6e9ef;--muted:#9aa3b2;--line:#2c323d;--accent:#ff7a63;--panel:#1b1f27;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#14171d;--fg:#e6e9ef;--muted:#9aa3b2;--line:#2c323d;--accent:#ff7a63;--panel:#1b1f27;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.65}
+main{max-width:720px;margin:0 auto;padding-block:40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:24px}
+h1{font-size:1.7rem;margin:0;text-wrap:balance}h2{font-size:1.05rem;margin:0 0 8px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:700}
+code{font-family:var(--mono);font-size:.88em}
+.wrap{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:6px}
+table{border-collapse:collapse;width:100%}td,th{padding:10px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+tr:last-child td{border-bottom:0}th{color:var(--muted);font-weight:400;font-size:.85rem;width:30%}
+p,ul{margin:0}ul{padding-left:1.2em}.muted{color:var(--muted)}
+</style>
+<main>
+<header><div class="eyebrow">Claude Skill · ZIP</div><h1>스킬 zip 패키지</h1>
+<p class="muted">GitHub에 공개된 스킬의 md 파일을 받아 그대로 zip으로 묶었습니다. 최신 작업이 위에 있습니다.</p></header>
+<section><h2>xlsx</h2><div class="wrap"><table>
+<tr><th>zip 파일</th><td><code>skills/xlsx.zip</code></td></tr>
+<tr><th>압축 내용</th><td><code>xlsx/SKILL.md</code> (8,584 bytes)<br><code>xlsx/LICENSE.txt</code> (Apache 2.0, SKILL.md가 이 파일을 가리킴)</td></tr>
+<tr><th>원본</th><td><a href="https://github.com/anthropics/skills/tree/main/skills/xlsx">anthropics/skills · skills/xlsx</a></td></tr>
+<tr><th>하는 일</th><td>엑셀(.xlsx·.csv 등)을 열고 고치고 새로 만듭니다. 수식을 쓰고 LibreOffice로 다시 계산해 수식 오류를 검사합니다.</td></tr>
+<tr><th>빠진 파일</th><td><code>scripts/</code> 폴더(<code>recalc.py</code>, office 스키마·검증기)는 넣지 않았습니다. SKILL.md의 재계산 단계는 이 스크립트가 있어야 실행됩니다.</td></tr>
+</table></div></section>
+<h2 style="margin:0">html-to-pdf</h2>
+<section><div class="wrap"><table>
+<tr><th>zip 파일</th><td><code>skills/html-to-pdf.zip</code></td></tr>
+<tr><th>압축 내용</th><td><code>html-to-pdf/SKILL.md</code> (10,389 bytes)</td></tr>
+<tr><th>원본</th><td><a href="https://github.com/aviz85/claude-skills-library/blob/main/skills/html-to-pdf/SKILL.md">aviz85/claude-skills-library · skills/html-to-pdf/SKILL.md</a></td></tr>
+<tr><th>스킬 이름</th><td><code>html-to-pdf</code> v1.0.0</td></tr>
+<tr><th>하는 일</th><td>Puppeteer(Chrome 헤드리스)로 HTML이나 URL을 PDF로 변환합니다. RTL 문서와 웹폰트를 지원하고, 페이지가 넘치면 자동으로 맞춥니다.</td></tr>
+<tr><th>PR</th><td><a href="https://github.com/chaeeun030702/001/pull/110">chaeeun030702/001#110</a> (draft)</td></tr>
+</table></div></section>
+<section><h2>참고</h2><ul>
+<li>SKILL.md는 <code>scripts/html-to-pdf.js</code>를 실행하고 <code>npm install</code>로 의존성을 설치하라고 안내합니다. 이번 zip에는 요청대로 md 파일만 넣었습니다.</li>
+<li>스킬로 실제 변환까지 하려면 원본 저장소의 <code>scripts/</code>와 <code>package.json</code>도 같은 폴더에 넣어야 합니다.</li>
+</ul></section>
+</main>
