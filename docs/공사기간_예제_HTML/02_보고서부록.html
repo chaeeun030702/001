@@ -1,0 +1,715 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>보고서 부록</title>
+<style>
+:root{--ink:#111;--line:#888;--head:#eef2f7;--accent:#1f4e79}
+*{box-sizing:border-box}
+html,body{margin:0;background:#d9dde3;color:var(--ink);
+  font-family:"Malgun Gothic","맑은 고딕","Noto Sans KR","Apple SD Gothic Neo",sans-serif}
+.toolbar{position:sticky;top:0;z-index:9;display:flex;gap:8px;align-items:center;flex-wrap:wrap;
+  padding:8px 16px;background:#24313f;color:#fff;font-size:13px}
+.toolbar b{margin-right:auto}
+.toolbar button{border:0;border-radius:4px;padding:6px 12px;font-size:13px;cursor:pointer;background:#fff;color:#24313f}
+.toolbar .hint{opacity:.75;font-size:12px}
+.page{width:210mm;min-height:297mm;margin:12px auto;padding:20mm 18mm;background:#fff;
+  box-shadow:0 1px 4px rgba(0,0,0,.25);font-size:10pt;line-height:1.55}
+.page[contenteditable=true]:focus{outline:2px solid #6aa0d8;outline-offset:-2px}
+p{margin:0 0 4pt}
+h1{font-size:18pt;color:var(--accent);margin:0 0 10pt;border-bottom:2px solid var(--accent);padding-bottom:4pt}
+h2{font-size:13pt;color:var(--accent);margin:14pt 0 6pt}
+table{border-collapse:collapse;width:100%;margin:4pt 0 10pt;font-size:8.5pt;table-layout:auto}
+th,td{border:1px solid var(--line);padding:2pt 3pt;vertical-align:middle;word-break:keep-all;overflow-wrap:anywhere}
+th{background:var(--head)}
+table.w2{font-size:7pt} table.w3{font-size:5.5pt} table.w3 td,table.w3 th{padding:1pt}
+img{max-width:100%;height:auto}
+.num{text-align:right}
+.sheet{break-before:page} .sheet:first-of-type{break-before:auto}
+.pb{break-before:page}
+@page{size:A4 portrait;margin:15mm 12mm}
+@media print{
+  html,body{background:#fff}
+  .toolbar{display:none}
+  .page{width:auto;min-height:0;margin:0;padding:0;box-shadow:none}
+  tr,img{break-inside:avoid}
+  thead{display:table-header-group}
+}
+</style></head>
+<body>
+<div class="toolbar"><b>보고서 부록</b>
+<span class="hint">본문을 눌러 바로 고칠 수 있습니다 · A4 세로</span>
+<button onclick="toggleEdit(this)">편집 끄기</button>
+<button onclick="saveHtml()">저장(HTML)</button>
+<button onclick="window.print()">인쇄 / PDF</button></div>
+<div class="page" contenteditable="true" spellcheck="false">
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p style="text-align:center"><b><span style="font-size:20pt">대죽공공폐수처리시설 고도개량사업</span></b></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p style="text-align:center"><b><span style="font-size:28pt;color:#1F4E78">공사기간 산정 보고서 부록</span></b></p>
+<p style="text-align:center"><span style="font-size:11pt;color:#555555">(공사기간 산정 기초자료)</span></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p style="text-align:center"><b><span style="font-size:16pt">2026. 11.</span></b></p>
+<p style="text-align:center"><b><span style="font-size:16pt">서산시</span></b></p>
+<p>&nbsp;</p>
+<div class="pb"></div>
+<p style="text-align:center"><b><span style="font-size:16pt">&lt; 목  차 &gt;</span></b></p>
+<p>&nbsp;</p>
+<p><b><span style="font-size:12pt">부록 1. 법정 공휴일수</span></b></p>
+<p><b><span style="font-size:12pt">부록 2. 작업제한 기상조건 및 기상프로필 설정</span></b></p>
+<p><b><span style="font-size:12pt">부록 3. 관측지점 기상조건별 비작업일수 및 월별 산정표</span></b></p>
+<p><b><span style="font-size:12pt">부록 4. 1일 작업량 적용내역</span></b></p>
+<p><b><span style="font-size:12pt">부록 5. 작업일수 산정 세부내역</span></b></p>
+<p><b><span style="font-size:12pt">부록 6. CPM 계산표 (주공정 분석)</span></b></p>
+<p><b><span style="font-size:12pt">부록 7. 공사기간 조정 이력</span></b></p>
+<p><b><span style="font-size:12pt">부록 8. 적정성 검토 산정근거</span></b></p>
+<p><b><span style="font-size:12pt">부록 9. 동절기 공사중지 추가검토</span></b></p>
+<p><b><span style="font-size:12pt">부록 10. 시공조건 명시 항목 예시 (가이드라인 부록6)</span></b></p>
+<p><b><span style="font-size:12pt">부록 11. 검토 작업경과</span></b></p>
+<p>&nbsp;</p>
+<div class="pb"></div>
+<p><b><span style="font-size:13pt;color:#1F4E78">부록 1. 법정 공휴일수</span></b></p>
+<p style="text-align:center"><b><span style="font-size:9.5pt">[표 부록-1]</span></b><b><span style="font-size:10pt">   법정 공휴일수(2026~2035년)</span></b></p>
+<table class="w2"><tr><th><b><span style="font-size:8pt">연도</span></b></th><th><b><span style="font-size:8pt">1월</span></b></th><th><b><span style="font-size:8pt">2월</span></b></th><th><b><span style="font-size:8pt">3월</span></b></th><th><b><span style="font-size:8pt">4월</span></b></th><th><b><span style="font-size:8pt">5월</span></b></th><th><b><span style="font-size:8pt">6월</span></b></th><th><b><span style="font-size:8pt">7월</span></b></th><th><b><span style="font-size:8pt">8월</span></b></th><th><b><span style="font-size:8pt">9월</span></b></th><th><b><span style="font-size:8pt">10월</span></b></th><th><b><span style="font-size:8pt">11월</span></b></th><th><b><span style="font-size:8pt">12월</span></b></th><th><b><span style="font-size:8pt">소계</span></b></th></tr>
+<tr><td><span style="font-size:8pt">69</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:8pt">68</span></td></tr>
+<tr><td><span style="font-size:8pt">68</span></td></tr>
+<tr><td><span style="font-size:8pt">67</span></td></tr>
+<tr><td><span style="font-size:8pt">68</span></td></tr>
+<tr><td><span style="font-size:8pt">68</span></td></tr>
+<tr><td><span style="font-size:8pt">67</span></td></tr>
+<tr><td><span style="font-size:8pt">67</span></td></tr>
+<tr><td><span style="font-size:8pt">68</span></td></tr></table>
+<p>&nbsp;</p>
+<p><span style="font-size:8.5pt;color:#444444">※ 「관공서의 공휴일에 관한 규정」에 따른 공휴일·대체공휴일. 임기만료 선거일 및 수시 지정일은 불규칙하여 제외 (가이드라인 부록1)</span></p>
+<p>&nbsp;</p>
+<div class="pb"></div>
+<p><b><span style="font-size:13pt;color:#1F4E78">부록 2. 작업제한 기상조건 및 기상프로필 설정</span></b></p>
+<p style="text-align:center"><b><span style="font-size:9.5pt">[표 부록-2]</span></b><b><span style="font-size:10pt">   비작업일수 산정을 위한 기상조건 적용 기준(가이드라인 예시)</span></b></p>
+<table class=""><tr><th><b><span style="font-size:8pt">공종</span></b></th><th><b><span style="font-size:8pt">강우</span></b></th><th><b><span style="font-size:8pt">혹서기</span></b></th><th><b><span style="font-size:8pt">동절기</span></b></th><th><b><span style="font-size:8pt">신적설</span></b></th><th><b><span style="font-size:8pt">바람</span></b></th><th><b><span style="font-size:8pt">미세먼지</span></b></th></tr>
+<tr><td><span style="font-size:8pt">PM2.5 보정</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:8pt">PM2.5 보정</span></td></tr></table>
+<p>&nbsp;</p>
+<p style="text-align:center"><b><span style="font-size:9.5pt">[표 부록-3]</span></b><b><span style="font-size:10pt">   주요 작업제한 기상조건(가이드라인 부록2 발췌)</span></b></p>
+<table class=""><tr><th><b><span style="font-size:8pt">작업</span></b></th><th><b><span style="font-size:8pt">작업제한 기상조건</span></b></th><th><b><span style="font-size:8pt">근거</span></b></th></tr>
+<tr><td><span style="font-size:8pt">KCS 14 20 10·40·41</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:8pt">SMCS 11 85 10</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:8pt">KCS 44 50 10</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:8pt">KCS 14 31 40</span></td></tr>
+<tr></tr></table>
+<p>&nbsp;</p>
+<p style="text-align:center"><b><span style="font-size:9.5pt">[표 부록-4]</span></b><b><span style="font-size:10pt">   금회 적용 기상프로필별 기상조건·적용률</span></b></p>
+<table class=""><tr><th><b><span style="font-size:7.5pt">번호</span></b></th><th><b><span style="font-size:7.5pt">기상조건</span></b></th><th><b><span style="font-size:7.5pt">옥외공사</span></b></th><th><b><span style="font-size:7.5pt">구조물공사</span></b></th><th><b><span style="font-size:7.5pt">옥내공사</span></b></th><th><b><span style="font-size:7.5pt">연속작업</span></b></th></tr>
+<tr><td></td></tr>
+<tr></tr>
+<tr><td></td></tr>
+<tr></tr>
+<tr><td></td></tr>
+<tr></tr>
+<tr><td></td></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr></table>
+<p>&nbsp;</p>
+<p style="text-align:center"><b><span style="font-size:9.5pt">[표 부록-5]</span></b><b><span style="font-size:10pt">   기상프로필 적용 공정</span></b></p>
+<table class=""><tr><th><b><span style="font-size:8pt">기상프로필</span></b></th><th><b><span style="font-size:8pt">설명</span></b></th><th><b><span style="font-size:8pt">적용 공정</span></b></th></tr>
+<tr><td><span style="font-size:8pt">C10, C20, C25, C30, C50, C70, C65, C80, C90</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:8pt">B10, M10, E10</span></td></tr>
+<tr></tr></table>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<div class="pb"></div>
+<p><b><span style="font-size:13pt;color:#1F4E78">부록 3. 관측지점 기상조건별 비작업일수 및 월별 산정표</span></b></p>
+<p style="text-align:center"><b><span style="font-size:9.5pt">[표 부록-6]</span></b><b><span style="font-size:10pt">   관측지점 &#x27;서산&#x27;(충청남도, 지점 129) 기상조건별 월평균 비작업일수 (2015~2024)</span></b></p>
+<table class="w2"><tr><th><b><span style="font-size:7.5pt">번호</span></b></th><th><b><span style="font-size:7.5pt">기상조건</span></b></th><th><b><span style="font-size:7.5pt">1월</span></b></th><th><b><span style="font-size:7.5pt">2월</span></b></th><th><b><span style="font-size:7.5pt">3월</span></b></th><th><b><span style="font-size:7.5pt">4월</span></b></th><th><b><span style="font-size:7.5pt">5월</span></b></th><th><b><span style="font-size:7.5pt">6월</span></b></th><th><b><span style="font-size:7.5pt">7월</span></b></th><th><b><span style="font-size:7.5pt">8월</span></b></th><th><b><span style="font-size:7.5pt">9월</span></b></th><th><b><span style="font-size:7.5pt">10월</span></b></th><th><b><span style="font-size:7.5pt">11월</span></b></th><th><b><span style="font-size:7.5pt">12월</span></b></th><th><b><span style="font-size:7.5pt">계</span></b></th></tr>
+<tr><td><span style="font-size:7.5pt">22.3</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7.5pt">12.9</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7.5pt">11.5</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7.5pt">12.1</span></td></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr></table>
+<p>&nbsp;</p>
+<p><span style="font-size:8.5pt;color:#444444">※ 1~13: 가이드라인 부록3 원자료, 14: 미세먼지 비상저감조치 발령일수(입력값)</span></p>
+<p style="text-align:center"><b><span style="font-size:9.5pt">[표 부록-7]</span></b><b><span style="font-size:10pt">   기상프로필 &#x27;옥외공사&#x27; 월별 비작업일수 산정표</span></b></p>
+<table class=""><tr><th><b><span style="font-size:7.5pt">년월</span></b></th><th><b><span style="font-size:7.5pt">달력일수</span></b></th><th><b><span style="font-size:7.5pt">기후(A)</span></b></th><th><b><span style="font-size:7.5pt">공휴일(B)</span></b></th><th><b><span style="font-size:7.5pt">중복(C)</span></b></th><th><b><span style="font-size:7.5pt">A+B−C</span></b></th><th><b><span style="font-size:7.5pt">적용(하한8)</span></b></th><th><b><span style="font-size:7.5pt">작업가능일</span></b></th><th><b><span style="font-size:7.5pt">가동률</span></b></th></tr>
+<tr><td><span style="font-size:7.5pt">61.3%</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7.5pt">54.8%</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7.5pt">63.3%</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7.5pt">66.7%</span></td></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr></table>
+<p>&nbsp;</p>
+<p style="text-align:center"><b><span style="font-size:9.5pt">[표 부록-8]</span></b><b><span style="font-size:10pt">   기상프로필 &#x27;구조물공사&#x27; 월별 비작업일수 산정표</span></b></p>
+<table class=""><tr><th><b><span style="font-size:7.5pt">년월</span></b></th><th><b><span style="font-size:7.5pt">달력일수</span></b></th><th><b><span style="font-size:7.5pt">기후(A)</span></b></th><th><b><span style="font-size:7.5pt">공휴일(B)</span></b></th><th><b><span style="font-size:7.5pt">중복(C)</span></b></th><th><b><span style="font-size:7.5pt">A+B−C</span></b></th><th><b><span style="font-size:7.5pt">적용(하한8)</span></b></th><th><b><span style="font-size:7.5pt">작업가능일</span></b></th><th><b><span style="font-size:7.5pt">가동률</span></b></th></tr>
+<tr><td><span style="font-size:7.5pt">61.3%</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7.5pt">51.6%</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7.5pt">60.0%</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7.5pt">63.3%</span></td></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr></table>
+<p>&nbsp;</p>
+<p style="text-align:center"><b><span style="font-size:9.5pt">[표 부록-9]</span></b><b><span style="font-size:10pt">   기상프로필 &#x27;옥내공사&#x27; 월별 비작업일수 산정표</span></b></p>
+<table class=""><tr><th><b><span style="font-size:7.5pt">년월</span></b></th><th><b><span style="font-size:7.5pt">달력일수</span></b></th><th><b><span style="font-size:7.5pt">기후(A)</span></b></th><th><b><span style="font-size:7.5pt">공휴일(B)</span></b></th><th><b><span style="font-size:7.5pt">중복(C)</span></b></th><th><b><span style="font-size:7.5pt">A+B−C</span></b></th><th><b><span style="font-size:7.5pt">적용(하한8)</span></b></th><th><b><span style="font-size:7.5pt">작업가능일</span></b></th><th><b><span style="font-size:7.5pt">가동률</span></b></th></tr>
+<tr><td><span style="font-size:7.5pt">74.2%</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7.5pt">74.2%</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7.5pt">73.3%</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7.5pt">73.3%</span></td></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr></table>
+<p>&nbsp;</p>
+<p style="text-align:center"><b><span style="font-size:9.5pt">[표 부록-10]</span></b><b><span style="font-size:10pt">   기상프로필 &#x27;연속작업&#x27; 월별 비작업일수 산정표</span></b></p>
+<table class=""><tr><th><b><span style="font-size:7.5pt">년월</span></b></th><th><b><span style="font-size:7.5pt">달력일수</span></b></th><th><b><span style="font-size:7.5pt">기후(A)</span></b></th><th><b><span style="font-size:7.5pt">공휴일(B)</span></b></th><th><b><span style="font-size:7.5pt">중복(C)</span></b></th><th><b><span style="font-size:7.5pt">A+B−C</span></b></th><th><b><span style="font-size:7.5pt">적용(하한8)</span></b></th><th><b><span style="font-size:7.5pt">작업가능일</span></b></th><th><b><span style="font-size:7.5pt">가동률</span></b></th></tr>
+<tr><td><span style="font-size:7.5pt">100.0%</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7.5pt">100.0%</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7.5pt">100.0%</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7.5pt">100.0%</span></td></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr></table>
+<p>&nbsp;</p>
+<p style="text-align:center"><b><span style="font-size:9.5pt">[표 부록-11]</span></b><b><span style="font-size:10pt">   주공정 기준 공사기간 반영 비작업일수</span></b></p>
+<table class=""><tr><th><b><span style="font-size:7.5pt">년월</span></b></th><th><b><span style="font-size:7.5pt">구분</span></b></th><th><b><span style="font-size:7.5pt">달력일수</span></b></th><th><b><span style="font-size:7.5pt">공사진행일</span></b></th><th><b><span style="font-size:7.5pt">주공정 기상프로필</span></b></th><th><b><span style="font-size:7.5pt">적용 비작업</span></b></th><th><b><span style="font-size:7.5pt">반영 비작업</span></b></th><th><b><span style="font-size:7.5pt">반영 작업일</span></b></th></tr>
+<tr><td><span style="font-size:7.5pt">0</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7.5pt">17</span></td></tr>
+<tr><td><span style="font-size:7.5pt">13</span></td></tr>
+<tr><td><span style="font-size:7.5pt">19</span></td></tr>
+<tr><td><span style="font-size:7.5pt">22</span></td></tr>
+<tr><td><span style="font-size:7.5pt">19.5</span></td></tr>
+<tr><td><span style="font-size:7.5pt">18</span></td></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr></table>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<div class="pb"></div>
+<p><b><span style="font-size:13pt;color:#1F4E78">부록 4. 1일 작업량 적용내역</span></b></p>
+<p style="text-align:center"><b><span style="font-size:9.5pt">[표 부록-12]</span></b><b><span style="font-size:10pt">   부록4(1일 작업량) DB 적용 항목</span></b></p>
+<table class=""><tr><th><b><span style="font-size:7.5pt">DB번호</span></b></th><th><b><span style="font-size:7.5pt">분야</span></b></th><th><b><span style="font-size:7.5pt">대공정</span></b></th><th><b><span style="font-size:7.5pt">세부공종</span></b></th><th><b><span style="font-size:7.5pt">작업조건/산출근거</span></b></th><th><b><span style="font-size:7.5pt">1일작업량</span></b></th><th><b><span style="font-size:7.5pt">출처</span></b></th><th><b><span style="font-size:7.5pt">적용 수량 No</span></b></th></tr>
+<tr><td><span style="font-size:7.5pt">3</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7.5pt">50</span></td></tr>
+<tr><td><span style="font-size:7.5pt">62</span></td></tr>
+<tr><td><span style="font-size:7.5pt">46, 47, 89</span></td></tr>
+<tr><td><span style="font-size:7.5pt">48</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7.5pt">44, 88</span></td></tr>
+<tr><td><span style="font-size:7.5pt">45</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7.5pt">86</span></td></tr>
+<tr></tr>
+<tr></tr></table>
+<p>&nbsp;</p>
+<p style="text-align:center"><b><span style="font-size:9.5pt">[표 부록-13]</span></b><b><span style="font-size:10pt">   품셈·실적 적용 항목(수동 입력)</span></b></p>
+<table class=""><tr><th><b><span style="font-size:7.5pt">No</span></b></th><th><b><span style="font-size:7.5pt">공정</span></b></th><th><b><span style="font-size:7.5pt">공종명</span></b></th><th><b><span style="font-size:7.5pt">규격</span></b></th><th><b><span style="font-size:7.5pt">단위</span></b></th><th><b><span style="font-size:7.5pt">1일작업량</span></b></th><th><b><span style="font-size:7.5pt">근거</span></b></th></tr>
+<tr><td><span style="font-size:7.5pt">샘플보고서 작업일수 1일 역산</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7.5pt">샘플보고서 작업일수 1일 역산</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7.5pt">샘플보고서 작업일수 5일 역산</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7.5pt">샘플보고서 작업일수 4일 역산</span></td></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr></table>
+<p>&nbsp;</p>
+<p style="text-align:center"><b><span style="font-size:9.5pt">[표 부록-14]</span></b><b><span style="font-size:10pt">   자동매칭 항목(검토자 확인)</span></b></p>
+<table class=""><tr><th><b><span style="font-size:7.5pt">No</span></b></th><th><b><span style="font-size:7.5pt">공종명</span></b></th><th><b><span style="font-size:7.5pt">규격</span></b></th><th><b><span style="font-size:7.5pt">단위</span></b></th><th><b><span style="font-size:7.5pt">매칭 DB 공종</span></b></th><th><b><span style="font-size:7.5pt">1일작업량</span></b></th><th><b><span style="font-size:7.5pt">매칭방법</span></b></th></tr>
+<tr><td><span style="font-size:7.5pt">규칙매칭(&#x27;포장.*절단|ASP.*절단&#x27;)</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7.5pt">규칙매칭(&#x27;(터파기|굴착).*(토사|보통토|사질)&#x27;)</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7.5pt">규칙매칭(&#x27;콘크리트.*타설.*무근|무근.*타설&#x27;)</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7.5pt">규칙매칭(&#x27;합판\s*거푸집&#x27;)</span></td></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr></table>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<div class="pb"></div>
+<p><b><span style="font-size:13pt;color:#1F4E78">부록 5. 작업일수 산정 세부내역</span></b></p>
+<p style="text-align:justify"><span style="font-size:10pt">작업일수 = ROUNDUP( 수량 ÷ (기준 1일작업량 × 보정계수 × 작업조) ),  보정계수 = 현장여건 × 공사규모 × 지질조건 × 기상기후 × 개별계수</span></p>
+<p style="text-align:center"><b><span style="font-size:9.5pt">[표 부록-15]</span></b><b><span style="font-size:10pt">   [C10] 토목 · 포장공 · 포장절단·깨기</span></b></p>
+<table class="w2"><tr><th><b><span style="font-size:7pt">No</span></b></th><th><b><span style="font-size:7pt">공종명</span></b></th><th><b><span style="font-size:7pt">규격</span></b></th><th><b><span style="font-size:7pt">단위</span></b></th><th><b><span style="font-size:7pt">수량</span></b></th><th><b><span style="font-size:7pt">기준1일작업량</span></b></th><th><b><span style="font-size:7pt">보정</span></b></th><th><b><span style="font-size:7pt">작업조</span></b></th><th><b><span style="font-size:7pt">순작업</span></b></th><th><b><span style="font-size:7pt">간접</span></b></th><th><b><span style="font-size:7pt">보정일</span></b></th><th><b><span style="font-size:7pt">합산</span></b></th><th><b><span style="font-size:7pt">산식</span></b></th></tr>
+<tr><td><span style="font-size:7pt">ROUNDUP(1398÷(699×1×2))=1</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7pt">ROUNDUP(93÷(54×0.95×2))=1</span></td></tr>
+<tr></tr></table>
+<p>&nbsp;</p>
+<p style="text-align:center"><b><span style="font-size:9.5pt">[표 부록-16]</span></b><b><span style="font-size:10pt">   [C20] 토목 · 가시설공 · 차수가시설(흙막이) 설치</span></b></p>
+<table class="w2"><tr><th><b><span style="font-size:7pt">No</span></b></th><th><b><span style="font-size:7pt">공종명</span></b></th><th><b><span style="font-size:7pt">규격</span></b></th><th><b><span style="font-size:7pt">단위</span></b></th><th><b><span style="font-size:7pt">수량</span></b></th><th><b><span style="font-size:7pt">기준1일작업량</span></b></th><th><b><span style="font-size:7pt">보정</span></b></th><th><b><span style="font-size:7pt">작업조</span></b></th><th><b><span style="font-size:7pt">순작업</span></b></th><th><b><span style="font-size:7pt">간접</span></b></th><th><b><span style="font-size:7pt">보정일</span></b></th><th><b><span style="font-size:7pt">합산</span></b></th><th><b><span style="font-size:7pt">산식</span></b></th></tr>
+<tr><td><span style="font-size:7pt">ROUNDUP(33.2÷(2.075×0.95×4))=5</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7pt">ROUNDUP(26÷(6.5×0.95×2))=3</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7pt">ROUNDUP(26÷(13×0.95×2))=2</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7pt">ROUNDUP(475÷(59.375×0.95×2))=5</span></td></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr></table>
+<p>&nbsp;</p>
+<p style="text-align:center"><b><span style="font-size:9.5pt">[표 부록-17]</span></b><b><span style="font-size:10pt">   [C25] 토목 · 부대공 · 기존관 보호공(줄파기·지장물)</span></b></p>
+<table class="w2"><tr><th><b><span style="font-size:7pt">No</span></b></th><th><b><span style="font-size:7pt">공종명</span></b></th><th><b><span style="font-size:7pt">규격</span></b></th><th><b><span style="font-size:7pt">단위</span></b></th><th><b><span style="font-size:7pt">수량</span></b></th><th><b><span style="font-size:7pt">기준1일작업량</span></b></th><th><b><span style="font-size:7pt">보정</span></b></th><th><b><span style="font-size:7pt">작업조</span></b></th><th><b><span style="font-size:7pt">순작업</span></b></th><th><b><span style="font-size:7pt">간접</span></b></th><th><b><span style="font-size:7pt">보정일</span></b></th><th><b><span style="font-size:7pt">합산</span></b></th><th><b><span style="font-size:7pt">산식</span></b></th></tr>
+<tr><td><span style="font-size:7pt">ROUNDUP(70÷(349×0.95×2))=1</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7pt">ROUNDUP(45÷(22.5×1×2))=1</span></td></tr>
+<tr></tr></table>
+<p>&nbsp;</p>
+<p style="text-align:center"><b><span style="font-size:9.5pt">[표 부록-18]</span></b><b><span style="font-size:10pt">   [C30] 토목 · 토공 · 터파기</span></b></p>
+<table class="w2"><tr><th><b><span style="font-size:7pt">No</span></b></th><th><b><span style="font-size:7pt">공종명</span></b></th><th><b><span style="font-size:7pt">규격</span></b></th><th><b><span style="font-size:7pt">단위</span></b></th><th><b><span style="font-size:7pt">수량</span></b></th><th><b><span style="font-size:7pt">기준1일작업량</span></b></th><th><b><span style="font-size:7pt">보정</span></b></th><th><b><span style="font-size:7pt">작업조</span></b></th><th><b><span style="font-size:7pt">순작업</span></b></th><th><b><span style="font-size:7pt">간접</span></b></th><th><b><span style="font-size:7pt">보정일</span></b></th><th><b><span style="font-size:7pt">합산</span></b></th><th><b><span style="font-size:7pt">산식</span></b></th></tr>
+<tr><td><span style="font-size:7pt">ROUNDUP(673÷(349×0.95×2))=2</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7pt">ROUNDUP(1216÷(121.6×0.95×2))=6</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7pt">ROUNDUP(151÷(37.75×0.95×2))=3</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7pt">-</span></td></tr>
+<tr></tr>
+<tr><td></td></tr></table>
+<p>&nbsp;</p>
+<p style="text-align:center"><b><span style="font-size:9.5pt">[표 부록-19]</span></b><b><span style="font-size:10pt">   [C40] 토목 · 구조물공 · TOC저감시설·밸브실 구조물</span></b></p>
+<table class="w2"><tr><th><b><span style="font-size:7pt">No</span></b></th><th><b><span style="font-size:7pt">공종명</span></b></th><th><b><span style="font-size:7pt">규격</span></b></th><th><b><span style="font-size:7pt">단위</span></b></th><th><b><span style="font-size:7pt">수량</span></b></th><th><b><span style="font-size:7pt">기준1일작업량</span></b></th><th><b><span style="font-size:7pt">보정</span></b></th><th><b><span style="font-size:7pt">작업조</span></b></th><th><b><span style="font-size:7pt">순작업</span></b></th><th><b><span style="font-size:7pt">간접</span></b></th><th><b><span style="font-size:7pt">보정일</span></b></th><th><b><span style="font-size:7pt">합산</span></b></th><th><b><span style="font-size:7pt">산식</span></b></th></tr>
+<tr><td><span style="font-size:7pt">ROUNDUP(60÷(189×1×2))=1</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7pt">ROUNDUP(268÷(60×1×2))=3</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7pt">ROUNDUP(1311÷(50×1×4))=7</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7pt">ROUNDUP(882÷(100×1×2))=5</span></td></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr></table>
+<p>&nbsp;</p>
+<p style="text-align:center"><b><span style="font-size:9.5pt">[표 부록-20]</span></b><b><span style="font-size:10pt">   [C50] 토목 · 관로공 · 구내배관·부단수 연결</span></b></p>
+<table class="w2"><tr><th><b><span style="font-size:7pt">No</span></b></th><th><b><span style="font-size:7pt">공종명</span></b></th><th><b><span style="font-size:7pt">규격</span></b></th><th><b><span style="font-size:7pt">단위</span></b></th><th><b><span style="font-size:7pt">수량</span></b></th><th><b><span style="font-size:7pt">기준1일작업량</span></b></th><th><b><span style="font-size:7pt">보정</span></b></th><th><b><span style="font-size:7pt">작업조</span></b></th><th><b><span style="font-size:7pt">순작업</span></b></th><th><b><span style="font-size:7pt">간접</span></b></th><th><b><span style="font-size:7pt">보정일</span></b></th><th><b><span style="font-size:7pt">합산</span></b></th><th><b><span style="font-size:7pt">산식</span></b></th></tr>
+<tr><td><span style="font-size:7pt">ROUNDUP(166÷(20.75×1×2))=4</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7pt">ROUNDUP(63÷(10.5×1×2))=3</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7pt">ROUNDUP(45÷(7.5×1×2))=3</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7pt">ROUNDUP(165÷(41.25×1×2))=2</span></td></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr></table>
+<p>&nbsp;</p>
+<p style="text-align:center"><b><span style="font-size:9.5pt">[표 부록-21]</span></b><b><span style="font-size:10pt">   [C70] 토목 · 토공 · 되메우기</span></b></p>
+<table class="w2"><tr><th><b><span style="font-size:7pt">No</span></b></th><th><b><span style="font-size:7pt">공종명</span></b></th><th><b><span style="font-size:7pt">규격</span></b></th><th><b><span style="font-size:7pt">단위</span></b></th><th><b><span style="font-size:7pt">수량</span></b></th><th><b><span style="font-size:7pt">기준1일작업량</span></b></th><th><b><span style="font-size:7pt">보정</span></b></th><th><b><span style="font-size:7pt">작업조</span></b></th><th><b><span style="font-size:7pt">순작업</span></b></th><th><b><span style="font-size:7pt">간접</span></b></th><th><b><span style="font-size:7pt">보정일</span></b></th><th><b><span style="font-size:7pt">합산</span></b></th><th><b><span style="font-size:7pt">산식</span></b></th></tr>
+<tr><td><span style="font-size:7pt">ROUNDUP(679÷(169.75×0.95×2))=3</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7pt">ROUNDUP(137÷(68.5×0.95×2))=2</span></td></tr>
+<tr></tr>
+<tr><td></td></tr></table>
+<p>&nbsp;</p>
+<p style="text-align:center"><b><span style="font-size:9.5pt">[표 부록-22]</span></b><b><span style="font-size:10pt">   [C65] 토목 · 가시설공 · 가시설 해체</span></b></p>
+<table class="w2"><tr><th><b><span style="font-size:7pt">No</span></b></th><th><b><span style="font-size:7pt">공종명</span></b></th><th><b><span style="font-size:7pt">규격</span></b></th><th><b><span style="font-size:7pt">단위</span></b></th><th><b><span style="font-size:7pt">수량</span></b></th><th><b><span style="font-size:7pt">기준1일작업량</span></b></th><th><b><span style="font-size:7pt">보정</span></b></th><th><b><span style="font-size:7pt">작업조</span></b></th><th><b><span style="font-size:7pt">순작업</span></b></th><th><b><span style="font-size:7pt">간접</span></b></th><th><b><span style="font-size:7pt">보정일</span></b></th><th><b><span style="font-size:7pt">합산</span></b></th><th><b><span style="font-size:7pt">산식</span></b></th></tr>
+<tr><td><span style="font-size:7pt">ROUNDUP(38÷(2.714×0.95×2))=8</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7pt">ROUNDUP(1÷(0.125×0.95×2))=5</span></td></tr>
+<tr></tr></table>
+<p>&nbsp;</p>
+<p style="text-align:center"><b><span style="font-size:9.5pt">[표 부록-23]</span></b><b><span style="font-size:10pt">   [C80] 토목 · 포장공 · 포장 복구</span></b></p>
+<table class="w2"><tr><th><b><span style="font-size:7pt">No</span></b></th><th><b><span style="font-size:7pt">공종명</span></b></th><th><b><span style="font-size:7pt">규격</span></b></th><th><b><span style="font-size:7pt">단위</span></b></th><th><b><span style="font-size:7pt">수량</span></b></th><th><b><span style="font-size:7pt">기준1일작업량</span></b></th><th><b><span style="font-size:7pt">보정</span></b></th><th><b><span style="font-size:7pt">작업조</span></b></th><th><b><span style="font-size:7pt">순작업</span></b></th><th><b><span style="font-size:7pt">간접</span></b></th><th><b><span style="font-size:7pt">보정일</span></b></th><th><b><span style="font-size:7pt">합산</span></b></th><th><b><span style="font-size:7pt">산식</span></b></th></tr>
+<tr><td><span style="font-size:7pt">ROUNDUP(154÷(77×1×2))=1</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7pt">ROUNDUP(553÷(20000×1×2))=1</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7pt">ROUNDUP(553÷(20000×1×2))=1</span></td></tr>
+<tr></tr>
+<tr><td></td></tr></table>
+<p>&nbsp;</p>
+<p style="text-align:center"><b><span style="font-size:9.5pt">[표 부록-24]</span></b><b><span style="font-size:10pt">   [C90] 토목 · 부대공 · 기타 부대공(기존구조물 접합)</span></b></p>
+<table class="w2"><tr><th><b><span style="font-size:7pt">No</span></b></th><th><b><span style="font-size:7pt">공종명</span></b></th><th><b><span style="font-size:7pt">규격</span></b></th><th><b><span style="font-size:7pt">단위</span></b></th><th><b><span style="font-size:7pt">수량</span></b></th><th><b><span style="font-size:7pt">기준1일작업량</span></b></th><th><b><span style="font-size:7pt">보정</span></b></th><th><b><span style="font-size:7pt">작업조</span></b></th><th><b><span style="font-size:7pt">순작업</span></b></th><th><b><span style="font-size:7pt">간접</span></b></th><th><b><span style="font-size:7pt">보정일</span></b></th><th><b><span style="font-size:7pt">합산</span></b></th><th><b><span style="font-size:7pt">산식</span></b></th></tr>
+<tr><td><span style="font-size:7pt">ROUNDUP(1÷(0.25×1×2))=2</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7pt">ROUNDUP(17÷(60×1×2))=1</span></td></tr>
+<tr></tr>
+<tr><td></td></tr></table>
+<p>&nbsp;</p>
+<p style="text-align:justify"><b><span style="font-size:10pt">[B10] 건축·건축공사(기계실 상부·마감) — 직접입력 작업일수 25일 (공정계획·실적 기준)</span></b></p>
+<p style="text-align:justify"><b><span style="font-size:10pt">[M10] 기계·기계설비 설치 — 직접입력 작업일수 40일 (공정계획·실적 기준)</span></b></p>
+<p style="text-align:justify"><b><span style="font-size:10pt">[E10] 전기·전기·계측제어 설치 — 직접입력 작업일수 30일 (공정계획·실적 기준)</span></b></p>
+<p style="text-align:justify"><b><span style="font-size:10pt">[T10] 시운전·부하 및 종합시운전 — 직접입력 작업일수 90일 (공정계획·실적 기준)</span></b></p>
+<p>&nbsp;</p>
+<div class="pb"></div>
+<p><b><span style="font-size:13pt;color:#1F4E78">부록 6. CPM 계산표 (주공정 분석)</span></b></p>
+<p style="text-align:center"><b><span style="font-size:9.5pt">[표 부록-25]</span></b><b><span style="font-size:10pt">   CPM 계산표</span></b></p>
+<table class="w2"><tr><th><b><span style="font-size:7.5pt">ID</span></b></th><th><b><span style="font-size:7.5pt">분야</span></b></th><th><b><span style="font-size:7.5pt">공정명</span></b></th><th><b><span style="font-size:7.5pt">기상프로필</span></b></th><th><b><span style="font-size:7.5pt">작업일수</span></b></th><th><b><span style="font-size:7.5pt">선행관계</span></b></th><th><b><span style="font-size:7.5pt">ES</span></b></th><th><b><span style="font-size:7.5pt">EF</span></b></th><th><b><span style="font-size:7.5pt">LS</span></b></th><th><b><span style="font-size:7.5pt">LF</span></b></th><th><b><span style="font-size:7.5pt">공사기간</span></b></th><th><b><span style="font-size:7.5pt">TF</span></b></th><th><b><span style="font-size:7.5pt">CP</span></b></th></tr>
+<tr><td><span style="font-size:7.5pt">●</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7.5pt">●</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7.5pt">●</span></td></tr>
+<tr></tr>
+<tr><td></td></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr></table>
+<p>&nbsp;</p>
+<p><span style="font-size:8.5pt;color:#444444">※ ES/EF: 최조개시/최조완료, LS/LF: 최늦개시/최늦완료, TF(총여유)=LS−ES. 선행관계 FS=완료 후 착수, SS n%=선행 n% 진행 후 착수, FF=동시완료</span></p>
+<p><span style="font-size:8.5pt;color:#444444">※ 주공정: C10 → C20 → C30 → C40 → B10 → M10 → E10 → T10 / 준비기간 60일 이후 착수, 최종공정 완료 후 정리기간 30일</span></p>
+<p>&nbsp;</p>
+<div class="pb"></div>
+<p><b><span style="font-size:13pt;color:#1F4E78">부록 7. 공사기간 조정 이력</span></b></p>
+<p style="text-align:center"><b><span style="font-size:9.5pt">[표 부록-26]</span></b><b><span style="font-size:10pt">   공기조정 개요</span></b></p>
+<table class=""><tr><th><b><span style="font-size:8.5pt">항목</span></b></th><th><b><span style="font-size:8.5pt">내용</span></b></th></tr>
+<tr><td><span style="font-size:8.5pt">548일 (발주처 요구 공사기간 18개월)</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:8.5pt">525일</span></td></tr>
+<tr></tr></table>
+<p>&nbsp;</p>
+<p style="text-align:justify"><span style="font-size:10pt">산정 공사기간이 목표기간 이내로 조정이 필요하지 않았음.</span></p>
+<p>&nbsp;</p>
+<div class="pb"></div>
+<p><b><span style="font-size:13pt;color:#1F4E78">부록 8. 적정성 검토 산정근거</span></b></p>
+<p><b><span style="font-size:10.5pt">■ 부록5 산정공식 — 기타건축물</span></b></p>
+<p><span style="font-size:10pt">- 산정식 : Y = -68.550 + 18.192×B + 12.079×G - 5.25×ln(A) + 167.632×ln(C)</span></p>
+<p><span style="font-size:10pt">- 변수 : C=총공사비(억원), A=연면적(100㎡), G=지상층수, B=지하층수</span></p>
+<p><span style="font-size:10pt">- Y = 617.2일</span></p>
+<p><span style="font-size:10pt">- B = 707일 (23.2개월),  A = 525일,  편차 = (A−B)/B = -25.8%  → 재검토 필요</span></p>
+<p><b><span style="font-size:10.5pt">■ 동종공사 실적 — 최근 준공 동종·유사공사 4건 평균 21.0개월</span></b></p>
+<p><span style="font-size:10pt">- 산정식 : 실적 공사기간 평균</span></p>
+<p><span style="font-size:10pt">- Y = 638.8일</span></p>
+<p><span style="font-size:10pt">- B = 639일 (21.0개월),  A = 525일,  편차 = (A−B)/B = -17.8%  → 적정</span></p>
+<p><b><span style="font-size:10.5pt">■ 건설사업관리기간 — 건설기술용역 대가 등에 관한 기준(국토교통부 고시 제2023-580호) [별표2]</span></b></p>
+<p><span style="font-size:10pt">- 산정식 : 공사비 51.4억원 직선보간 → 17.5개월</span></p>
+<p><span style="font-size:10pt">- B = 532일 (17.5개월),  A = 525일,  편차 = (A−B)/B = -1.3%  → 적정(참고)</span></p>
+<p><span style="font-size:10pt">- 비고 : 참고</span></p>
+<p><b><span style="font-size:10.5pt">■ 환경공단 산정식 — 폐수처리시설 — 환경시설 설치사업의 품질 및 안정성 확보를 위한 표준 공사기간 산정 가이드라인(2023.04, 한국환경공단) 부록5</span></b></p>
+<p><span style="font-size:10pt">- 산정식 : Y = 0.0095C - 0.0029V + 506.5437</span></p>
+<p><span style="font-size:10pt">- 변수 : C=총공사비(백만원), V=시설용량(㎥/일)</span></p>
+<p><span style="font-size:10pt">- Y = 538.0일</span></p>
+<p><span style="font-size:10pt">- B = 628일 (20.6개월),  A = 525일,  편차 = (A−B)/B = -16.4%  → 적정(참고)</span></p>
+<p><span style="font-size:10pt">- 비고 : 참고</span></p>
+<p><b><span style="font-size:10.5pt">■ 환경공단 경험치 — 처리장 — 하수관로공사 설계시 토목·기계·전기 주요 착안사항(2020.06, 한국환경공단)</span></b></p>
+<p><span style="font-size:10pt">- 산정식 : 공사비 51.4억원 → 20개월</span></p>
+<p><span style="font-size:10pt">- B = 608일 (20.0개월),  A = 525일,  편차 = (A−B)/B = -13.7%  → 적정(참고)</span></p>
+<p><span style="font-size:10pt">- 비고 : 참고</span></p>
+<p style="text-align:center"><b><span style="font-size:9.5pt">[표 부록-27]</span></b><b><span style="font-size:10pt">   가이드라인 부록5 시설물별 공사기간 산정공식</span></b></p>
+<table class=""><tr><th><b><span style="font-size:7.5pt">시설물</span></b></th><th><b><span style="font-size:7.5pt">산정공식</span></b></th><th><b><span style="font-size:7.5pt">변수</span></b></th><th><b><span style="font-size:7.5pt">적용범위</span></b></th></tr>
+<tr><td><span style="font-size:7.5pt">200억원 이하</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7.5pt">200억원 이하</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7.5pt">5억원 이상, 300억원 이하</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7.5pt">200억원 이하</span></td></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr></table>
+<p>&nbsp;</p>
+<p><span style="font-size:8.5pt;color:#444444">※ 산정값(Y)은 비작업일수를 포함하므로 준비기간·정리기간만 합산. 총공사비는 추정금액(추정가격+부가가치세+관급자재비). 적용범위 내에서만 활용</span></p>
+<p>&nbsp;</p>
+<div class="pb"></div>
+<p><b><span style="font-size:13pt;color:#1F4E78">부록 9. 동절기 공사중지 추가검토</span></b></p>
+<p style="text-align:center"><b><span style="font-size:9.5pt">[표 부록-28]</span></b><b><span style="font-size:10pt">   동절기(12,1,2월) 공사중지 반영 시 공사일정</span></b></p>
+<table class=""><tr><th><b><span style="font-size:8.5pt">구분</span></b></th><th><b><span style="font-size:8.5pt">공사기간(일)</span></b></th><th><b><span style="font-size:8.5pt">개월</span></b></th><th><b><span style="font-size:8.5pt">착공</span></b></th><th><b><span style="font-size:8.5pt">준공</span></b></th></tr>
+<tr><td><span style="font-size:8.5pt">2027.10.07</span></td></tr>
+<tr></tr>
+<tr><td></td></tr></table>
+<p>&nbsp;</p>
+<p style="text-align:justify"><span style="font-size:10pt">동절기 중지기간은 달력일수 전체를 비작업일수로 계상하여 기상조건에 의한 비작업일수를 대체함(중복계상 배제). 가이드라인 부록5 산정공식(실적공기)과의 비교는 동절기 미반영 기준으로 수행하였으며, 실제 공사 시 동절기 공사중지 여부는 시공조건 명시사항에 기재하여야 함.</span></p>
+<p>&nbsp;</p>
+<div class="pb"></div>
+<p><b><span style="font-size:13pt;color:#1F4E78">부록 10. 시공조건 명시 항목 예시 (가이드라인 부록6)</span></b></p>
+<p><b><span style="font-size:10.5pt">■ 용지보상</span></b></p>
+<p><span style="font-size:10pt">- 미처리 용지의 장소, 범위 및 처리 예정 시기</span></p>
+<p><span style="font-size:10pt">- 공사용지 등의 사용종료 후의 복구내용</span></p>
+<p><span style="font-size:10pt">- 공사용 가설도로·기자재 보관용 토지 임대 시 장소·범위·시기·기간·사용조건·복구방법</span></p>
+<p><b><span style="font-size:10.5pt">■ 인·허가 및 심의 절차</span></b></p>
+<p><span style="font-size:10pt">- 관계기관·지자체 협의결과 특정조건이 부여되어 공정에 영향이 있는 경우 그 항목 및 영향범위</span></p>
+<p><span style="font-size:10pt">- 협의 미완료 부분의 제약내용 및 완료 예정시기</span></p>
+<p><span style="font-size:10pt">- 타 공사의 개시·완료 시기에 의한 영향</span></p>
+<p><span style="font-size:10pt">- 시공시기·시간·방법이 제한되는 경우 그 내용</span></p>
+<p><b><span style="font-size:10.5pt">■ 지장물 이설·철거</span></b></p>
+<p><span style="font-size:10pt">- 지하매설물 사전조사 항목 및 조사기간, 이설기간</span></p>
+<p><span style="font-size:10pt">- 점용물건 지장물의 명칭·관리자·위치·이설시기·방호</span></p>
+<p><b><span style="font-size:10.5pt">■ 문화재 시·발굴</span></b></p>
+<p><span style="font-size:10pt">- 사전조사 항목 및 조사기간</span></p>
+<p><span style="font-size:10pt">- 시·발굴 예정기간</span></p>
+<p><b><span style="font-size:10.5pt">■ 환경 관련</span></b></p>
+<p><span style="font-size:10pt">- 사후환경영향조사 항목 및 기간</span></p>
+<p><span style="font-size:10pt">- 소음·진동·분진·배출가스 방지 시공방법·작업시간</span></p>
+<p><span style="font-size:10pt">- 탁수·용수 처리대책</span></p>
+<p><span style="font-size:10pt">- 지반침하·지하수 고갈 등 사전·사후 조사</span></p>
+<p><span style="font-size:10pt">- 매립폐기물·오염토 처리기간</span></p>
+<p><b><span style="font-size:10.5pt">■ 안전대책</span></b></p>
+<p><span style="font-size:10pt">- 철도·가스·전기·통신·수도 근접공사의 시공방법·작업시간 제한</span></p>
+<p><span style="font-size:10pt">- 낙석·붕괴 방호시설</span></p>
+<p><span style="font-size:10pt">- 교통유도원·보안요원 배치</span></p>
+<p><span style="font-size:10pt">- 유독가스·산소결핍 대책 환기설비</span></p>
+<p><b><span style="font-size:10.5pt">■ 공사용도로·가설·건설부산물·기타</span></b></p>
+<p><span style="font-size:10pt">- 반입로 사용 제한, 가설도로 안전시설·유지보수</span></p>
+<p><span style="font-size:10pt">- 가설비 구조·시공방법 지정</span></p>
+<p><span style="font-size:10pt">- 건설발생토 반출·가적치 조건, 폐기물 처리조건</span></p>
+<p><span style="font-size:10pt">- 지급자재·대여품, 공사용 전력, 신기술·특허공법, 부분사용, 연약지반 개량</span></p>
+<p>&nbsp;</p>
+<div class="pb"></div>
+<p><b><span style="font-size:13pt;color:#1F4E78">부록 11. 검토 작업경과</span></b></p>
+<p style="text-align:center"><b><span style="font-size:9.5pt">[표 부록-29]</span></b><b><span style="font-size:10pt">   검토 프로그램 실행 작업경과</span></b></p>
+<table class=""><tr><th><b><span style="font-size:7pt">시각</span></b></th><th><b><span style="font-size:7pt">단계</span></b></th><th><b><span style="font-size:7pt">구분</span></b></th><th><b><span style="font-size:7pt">내용</span></b></th></tr>
+<tr><td><span style="font-size:7pt">[1/9] ① 공사개요 — 입력서식 읽기: examples/예제_대죽공공폐수_입력.xlsx</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7pt">  공정 14개, 수량항목 90개, 유사사례 4건</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7pt">  프로필 &#x27;옥외공사&#x27;: 체감33℃↑×0.5, 최고0℃↓·적설5㎝↑×1, 강수5㎜↑×1, 순간풍속15m/s↑×1, 미세먼지×1 → 연간 기상 비작업 83.2일</span></td></tr>
+<tr></tr>
+<tr><td><span style="font-size:7pt">  프로필 &#x27;옥내공사&#x27;: 체감33℃↑×0.5, 최고0℃↓×1, 미세먼지×1 → 연간 기상 비작업 34.1일</span></td></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr></table>
+<p>&nbsp;</p>
+<p style="margin-top:14pt;font-size:8pt;color:#666">작성일 2026-11-16</p>
+</div>
+<script>
+function saveHtml(){
+  var d=document.documentElement.cloneNode(true);
+  var pg=d.querySelector('.page'); if(pg) pg.setAttribute('contenteditable','true');
+  var blob=new Blob(['<!doctype html>\n'+d.outerHTML],{type:'text/html;charset=utf-8'});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download=decodeURIComponent((location.pathname.split('/').pop()||document.title+'.html'));
+  document.body.appendChild(a); a.click(); a.remove();
+}
+function toggleEdit(btn){
+  var pg=document.querySelector('.page'); var on=pg.getAttribute('contenteditable')!=='true';
+  pg.setAttribute('contenteditable',on?'true':'false'); btn.textContent=on?'편집 끄기':'편집 켜기';
+}
+</script>
+</body></html>

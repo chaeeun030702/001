@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>공사기간 검토 마인드맵</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+:root{--bg:#f5f6f4;--fg:#1c2623;--mute:#5b6763;--card:#ffffff;--line:#cfd6d2;--ink2:#2c3a35;
+--b1:#2f7d6d;--b2:#b5651d;--b3:#4a6fa5;--b4:#8a5a9e;--b5:#c0392b;--b6:#7a8b2e;--b7:#00838f;--b8:#a03a6a;--b9:#5d6d7e;}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#111816;--fg:#e6ece9;--mute:#9aa8a2;--card:#18211e;--line:#33413c;--ink2:#cdd8d3;
+--b1:#5fbfa9;--b2:#e0975a;--b3:#8fb0e0;--b4:#c79be0;--b5:#f08a7e;--b6:#b9cc66;--b7:#4fc3cf;--b8:#e68bb4;--b9:#9fb0c0;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#111816;--fg:#e6ece9;--mute:#9aa8a2;--card:#18211e;--line:#33413c;--ink2:#cdd8d3;
+--b1:#5fbfa9;--b2:#e0975a;--b3:#8fb0e0;--b4:#c79be0;--b5:#f08a7e;--b6:#b9cc66;--b7:#4fc3cf;--b8:#e68bb4;--b9:#9fb0c0;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:"IBM Plex Sans KR","Noto Sans KR","Malgun Gothic",sans-serif;font-size:15px;line-height:1.6;
+ padding-block:28px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1040px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+h1{font-size:clamp(22px,4vw,30px);margin:0 0 4px;letter-spacing:-.01em;text-wrap:balance}
+.sub{color:var(--mute);margin:0}
+.mm{display:grid;grid-template-columns:minmax(150px,210px) 1fr;gap:0;align-items:stretch}
+.root{align-self:start;position:sticky;top:16px;background:var(--fg);color:var(--bg);border-radius:14px;padding:18px 16px;font-weight:700;font-size:17px;line-height:1.35;text-align:center;position:relative}
+.root small{display:block;font-weight:400;font-size:12px;opacity:.75;margin-top:6px}
+.branches{display:flex;flex-direction:column;gap:10px;margin-left:34px;position:relative;min-width:0}
+.branches::before{content:"";position:absolute;left:-17px;top:22px;bottom:22px;border-left:2px solid var(--line)}
+.root::after{content:"";position:absolute;right:-34px;top:50%;width:34px;border-top:2px solid var(--line)}
+details{position:relative;min-width:0}
+details::before{content:"";position:absolute;left:-17px;top:22px;width:17px;border-top:2px solid var(--line)}
+summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:10px;border:2px solid var(--c);
+ background:color-mix(in srgb,var(--c) 14%,var(--bg));font-weight:700;color:var(--fg)}
+summary::-webkit-details-marker{display:none}
+summary:focus-visible{outline:3px solid var(--c);outline-offset:2px}
+summary .sec{margin-left:auto;font-weight:400;font-size:12px;color:var(--mute);font-variant-numeric:tabular-nums}
+summary::after{content:"＋";font-weight:400;color:var(--mute)}
+details[open] summary::after{content:"－"}
+ul{list-style:none;margin:8px 0 6px 22px;padding:0;display:flex;flex-direction:column;gap:5px;border-left:2px solid color-mix(in srgb,var(--c) 45%,transparent);padding-left:14px}
+li{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--c);border-radius:8px;padding:6px 12px;font-size:14px;color:var(--ink2)}
+h2{font-size:17px;margin:0 0 10px}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:13.5px}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:color-mix(in srgb,var(--b1) 12%,var(--card));font-weight:700}
+tr:last-child td{border-bottom:0}
+code{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12.5px}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+button{font:inherit;font-size:13px;padding:6px 12px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer}
+button:focus-visible{outline:3px solid var(--b3);outline-offset:2px}
+@media (max-width:720px){.mm{grid-template-columns:1fr}.root{margin-bottom:16px;position:static}.root::after{display:none}.branches{margin-left:18px}.branches::before{left:-10px}details::before{left:-10px;width:10px}}
+@media (prefers-reduced-motion:no-preference){summary{transition:background .15s}}
+</style></head><body>
+<div class="wrap">
+<header><h1>공사기간 적정성 검토 마인드맵</h1><p class="sub">프로그램 없이 Claude가 직접 계산하는 구조 — 가지를 눌러 펼치고 접을 수 있습니다.</p></header>
+<div class="tools"><button id="openAll" type="button">모두 펼치기</button><button id="closeAll" type="button">모두 접기</button></div>
+<section class="mm" aria-label="마인드맵">
+<div class="root">공사기간<br>적정성 검토<small>Claude 직접 수행<br>(원본 Python 미사용)</small></div>
+<div class="branches">
+<details open style="--c:var(--b1)"><summary>입력<span class="sec">§0·§10</span></summary><ul><li>1_공사개요 — 총공사비·착공일·위치·준비 60일·정리 30일·보정계수·목표기간 기준·허용범위</li><li>2_비작업조건 — 프로필(옥외·구조물·옥내·연속작업)별 조건번호:적용률, 미세먼지 월별</li><li>3_수량 — 공종·규격·단위·수량, DB지정·수동 1일작업량·작업조</li><li>4_공정 — 선행관계 FS·SS·FF, 직접작업일수, 최대중첩률</li><li>5_유사사례 — 최근 5년 동종·유사공사</li><li>수량파일만 있을 때 — 머리글 탐지 → 행 분류 → 공정 14키 자동구성</li></ul></details>
+<details open style="--c:var(--b2)"><summary>② 비작업일수<span class="sec">§1</span></summary><ul><li>A 기상 = Σ round(관측지점 값 × 적용률, 2) → 소수 1자리</li><li>B 법정공휴일 = 부록1 연·월 값</li><li>C 중복 = round_half_up(A × B ÷ 달력일수)</li><li>적용 = max(A + B − C, 주40시간 하한 8일) → 정수 반올림</li><li>동절기 중지월(12·1·2)은 그 달 전체 중지</li><li>연속작업·준비·정리 달력은 비작업 0</li></ul></details>
+<details open style="--c:var(--b3)"><summary>③ 1일작업량<span class="sec">§3-1·3-2</span></summary><ul><li>수동입력 &gt; DB지정 &gt; 자동매칭 순</li><li>DB지정 — 번호·공종명·유사도 0.6</li><li>자동매칭 — 규칙(정규식, 단위 일치) → 유사도 Dice ≥ 0.45</li><li>보정계수 = 현장여건 × 공사규모 × 지질 × 기상기후 × 개별</li><li>못 정하면 작업일수 0 + 경고, 임의로 채우지 않음</li></ul></details>
+<details open style="--c:var(--b4)"><summary>④ 작업일수<span class="sec">§3-3</span></summary><ul><li>단위작업 = ROUNDUP(수량 ÷ (1일작업량 × 보정계수 × 작업조))</li><li>공정 W = Σ(작업일수 + 간접 + 보정) + 직접작업일수</li><li>중복가능(운반·시험 등)은 합산 제외</li><li>간접작업일수 — 공정 내 같은 패턴 1회</li></ul></details>
+<details open style="--c:var(--b5)"><summary>⑤ 주공정 CPM<span class="sec">§2·§4</span></summary><ul><li>가동률 달력 — 일별 가동률 누계 cum, finish / start_for_finish</li><li>준비기간 P일 뒤가 공사 착수일</li><li>전진 — FS(+lag)·SS(+lag 또는 n%)·FF → ES·EF</li><li>후진 — LS·LF, 총여유 TF = LS − ES</li><li>TF ≤ 0 인 공정 = 주공정(Critical Path)</li></ul></details>
+<details open style="--c:var(--b6)"><summary>⑤-1 공기조정<span class="sec">§5</span></summary><ul><li>목표기간 초과 시에만 수행</li><li>후보 ① 주공정 최대 작업일수 항목 작업조 +1</li><li>후보 ② 선행 중첩 10%p씩 (FS → SS)</li><li>후보마다 시험 계산해 최대 단축 채택</li><li>최대 300회 · 연속 6회 무효 시 종료 · 최적 상태 복원</li></ul></details>
+<details open style="--c:var(--b7)"><summary>⑥ 종합<span class="sec">§6</span></summary><ul><li>총일수 = 정리기간 종료일차 + 1</li><li>공사기간 = 준비 + 비작업 + 작업 + 정리</li><li>+ 공사여건 보정일수</li><li>개월 = 일수 ÷ 30.4167, 준공일 = 착공일 + (총일수 − 1)</li></ul></details>
+<details open style="--c:var(--b8)"><summary>⑦ 적정성<span class="sec">§7</span></summary><ul><li>부록5 산정공식 — B = Y + 준비 + 정리, 적용범위 밖은 참고</li><li>동종공사 평균 개월 × 30.4167 (+ 준비·정리 가산)</li><li>건설사업관리기간·환경공단 — 참고</li><li>편차 = (A − B) ÷ B, ±20% 이내면 적정</li><li>초과 시 원인 분석, 수치 조작 금지</li></ul></details>
+<details open style="--c:var(--b9)"><summary>추가검토 · 산출물<span class="sec">§9</span></summary><ul><li>동절기 공사중지를 켜서 일정 재계산</li><li>01 공사기간 산정보고서</li><li>02 보고서 부록 (부록 1~11)</li><li>03 검토과정 워크북</li><li>04 입력</li><li>모두 편집 가능한 A4 세로 HTML</li></ul></details>
+</div>
+</section>
+<section><h2>원본 Python → 이 스킬 문서 대응</h2><div class="tw"><table><thead><tr><th>원본 모듈</th><th>하던 일</th><th>지금은 어디에</th></tr></thead><tbody>
+<tr><td><code>refdata.py + data/*.json</code></td><td>기준 상수·DB</td><td>기준값.md, data/</td></tr>
+<tr><td><code>project.py</code></td><td>입력서식 5시트</td><td>계산절차 §0, 04_입력.html</td></tr>
+<tr><td><code>nonwork.py · calendar_cap.py</code></td><td>② 비작업일수·가동률 달력</td><td>계산절차 §1·§2</td></tr>
+<tr><td><code>workdays.py</code></td><td>③④ 1일작업량·작업일수</td><td>계산절차 §3</td></tr>
+<tr><td><code>schedule.py</code></td><td>⑤ CPM</td><td>계산절차 §4</td></tr>
+<tr><td><code>compress.py</code></td><td>⑤-1 공기조정</td><td>계산절차 §5</td></tr>
+<tr><td><code>adequacy.py · summary.py</code></td><td>⑦ 적정성·월별 집계</td><td>계산절차 §7·§8</td></tr>
+<tr><td><code>qtyparse.py · wizard.py</code></td><td>수량파일 → 입력서식</td><td>계산절차 §10</td></tr>
+<tr><td><code>report·appendix·workbook·gantt 등</code></td><td>문서 생성</td><td>산출물작성.md + html_template.html</td></tr>
+<tr><td><code>pipeline.py</code></td><td>①→⑦ 순서·작업경과</td><td>reviewer.md 절차</td></tr>
+</tbody></table></div></section>
+</div>
+<script>var d=function(){return document.querySelectorAll("details")};document.getElementById("openAll").onclick=function(){d().forEach(function(x){x.open=true})};document.getElementById("closeAll").onclick=function(){d().forEach(function(x){x.open=false})};</script>
+</body></html>
