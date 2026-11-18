@@ -1,0 +1,1327 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>포항 에코빌리지 작업 기록</title>
+<style>
+:root{--bg:#fff;--fg:#141b26;--muted:#5d6878;--line:#dde2ea;--soft:#f3f6fa;--accent:#1665e8}
+@media (prefers-color-scheme:dark){:root{--bg:#0c1118;--fg:#e8edf4;--muted:#9aa5b5;--line:#2a3443;--soft:#1b2430;--accent:#5b9bff;color-scheme:dark}}
+body{background:var(--bg);color:var(--fg);font-family:"Noto Sans KR",system-ui,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;line-height:1.6;max-width:960px;margin:0 auto;padding:24px max(16px,env(safe-area-inset-left,0px));word-break:keep-all}
+h1{font-size:26px;border-bottom:2px solid var(--fg);padding-bottom:8px} h2{font-size:20px;margin-top:36px;border-left:4px solid var(--accent);padding-left:10px} h3{font-size:15px;margin-top:24px}
+a{color:var(--accent)}
+table{border-collapse:collapse;width:100%;font-size:13.5px;display:block;overflow-x:auto} th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top} th{background:var(--soft)}
+code{background:var(--soft);padding:1px 4px;border-radius:3px;font-size:.92em}
+pre{background:var(--soft);padding:12px;border-radius:6px;overflow:auto;max-height:480px;font-size:12px} pre code{background:none;padding:0}
+@page{size:A4;margin:15mm} @media print{pre{max-height:none}}
+</style></head><body>
+<h1>포항 에코빌리지 민간투자사업 추진계획: 작업 기록</h1>
+<ul>
+<li>작업 기간: 2026-11-11 ~ 2026-11-18</li>
+<li>저장소·브랜치: <code>chaeeun030702/001</code> · <code>claude/practical-turing-v89qd6</code></li>
+<li>PR: https://github.com/chaeeun030702/001/pull/109 (draft)</li>
+<li>아티팩트: https://claude.ai/artifact/MzH9wGE49UKKPfQcQTfw7X (비공개, 버전 3)</li>
+<li>폴더: <code>docs/pohang_ecovillage/</code></li>
+</ul>
+<h2>1. 요청과 처리 경과</h2>
+<table>
+<thead>
+<tr>
+<th>순서</th>
+<th>일시 (UTC)</th>
+<th>요청</th>
+<th>처리 내용</th>
+<th>결과</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>11-11 09:30</td>
+<td>첨부 <code>Pohang_Ecovillage_Package.zip</code> 분석 후 구현</td>
+<td>압축 해제(PPTX, PDF, 슬라이드 텍스트 md). PDF 12쪽을 이미지로 렌더링해 배치를 확인하고 PPTX에서 사진 4장을 추출. 12장을 HTML 발표자료로 구현(문서 보기·발표 모드, 반응형, 다크모드)</td>
+<td>커밋 <code>90e2d04</code>, PR #109 생성, 아티팩트 게시(버전 1)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>11-11 09:34</td>
+<td>(PR 감시)</td>
+<td>CI·리뷰 확인. 체크 없음, 리뷰 없음, 병합 가능</td>
+<td>조치 없음</td>
+</tr>
+<tr>
+<td>3</td>
+<td>11-11 09:36</td>
+<td>아티팩트로 게시</td>
+<td>같은 URL로 재게시하고 열기</td>
+<td>아티팩트 버전 1 유지</td>
+</tr>
+<tr>
+<td>4</td>
+<td>11-11 09:37</td>
+<td>A4 가로 수정 및 편집 가능한 HTML 파일</td>
+<td>각 장을 A4 가로(297×210mm)로 고정하고 화면 폭에 맞춰 축소. 편집 모드(글자 수정, 사진 교체, 자동 보관, 원본 되돌리기), HTML 저장, A4 가로 인쇄(<code>@page</code>) 추가. 넘침 검사(12쪽 모두 정상), PDF 출력 12쪽 확인, 저장 파일에 수정 내용이 남는지 확인</td>
+<td>커밋 <code>cb08923</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td>11-11 09:38</td>
+<td>(위 작업 보완)</td>
+<td>아티팩트 화면에서는 파일 내려받기가 막혀 있어 <code>downloads</code> 기능으로 저장하도록 연결</td>
+<td>커밋 <code>effa259</code>, 아티팩트 버전 3</td>
+</tr>
+<tr>
+<td>6</td>
+<td>11-11 10:25 ~ 18:28</td>
+<td>(PR 정기 확인 3회)</td>
+<td>매번 병합 가능, CI 체크 없음, 리뷰 없음</td>
+<td>3회 연속 변화 없음으로 정기 확인 종료</td>
+</tr>
+<tr>
+<td>7</td>
+<td>11-18</td>
+<td>전체 기록과 파일을 md 파일로 저장</td>
+<td>이 문서 작성. 첫 작업 때 실수로 커밋된 확인용 스크린샷 <code>full.png</code>(2.3MB, 옛 레이아웃) 삭제</td>
+<td>이 커밋</td>
+</tr>
+</tbody>
+</table>
+<h2>2. 첨부 자료 분석 요약</h2>
+<table>
+<thead>
+<tr>
+<th>첨부 파일</th>
+<th>내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Pohang_Ecovillage_Compatible.pptx</code></td>
+<td>12장 발표자료 원본. 사진 4장 포함</td>
+</tr>
+<tr>
+<td><code>Pohang_Ecovillage_Compatible.pdf</code></td>
+<td>같은 자료의 PDF</td>
+</tr>
+<tr>
+<td><code>Pohang_Ecovillage_Slide_Text.md</code></td>
+<td>슬라이드별 텍스트 추출본 (→ <code>slide_text.md</code>로 보관)</td>
+</tr>
+</tbody>
+</table>
+<p>슬라이드 구성:</p>
+<table>
+<thead>
+<tr>
+<th>쪽</th>
+<th>장</th>
+<th>핵심 내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>표지</td>
+<td>GS E&amp;C, 포항 에코빌리지 친환경에너지타운 민간투자사업 추진계획</td>
+</tr>
+<tr>
+<td>2</td>
+<td>목차</td>
+<td>8개 장</td>
+</tr>
+<tr>
+<td>3</td>
+<td>01 추진 배경</td>
+<td>생활폐기물 460톤/일, 대체 기반 필요 시점 2034년, 공간계획 40만㎡</td>
+</tr>
+<tr>
+<td>4</td>
+<td>02 마스터플랜</td>
+<td>조감 개념도, 전체 사업비 6,800억원(검토값)</td>
+</tr>
+<tr>
+<td>5</td>
+<td>03 시설 구성</td>
+<td>소각 400, 음식물 바이오가스화 200, 재활용선별 60, 대형폐기물 40, 침출수 400(톤/일), 매립 120,000㎡, 주민편익시설</td>
+</tr>
+<tr>
+<td>6</td>
+<td>04 민간제안</td>
+<td>민간제안 4단계, 정부고시 비교, 2015·2023·2024 정책 흐름, 공사비 절감 24.3%</td>
+</tr>
+<tr>
+<td>7</td>
+<td>05 BTO-a</td>
+<td>BTO-a·BTO·BTL 비교, 민간투자 추진 장점 4가지</td>
+</tr>
+<tr>
+<td>8</td>
+<td>06 추진 절차</td>
+<td>법정 10단계, 제3자 공고 90일 이상, 협상 원칙 1년 등</td>
+</tr>
+<tr>
+<td>9</td>
+<td>07 초기 추진 계획</td>
+<td>7개월 4단계 일정(간트 표)</td>
+</tr>
+<tr>
+<td>10</td>
+<td>08 GS건설 역량</td>
+<td>소각시설 시공 18개소(30.7%), 용량가중 평균 가동률 90.1% 대 79.7%</td>
+</tr>
+<tr>
+<td>11</td>
+<td>09 실적: 하남</td>
+<td>하수처리 32,000㎥/일 등 6개 시설, 2011.09~2015.06</td>
+</tr>
+<tr>
+<td>12</td>
+<td>09 실적: 제주·경북</td>
+<td>제주 소각 500톤/일, 경북북부권 390톤/일 + 바이오가스화 120톤/일</td>
+</tr>
+</tbody>
+</table>
+<h2>3. 결과물 사용법</h2>
+<ul>
+<li><code>index.html</code>을 브라우저로 연다.</li>
+<li><strong>편집</strong>: 글자를 눌러 고치고, 사진을 누르면 다른 사진으로 바꾼다. 수정 내용은 브라우저에 자동 보관된다.</li>
+<li><strong>HTML 저장</strong>: 편집본을 HTML 한 파일로 받는다. 받은 파일도 다시 편집할 수 있다.</li>
+<li><strong>A4 인쇄</strong>: A4 가로 12쪽으로 인쇄한다. PDF로 저장할 때는 여백을 '없음'으로 둔다. 아티팩트 화면에서는 인쇄가 막혀 있어 버튼이 숨겨진다.</li>
+<li><strong>발표 모드</strong>: 한 장씩 보이며 ←/→ 키로 넘긴다. Esc로 빠져나온다.</li>
+<li>원본을 크게 고칠 때는 <code>template.html</code>을 수정하고 <code>python3 docs/pohang_ecovillage/build.py</code>를 실행한다.</li>
+</ul>
+<h2>4. 파일 목록</h2>
+<table>
+<thead>
+<tr>
+<th>파일 (<code>docs/pohang_ecovillage/</code>)</th>
+<th>설명</th>
+<th>크기(바이트)</th>
+<th>SHA-256 앞 12자</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>index.html</code></td>
+<td>완성본. 이미지 내장 HTML 한 파일 (A4 가로 12쪽, 편집·HTML 저장·인쇄·발표 모드)</td>
+<td>317,309</td>
+<td><code>94ac94742dd6</code></td>
+</tr>
+<tr>
+<td><code>template.html</code></td>
+<td>편집용 원본. 이미지 자리는 <code>{{IMG_이름}}</code></td>
+<td>43,761</td>
+<td><code>d8c722d0fb5f</code></td>
+</tr>
+<tr>
+<td><code>build.py</code></td>
+<td>template.html + img/*.jpg → index.html 생성</td>
+<td>553</td>
+<td><code>809384bff5a7</code></td>
+</tr>
+<tr>
+<td><code>README.md</code></td>
+<td>폴더 안내와 편집·인쇄 방법</td>
+<td>1,316</td>
+<td><code>1a73b7a0d5ef</code></td>
+</tr>
+<tr>
+<td><code>slide_text.md</code></td>
+<td>첨부 PPTX에서 추출한 슬라이드별 원본 텍스트</td>
+<td>11,709</td>
+<td><code>1da567050a5b</code></td>
+</tr>
+<tr>
+<td><code>img/masterplan.jpg</code></td>
+<td>4쪽 마스터플랜 조감 개념도 (PPTX image1)</td>
+<td>87,185</td>
+<td><code>1e38d49f7528</code></td>
+</tr>
+<tr>
+<td><code>img/hanam.jpg</code></td>
+<td>11쪽 하남 환경기초시설 사진 (PPTX image2)</td>
+<td>52,201</td>
+<td><code>51ef12d66f61</code></td>
+</tr>
+<tr>
+<td><code>img/jeju.jpg</code></td>
+<td>12쪽 제주환경자원순환센터 사진 (PPTX image3)</td>
+<td>36,222</td>
+<td><code>e30b6b80d118</code></td>
+</tr>
+<tr>
+<td><code>img/gyeongbuk.jpg</code></td>
+<td>12쪽 경북북부권환경에너지타운 사진 (PPTX image4)</td>
+<td>29,526</td>
+<td><code>8ed4441c84c3</code></td>
+</tr>
+<tr>
+<td><code>작업기록.md</code></td>
+<td>이 문서</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>작업기록.html</code></td>
+<td>이 문서의 HTML 보기용 사본</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>미해결·확인 필요 사항:</p>
+<ul>
+<li>아티팩트 화면에서 <strong>HTML 저장</strong>(저장 확인 창)은 실제 화면에서 시험하지 못했다. 파일을 직접 열었을 때의 내려받기는 확인했다.</li>
+<li>원본 자료의 수치(사업비 6,800억원, 공사비 절감 24.3%, 가동률 등)는 첨부 자료를 그대로 옮긴 것으로, 원자료 검증은 하지 않았다.</li>
+</ul>
+<h2>5. 파일 원문</h2>
+<p><code>index.html</code>은 <code>template.html</code>에 사진 4장을 base64로 넣은 결과물이라 원문을 싣지 않았다. <code>python3 docs/pohang_ecovillage/build.py</code>로 똑같이 다시 만들 수 있다. 사진은 바이너리라 목록만 남겼다.</p>
+<h3><code>README.md</code></h3>
+<pre><code class="language-markdown"># 포항 에코빌리지 친환경에너지타운 · 민간투자사업 추진계획 (웹 버전)
+
+첨부 패키지(`Pohang_Ecovillage_Package.zip`: PPTX·PDF·슬라이드 텍스트)의 12장 발표자료를
+브라우저에서 바로 보는 HTML 한 파일로 구현했다.
+
+| 파일 | 내용 |
+| --- | --- |
+| `index.html` | 완성본. 이미지까지 내장한 HTML 한 파일. A4 가로(297×210mm) 12쪽, 편집·HTML 저장·A4 인쇄, 발표 모드(←→ 키) |
+| `template.html` | 편집용 원본. 이미지는 `{{IMG_이름}}` 자리표시 |
+| `build.py` | `template.html` + `img/*.jpg` → `index.html` |
+| `img/` | PPTX에서 추출한 마스터플랜·실적 사진 |
+| `slide_text.md` | 원본 슬라이드 텍스트 추출본 |
+
+수정 후 다시 만들기:
+
+```bash
+python3 docs/pohang_ecovillage/build.py
+```
+
+## 편집과 인쇄
+
+1. `index.html`을 브라우저로 연다.
+2. **편집**을 누르고 글자를 바로 고친다. 사진을 누르면 다른 사진으로 바꿀 수 있다. 수정 내용은 브라우저에 자동으로 보관된다.
+3. **HTML 저장**을 누르면 편집본이 HTML 한 파일로 저장된다. 저장한 파일도 다시 편집할 수 있다.
+4. **A4 인쇄**를 누르면 A4 가로 12쪽으로 인쇄된다. PDF로 저장할 때는 여백을 '없음'으로 둔다.
+</code></pre>
+<h3><code>build.py</code></h3>
+<pre><code class="language-python">&quot;&quot;&quot;template.html + img/*.jpg -&gt; index.html (이미지를 data URI로 넣은 완전한 HTML 한 파일).&quot;&quot;&quot;
+import base64
+import pathlib
+import re
+
+here = pathlib.Path(__file__).parent
+html = (here / &quot;template.html&quot;).read_text(encoding=&quot;utf-8&quot;)
+
+
+def embed(m):
+    data = (here / &quot;img&quot; / f&quot;{m.group(1)}.jpg&quot;).read_bytes()
+    return &quot;data:image/jpeg;base64,&quot; + base64.b64encode(data).decode()
+
+
+out = re.sub(r&quot;\{\{IMG_(\w+)\}\}&quot;, embed, html)
+(here / &quot;index.html&quot;).write_text(out, encoding=&quot;utf-8&quot;)
+print(&quot;wrote&quot;, here / &quot;index.html&quot;, len(out), &quot;bytes&quot;)
+</code></pre>
+<h3><code>template.html</code></h3>
+<pre><code class="language-html">&lt;title&gt;포항 에코빌리지 민간투자사업 추진계획&lt;/title&gt;
+&lt;meta name=&quot;claude:viewport-fit-sides&quot; content=&quot;cover&quot;&gt;
+&lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.googleapis.com&quot;&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&amp;family=IBM+Plex+Sans:wght@500;600;700&amp;display=swap&quot;&gt;
+&lt;style&gt;
+/* Layout: A4 가로(297×210mm) 페이지를 문서처럼 쌓고 화면 폭에 맞춰 축소. 편집 모드에서 글·사진 수정, HTML로 저장, A4 가로 인쇄. */
+:root{
+  --bg:#eef1f5; --paper:#ffffff; --ink:#141b26; --muted:#5d6878; --line:#dde2ea;
+  --soft:#f3f6fa; --accent:#1665e8; --accent-soft:#e8f0fe; --accent-ink:#0d47b3; --bar2:#9aa6b6;
+  --f-body:&quot;Noto Sans KR&quot;,system-ui,-apple-system,&quot;Apple SD Gothic Neo&quot;,&quot;Malgun Gothic&quot;,sans-serif;
+  --f-num:&quot;IBM Plex Sans&quot;,&quot;Noto Sans KR&quot;,system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme=&quot;light&quot;]){
+  --bg:#0c1118; --paper:#151c26; --ink:#e8edf4; --muted:#9aa5b5; --line:#2a3443;
+  --soft:#1b2430; --accent:#5b9bff; --accent-soft:#1a2b47; --accent-ink:#9cc2ff; --bar2:#5d6a7c; color-scheme:dark}}
+:root[data-theme=&quot;dark&quot;]{
+  --bg:#0c1118; --paper:#151c26; --ink:#e8edf4; --muted:#9aa5b5; --line:#2a3443;
+  --soft:#1b2430; --accent:#5b9bff; --accent-soft:#1a2b47; --accent-ink:#9cc2ff; --bar2:#5d6a7c; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px;word-break:keep-all}
+h1,h2,h3,p{margin:0}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+
+/* toolbar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;max-width:1123px;margin:0 auto;display:flex;gap:8px;align-items:center;
+  padding:12px 0;background:var(--bg);flex-wrap:wrap}
+body::before{content:&quot;&quot;;position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.bar .brand{font-weight:700;font-size:13px;letter-spacing:.06em}
+.bar nav{display:flex;gap:4px;flex-wrap:wrap;flex:1;min-width:0}
+.bar nav a{font-size:12px;color:var(--muted);text-decoration:none;padding:4px 8px;border-radius:6px}
+.bar nav a:hover,.bar nav a.on{background:var(--accent-soft);color:var(--accent-ink)}
+.btn{font:inherit;font-size:13px;font-weight:500;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:8px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn:focus-visible,.bar a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* slides */
+.deck{display:flex;flex-direction:column;align-items:center;gap:24px;--z:1}
+.slide{background:var(--paper);border:1px solid var(--line);border-radius:2px;padding:12mm 15mm 8mm;
+  width:297mm;height:210mm;flex:none;overflow:hidden;zoom:var(--z);box-shadow:0 2px 10px rgba(20,30,50,.08);
+  display:flex;flex-direction:column;gap:16px;position:relative;scroll-margin-top:72px}
+.slide&gt;*{min-width:0}
+.deck&gt;*{min-width:0}
+.head{display:flex;justify-content:space-between;gap:16px;align-items:flex-end;border-bottom:1px solid var(--ink);padding-bottom:12px;flex-wrap:wrap}
+.head h2{font-size:clamp(20px,2.4vw,26px);font-weight:700;text-wrap:balance;letter-spacing:-.01em}
+.head p{color:var(--muted);font-size:13px;margin-top:4px}
+.tag{font-size:12px;color:var(--muted);white-space:nowrap}
+.tag b{color:var(--accent);font-weight:600}
+.src{margin-top:auto;font-size:11.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px;display:flex;justify-content:space-between;gap:16px}
+.src span:last-child{white-space:nowrap;font-family:var(--f-num)}
+
+.grid{display:grid;gap:14px}
+.g3{grid-template-columns:repeat(3,1fr)} .g2{grid-template-columns:repeat(2,1fr)} .g4{grid-template-columns:repeat(4,1fr)} .g5{grid-template-columns:repeat(5,1fr)}
+.card{border:1px solid var(--line);border-radius:8px;padding:16px 18px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.card.fill{background:var(--soft);border-color:transparent}
+.lbl{font-size:12px;color:var(--muted)}
+.big{font-family:var(--f-num);font-size:34px;font-weight:700;line-height:1.1;letter-spacing:-.02em}
+.big small{font-family:var(--f-body);font-size:13px;font-weight:500;color:var(--muted);margin-left:4px;letter-spacing:0}
+.note{font-size:13px;color:var(--muted)}
+.h3{font-size:15px;font-weight:700;border-left:3px solid var(--accent);padding-left:10px;line-height:1.3}
+.flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:10px;align-items:stretch}
+.flow .arrow{align-self:center;color:var(--accent);font-size:20px}
+ul.dots{margin:0;padding-left:18px;font-size:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:4px 16px}
+
+/* cover */
+.cover{gap:18px;background:
+  linear-gradient(135deg,var(--paper) 55%,var(--accent-soft) 100%)}
+.cover .co{font-size:13px;font-weight:700;letter-spacing:.12em;margin-bottom:auto;padding-bottom:40px}
+.cover .eyebrow{color:var(--accent);font-weight:600;font-size:14px;letter-spacing:.04em}
+.cover h1{font-size:clamp(28px,4.4vw,48px);font-weight:900;line-height:1.25;letter-spacing:-.02em;text-wrap:balance}
+.cover .rule{width:72px;height:3px;background:var(--accent)}
+.cover .meta{display:flex;gap:28px;flex-wrap:wrap;margin-top:12px}
+.cover .meta div{display:flex;flex-direction:column}
+.cover .meta b{font-family:var(--f-num);font-size:22px}
+
+/* toc */
+.toc{display:grid;grid-template-columns:1fr 1fr;gap:0 40px}
+.toc a{display:grid;grid-template-columns:44px 1fr auto;gap:8px;align-items:center;padding:16px 4px;border-bottom:1px solid var(--line);color:var(--ink);text-decoration:none;font-weight:500}
+.toc a:hover{color:var(--accent)}
+.toc .n{color:var(--accent);font-family:var(--f-num);font-weight:700}
+.toc .p{color:var(--muted);font-size:12px;font-family:var(--f-num)}
+
+/* figure */
+figure{margin:0;display:flex;flex-direction:column;gap:8px}
+figure img{width:100%;border-radius:6px;display:block}
+.mp img{width:auto;max-width:100%;height:118mm;object-fit:contain;margin:0 auto}
+.ref figure img{height:92mm;object-fit:cover}
+.pair img{height:62mm;width:100%;object-fit:cover}
+.mp{position:relative}
+.mp .pin{position:absolute;font-size:12px;font-weight:700;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:2px 7px;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+
+/* proposal */
+.split{display:grid;grid-template-columns:2.2fr 1fr;gap:16px}
+.pill{display:inline-block;font-size:11px;font-weight:600;color:var(--accent-ink);background:var(--accent-soft);padding:2px 8px;border-radius:999px;align-self:flex-start}
+.pill.grey{background:var(--soft);color:var(--muted)}
+.steps{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.step{border:1px solid var(--accent);border-radius:6px;padding:10px 12px;font-weight:600;font-size:14px;background:var(--accent-soft)}
+.step i{display:block;font-style:normal;font-family:var(--f-num);font-size:11px;color:var(--accent);font-weight:700}
+.vflow{font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:2px}
+.timeline{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;border-top:1px solid var(--line);padding-top:14px}
+.timeline b{font-family:var(--f-num)}
+
+/* bto-a */
+.models{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:14px}
+.model{border:1px solid var(--line);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:8px;font-size:13px}
+.model.main{border:2px solid var(--accent)}
+.model h3{font-family:var(--f-num);font-size:26px;font-weight:700}
+.model.main h3{color:var(--accent)}
+.box{background:var(--soft);border-radius:6px;padding:8px;text-align:center;font-size:13px}
+.model.main .box.hl{background:var(--accent-soft);color:var(--accent-ink);font-weight:700;border:1px solid var(--accent)}
+.down{text-align:center;color:var(--muted);font-size:12px}
+.pros h4{margin:0 0 4px;font-size:14px}
+.pros p{font-size:13px;color:var(--muted)}
+
+/* procedure */
+.phase{font-size:12px;font-weight:700;color:var(--accent)}
+.proc{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.proc .card{gap:2px;position:relative}
+.proc .card h4{margin:2px 0 4px;font-size:15px}
+.proc .card p{font-size:12.5px;color:var(--muted)}
+.proc .card i{font-style:normal;font-family:var(--f-num);font-size:11px;font-weight:700;color:var(--accent)}
+.rules{background:var(--soft);border-radius:8px;padding:12px 16px;font-size:13px;display:grid;gap:4px}
+
+/* gantt */
+.scroll{overflow-x:auto}
+table.gantt{width:100%;min-width:680px;border-collapse:collapse;font-size:13px;table-layout:fixed}
+.gantt th,.gantt td{border:1px solid var(--line);padding:9px 8px;text-align:center}
+.gantt th{background:var(--soft);font-weight:600;font-size:12px}
+.gantt th:first-child,.gantt td:first-child{text-align:left;width:26%;font-weight:600}
+.gantt td.on{background:var(--accent);color:#fff;font-weight:700;font-size:12px}
+
+/* capability */
+.claim{border-left:4px solid var(--accent);background:var(--accent-soft);padding:14px 18px;font-weight:700;font-size:15px;line-height:1.6;color:var(--ink)}
+.claim em{font-style:normal;color:var(--accent-ink)}
+.cap{display:grid;grid-template-columns:1.25fr 1fr;gap:16px}
+.meter{display:grid;gap:12px}
+.meter .row{display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:end;font-size:13px}
+.meter .row b{font-family:var(--f-num);font-size:22px}
+.meter .track{grid-column:1/-1;height:12px;background:var(--soft);border-radius:2px;overflow:hidden;position:relative}
+.meter .track span{display:block;height:100%}
+.meter .ticks{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);font-family:var(--f-num)}
+
+/* references */
+.ref{display:grid;grid-template-columns:1.4fr 1fr;gap:20px}
+.specs{display:grid}
+.specs div{display:flex;justify-content:space-between;align-items:baseline;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+.specs b{font-family:var(--f-num);font-size:20px}
+.specs small{color:var(--muted);font-size:12px;margin-left:4px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.pair .card{padding:0;border:0;gap:10px}
+.kv{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--line);padding-top:10px}
+.kv b{font-family:var(--f-num);font-size:30px}
+
+/* present mode */
+body.present .bar nav{display:none}
+body.present .slide{display:none}
+body.present .slide.cur{display:flex}
+.pager{display:none;gap:8px;align-items:center;font-family:var(--f-num);font-size:13px;color:var(--muted)}
+body.present .pager{display:flex}
+
+/* edit mode */
+body.editing .slide{outline:2px dashed var(--accent);outline-offset:4px}
+body.editing .slide img{cursor:pointer}
+body.editing .slide img:hover{outline:3px solid var(--accent)}
+[contenteditable]:focus{outline:none}
+.btn.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.edit-only{display:none}
+body.editing .edit-only{display:inline-flex}
+.status{font-size:12px;color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);
+  padding:10px 16px;border-radius:8px;font-size:13px;z-index:20;max-width:calc(100% - 32px)}
+.hint{max-width:1123px;margin:0 auto 12px;font-size:12.5px;color:var(--muted)}
+body:not(.editing) .hint{display:none}
+
+@media (prefers-reduced-motion:no-preference){.meter .track span{transition:width .8s ease}}
+
+/* A4 가로 인쇄 */
+@page{size:A4 landscape;margin:0}
+@media print{
+  :root:root:root{--bg:#fff;--paper:#fff;--ink:#141b26;--muted:#5d6878;--line:#dde2ea;--soft:#f3f6fa;--accent:#1665e8;--accent-soft:#e8f0fe;--accent-ink:#0d47b3;--bar2:#9aa6b6;color-scheme:light}
+  html,body{background:#fff;padding:0!important;margin:0}
+  body::before,.bar,.hint,.toast{display:none!important}
+  .deck{display:block;--z:1!important}
+  .slide{display:flex!important;zoom:1;border:0;border-radius:0;box-shadow:none;outline:0!important;break-after:page;page-break-after:always;margin:0}
+  .slide:last-child{break-after:auto;page-break-after:auto}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+&lt;/style&gt;
+
+&lt;div class=&quot;bar&quot;&gt;
+  &lt;span class=&quot;brand&quot;&gt;GS E&amp;amp;C&lt;/span&gt;
+  &lt;nav id=&quot;nav&quot;&gt;
+    &lt;a href=&quot;#s3&quot;&gt;01 배경&lt;/a&gt;&lt;a href=&quot;#s4&quot;&gt;02 마스터플랜&lt;/a&gt;&lt;a href=&quot;#s6&quot;&gt;03 민간제안&lt;/a&gt;&lt;a href=&quot;#s7&quot;&gt;04 BTO-a&lt;/a&gt;
+    &lt;a href=&quot;#s8&quot;&gt;05 절차&lt;/a&gt;&lt;a href=&quot;#s9&quot;&gt;06 초기계획&lt;/a&gt;&lt;a href=&quot;#s10&quot;&gt;07 역량&lt;/a&gt;&lt;a href=&quot;#s11&quot;&gt;08 실적&lt;/a&gt;
+  &lt;/nav&gt;
+  &lt;div class=&quot;pager&quot;&gt;&lt;button class=&quot;btn&quot; id=&quot;prev&quot; aria-label=&quot;이전 장&quot;&gt;‹&lt;/button&gt;&lt;span id=&quot;pg&quot;&gt;1 / 12&lt;/span&gt;&lt;button class=&quot;btn&quot; id=&quot;next&quot; aria-label=&quot;다음 장&quot;&gt;›&lt;/button&gt;&lt;/div&gt;
+  &lt;span class=&quot;status&quot; id=&quot;status&quot;&gt;&lt;/span&gt;
+  &lt;button class=&quot;btn edit-only&quot; id=&quot;revert&quot; hidden&gt;원본으로 되돌리기&lt;/button&gt;
+  &lt;button class=&quot;btn&quot; id=&quot;edit&quot; aria-pressed=&quot;false&quot;&gt;편집&lt;/button&gt;
+  &lt;button class=&quot;btn&quot; id=&quot;save&quot;&gt;HTML 저장&lt;/button&gt;
+  &lt;button class=&quot;btn&quot; id=&quot;print&quot;&gt;A4 인쇄&lt;/button&gt;
+  &lt;button class=&quot;btn&quot; id=&quot;mode&quot;&gt;발표 모드&lt;/button&gt;
+&lt;/div&gt;
+&lt;p class=&quot;hint&quot;&gt;편집 모드: 글자를 눌러 바로 고치고, 사진을 누르면 다른 사진으로 바꿉니다. 수정 내용은 이 브라우저에 자동 보관되며, &lt;b&gt;HTML 저장&lt;/b&gt;으로 편집본을 파일로 받습니다.&lt;/p&gt;
+&lt;input type=&quot;file&quot; id=&quot;imgpick&quot; accept=&quot;image/*&quot; hidden&gt;
+
+&lt;main class=&quot;deck&quot; id=&quot;deck&quot;&gt;
+
+&lt;!-- 1 --&gt;
+&lt;section class=&quot;slide cover&quot; id=&quot;s1&quot;&gt;
+  &lt;div class=&quot;co&quot;&gt;GS E&amp;amp;C&lt;/div&gt;
+  &lt;div class=&quot;eyebrow&quot;&gt;Eco-friendly Energy Town&lt;/div&gt;
+  &lt;h1&gt;포항 에코빌리지 친환경에너지타운&lt;br&gt;민간투자사업 추진계획&lt;/h1&gt;
+  &lt;div class=&quot;rule&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;meta&quot;&gt;
+    &lt;div&gt;&lt;span class=&quot;lbl&quot;&gt;사업방식&lt;/span&gt;&lt;b&gt;BTO-a&lt;/b&gt;&lt;/div&gt;
+    &lt;div&gt;&lt;span class=&quot;lbl&quot;&gt;추진유형&lt;/span&gt;&lt;b&gt;민간제안&lt;/b&gt;&lt;/div&gt;
+    &lt;div&gt;&lt;span class=&quot;lbl&quot;&gt;사업비(검토값)&lt;/span&gt;&lt;b&gt;6,800억원&lt;/b&gt;&lt;/div&gt;
+    &lt;div&gt;&lt;span class=&quot;lbl&quot;&gt;초기 추진기간&lt;/span&gt;&lt;b&gt;7개월&lt;/b&gt;&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;src&quot;&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;01 / 12&lt;/span&gt;&lt;/div&gt;
+&lt;/section&gt;
+
+&lt;!-- 2 --&gt;
+&lt;section class=&quot;slide&quot; id=&quot;s2&quot;&gt;
+  &lt;div class=&quot;head&quot;&gt;&lt;div&gt;&lt;h2&gt;목차&lt;/h2&gt;&lt;p&gt;사업 구상부터 민간투자 추진 절차까지&lt;/p&gt;&lt;/div&gt;&lt;span class=&quot;tag&quot;&gt;목차&lt;/span&gt;&lt;/div&gt;
+  &lt;div class=&quot;toc&quot;&gt;
+    &lt;a href=&quot;#s3&quot;&gt;&lt;span class=&quot;n&quot;&gt;01&lt;/span&gt;사업 추진 배경&lt;span class=&quot;p&quot;&gt;03&lt;/span&gt;&lt;/a&gt;
+    &lt;a href=&quot;#s8&quot;&gt;&lt;span class=&quot;n&quot;&gt;05&lt;/span&gt;법령에 따른 추진 절차&lt;span class=&quot;p&quot;&gt;08&lt;/span&gt;&lt;/a&gt;
+    &lt;a href=&quot;#s4&quot;&gt;&lt;span class=&quot;n&quot;&gt;02&lt;/span&gt;마스터플랜과 시설 구성&lt;span class=&quot;p&quot;&gt;04&lt;/span&gt;&lt;/a&gt;
+    &lt;a href=&quot;#s9&quot;&gt;&lt;span class=&quot;n&quot;&gt;06&lt;/span&gt;프로젝트 초기 추진 계획&lt;span class=&quot;p&quot;&gt;09&lt;/span&gt;&lt;/a&gt;
+    &lt;a href=&quot;#s6&quot;&gt;&lt;span class=&quot;n&quot;&gt;03&lt;/span&gt;민간제안 방식 추진&lt;span class=&quot;p&quot;&gt;06&lt;/span&gt;&lt;/a&gt;
+    &lt;a href=&quot;#s10&quot;&gt;&lt;span class=&quot;n&quot;&gt;07&lt;/span&gt;GS건설 수행 역량&lt;span class=&quot;p&quot;&gt;10&lt;/span&gt;&lt;/a&gt;
+    &lt;a href=&quot;#s7&quot;&gt;&lt;span class=&quot;n&quot;&gt;04&lt;/span&gt;BTO-a 추진모델&lt;span class=&quot;p&quot;&gt;07&lt;/span&gt;&lt;/a&gt;
+    &lt;a href=&quot;#s11&quot;&gt;&lt;span class=&quot;n&quot;&gt;08&lt;/span&gt;GS건설 주요 실적&lt;span class=&quot;p&quot;&gt;11&lt;/span&gt;&lt;/a&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;src&quot;&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;02 / 12&lt;/span&gt;&lt;/div&gt;
+&lt;/section&gt;
+
+&lt;!-- 3 --&gt;
+&lt;section class=&quot;slide&quot; id=&quot;s3&quot;&gt;
+  &lt;div class=&quot;head&quot;&gt;&lt;div&gt;&lt;h2&gt;환경시설의 처리 안정성과 주민 편익을 함께 확보&lt;/h2&gt;&lt;p&gt;분산된 폐기물 처리기능을 하나의 자원순환 거점으로 연결한다.&lt;/p&gt;&lt;/div&gt;&lt;span class=&quot;tag&quot;&gt;&lt;b&gt;01&lt;/b&gt; / 추진 배경&lt;/span&gt;&lt;/div&gt;
+  &lt;div class=&quot;grid g3&quot;&gt;
+    &lt;div class=&quot;card&quot;&gt;&lt;span class=&quot;lbl&quot;&gt;기존 발생량&lt;/span&gt;&lt;span class=&quot;big&quot;&gt;460&lt;small&gt;톤/일&lt;/small&gt;&lt;/span&gt;&lt;span class=&quot;note&quot;&gt;홍보자료상 생활폐기물 발생량&lt;br&gt;최신 수요와 성상 재검증&lt;/span&gt;&lt;/div&gt;
+    &lt;div class=&quot;card&quot;&gt;&lt;span class=&quot;lbl&quot;&gt;기존 시설의 한계 대비&lt;/span&gt;&lt;span class=&quot;big&quot;&gt;2034&lt;small&gt;년&lt;/small&gt;&lt;/span&gt;&lt;span class=&quot;note&quot;&gt;홍보자료가 제시한 대체 기반 필요 시점&lt;br&gt;실제 잔여수명과 연계해 일정 검토&lt;/span&gt;&lt;/div&gt;
+    &lt;div class=&quot;card&quot;&gt;&lt;span class=&quot;lbl&quot;&gt;공간계획 기준&lt;/span&gt;&lt;span class=&quot;big&quot;&gt;40&lt;small&gt;만㎡&lt;/small&gt;&lt;/span&gt;&lt;span class=&quot;note&quot;&gt;종합처리시설과 주민편익시설의 연계&lt;br&gt;최종 면적은 입지에 따라 조정&lt;/span&gt;&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;flow&quot;&gt;
+    &lt;div class=&quot;card fill&quot;&gt;&lt;b&gt;안정적인 처리&lt;/b&gt;&lt;span class=&quot;note&quot;&gt;소각, 재활용, 매립의 유기적 연계&lt;/span&gt;&lt;/div&gt;&lt;span class=&quot;arrow&quot;&gt;→&lt;/span&gt;
+    &lt;div class=&quot;card fill&quot;&gt;&lt;b&gt;자원과 에너지 회수&lt;/b&gt;&lt;span class=&quot;note&quot;&gt;폐열과 바이오가스의 이용처 확보&lt;/span&gt;&lt;/div&gt;&lt;span class=&quot;arrow&quot;&gt;→&lt;/span&gt;
+    &lt;div class=&quot;card fill&quot;&gt;&lt;b&gt;주민과 공유하는 공간&lt;/b&gt;&lt;span class=&quot;note&quot;&gt;공원, 체육 및 여가시설 연계&lt;/span&gt;&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;src&quot;&gt;&lt;span&gt;[S1, 2~3쪽] 발생량과 목표 시점은 과거 홍보자료 기준이며 확정 설계조건이 아니다.&lt;/span&gt;&lt;span&gt;03 / 12&lt;/span&gt;&lt;/div&gt;
+&lt;/section&gt;
+
+&lt;!-- 4 --&gt;
+&lt;section class=&quot;slide&quot; id=&quot;s4&quot;&gt;
+  &lt;div class=&quot;head&quot;&gt;&lt;div&gt;&lt;h2&gt;환경시설과 주민 공간을 잇는 친환경에너지타운&lt;/h2&gt;&lt;p&gt;공정은 연결하고, 처리차량과 주민 이용 동선은 분리한다.&lt;/p&gt;&lt;/div&gt;&lt;span class=&quot;tag&quot;&gt;&lt;b&gt;02&lt;/b&gt; / 마스터플랜&lt;/span&gt;&lt;/div&gt;
+  &lt;figure class=&quot;mp&quot;&gt;
+    &lt;img src=&quot;{{IMG_masterplan}}&quot; alt=&quot;포항 에코빌리지 마스터플랜 조감 개념도: 소각장, 매립시설, 침출수처리시설, 음식물바이오가스화시설, 재활용선별시설, 대형폐기물처리시설과 주민편익시설 배치&quot;&gt;
+  &lt;/figure&gt;
+  &lt;div class=&quot;grid g4&quot;&gt;
+    &lt;div class=&quot;card fill&quot;&gt;&lt;span class=&quot;lbl&quot;&gt;전체 사업비(검토값)&lt;/span&gt;&lt;b class=&quot;num&quot;&gt;6,800억원&lt;/b&gt;&lt;/div&gt;
+    &lt;div class=&quot;card fill&quot;&gt;&lt;span class=&quot;lbl&quot;&gt;소각장&lt;/span&gt;&lt;b class=&quot;num&quot;&gt;400톤/일 · 약 2,000억원&lt;/b&gt;&lt;/div&gt;
+    &lt;div class=&quot;card fill&quot;&gt;&lt;span class=&quot;lbl&quot;&gt;음식물바이오가스화&lt;/span&gt;&lt;b class=&quot;num&quot;&gt;200톤/일 · 약 900억원&lt;/b&gt;&lt;/div&gt;
+    &lt;div class=&quot;card fill&quot;&gt;&lt;span class=&quot;lbl&quot;&gt;매립시설&lt;/span&gt;&lt;b class=&quot;num&quot;&gt;120,000㎡&lt;/b&gt;&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;src&quot;&gt;&lt;span&gt;[S4, Ⅲ] HWP 원본 개념도. 사업비 6,800억원과 배치는 검토 단계의 값이다.&lt;/span&gt;&lt;span&gt;04 / 12&lt;/span&gt;&lt;/div&gt;
+&lt;/section&gt;
+
+&lt;!-- 5 --&gt;
+&lt;section class=&quot;slide&quot; id=&quot;s5&quot;&gt;
+  &lt;div class=&quot;head&quot;&gt;&lt;div&gt;&lt;h2&gt;환경시설의 처리 공정은 연결하고, 주민 동선은 분리&lt;/h2&gt;&lt;p&gt;시설 규모는 첨부자료 기준이며, 최신 수요와 입지에 따라 검증한다.&lt;/p&gt;&lt;/div&gt;&lt;span class=&quot;tag&quot;&gt;&lt;b&gt;03&lt;/b&gt; / 시설 구성&lt;/span&gt;&lt;/div&gt;
+  &lt;div class=&quot;grid g3&quot;&gt;
+    &lt;div class=&quot;card&quot;&gt;&lt;span class=&quot;lbl&quot;&gt;소각시설&lt;/span&gt;&lt;span class=&quot;big&quot;&gt;400&lt;small&gt;톤/일&lt;/small&gt;&lt;/span&gt;&lt;span class=&quot;note&quot;&gt;소각열 회수와 에너지 이용 연계&lt;/span&gt;&lt;/div&gt;
+    &lt;div class=&quot;card&quot;&gt;&lt;span class=&quot;lbl&quot;&gt;음식물 바이오가스화&lt;/span&gt;&lt;span class=&quot;big&quot;&gt;200&lt;small&gt;톤/일&lt;/small&gt;&lt;/span&gt;&lt;span class=&quot;note&quot;&gt;가스 이용처와 공급 조건 검토&lt;/span&gt;&lt;/div&gt;
+    &lt;div class=&quot;card&quot;&gt;&lt;span class=&quot;lbl&quot;&gt;재활용선별&lt;/span&gt;&lt;span class=&quot;big&quot;&gt;60&lt;small&gt;톤/일&lt;/small&gt;&lt;/span&gt;&lt;span class=&quot;note&quot;&gt;재활용품 회수와 반출동선 정리&lt;/span&gt;&lt;/div&gt;
+    &lt;div class=&quot;card&quot;&gt;&lt;span class=&quot;lbl&quot;&gt;대형폐기물 처리&lt;/span&gt;&lt;span class=&quot;big&quot;&gt;40&lt;small&gt;톤/일&lt;/small&gt;&lt;/span&gt;&lt;span class=&quot;note&quot;&gt;선별 후 자원화·잔재물 처리 연계&lt;/span&gt;&lt;/div&gt;
+    &lt;div class=&quot;card&quot;&gt;&lt;span class=&quot;lbl&quot;&gt;매립시설 면적&lt;/span&gt;&lt;span class=&quot;big&quot;&gt;120,000&lt;small&gt;㎡&lt;/small&gt;&lt;/span&gt;&lt;span class=&quot;note&quot;&gt;매립 용적과 구분해 산정&lt;/span&gt;&lt;/div&gt;
+    &lt;div class=&quot;card&quot;&gt;&lt;span class=&quot;lbl&quot;&gt;침출수 처리&lt;/span&gt;&lt;span class=&quot;big&quot;&gt;400&lt;small&gt;톤/일&lt;/small&gt;&lt;/span&gt;&lt;span class=&quot;note&quot;&gt;발생량과 처리계통 검토&lt;/span&gt;&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;grid g2&quot;&gt;
+    &lt;div class=&quot;card&quot;&gt;&lt;span class=&quot;h3&quot;&gt;주민편익시설 &lt;span class=&quot;lbl&quot; style=&quot;font-weight:400;margin-left:8px&quot;&gt;도입 가능 시설 예시&lt;/span&gt;&lt;/span&gt;
+      &lt;ul class=&quot;dots&quot; style=&quot;margin-top:8px&quot;&gt;&lt;li&gt;수영장&lt;/li&gt;&lt;li&gt;파크골프장&lt;/li&gt;&lt;li&gt;카페&lt;/li&gt;&lt;li&gt;축구장&lt;/li&gt;&lt;li&gt;생태공원&lt;/li&gt;&lt;li&gt;캠핑장&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;
+    &lt;div class=&quot;card fill&quot;&gt;&lt;span class=&quot;h3&quot;&gt;처리·주민 이용 구역 분리&lt;/span&gt;
+      &lt;div class=&quot;grid g2&quot; style=&quot;margin-top:8px;gap:10px&quot;&gt;
+        &lt;div&gt;&lt;b&gt;처리 구역&lt;/b&gt;&lt;p class=&quot;note&quot;&gt;반입 → 선별·처리 → 잔재물 관리&lt;/p&gt;&lt;/div&gt;
+        &lt;div&gt;&lt;b&gt;주민 이용 구역&lt;/b&gt;&lt;p class=&quot;note&quot;&gt;공원, 체육·여가시설과 안전한 동선&lt;/p&gt;&lt;/div&gt;
+      &lt;/div&gt;&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;src&quot;&gt;&lt;span&gt;[S1, 3쪽 / S4, Ⅲ] 공정·동선은 제안 개념. 최종 용량, 주민편익시설과 지하화 범위는 별도 협의한다.&lt;/span&gt;&lt;span&gt;05 / 12&lt;/span&gt;&lt;/div&gt;
+&lt;/section&gt;
+
+&lt;!-- 6 --&gt;
+&lt;section class=&quot;slide&quot; id=&quot;s6&quot;&gt;
+  &lt;div class=&quot;head&quot;&gt;&lt;div&gt;&lt;h2&gt;본 사업은 민간제안 방식으로 추진&lt;/h2&gt;&lt;p&gt;민간이 사업을 구상하고, 포항시와 협의해 제안 절차를 진행한다.&lt;/p&gt;&lt;/div&gt;&lt;span class=&quot;tag&quot;&gt;&lt;b&gt;04&lt;/b&gt; / 민간제안&lt;/span&gt;&lt;/div&gt;
+  &lt;div class=&quot;split&quot;&gt;
+    &lt;div class=&quot;card&quot; style=&quot;gap:12px;border-color:var(--accent)&quot;&gt;
+      &lt;span class=&quot;pill&quot;&gt;본 사업 추진방식&lt;/span&gt;
+      &lt;h3 style=&quot;font-size:30px;font-weight:900;border-left:4px solid var(--accent);padding-left:12px&quot;&gt;민간제안&lt;/h3&gt;
+      &lt;p&gt;민간의 사업 구상과 제안으로 추진&lt;/p&gt;
+      &lt;div class=&quot;steps&quot;&gt;
+        &lt;div class=&quot;step&quot;&gt;&lt;i&gt;01&lt;/i&gt;의향서 제출·회신&lt;/div&gt;
+        &lt;div class=&quot;step&quot;&gt;&lt;i&gt;02&lt;/i&gt;제안서 제출&lt;/div&gt;
+        &lt;div class=&quot;step&quot;&gt;&lt;i&gt;03&lt;/i&gt;적격성 검토&lt;/div&gt;
+        &lt;div class=&quot;step&quot;&gt;&lt;i&gt;04&lt;/i&gt;제3자 공고·평가·협상&lt;/div&gt;
+      &lt;/div&gt;
+      &lt;p class=&quot;note&quot;&gt;사업계획, 재무모델, 건설·운영계획을 구체화해 제안한다.&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;card&quot; style=&quot;gap:10px&quot;&gt;
+      &lt;span class=&quot;pill grey&quot;&gt;비교 참고&lt;/span&gt;
+      &lt;h3 style=&quot;font-size:20px;color:var(--muted)&quot;&gt;정부고시&lt;/h3&gt;
+      &lt;p class=&quot;note&quot;&gt;공공이 대상사업과 요구조건을 정해 모집&lt;/p&gt;
+      &lt;div class=&quot;vflow&quot;&gt;&lt;span&gt;타당성분석&lt;/span&gt;&lt;span&gt;↓&lt;/span&gt;&lt;span&gt;대상사업 지정&lt;/span&gt;&lt;span&gt;↓&lt;/span&gt;&lt;span&gt;기본계획 고시&lt;/span&gt;&lt;span&gt;↓&lt;/span&gt;&lt;span&gt;평가와 협상&lt;/span&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div&gt;
+    &lt;p class=&quot;h3&quot; style=&quot;margin-bottom:12px&quot;&gt;폐기물처리시설 사업추진 방침 검토 / 기재부 주관 민간투자사업 활성화 방안(경제관계장관회의) 자료 내&lt;/p&gt;
+    &lt;div class=&quot;timeline&quot;&gt;
+      &lt;div&gt;&lt;b&gt;2015&lt;/b&gt; · 민자 우선제도 도입&lt;p class=&quot;note&quot;&gt;사업성평가로 민자 추진 가능사업은 예산 신청 전 민자절차 진행&lt;/p&gt;&lt;/div&gt;
+      &lt;div&gt;&lt;b&gt;2023&lt;/b&gt; · 재정사업 민자전환 검토&lt;p class=&quot;note&quot;&gt;폐기물·공공하수처리시설 등 필수 민자검토 시설의 적격성 판단&lt;/p&gt;&lt;/div&gt;
+      &lt;div&gt;&lt;b&gt;2024&lt;/b&gt; · 민간 창의·효율 활용&lt;p class=&quot;note&quot;&gt;공사기간 단축·공사비 절감 추진 · 환경사업 공사비 절감 &lt;b class=&quot;num&quot; style=&quot;color:var(--accent)&quot;&gt;24.3%&lt;/b&gt;*&lt;/p&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;src&quot;&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;06 / 12&lt;/span&gt;&lt;/div&gt;
+&lt;/section&gt;
+
+&lt;!-- 7 --&gt;
+&lt;section class=&quot;slide&quot; id=&quot;s7&quot;&gt;
+  &lt;div class=&quot;head&quot;&gt;&lt;div&gt;&lt;h2&gt;환경민자사업은 BTO-a로 추진 (환경부 방침)&lt;/h2&gt;&lt;p&gt;손익공유형을 중심으로 투자비 회수와 위험분담 구조를 구체화한다.&lt;/p&gt;&lt;/div&gt;&lt;span class=&quot;tag&quot;&gt;&lt;b&gt;05&lt;/b&gt; / BTO-a&lt;/span&gt;&lt;/div&gt;
+  &lt;div class=&quot;models&quot;&gt;
+    &lt;div class=&quot;model main&quot;&gt;&lt;span class=&quot;pill&quot;&gt;손익공유형&lt;/span&gt;&lt;h3&gt;BTO-a&lt;/h3&gt;
+      &lt;div class=&quot;box&quot;&gt;주무관청 ↔ 사업시행자&lt;/div&gt;&lt;div class=&quot;down&quot;&gt;↓ 협약에 따른 분담&lt;/div&gt;
+      &lt;div class=&quot;box hl&quot;&gt;지원조건과 초과이익 공유&lt;/div&gt;
+      &lt;p class=&quot;note&quot;&gt;투자위험분담기준금 등을 설정 · 지원·환수 조건과 재정부담 비교&lt;/p&gt;&lt;/div&gt;
+    &lt;div class=&quot;model&quot;&gt;&lt;span class=&quot;pill grey&quot;&gt;수익형&lt;/span&gt;&lt;h3&gt;BTO&lt;/h3&gt;
+      &lt;div class=&quot;box&quot;&gt;시설 이용자&lt;/div&gt;&lt;div class=&quot;down&quot;&gt;↓ 사용료&lt;/div&gt;&lt;div class=&quot;box&quot;&gt;사업시행자&lt;/div&gt;
+      &lt;p class=&quot;note&quot;&gt;사용료로 투자비 회수 · 수요, 운영비와 수입 안정성 검토&lt;/p&gt;&lt;/div&gt;
+    &lt;div class=&quot;model&quot;&gt;&lt;span class=&quot;pill grey&quot;&gt;임대형&lt;/span&gt;&lt;h3&gt;BTL&lt;/h3&gt;
+      &lt;div class=&quot;box&quot;&gt;주무관청&lt;/div&gt;&lt;div class=&quot;down&quot;&gt;↓ 시설임대료 등&lt;/div&gt;&lt;div class=&quot;box&quot;&gt;사업시행자&lt;/div&gt;
+      &lt;p class=&quot;note&quot;&gt;공공 지급금으로 투자비 회수 · 대상 적합성, 한도액과 의결 검토&lt;/p&gt;&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div&gt;
+    &lt;p class=&quot;h3&quot; style=&quot;margin-bottom:12px&quot;&gt;민간투자사업 추진 장점 / &lt;span style=&quot;color:var(--accent)&quot;&gt;재정사업 대비 공사비, 운영비가 절감되는 경우에 한해 추진&lt;/span&gt;&lt;/p&gt;
+    &lt;div class=&quot;grid g4 pros&quot;&gt;
+      &lt;div&gt;&lt;h4&gt;비용 절감 검증&lt;/h4&gt;&lt;p&gt;재정사업 대비 공사비·운영비 절감 여부를 공공투자관리센터 적격성 검토로 확인&lt;/p&gt;&lt;/div&gt;
+      &lt;div&gt;&lt;h4&gt;포항시 재정 건전성 확보&lt;/h4&gt;&lt;p&gt;민간자본 선투입으로 초기 재정부담 분산, 준공 후 기부채납·처리수수료로 회수&lt;/p&gt;&lt;/div&gt;
+      &lt;div&gt;&lt;h4&gt;환경시설 혜택 조기 공유&lt;/h4&gt;&lt;p&gt;미래세대와 시설 혜택을 함께 누리고 운영기간에 걸쳐 비용 부담 분산&lt;/p&gt;&lt;/div&gt;
+      &lt;div&gt;&lt;h4&gt;지역경제·세수 기여&lt;/h4&gt;&lt;p&gt;지역 종합건설업체 공동도급 참여와 운영기업 유치·일자리 창출 연계&lt;/p&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;src&quot;&gt;&lt;span&gt;사용자 첨부자료를 요약했다. 국비지원·지방채무 반영 여부, 지역 참여와 재정 효과는 관련 제도 및 사업조건에 따라 확인하며, BTO-a 지원·환수 조건은 실시협약 등에서 확정한다.&lt;/span&gt;&lt;span&gt;07 / 12&lt;/span&gt;&lt;/div&gt;
+&lt;/section&gt;
+
+&lt;!-- 8 --&gt;
+&lt;section class=&quot;slide&quot; id=&quot;s8&quot;&gt;
+  &lt;div class=&quot;head&quot;&gt;&lt;div&gt;&lt;h2&gt;법령 [민간투자법, 민간투자사업 기본계획]에 따라 진행&lt;/h2&gt;&lt;p&gt;민간제안 BTO-a 사업의 주요 단계와 검토·지원체계&lt;/p&gt;&lt;/div&gt;&lt;span class=&quot;tag&quot;&gt;&lt;b&gt;06&lt;/b&gt; / 추진 절차&lt;/span&gt;&lt;/div&gt;
+  &lt;span class=&quot;phase&quot;&gt;① 제안과 사업성 검토&lt;/span&gt;
+  &lt;div class=&quot;proc&quot;&gt;
+    &lt;div class=&quot;card&quot;&gt;&lt;i&gt;01&lt;/i&gt;&lt;h4&gt;의향서 제출·회신&lt;/h4&gt;&lt;p&gt;사업 추진 의향서 제출&lt;br&gt;주무관청 검토·회신&lt;/p&gt;&lt;/div&gt;
+    &lt;div class=&quot;card&quot;&gt;&lt;i&gt;02&lt;/i&gt;&lt;h4&gt;제안서 제출&lt;/h4&gt;&lt;p&gt;사업계획, 재무모델&lt;br&gt;건설 및 운영계획&lt;/p&gt;&lt;/div&gt;
+    &lt;div class=&quot;card&quot;&gt;&lt;i&gt;03&lt;/i&gt;&lt;h4&gt;적격성 검토&lt;/h4&gt;&lt;p&gt;KDI 내 공공투자관리센터&lt;br&gt;민자적격성 검토&lt;/p&gt;&lt;/div&gt;
+    &lt;div class=&quot;card&quot;&gt;&lt;i&gt;04&lt;/i&gt;&lt;h4&gt;심의와 공고&lt;/h4&gt;&lt;p&gt;해당 심의·제3자 공고&lt;br&gt;한국환경공단 지원&lt;/p&gt;&lt;/div&gt;
+    &lt;div class=&quot;card&quot;&gt;&lt;i&gt;05&lt;/i&gt;&lt;h4&gt;평가와 협상&lt;/h4&gt;&lt;p&gt;평가 및 사업조건 협상&lt;br&gt;한국환경공단 지원&lt;/p&gt;&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;span class=&quot;phase&quot;&gt;② 협약과 사업 이행&lt;/span&gt;
+  &lt;div class=&quot;proc&quot;&gt;
+    &lt;div class=&quot;card&quot;&gt;&lt;i&gt;06&lt;/i&gt;&lt;h4&gt;실시협약&lt;/h4&gt;&lt;p&gt;협약 체결로&lt;br&gt;사업시행자 지정&lt;/p&gt;&lt;/div&gt;
+    &lt;div class=&quot;card&quot;&gt;&lt;i&gt;07&lt;/i&gt;&lt;h4&gt;실시계획&lt;/h4&gt;&lt;p&gt;실시설계, 부지계획&lt;br&gt;금융조달 확정&lt;/p&gt;&lt;/div&gt;
+    &lt;div class=&quot;card&quot;&gt;&lt;i&gt;08&lt;/i&gt;&lt;h4&gt;인허가&lt;/h4&gt;&lt;p&gt;설치 관련 승인&lt;br&gt;환경 및 부지 협의&lt;/p&gt;&lt;/div&gt;
+    &lt;div class=&quot;card&quot;&gt;&lt;i&gt;09&lt;/i&gt;&lt;h4&gt;본공사 착공&lt;/h4&gt;&lt;p&gt;공사 착수·품질관리&lt;br&gt;안전 및 공정관리&lt;/p&gt;&lt;/div&gt;
+    &lt;div class=&quot;card&quot;&gt;&lt;i&gt;10&lt;/i&gt;&lt;h4&gt;준공과 운영&lt;/h4&gt;&lt;p&gt;준공 확인&lt;br&gt;서비스 성과 관리&lt;/p&gt;&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;rules&quot;&gt;
+    &lt;b&gt;주요 절차 기준&lt;/b&gt;
+    &lt;span&gt;제3자 공고: 통상 &lt;b class=&quot;num&quot;&gt;90일&lt;/b&gt; 이상 / 협상: 원칙 &lt;b class=&quot;num&quot;&gt;1년&lt;/b&gt;, 불가피한 경우 6개월 이내 1회 연장&lt;/span&gt;
+    &lt;span&gt;실시계획 승인 신청: 지정일부터 &lt;b class=&quot;num&quot;&gt;1년&lt;/b&gt; 이내가 원칙 / 준공보고: 공사 완료 후 &lt;b class=&quot;num&quot;&gt;15일&lt;/b&gt; 이내&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;src&quot;&gt;&lt;span&gt;[S2, 제82조, 제91~104조 / L1·L2] 단계는 일부 병행 가능. 공고 예외, 승인 신청 연장 및 심의 요건은 적용 법령에 따라 별도 확인한다.&lt;/span&gt;&lt;span&gt;08 / 12&lt;/span&gt;&lt;/div&gt;
+&lt;/section&gt;
+
+&lt;!-- 9 --&gt;
+&lt;section class=&quot;slide&quot; id=&quot;s9&quot;&gt;
+  &lt;div class=&quot;head&quot;&gt;&lt;div&gt;&lt;h2&gt;프로젝트 초기 추진 계획&lt;/h2&gt;&lt;p&gt;총 7개월의 초기 추진계획: 타당성 검토 → 의향서 제출·회신 → 제안서 작성·제출 → 검토 의뢰&lt;/p&gt;&lt;/div&gt;&lt;span class=&quot;tag&quot;&gt;&lt;b&gt;07&lt;/b&gt; / 초기 추진 계획&lt;/span&gt;&lt;/div&gt;
+  &lt;div class=&quot;scroll&quot;&gt;
+    &lt;table class=&quot;gantt&quot;&gt;
+      &lt;thead&gt;&lt;tr&gt;&lt;th&gt;추진 단계&lt;/th&gt;&lt;th&gt;1개월&lt;/th&gt;&lt;th&gt;2개월&lt;/th&gt;&lt;th&gt;3개월&lt;/th&gt;&lt;th&gt;4개월&lt;/th&gt;&lt;th&gt;5개월&lt;/th&gt;&lt;th&gt;6개월&lt;/th&gt;&lt;th&gt;7개월&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+      &lt;tbody&gt;
+        &lt;tr&gt;&lt;td&gt;1단계 · 타당성 검토&lt;/td&gt;&lt;td class=&quot;on&quot; colspan=&quot;3&quot;&gt;용량·지질조건 검토&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;2단계 · 의향서 제출·회신&lt;/td&gt;&lt;td class=&quot;on&quot;&gt;제출·회신&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;3단계 · 제안서 준비과업&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td class=&quot;on&quot; colspan=&quot;4&quot;&gt;사업제안서 작성, 제출&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;4단계 · 제안서 검토의뢰&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td class=&quot;on&quot;&gt;PIMAC 의뢰&lt;/td&gt;&lt;/tr&gt;
+      &lt;/tbody&gt;
+    &lt;/table&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;grid g4&quot;&gt;
+    &lt;div class=&quot;card&quot;&gt;&lt;span class=&quot;lbl&quot;&gt;1단계 / 1~3개월&lt;/span&gt;&lt;span class=&quot;h3&quot;&gt;타당성 검토&lt;/span&gt;&lt;p class=&quot;note&quot;&gt;종합설계회사 선정(수의계약 추진)&lt;br&gt;용량 적정성 및 지질조건 검토&lt;/p&gt;&lt;/div&gt;
+    &lt;div class=&quot;card&quot;&gt;&lt;span class=&quot;lbl&quot;&gt;2단계 / 1개월 차&lt;/span&gt;&lt;span class=&quot;h3&quot;&gt;의향서 제출 및 회신&lt;/span&gt;&lt;p class=&quot;note&quot;&gt;사업 추진 의향서 작성·제출&lt;br&gt;포항시 회신&lt;/p&gt;&lt;/div&gt;
+    &lt;div class=&quot;card&quot;&gt;&lt;span class=&quot;lbl&quot;&gt;3단계 / 3~6개월&lt;/span&gt;&lt;span class=&quot;h3&quot;&gt;제안서 준비과업&lt;/span&gt;&lt;p class=&quot;note&quot;&gt;시설 규모·공정·배치 검토&lt;br&gt;사업비·재무모델 수립&lt;br&gt;건설·운영계획 구체화&lt;br&gt;제안서 작성 및 점검&lt;/p&gt;&lt;/div&gt;
+    &lt;div class=&quot;card&quot;&gt;&lt;span class=&quot;lbl&quot;&gt;4단계 / 7개월 차&lt;/span&gt;&lt;span class=&quot;h3&quot;&gt;제안서 검토 의뢰&lt;/span&gt;&lt;p class=&quot;note&quot;&gt;사업제안서 검토 의뢰&lt;br&gt;PIMAC 검토 절차 착수&lt;/p&gt;&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;src&quot;&gt;&lt;span&gt;7개월은 초기 준비계획(안)이며, 단계별 배분은 협의에 따라 조정한다. 수의계약 적용 여부는 발주 주체와 관련 계약 규정에 따라 확인하며, 의향서 회신과 후속 일정은 주무관청 협의에 따른다.&lt;/span&gt;&lt;span&gt;09 / 12&lt;/span&gt;&lt;/div&gt;
+&lt;/section&gt;
+
+&lt;!-- 10 --&gt;
+&lt;section class=&quot;slide&quot; id=&quot;s10&quot;&gt;
+  &lt;div class=&quot;head&quot;&gt;&lt;div&gt;&lt;h2&gt;GS건설, 최적의 포항에코빌리지 사업 추진 파트너&lt;/h2&gt;&lt;p&gt;당사는 시공 역량, 전문 운영체계와 금융 검토를 연결한 수행방안을 제안한다.&lt;/p&gt;&lt;/div&gt;&lt;span class=&quot;tag&quot;&gt;&lt;b&gt;08&lt;/b&gt; / GS건설 역량&lt;/span&gt;&lt;/div&gt;
+  &lt;p class=&quot;claim&quot;&gt;국내 TOP 3 종합건설사로 사업면적 &lt;em&gt;40만㎡&lt;/em&gt;, 소각시설 &lt;em&gt;400톤/일&lt;/em&gt; 규모의 초대형 환경복합시설을 차질 없이 수행할 수 있는 압도적 시공·운영 실적과 재무 건전성을 갖춘 파트너&lt;/p&gt;
+  &lt;div class=&quot;cap&quot;&gt;
+    &lt;div class=&quot;grid&quot; style=&quot;gap:14px&quot;&gt;
+      &lt;div class=&quot;grid g2&quot;&gt;
+        &lt;div class=&quot;card fill&quot;&gt;&lt;span class=&quot;lbl&quot;&gt;당사 소각시설 시공개소&lt;/span&gt;&lt;span class=&quot;big&quot;&gt;18&lt;small&gt;개소&lt;/small&gt;&lt;/span&gt;&lt;span class=&quot;note&quot;&gt;분석 대상 전국 62개소&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;card fill&quot;&gt;&lt;span class=&quot;lbl&quot;&gt;당사 소각시설 시공 비율&lt;/span&gt;&lt;span class=&quot;big&quot;&gt;30.7&lt;small&gt;%&lt;/small&gt;&lt;/span&gt;&lt;span class=&quot;note&quot;&gt;5,910톤/일&lt;/span&gt;&lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;card&quot;&gt;
+        &lt;b style=&quot;margin-bottom:8px&quot;&gt;GS건설 소각시설의 용량가중 평균 가동률&lt;/b&gt;
+        &lt;div class=&quot;meter&quot;&gt;
+          &lt;div class=&quot;row&quot;&gt;&lt;span&gt;GS건설 시공시설&lt;/span&gt;&lt;b style=&quot;color:var(--accent)&quot;&gt;90.1%&lt;/b&gt;&lt;div class=&quot;track&quot;&gt;&lt;span style=&quot;width:90.1%;background:var(--accent)&quot;&gt;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+          &lt;div class=&quot;row&quot;&gt;&lt;span&gt;나머지 14개사 시공시설&lt;/span&gt;&lt;b style=&quot;color:var(--muted)&quot;&gt;79.7%&lt;/b&gt;&lt;div class=&quot;track&quot;&gt;&lt;span style=&quot;width:79.7%;background:var(--bar2)&quot;&gt;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+          &lt;div class=&quot;ticks&quot;&gt;&lt;span&gt;0%&lt;/span&gt;&lt;span&gt;25%&lt;/span&gt;&lt;span&gt;50%&lt;/span&gt;&lt;span&gt;75%&lt;/span&gt;&lt;span&gt;100%&lt;/span&gt;&lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;grid&quot; style=&quot;gap:12px;align-content:start&quot;&gt;
+      &lt;div class=&quot;card&quot;&gt;&lt;span class=&quot;h3&quot;&gt;통합 설계와 시공&lt;/span&gt;&lt;p class=&quot;note&quot;&gt;소각, 선별, 매립 및 침출수 공정의 접점 관리&lt;/p&gt;&lt;/div&gt;
+      &lt;div class=&quot;card&quot;&gt;&lt;span class=&quot;h3&quot;&gt;장기 성능과 유지관리&lt;/span&gt;&lt;p class=&quot;note&quot;&gt;예비설비, 정기보수와 대수선 계획의 연계&lt;/p&gt;&lt;/div&gt;
+      &lt;div class=&quot;card&quot;&gt;&lt;span class=&quot;h3&quot;&gt;사업구조와 재원 검토&lt;/span&gt;&lt;p class=&quot;note&quot;&gt;참여사 역할, 금융조건 및 위험분담의 구체화&lt;/p&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;src&quot;&gt;&lt;span&gt;[S4, Ⅳ] 100톤/일 이상 공공소각시설의 내부 분석도, 2024년 자료 기준. 가동률 = 처리량 ÷ (시설용량 × 300일), 용량가중 평균. 시공시설 지표이며 당사의 직접 운영 실적과 다르다. 후속 검토 시 원자료와 산출근거를 확인한다.&lt;/span&gt;&lt;span&gt;10 / 12&lt;/span&gt;&lt;/div&gt;
+&lt;/section&gt;
+
+&lt;!-- 11 --&gt;
+&lt;section class=&quot;slide&quot; id=&quot;s11&quot;&gt;
+  &lt;div class=&quot;head&quot;&gt;&lt;div&gt;&lt;h2&gt;하남, 환경기초시설과 공원을 함께 조성 [포항시 입지공모 자료 내]&lt;/h2&gt;&lt;p&gt;하남시 환경기초시설 현대화 및 공원조성사업&lt;/p&gt;&lt;/div&gt;&lt;span class=&quot;tag&quot;&gt;&lt;b&gt;09&lt;/b&gt; / GS건설 주요 실적&lt;/span&gt;&lt;/div&gt;
+  &lt;div class=&quot;ref&quot;&gt;
+    &lt;figure&gt;
+      &lt;img src=&quot;{{IMG_hanam}}&quot; alt=&quot;하남시 환경기초시설과 상부 공원 전경&quot;&gt;
+      &lt;div style=&quot;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap&quot;&gt;&lt;b&gt;경기도 하남시&lt;/b&gt;&lt;span class=&quot;note num&quot;&gt;공사기간 2011.09 ~ 2015.06&lt;/span&gt;&lt;/div&gt;
+      &lt;p class=&quot;note&quot;&gt;하수·폐기물 처리시설과 공원을 함께 조성한 복합환경시설 실적&lt;/p&gt;
+    &lt;/figure&gt;
+    &lt;div class=&quot;grid&quot; style=&quot;gap:12px;align-content:start&quot;&gt;
+      &lt;span class=&quot;h3&quot;&gt;주요 시설 구성&lt;/span&gt;
+      &lt;div class=&quot;specs&quot;&gt;
+        &lt;div&gt;&lt;span&gt;하수처리&lt;/span&gt;&lt;span&gt;&lt;b&gt;32,000&lt;/b&gt;&lt;small&gt;㎥/일&lt;/small&gt;&lt;/span&gt;&lt;/div&gt;
+        &lt;div&gt;&lt;span&gt;소각&lt;/span&gt;&lt;span&gt;&lt;b&gt;48&lt;/b&gt;&lt;small&gt;톤/일&lt;/small&gt;&lt;/span&gt;&lt;/div&gt;
+        &lt;div&gt;&lt;span&gt;슬러지건조&lt;/span&gt;&lt;span&gt;&lt;b&gt;60&lt;/b&gt;&lt;small&gt;톤/일&lt;/small&gt;&lt;/span&gt;&lt;/div&gt;
+        &lt;div&gt;&lt;span&gt;음식물처리&lt;/span&gt;&lt;span&gt;&lt;b&gt;80&lt;/b&gt;&lt;small&gt;톤/일&lt;/small&gt;&lt;/span&gt;&lt;/div&gt;
+        &lt;div&gt;&lt;span&gt;재활용선별&lt;/span&gt;&lt;span&gt;&lt;b&gt;50&lt;/b&gt;&lt;small&gt;톤/일&lt;/small&gt;&lt;/span&gt;&lt;/div&gt;
+        &lt;div&gt;&lt;span&gt;압축시설&lt;/span&gt;&lt;span&gt;&lt;b&gt;60&lt;/b&gt;&lt;small&gt;톤/일&lt;/small&gt;&lt;/span&gt;&lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;card fill note&quot;&gt;오수중계펌프장 110,000㎥/일&lt;br&gt;유입관거 1.34km · 방류관거 1.04km&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;src&quot;&gt;&lt;span&gt;[S7] 첨부 실적 이미지 기준. 시설용량과 공사기간을 전사했으며, 계약·시공 범위와 운영 실적은 별도 증빙으로 확인한다.&lt;/span&gt;&lt;span&gt;11 / 12&lt;/span&gt;&lt;/div&gt;
+&lt;/section&gt;
+
+&lt;!-- 12 --&gt;
+&lt;section class=&quot;slide&quot; id=&quot;s12&quot;&gt;
+  &lt;div class=&quot;head&quot;&gt;&lt;div&gt;&lt;h2&gt;제주·경북북부권, 소각과 자원순환 시설 수행&lt;/h2&gt;&lt;p&gt;대형 소각시설과 바이오가스화시설 시공 실적&lt;/p&gt;&lt;/div&gt;&lt;span class=&quot;tag&quot;&gt;&lt;b&gt;09&lt;/b&gt; / GS건설 주요 실적&lt;/span&gt;&lt;/div&gt;
+  &lt;div class=&quot;pair&quot;&gt;
+    &lt;div class=&quot;card&quot;&gt;
+      &lt;img src=&quot;{{IMG_jeju}}&quot; alt=&quot;제주환경자원순환센터 전경&quot; style=&quot;border-radius:6px&quot;&gt;
+      &lt;span class=&quot;h3&quot;&gt;제주환경자원순환센터&lt;/span&gt;&lt;span class=&quot;note&quot;&gt;제주특별자치도 제주시&lt;/span&gt;
+      &lt;div class=&quot;kv&quot;&gt;&lt;span&gt;소각시설&lt;br&gt;&lt;span class=&quot;note&quot;&gt;스토커 방식&lt;/span&gt;&lt;/span&gt;&lt;span&gt;&lt;b&gt;500&lt;/b&gt; &lt;span class=&quot;note&quot;&gt;톤/일&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;
+      &lt;span class=&quot;note num&quot;&gt;공사기간 2016.07 ~ 2019.11&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;card&quot;&gt;
+      &lt;img src=&quot;{{IMG_gyeongbuk}}&quot; alt=&quot;경북북부권환경에너지타운 전경&quot; style=&quot;border-radius:6px&quot;&gt;
+      &lt;span class=&quot;h3&quot;&gt;경북북부권환경에너지타운&lt;/span&gt;&lt;span class=&quot;note&quot;&gt;경상북도 안동시&lt;/span&gt;
+      &lt;div class=&quot;kv&quot;&gt;&lt;span&gt;소각시설&lt;br&gt;&lt;span class=&quot;note&quot;&gt;스토커 방식 · 바이오가스화 120톤/일 (혐기성 소화)&lt;/span&gt;&lt;/span&gt;&lt;span&gt;&lt;b&gt;390&lt;/b&gt; &lt;span class=&quot;note&quot;&gt;톤/일&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;
+      &lt;span class=&quot;note num&quot;&gt;공사기간 2016.12 ~ 2019.10&lt;/span&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;src&quot;&gt;&lt;span&gt;[S7] 첨부 실적 이미지 기준. TPD는 톤/일로 표기했다. 시설용량·공사기간은 과거 시공 실적으로, 현재 운영 성과를 의미하지 않는다.&lt;/span&gt;&lt;span&gt;12 / 12&lt;/span&gt;&lt;/div&gt;
+&lt;/section&gt;
+
+&lt;/main&gt;
+
+&lt;script&gt;
+(function(){
+  const KEY='pohang-ecovillage-a4-draft-v1';
+  const PAGE_W=1123, PAGE_H=794; // 297×210mm @96dpi
+  const deck=document.getElementById('deck');
+  const $=id=&gt;document.getElementById(id);
+  const framed=(()=&gt;{try{return window.self!==window.top}catch(e){return true}})();
+  const slides=()=&gt;[...deck.querySelectorAll('.slide')];
+  let i=0;
+
+  function toast(msg){const t=document.createElement('div');t.className='toast';t.setAttribute('role','status');t.textContent=msg;document.body.appendChild(t);setTimeout(()=&gt;t.remove(),2600);}
+  function fit(){
+    const present=document.body.classList.contains('present');
+    const w=deck.clientWidth||document.body.clientWidth;
+    let z=Math.min(1,w/PAGE_W);
+    if(present) z=Math.min(w/PAGE_W,(window.innerHeight-90)/PAGE_H);
+    deck.style.setProperty('--z',Math.max(.2,z).toFixed(4));
+  }
+  window.addEventListener('resize',fit);
+
+  // 발표 모드
+  function show(n){const ss=slides();i=Math.max(0,Math.min(ss.length-1,n));ss.forEach((s,k)=&gt;s.classList.toggle('cur',k===i));$('pg').textContent=(i+1)+' / '+ss.length;}
+  function setPresent(on){
+    if(on&amp;&amp;document.body.classList.contains('editing'))setEdit(false);
+    document.body.classList.toggle('present',on);$('mode').textContent=on?'문서 보기':'발표 모드';fit();
+    if(on){show(i);window.scrollTo(0,0);}else{slides()[i].scrollIntoView({block:'start'});}
+  }
+  $('mode').addEventListener('click',()=&gt;{
+    if(!document.body.classList.contains('present')){const y=window.scrollY+120;const ss=slides();i=Math.max(0,ss.findIndex(s=&gt;s.getBoundingClientRect().bottom+window.scrollY&gt;y));}
+    setPresent(!document.body.classList.contains('present'));
+  });
+  $('prev').onclick=()=&gt;show(i-1);
+  $('next').onclick=()=&gt;show(i+1);
+  document.addEventListener('keydown',e=&gt;{
+    if(!document.body.classList.contains('present'))return;
+    if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();show(i+1);}
+    if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();show(i-1);}
+    if(e.key==='Escape')setPresent(false);
+  });
+  document.addEventListener('click',e=&gt;{
+    const a=e.target.closest('a[href^=&quot;#s&quot;]');if(!a)return;
+    if(document.body.classList.contains('editing')&amp;&amp;deck.contains(a)){e.preventDefault();return;}
+    if(document.body.classList.contains('present')){e.preventDefault();show(slides().findIndex(s=&gt;'#'+s.id===a.getAttribute('href')));}
+  });
+
+  // 편집 모드
+  let timer=null;
+  function store(){try{localStorage.setItem(KEY,deck.innerHTML);$('revert').hidden=false;$('status').textContent='편집본 자동 보관됨';}catch(e){$('status').textContent='이 브라우저에서는 자동 보관이 안 됩니다. HTML 저장을 이용하세요.';}}
+  function setEdit(on){
+    if(on&amp;&amp;document.body.classList.contains('present'))setPresent(false);
+    document.body.classList.toggle('editing',on);
+    slides().forEach(s=&gt;{if(on)s.setAttribute('contenteditable','true');else s.removeAttribute('contenteditable');});
+    $('edit').classList.toggle('on',on);$('edit').setAttribute('aria-pressed',on);$('edit').textContent=on?'편집 끝내기':'편집';
+    if(!on)$('status').textContent='';
+  }
+  $('edit').addEventListener('click',()=&gt;setEdit(!document.body.classList.contains('editing')));
+  deck.addEventListener('input',()=&gt;{clearTimeout(timer);timer=setTimeout(store,500);});
+
+  // 사진 바꾸기
+  let target=null;
+  deck.addEventListener('click',e=&gt;{
+    if(!document.body.classList.contains('editing'))return;
+    const img=e.target.closest('img');if(!img)return;
+    e.preventDefault();target=img;$('imgpick').value='';$('imgpick').click();
+  });
+  $('imgpick').addEventListener('change',e=&gt;{
+    const f=e.target.files&amp;&amp;e.target.files[0];if(!f||!target)return;
+    const r=new FileReader();r.onload=()=&gt;{target.src=r.result;store();toast('사진을 바꿨습니다.');};r.readAsDataURL(f);
+  });
+
+  // 원본으로
+  const ORIGINAL=deck.innerHTML;
+  let restored=false;
+  try{const d=localStorage.getItem(KEY);if(d){deck.innerHTML=d;restored=true;}}catch(e){}
+  if(restored){$('revert').hidden=false;$('status').textContent='저장된 편집본을 불러왔습니다';}
+  $('revert').addEventListener('click',()=&gt;{
+    const b=$('revert');
+    if(!b.dataset.armed){b.dataset.armed='1';b.textContent='한 번 더 누르면 되돌립니다';setTimeout(()=&gt;{delete b.dataset.armed;b.textContent='원본으로 되돌리기';},3000);return;}
+    deck.innerHTML=ORIGINAL;try{localStorage.removeItem(KEY);}catch(e){}
+    b.hidden=true;delete b.dataset.armed;b.textContent='원본으로 되돌리기';
+    if(document.body.classList.contains('editing'))setEdit(true);
+    $('status').textContent='';toast('원본으로 되돌렸습니다.');observe();
+  });
+
+  // HTML 저장
+  function cleanHTML(){
+    const root=document.documentElement.cloneNode(true);
+    root.removeAttribute('style');
+    const b=root.querySelector('body');b.classList.remove('editing','present');
+    root.querySelectorAll('[contenteditable]').forEach(el=&gt;el.removeAttribute('contenteditable'));
+    root.querySelectorAll('.slide.cur').forEach(el=&gt;el.classList.remove('cur'));
+    root.querySelectorAll('.toast').forEach(el=&gt;el.remove());
+    root.querySelectorAll('#nav a.on').forEach(el=&gt;el.classList.remove('on'));
+    const d=root.querySelector('#deck');d.removeAttribute('style');
+    const st=root.querySelector('#status');if(st)st.textContent='';
+    const rv=root.querySelector('#revert');if(rv)rv.setAttribute('hidden','');
+    return '&lt;!doctype html&gt;\n'+root.outerHTML;
+  }
+  $('save').addEventListener('click',async()=&gt;{
+    const html=cleanHTML();
+    const name='포항_에코빌리지_추진계획_A4_'+new Date().toISOString().slice(0,10)+'.html';
+    if(!framed){
+      const url=URL.createObjectURL(new Blob([html],{type:'text/html'}));
+      const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
+      setTimeout(()=&gt;URL.revokeObjectURL(url),1000);toast('편집본을 '+name+'(으)로 저장했습니다.');return;
+    }
+    const dl=window.claude&amp;&amp;window.claude.use?await window.claude.use('downloads').catch(()=&gt;null):null;
+    if(dl){
+      try{await dl.save({filename:name,data:html});toast('편집본을 '+name+'(으)로 저장했습니다.');return;}
+      catch(e){if(e&amp;&amp;e.code==='declined'){toast('저장을 취소했습니다.');return;}}
+    }
+    try{await navigator.clipboard.writeText(html);toast('이 화면에서는 파일 저장이 막혀 있어 HTML을 클립보드에 복사했습니다. 메모장에 붙여 .html로 저장하세요.');}
+    catch(e){toast('이 화면에서는 저장할 수 없습니다. 내려받은 HTML 파일을 브라우저로 열어 저장하세요.');}
+  });
+
+  // 인쇄 (액자 안에서는 인쇄가 막혀 있으므로 숨김)
+  if(framed)$('print').hidden=true;
+  $('print').addEventListener('click',()=&gt;{if(document.body.classList.contains('editing'))setEdit(false);window.print();});
+  window.addEventListener('beforeprint',()=&gt;{if(document.body.classList.contains('present'))setPresent(false);});
+
+  // 목차 강조
+  const links=[...document.querySelectorAll('#nav a')];
+  let io=null;
+  function observe(){
+    if(io)io.disconnect();
+    io=new IntersectionObserver(es=&gt;es.forEach(en=&gt;{if(en.isIntersecting){const id='#'+en.target.id;links.forEach(l=&gt;l.classList.toggle('on',l.getAttribute('href')===id));}}),{rootMargin:'-40% 0px -55% 0px'});
+    slides().forEach(s=&gt;io.observe(s));
+  }
+  observe();fit();
+})();
+&lt;/script&gt;
+</code></pre>
+<h3><code>slide_text.md</code></h3>
+<pre><code class="language-markdown"># 포항 에코빌리지 민간투자사업 추진계획
+
+&gt; 이 문서는 PPTX의 텍스트를 슬라이드별로 추출한 참고용 파일입니다. 이미지, 도형, 표의 배치와 시각 정보는 포함되지 않으며, 텍스트 순서는 원본의 읽기 순서와 다를 수 있습니다. 정확한 내용과 배치는 PPTX 또는 PDF를 확인하세요.
+
+## 1페이지
+
+- GS E&amp;C
+- Eco-friendly Energy Town
+- 포항 에코빌리지 친환경에너지타운
+- 민간투자사업 추진계획
+
+## 2페이지
+
+- 목차
+- 목차
+- 사업 구상부터 민간투자 추진 절차까지
+- 01
+- 05
+- 사업 추진 배경
+- 법령에 따른 추진 절차
+- 03
+- 08
+- 02
+- 06
+- 마스터플랜과 시설 구성
+- 프로젝트 초기 추진 계획
+- 04
+- 09
+- 03
+- 07
+- 민간제안 방식 추진
+- GS건설 수행 역량
+- 06
+- 10
+- 04
+- 08
+- BTO-a 추진모델
+- GS건설 주요 실적
+- 07
+- 11
+
+## 3페이지
+
+- 환경시설의 처리 안정성과 주민 편익을 함께 확보
+- 01 / 추진 배경
+- 분산된 폐기물 처리기능을 하나의 자원순환 거점으로 연결한다.
+- 기존 발생량
+- 기존 시설의 한계 대비
+- 공간계획 기준
+- 460
+- 2034
+- 40
+- 톤/일
+- 년
+- 만㎡
+- 홍보자료상 생활폐기물 발생량
+- 홍보자료가 제시한 대체 기반 필요 시점
+- 종합처리시설과 주민편익시설의 연계
+- 최신 수요와 성상 재검증
+- 실제 잔여수명과 연계해 일정 검토
+- 최종 면적은 입지에 따라 조정
+- 안정적인 처리
+- 자원과 에너지 회수
+- 주민과 공유하는 공간
+- →
+- →
+- 소각, 재활용, 매립의 유기적 연계
+- 폐열과 바이오가스의 이용처 확보
+- 공원, 체육 및 여가시설 연계
+- [S1, 2~3쪽] 발생량과 목표 시점은 과거 홍보자료 기준이며 확정 설계조건이 아니다.
+
+## 4페이지
+
+- 환경시설과 주민 공간을 잇는 친환경에너지타운
+- 02 / 마스터플랜
+- 공정은 연결하고, 처리차량과 주민 이용 동선은 분리한다.
+- [S4, Ⅲ] HWP 원본 개념도. 사업비 6,800억원과 배치는 검토 단계의 값이다.
+
+## 5페이지
+
+- 환경시설의 처리 공정은 연결하고, 주민 동선은 분리
+- 03 / 시설 구성
+- 시설 규모는 첨부자료 기준이며, 최신 수요와 입지에 따라 검증한다.
+- 소각시설
+- 음식물 바이오가스화
+- 재활용선별
+- 400
+- 200
+- 60
+- 톤/일
+- 톤/일
+- 톤/일
+- 소각열 회수와 에너지 이용 연계
+- 가스 이용처와 공급 조건 검토
+- 재활용품 회수와 반출동선 정리
+- 대형폐기물 처리
+- 매립시설 면적
+- 침출수 처리
+- 40
+- 120,000
+- 400
+- 톤/일
+- ㎡
+- 톤/일
+- 선별 후 자원화·잔재물 처리 연계
+- 매립 용적과 구분해 산정
+- 발생량과 처리계통 검토
+- 주민편익시설
+- 도입 가능 시설 예시
+- • 수영장
+- • 파크골프장
+- • 카페
+- • 축구장
+- • 생태공원
+- • 캠핑장
+- 처리·주민 이용 구역 분리
+- 처리 구역
+- 주민 이용 구역
+- 반입 → 선별·처리 → 잔재물 관리
+- 공원, 체육·여가시설과 안전한 동선
+- [S1, 3쪽 / S4, Ⅲ] 공정·동선은 제안 개념. 최종 용량, 주민편익시설과 지하화 범위는 별도 협의한다.
+
+## 6페이지
+
+- 본 사업은 민간제안 방식으로 추진
+- 04 / 민간제안
+- 민간이 사업을 구상하고, 포항시와 협의해 제안 절차를 진행한다.
+- 본 사업 추진방식
+- 비교 참고
+- 민간제안
+- 정부고시
+- 공공이 대상사업과
+- 민간의 사업 구상과 제안으로 추진
+- 요구조건을 정해 모집
+- 타당성분석
+- 01
+- 02
+- ↓
+- 대상사업 지정
+- 의향서 제출·회신
+- 제안서 제출
+- ↓
+- 기본계획 고시
+- 03
+- 04
+- ↓
+- 평가와 협상
+- 적격성 검토
+- 제3자 공고·평가·협상
+- 사업계획, 재무모델, 건설·운영계획을 구체화해 제안한다.
+- 폐기물처리시설 사업추진 방침 검토 / 기재부 주관 민간투자사업 활성화 방안(경계관계장관회의) 자료 내
+- 2015 · 민자 우선제도 도입
+- 2023 · 재정사업 민자전환 검토
+- 2024 · 민간 창의·효율 활용
+- 사업성평가로 민자 추진 가능사업은
+- 폐기물·공공하수처리시설 등
+- 공사기간 단축·공사비 절감 추진
+- 예산 신청 전 민자절차 진행
+- 필수 민자검토 시설의 적격성 판단
+- 환경사업 공사비 절감 24.3%*
+
+## 7페이지
+
+- 환경민자사업은 BTO-a로 추진(환경부 방침)
+- 05 / BTO-a
+- 손익공유형을 중심으로 투자비 회수와 위험분담 구조를 구체화한다.
+- 손익공유형
+- 수익형
+- 임대형
+- BTO-a
+- BTO
+- BTL
+- 시설 이용자
+- 주무관청
+- 주무관청 ↔ 사업시행자
+- ↓ 사용료
+- ↓ 시설임대료 등
+- ↓ 협약에 따른 분담
+- 사업시행자
+- 사업시행자
+- 지원조건과 초과이익 공유
+- 사용료로 투자비 회수
+- 공공 지급금으로 투자비 회수
+- 수요, 운영비와 수입 안정성 검토
+- 대상 적합성, 한도액과 의결 검토
+- 투자위험분담기준금 등을 설정
+- 지원·환수 조건과 재정부담 비교
+- 민간투자사업 추진 장점 /
+- 재정사업 대비 공사비, 운영비가 절감되는 경우에 한해 추진
+- 비용 절감 검증
+- 포항시 재정 건전성 확보
+- 환경시설 혜택 조기 공유
+- 지역경제·세수 기여
+- 재정사업 대비 공사비·운영비 절감
+- 민간자본 선투입으로 초기
+- 미래세대와 시설 혜택을 함께
+- 지역 종합건설업체 공동도급
+- 여부를
+- 재정부담 분산
+- 누리고
+- 참여와
+- 공공투자관리센터 적격성 검토로
+- 준공 후 기부채납·처리수수료로
+- 운영기간에 걸쳐 비용 부담 분산
+- 운영기업 유치·일자리 창출 연계
+- 확인
+- 회수
+- 사용자 첨부자료를 요약했다. 국비지원·지방채무 반영 여부, 지역 참여와 재정 효과는 관련 제도 및 사업조건에 따라 확인하며, BTO-a 지원·환수 조건은 실시협약 등에서 확정한다.
+
+## 8페이지
+
+- 법령[민간투자법, 민간투자사업 기본계획]에 따라 진행
+- 06 / 추진 절차
+- 민간제안 BTO-a 사업의 주요 단계와 검토·지원체계
+- ① 제안과 사업성 검토
+- 01
+- 02
+- 03
+- 04
+- 05
+- 의향서 제출·회신
+- 제안서 제출
+- 적격성 검토
+- 심의와 공고
+- 평가와 협상
+- ›
+- ›
+- ›
+- ›
+- 사업 추진 의향서 제출
+- 사업계획, 재무모델
+- KDI 내 공공투자관리센터
+- 해당 심의·제3자 공고
+- 평가 및 사업조건 협상
+- 주무관청 검토·회신
+- 건설 및 운영계획
+- 민자적격성 검토
+- 한국환경공단 지원
+- 한국환경공단 지원
+- ② 협약과 사업 이행
+- 06
+- 07
+- 08
+- 09
+- 10
+- 실시협약
+- 실시계획
+- 인허가
+- 본공사 착공
+- 준공과 운영
+- ›
+- ›
+- ›
+- ›
+- 협약 체결로
+- 실시설계, 부지계획
+- 설치 관련 승인
+- 공사 착수·품질관리
+- 준공 확인
+- 사업시행자 지정
+- 금융조달 확정
+- 환경 및 부지 협의
+- 안전 및 공정관리
+- 서비스 성과 관리
+- 주요 절차 기준
+- 제3자 공고: 통상 90일 이상 / 협상: 원칙 1년, 불가피한 경우 6개월 이내 1회 연장
+- 실시계획 승인 신청: 지정일부터 1년 이내가 원칙 / 준공보고: 공사 완료 후 15일 이내
+- [S2, 제82조, 제91~104조 / L1·L2] 단계는 일부 병행 가능. 공고 예외, 승인 신청 연장 및 심의 요건은 적용 법령에 따라 별도 확인한다.
+
+## 9페이지
+
+- 프로젝트 초기 추진 계획
+- 07 / 초기 추진 계획
+- 총 7개월의 초기 추진계획: 타당성 검토 → 의향서 제출·회신 → 제안서 작성·제출 → 검토 의뢰
+- 추진 단계
+- 1개월
+- 2개월
+- 3개월
+- 4개월
+- 5개월
+- 6개월
+- 7개월
+- 1단계 · 타당성 검토
+- 용량·지질조건 검토
+- 2단계 · 의향서 제출·회신
+- 제출·회신
+- 3단계 · 제안서 준비과업
+- 사업제안서 작성, 제출
+- 4단계 · 제안서 검토의뢰
+- PIMAC의뢰
+- 1단계 / 1~3개월
+- 2단계 / 1개월 차
+- 3단계 / 3~6개월
+- 4단계 / 7개월 차
+- 타당성 검토
+- 의향서 제출 및 회신
+- 제안서 준비과업
+- 제안서 검토 의뢰
+- 종합설계회사 선정(수의계약 추진)
+- 사업 추진 의향서 작성·제출
+- 시설 규모·공정·배치 검토
+- 사업제안서 검토 의뢰
+- 용량 적정성 및 지질조건 검토
+- 포항시 회신
+- 사업비·재무모델 수립
+- PIMAC 검토 절차 착수
+- 건설·운영계획 구체화
+- 제안서 작성 및 점검
+- 7개월은 초기 준비계획(안)이며, 단계별 배분은 협의에 따라 조정한다. 수의계약 적용 여부는 발주 주체와 관련 계약 규정에 따라 확인하며, 의향서 회신과 후속 일정은 주무관청 협의에 따른다.
+
+## 10페이지
+
+- GS건설 , 최적의 포항에코빌리지 사업 추진 파트너
+- 08 / GS건설 역량
+- 당사는 시공 역량, 전문 운영체계와 금융 검토를 연결한 수행방안을 제안한다.
+- 국내 TOP 3 종합건설사로 사업면적 40만㎡, 소각시설 400톤/일 규모의 초대형 환경복합시설을 차질 없이 수행할 수 있는 압도적
+- 시공·운영 실적과 재무 건전성을 갖춘 파트너
+- 통합 설계와 시공
+- 당사 소각시설 시공개소
+- 당사 소각시설 시공 비율
+- 18
+- 30.7
+- 소각, 선별, 매립 및 침출수 공정의 접점 관리
+- 개소
+- %
+- 분석 대상 전국 62개소
+- 5,910톤/일
+- 장기 성능과 유지관리
+- 예비설비, 정기보수와 대수선 계획의 연계
+- GS건설 소각시설의 용량가중 평균 가동률
+- 90.1%
+- GS건설 시공시설
+- 사업구조와 재원 검토
+- 참여사 역할, 금융조건 및 위험분담의 구체화
+- 79.7%
+- 나머지 14개사 시공시설
+- [S4, Ⅳ] 100톤/일 이상 공공소각시설의 내부 분석도, 2024년 자료 기준. 가동률 = 처리량 ÷ (시설용량 × 300일), 용량가중 평균. 시공시설 지표이며 당사의 직접 운영 실적과 다르다. 후속 검토 시 원자료와 산출근거를
+- 확인한다.
+
+## 11페이지
+
+- 하남, 환경기초시설과 공원을 함께 조성 [포항시 입지공모 자료 내]
+- 09 / GS건설 주요 실적
+- 하남시 환경기초시설 현대화 및 공원조성사업
+- 주요 시설 구성
+- 32,000
+- 하수처리
+- ㎥/일
+- 48
+- 소각
+- 톤/일
+- 60
+- 슬러지건조
+- 톤/일
+- 80
+- 음식물처리
+- 톤/일
+- 50
+- 재활용선별
+- 톤/일
+- 60
+- 압축시설
+- 톤/일
+- 경기도 하남시
+- 공사기간 2011.09 ~ 2015.06
+- 오수중계펌프장 110,000㎥/일
+- 하수·폐기물 처리시설과 공원을 함께 조성한 복합환경시설 실적
+- 유입관거 1.34km · 방류관거 1.04km
+- [S7] 첨부 실적 이미지 기준. 시설용량과 공사기간을 전사했으며, 계약·시공 범위와 운영 실적은 별도 증빙으로 확인한다.
+
+## 12페이지
+
+- 제주·경북북부권, 소각과 자원순환 시설 수행
+- 09 / GS건설 주요 실적
+- 대형 소각시설과 바이오가스화시설 시공 실적
+- 제주환경자원순환센터
+- 경북북부권환경에너지타운
+- 제주특별자치도 제주시
+- 경상북도 안동시
+- 500
+- 390
+- 소각시설
+- 소각시설
+- 톤/일
+- 톤/일
+- 스토커 방식
+- 스토커 방식 · 바이오가스화 120톤/일
+- 혐기성 소화 방식
+- 공사기간 2016.07 ~ 2019.11
+- 공사기간 2016.12 ~ 2019.10
+- [S7] 첨부 실적 이미지 기준. TPD는 톤/일로 표기했다. 시설용량·공사기간은 과거 시공 실적으로, 현재 운영 성과를 의미하지 않는다.
+</code></pre>
+</body></html>
