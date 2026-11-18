@@ -1,0 +1,747 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>e-safety 판독 복구 기록</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* 단일 문서 열: 표·코드는 각자 가로 스크롤 */
+:root{--bg:#f6f8f7;--fg:#17201c;--muted:#5b6a63;--line:#d5ddd9;--panel:#ffffff;--accent:#0d6b4a;--code:#eef2f0;
+--sans:"IBM Plex Sans KR",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121816;--fg:#e3ebe7;--muted:#9aaba3;--line:#2b3632;--panel:#18201d;--accent:#5fcf9f;--code:#1d2724;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#121816;--fg:#e3ebe7;--muted:#9aaba3;--line:#2b3632;--panel:#18201d;--accent:#5fcf9f;--code:#1d2724;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font:15px/1.7 var(--sans);padding-block:32px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main{max-width:920px;margin:0 auto;display:flex;flex-direction:column;gap:4px;min-width:0}
+h1{font-size:1.7rem;line-height:1.3;text-wrap:balance;margin:0 0 8px}
+h2{font-size:1.2rem;margin:28px 0 8px;padding-top:16px;border-top:1px solid var(--line);text-wrap:balance}
+h3{font-size:1rem;margin:20px 0 6px;color:var(--accent);font-family:var(--mono);font-weight:500;overflow-wrap:anywhere}
+a{color:var(--accent)} a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+ul{color:var(--muted);padding-left:20px} li{margin:2px 0}
+table{border-collapse:collapse;width:100%;font-size:.9rem;background:var(--panel)}
+.tw{overflow-x:auto;margin:8px 0}
+th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+th{background:var(--code);font-weight:600;white-space:nowrap}
+code{font-family:var(--mono);font-size:.86em;background:var(--code);padding:1px 4px;border-radius:3px;overflow-wrap:anywhere}
+pre{background:var(--code);border:1px solid var(--line);padding:12px;overflow-x:auto;font-size:12.5px;line-height:1.5;max-height:520px}
+pre code{background:none;padding:0;overflow-wrap:normal}
+</style>
+</head><body>
+<main>
+<h1 id="e-safety-ai-사진-판독-복구--작업-기록">e-safety AI 사진 판독
+복구 — 작업 기록</h1>
+<ul>
+<li>작업일: 2026-10-02 (기록 저장: 2026-11-18)</li>
+<li>대상 저장소: <a
+href="https://github.com/chaeeun030702/cnbu">chaeeun030702/cnbu</a> ·
+배포: Vercel 프로젝트 <code>cbnu-safety</code> → <a
+href="https://e-safety.vercel.app">https://e-safety.vercel.app</a></li>
+<li>결과: <code>/api/read?test=1</code> 응답
+<code>"test":{"status":200,"stop_reason":"end_turn"}</code> — 서버에서
+Claude API 호출 정상화</li>
+<li>보안: 이 문서의 모든 API 키 값은 <code>sk-ant-usr-[REDACTED]</code>
+형태로 가렸습니다.</li>
+</ul>
+<h2 id="1-요약">1. 요약</h2>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>항목</th>
+<th>내용</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>증상</td>
+<td><code>/api/read</code>에서 <code>"key":true</code>인데도 사진 판독이
+항상 키워드 판독으로 대체됨</td>
+</tr>
+<tr class="even">
+<td>원인 ①</td>
+<td>서버가 <code>temperature: 0</code>을 보냄 →
+<code>claude-sonnet-5-5</code>는 기본값이 아닌 샘플링 값을 400으로
+거부</td>
+</tr>
+<tr class="odd">
+<td>원인 ②</td>
+<td>Vercel 프로젝트가 GitHub 저장소와 연결되지 않아 <code>main</code>
+머지가 배포되지 않음</td>
+</tr>
+<tr class="even">
+<td>원인 ③</td>
+<td>새 개인 키(<code>sk-ant-usr-…</code>)가 워크스페이스 미지정 →
+<code>anthropic-workspace-id</code> 헤더 필요</td>
+</tr>
+<tr class="odd">
+<td>원인 ④</td>
+<td>이후 Vercel에 저장된 키가 무효(401) → 워크스페이스 지정 새 키로
+교체</td>
+</tr>
+<tr class="even">
+<td>코드 수정</td>
+<td>PR #1 · #2 · #3 (모두 <code>main</code>에 squash 머지)</td>
+</tr>
+<tr class="odd">
+<td>사용자 조치</td>
+<td>Vercel Git 연결, <code>ANTHROPIC_WORKSPACE_ID</code> 추가, 새 키
+등록, Redeploy, 노출된 키 폐기</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="2-진행-기록-시간순">2. 진행 기록 (시간순)</h2>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>#</th>
+<th>요청</th>
+<th>조치</th>
+<th>결과</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>새 API 키 적용, GitHub·Vercel 배포, e-safety.vercel.app 검증</td>
+<td><code>cnbu</code> 저장소를 세션에 추가·클론. 키는 저장소에 커밋하지
+않음(Vercel 환경변수용). 키로 1회 시험 호출</td>
+<td>Anthropic 응답: "API key is not scoped to a workspace …
+anthropic-workspace-id header"</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>—</td>
+<td><code>api/read.js</code>에 <code>ANTHROPIC_WORKSPACE_ID</code> 지원
+추가, 저장소 루트의 예전 키 이름 파일 삭제</td>
+<td>브랜치 <code>claude/fervent-gauss-k5o5xv</code>에 푸시</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>PR 만들어서 main 머지</td>
+<td><a href="https://github.com/chaeeun030702/cnbu/pull/1">PR #1</a>
+생성·squash 머지 (<code>f4e7357</code>)</td>
+<td>머지 완료</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>예전 키 폐기 요청</td>
+<td>세션에서는 Console 권한이 없어 폐기 불가 → Console 삭제 절차
+안내</td>
+<td>사용자가 직접 폐기</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td><code>true</code>인데 사진 판독 안 됨</td>
+<td>원인 분석: Sonnet 5.5는 <code>temperature</code> 비기본값 400.
+<code>temperature</code> 제거, <code>effort: low</code>,
+<code>max_tokens</code> 8000, 제한시간 60s/55s/65s, 실패 사유 화면
+표시</td>
+<td><a href="https://github.com/chaeeun030702/cnbu/pull/2">PR #2</a>
+머지 (<code>0704a45</code>)</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>여전히 키워드 판독</td>
+<td>진단 경로 <code>GET /api/read?test=1</code>, 배포 커밋
+<code>commit</code> 표시 추가</td>
+<td><a href="https://github.com/chaeeun030702/cnbu/pull/3">PR #3</a>
+머지 (<code>62bd1cb</code>)</td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td>응답에 <code>workspace</code>·<code>commit</code> 없음</td>
+<td>새 코드가 배포되지 않음 → Vercel Git 연결 확인 안내</td>
+<td>사용자가 <code>chaeeun030702/cnbu</code> 연결</td>
+</tr>
+<tr class="even">
+<td>8</td>
+<td><code>commit:62bd1cb</code>, test 400 (workspace)</td>
+<td><code>ANTHROPIC_WORKSPACE_ID</code> 추가 방법 안내(Console →
+Workspaces ID, Vercel 환경변수, Redeploy)</td>
+<td><code>"workspace":true</code></td>
+</tr>
+<tr class="odd">
+<td>9</td>
+<td>test 401 "API key is invalid"</td>
+<td>저장된 키가 폐기·만료됨 → 같은 워크스페이스로 지정한 새 키 발급·교체
+안내</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>10</td>
+<td>test 200 <code>end_turn</code></td>
+<td>서버 ↔︎ Anthropic 호출 정상 확인. 실제 사진 판독 확인 절차 안내</td>
+<td>완료</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="3-최종-설정-vercel-환경변수">3. 최종 설정 (Vercel 환경변수)</h2>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>변수</th>
+<th>값</th>
+<th>비고</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>ANTHROPIC_API_KEY</code></td>
+<td>워크스페이스를 지정해 새로 만든 키</td>
+<td>대화에 붙여 넣지 않음</td>
+</tr>
+<tr class="even">
+<td><code>ANTHROPIC_WORKSPACE_ID</code></td>
+<td><code>wrkspc_…</code></td>
+<td>워크스페이스 지정 키라면 생략 가능</td>
+</tr>
+<tr class="odd">
+<td><code>ANTHROPIC_MODEL</code></td>
+<td>(선택) 기본 <code>claude-sonnet-5-5</code></td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<p>진단: <code>GET /api/read</code> → 상태,
+<code>GET /api/read?test=1</code> → 실제 호출
+결과(<code>test.status</code>)와 배포 커밋.</p>
+<h2 id="4-남은-일주의">4. 남은 일·주의</h2>
+<ul>
+<li><code>/api/read?test=1</code>은 누구나 호출할 수 있어 호출마다
+소액의 API 비용이 생깁니다. 사진 판독 확인 뒤 제거·제한을
+권장합니다.</li>
+<li>대화에 노출된 키 2개(예전 키, 처음 붙여 넣은 키)는 Console에서
+삭제해야 합니다. 예전 키는 git 기록(파일 이름)에 남아 있습니다.</li>
+<li>이후 <code>main</code>은 PR #119까지 진행되었습니다. 아래 파일
+내용은 2026-10-02 작업 시점(커밋 <code>62bd1cb</code>) 기준입니다.</li>
+</ul>
+<h2 id="5-변경-파일-diff">5. 변경 파일 (diff)</h2>
+<h3
+id="pr--f4e7357-apiread-support-anthropic_workspace_id-for-unscoped-keys-remove-stray-key-named-file-1">PR
+— <code>f4e7357</code> api/read: support ANTHROPIC_WORKSPACE_ID for
+unscoped keys; remove stray key-named file (#1)</h3>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode diff"><code class="sourceCode diff"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">diff --git a/README.md b/README.md</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>index 4a0af9d..51c2f63 100644</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="dt">--- a/README.md</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="dt">+++ b/README.md</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="dt">@@ -36,7 +36,8 @@ vercel deploy --prod</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a> | 변수 | 값 |</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a> |---|---|</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a> | `ANTHROPIC_API_KEY` | Anthropic API 키 (Settings → Environment Variables 에서 직접 입력) |</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="st">-| `ANTHROPIC_MODEL` | (선택) 기본값 `claude-sonnet-4-5` |</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="va">+| `ANTHROPIC_WORKSPACE_ID` | 워크스페이스에 묶이지 않은 키(`sk-ant-usr-…`)를 쓸 때 필수 — Console 워크스페이스 ID |</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="va">+| `ANTHROPIC_MODEL` | (선택) 기본값 `claude-sonnet-5-5` |</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a> `GET /api/read` 로 상태를 확인할 수 있다 — `{&quot;ok&quot;:true,&quot;key&quot;:true,...}` 이면 키가 잡힌 것이다.</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a> 사진은 브라우저에서 최대 1,600 px로 줄여 전송되며 서버에 저장되지 않는다.</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="kw">diff --git a/api/read.js b/api/read.js</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>index 6a820cd..212bff1 100644</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="dt">--- a/api/read.js</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="dt">+++ b/api/read.js</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="dt">@@ -16,6 +16,8 @@ const KB = require(&#39;../data/indicators.json&#39;);</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a> const LANG_NAME = { ko: &#39;한국어&#39;, en: &#39;English&#39;, zh: &#39;中文(简体)&#39;, vi: &#39;Tiếng Việt&#39;, uz: &quot;O&#39;zbek&quot; };</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a> const MAX_BYTES = 5 * 1024 * 1024;</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a> const MODEL = process.env.ANTHROPIC_MODEL || &#39;claude-sonnet-5-5&#39;;</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="va">+// 워크스페이스에 묶이지 않은 키(sk-ant-usr-…)는 anthropic-workspace-id 헤더가 필요하다</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="va">+const WORKSPACE = process.env.ANTHROPIC_WORKSPACE_ID || &#39;&#39;;</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a> function kbText(dom) {</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>   return KB.filter(function (x) { return x.dom === dom; }).map(function (x) {</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="dt">@@ -80,7 +82,7 @@ module.exports = async function handler(req, res) {</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>   res.setHeader(&#39;Cache-Control&#39;, &#39;no-store&#39;);</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>   if (req.method === &#39;GET&#39;) {</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>     return res.status(200).json({ ok: true, service: &#39;e-safety read&#39;, model: MODEL,</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="st">-      key: !!process.env.ANTHROPIC_API_KEY, indicators: KB.length });</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="va">+      key: !!process.env.ANTHROPIC_API_KEY, workspace: !!WORKSPACE, indicators: KB.length });</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>   }</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>   if (req.method !== &#39;POST&#39;) return res.status(405).json({ ok: false, reason: &#39;method&#39; });</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="dt">@@ -123,8 +125,9 @@ module.exports = async function handler(req, res) {</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>   try {</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>     var r = await fetch(&#39;https://api.anthropic.com/v1/messages&#39;, {</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>       method: &#39;POST&#39;, signal: ctrl.signal,</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="st">-      headers: { &#39;content-type&#39;: &#39;application/json&#39;, &#39;x-api-key&#39;: key,</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="va">+      headers: Object.assign({ &#39;content-type&#39;: &#39;application/json&#39;, &#39;x-api-key&#39;: key,</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>                  &#39;anthropic-version&#39;: &#39;2023-06-01&#39; },</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="va">+               WORKSPACE ? { &#39;anthropic-workspace-id&#39;: WORKSPACE } : {}),</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>       body: JSON.stringify(payload),</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>     });</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>     clearTimeout(timer);</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="kw">diff --git a/sk-ant-usr-[REDACTED] b/sk-ant-usr-[REDACTED]</span></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>deleted file mode 100644</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>index 7657495..0000000</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a><span class="dt">--- a/sk-ant-usr-[REDACTED]</span></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="dt">+++ /dev/null</span></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a><span class="dt">@@ -1 +0,0 @@</span></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a><span class="st">-fix: default model -&gt; claude-sonnet-5-5</span></span></code></pre></div>
+<h3
+id="pr--0704a45-apiread-drop-temperature-400-on-sonnet-55-low-effort-longer-timeouts-show-fallback-reason-2">PR
+— <code>0704a45</code> api/read: drop temperature (400 on Sonnet 5.5),
+low effort, longer timeouts; show fallback reason (#2)</h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode diff"><code class="sourceCode diff"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">diff --git a/README.md b/README.md</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>index 51c2f63..838c93f 100644</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="dt">--- a/README.md</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="dt">+++ b/README.md</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="dt">@@ -23,7 +23,7 @@ AI 판독을 쓸 수 없으면(키 미설정·오류) 파일명·현장 정보 *</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a> | `index.html` | 정적 프런트엔드 — 분할 셸, 분석 엔진, 지면 3종, 다국어 5개 언어, 인쇄 |</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a> | `api/read.js` | Vercel 서버리스 함수 — 사진 + 지식베이스 → Claude 비전 → JSON |</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a> | `data/` | 자동판독·자동생성 지식베이스(표지 19종, 매핑규칙, 키워드, 보정규칙, PTW 양식) |</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="st">-| `vercel.json` | 정적 배포 + 함수 설정(`maxDuration` 30 s) |</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="va">+| `vercel.json` | 정적 배포 + 함수 설정(`maxDuration` 60 s) |</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a> ## 배포</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="kw">diff --git a/api/read.js b/api/read.js</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>index 212bff1..7c3e2ea 100644</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="dt">--- a/api/read.js</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="dt">+++ b/api/read.js</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="dt">@@ -111,8 +111,10 @@ module.exports = async function handler(req, res) {</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>   var payload = {</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>     model: MODEL,</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="st">-    max_tokens: 1800,</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="st">-    temperature: 0,</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="va">+    // Sonnet 5.5 는 temperature 등 샘플링 값을 기본값 외로 주면 400 을 돌려준다 → 보내지 않는다.</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="va">+    // thinking 은 끌 수 없으므로 effort 를 낮춰 지연을 줄이고, 생각 토큰까지 감안해 max_tokens 를 넉넉히 둔다.</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="va">+    max_tokens: 8000,</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="va">+    output_config: { effort: &#39;low&#39; },</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>     system: systemPrompt(lang),</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>     messages: [{ role: &#39;user&#39;, content: [</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>       { type: &#39;image&#39;, source: { type: &#39;base64&#39;, media_type: img.mime, data: img.b64 } },</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="dt">@@ -121,7 +123,7 @@ module.exports = async function handler(req, res) {</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>   };</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>   var ctrl = new AbortController();</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="st">-  var timer = setTimeout(function () { ctrl.abort(); }, 28000);</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="va">+  var timer = setTimeout(function () { ctrl.abort(); }, 55000);</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>   try {</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>     var r = await fetch(&#39;https://api.anthropic.com/v1/messages&#39;, {</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>       method: &#39;POST&#39;, signal: ctrl.signal,</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a><span class="dt">@@ -136,6 +138,9 @@ module.exports = async function handler(req, res) {</span></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>       return res.status(200).json({ ok: false, reason: r.status === 401 ? &#39;bad_key&#39; : &#39;api_&#39; + r.status,</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>         keyFrom: keyFrom, detail: data &amp;&amp; data.error &amp;&amp; data.error.message });</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>     }</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a><span class="va">+    if (data.stop_reason === &#39;refusal&#39; || data.stop_reason === &#39;max_tokens&#39;) {</span></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a><span class="va">+      return res.status(200).json({ ok: false, reason: data.stop_reason, keyFrom: keyFrom });</span></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a><span class="va">+    }</span></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>     var text = (data.content || []).filter(function (c) { return c.type === &#39;text&#39;; })</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>       .map(function (c) { return c.text; }).join(&#39;\n&#39;);</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>     var out = extractJson(text);</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a><span class="kw">diff --git a/index.html b/index.html</span></span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>index 2429f5e..e646cd9 100644</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a><span class="dt">--- a/index.html</span></span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a><span class="dt">+++ b/index.html</span></span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a><span class="dt">@@ -659,7 +659,7 @@ function aiRead(dataUrl, fileName){</span></span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>   setBusy(true);</span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>   shrink(dataUrl, 1600, function(small){</span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>     var ctrl = window.AbortController ? new AbortController() : null;</span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a><span class="st">-    var timer = ctrl ? setTimeout(function(){ ctrl.abort(); }, 40000) : null;</span></span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a><span class="va">+    var timer = ctrl ? setTimeout(function(){ ctrl.abort(); }, 65000) : null;</span></span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>     fetch(&quot;/api/read&quot;, {method:&quot;POST&quot;, headers:{&quot;content-type&quot;:&quot;application/json&quot;},</span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>       signal: ctrl ? ctrl.signal : undefined,</span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>       body: JSON.stringify({image:small, name:fileName||&quot;&quot;, lang:lang, key:apiKey||undefined,</span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a><span class="dt">@@ -668,7 +668,7 @@ function aiRead(dataUrl, fileName){</span></span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>     .then(function(j){</span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>       if(timer) clearTimeout(timer);</span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>       setBusy(false);</span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a><span class="st">-      if(!j || !j.ok){ fallback(fileName, j &amp;&amp; j.reason); return; }</span></span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a><span class="va">+      if(!j || !j.ok){ fallback(fileName, j &amp;&amp; j.reason, j &amp;&amp; j.detail); return; }</span></span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>       var hits={}, ids=[];</span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>       (j.hits||[]).forEach(function(h){ if(!hits[h.id]){ hits[h.id]=h; ids.push(h.id); } });</span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>       var base=false;</span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a><span class="dt">@@ -688,9 +688,10 @@ function aiRead(dataUrl, fileName){</span></span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>                         fallback(fileName, e &amp;&amp; e.name===&quot;AbortError&quot; ? &quot;timeout&quot; : &quot;network&quot;); });</span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>   });</span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a> }</span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a><span class="st">-function fallback(fileName, reason){</span></span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a><span class="va">+function fallback(fileName, reason, detail){</span></span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>   var info = autoRead(fileName);</span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>   info.fallback = reason || &quot;error&quot;;</span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a><span class="va">+  info.fbDetail = detail || &quot;&quot;;</span></span>
+<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a>   applyRead(info);</span>
+<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a> }</span>
+<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a> function keyStat(msg, cls){</span>
+<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a><span class="dt">@@ -796,7 +797,8 @@ function renderEngine(){</span></span>
+<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a>     if(readInfo.fallback){</span>
+<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>       h+=&#39;&lt;div class=&quot;fb&quot;&gt;&#39;+U(&quot;rdFallback&quot;)+</span>
+<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a>          (readInfo.fallback===&quot;no_key&quot; ? &#39; — &#39;+U(&quot;rdNoKey&quot;) :</span>
+<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a><span class="st">-          readInfo.fallback===&quot;bad_key&quot; ? &#39; — &#39;+U(&quot;rdBadKey&quot;) : &#39;&#39;)+&#39;&lt;/div&gt;&#39;;</span></span>
+<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a><span class="va">+          readInfo.fallback===&quot;bad_key&quot; ? &#39; — &#39;+U(&quot;rdBadKey&quot;) : &#39;&#39;)+</span></span>
+<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a><span class="va">+         &#39; &lt;span class=&quot;fl&quot;&gt;[&#39;+esc(readInfo.fallback)+(readInfo.fbDetail?&#39;: &#39;+esc(String(readInfo.fbDetail).slice(0,160)):&#39;&#39;)+&#39;]&lt;/span&gt;&lt;/div&gt;&#39;;</span></span>
+<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>     }</span>
+<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a>     if(readInfo.kw.length){</span>
+<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>       h+=&#39;&lt;ul&gt;&#39;+readInfo.kw.map(function(k){</span>
+<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a><span class="kw">diff --git a/vercel.json b/vercel.json</span></span>
+<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>index 778d501..e9e50ce 100644</span>
+<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a><span class="dt">--- a/vercel.json</span></span>
+<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a><span class="dt">+++ b/vercel.json</span></span>
+<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a><span class="dt">@@ -23,8 +23,8 @@</span></span>
+<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a>   ],</span>
+<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a>   &quot;functions&quot;: {</span>
+<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a>     &quot;api/read.js&quot;: {</span>
+<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a><span class="st">-      &quot;maxDuration&quot;: 30,</span></span>
+<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a><span class="va">+      &quot;maxDuration&quot;: 60,</span></span>
+<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a>       &quot;memory&quot;: 512</span>
+<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a>     }</span>
+<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a>   }</span>
+<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a><span class="st">-}</span></span>
+<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a>\ No newline at end of file</span>
+<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a><span class="va">+}</span></span></code></pre></div>
+<h3
+id="pr--62bd1cb-apiread-add-get-test1-diagnostic-and-deployed-commit-to-status-3">PR
+— <code>62bd1cb</code> api/read: add GET ?test=1 diagnostic and deployed
+commit to status (#3)</h3>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode diff"><code class="sourceCode diff"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">diff --git a/README.md b/README.md</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>index 838c93f..d0023b4 100644</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="dt">--- a/README.md</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="dt">+++ b/README.md</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="dt">@@ -40,6 +40,7 @@ vercel deploy --prod</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a> | `ANTHROPIC_MODEL` | (선택) 기본값 `claude-sonnet-5-5` |</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a> `GET /api/read` 로 상태를 확인할 수 있다 — `{&quot;ok&quot;:true,&quot;key&quot;:true,...}` 이면 키가 잡힌 것이다.</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="va">+`GET /api/read?test=1` 은 서버 키로 짧은 요청을 실제로 보내 결과(`test.status`, 오류 메시지)를 보여준다. `commit` 은 배포된 커밋이다.</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a> 사진은 브라우저에서 최대 1,600 px로 줄여 전송되며 서버에 저장되지 않는다.</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a> ## 근거</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="kw">diff --git a/api/read.js b/api/read.js</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>index 7c3e2ea..7656d89 100644</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="dt">--- a/api/read.js</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="dt">+++ b/api/read.js</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="dt">@@ -68,6 +68,12 @@ function parseDataUrl(s) {</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>   return { mime: m[1], b64: m[2] };</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a> }</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="va">+function apiHeaders(key) {</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="va">+  var h = { &#39;content-type&#39;: &#39;application/json&#39;, &#39;x-api-key&#39;: key, &#39;anthropic-version&#39;: &#39;2023-06-01&#39; };</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="va">+  if (WORKSPACE) h[&#39;anthropic-workspace-id&#39;] = WORKSPACE;</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="va">+  return h;</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="va">+}</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="va">+</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a> function clamp(v, lo, hi) { v = Number(v); return isFinite(v) ? Math.min(hi, Math.max(lo, v)) : (lo + hi) / 2; }</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a> function extractJson(text) {</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="dt">@@ -81,8 +87,23 @@ function extractJson(text) {</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a> module.exports = async function handler(req, res) {</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>   res.setHeader(&#39;Cache-Control&#39;, &#39;no-store&#39;);</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>   if (req.method === &#39;GET&#39;) {</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="st">-    return res.status(200).json({ ok: true, service: &#39;e-safety read&#39;, model: MODEL,</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a><span class="st">-      key: !!process.env.ANTHROPIC_API_KEY, workspace: !!WORKSPACE, indicators: KB.length });</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="va">+    var info = { ok: true, service: &#39;e-safety read&#39;, model: MODEL,</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="va">+      key: !!process.env.ANTHROPIC_API_KEY, workspace: !!WORKSPACE, indicators: KB.length,</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a><span class="va">+      commit: (process.env.VERCEL_GIT_COMMIT_SHA || &#39;&#39;).slice(0, 7) };</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a><span class="va">+    // GET /api/read?test=1 → 서버 키로 짧은 텍스트 요청을 보내 Anthropic 응답을 그대로 보여준다(진단용)</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a><span class="va">+    if (req.query &amp;&amp; req.query.test &amp;&amp; process.env.ANTHROPIC_API_KEY) {</span></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a><span class="va">+      try {</span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a><span class="va">+        var tr = await fetch(&#39;https://api.anthropic.com/v1/messages&#39;, {</span></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a><span class="va">+          method: &#39;POST&#39;, headers: apiHeaders(process.env.ANTHROPIC_API_KEY),</span></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a><span class="va">+          body: JSON.stringify({ model: MODEL, max_tokens: 256, output_config: { effort: &#39;low&#39; },</span></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a><span class="va">+            messages: [{ role: &#39;user&#39;, content: &#39;Reply with OK.&#39; }] }),</span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a><span class="va">+        });</span></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a><span class="va">+        var td = await tr.json();</span></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a><span class="va">+        info.test = tr.ok ? { status: tr.status, stop_reason: td.stop_reason }</span></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a><span class="va">+                          : { status: tr.status, error: td &amp;&amp; td.error &amp;&amp; td.error.message };</span></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a><span class="va">+      } catch (e) { info.test = { error: String(e &amp;&amp; e.message || e) }; }</span></span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a><span class="va">+    }</span></span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a><span class="va">+    return res.status(200).json(info);</span></span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>   }</span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>   if (req.method !== &#39;POST&#39;) return res.status(405).json({ ok: false, reason: &#39;method&#39; });</span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a><span class="dt">@@ -127,9 +148,7 @@ module.exports = async function handler(req, res) {</span></span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>   try {</span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>     var r = await fetch(&#39;https://api.anthropic.com/v1/messages&#39;, {</span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>       method: &#39;POST&#39;, signal: ctrl.signal,</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a><span class="st">-      headers: Object.assign({ &#39;content-type&#39;: &#39;application/json&#39;, &#39;x-api-key&#39;: key,</span></span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a><span class="st">-                 &#39;anthropic-version&#39;: &#39;2023-06-01&#39; },</span></span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a><span class="st">-               WORKSPACE ? { &#39;anthropic-workspace-id&#39;: WORKSPACE } : {}),</span></span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a><span class="va">+      headers: apiHeaders(key),</span></span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>       body: JSON.stringify(payload),</span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>     });</span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>     clearTimeout(timer);</span></code></pre></div>
+<h2 id="6-작업-시점-파일-전문-62bd1cb">6. 작업 시점 파일 전문
+(<code>62bd1cb</code>)</h2>
+<h3 id="apireadjs"><code>api/read.js</code></h3>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">// ─────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">//  /api/read — 현장사진 AI 판독 (Vercel Serverless Function, Node 20)</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">//</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">//  입력  POST { image: &quot;data:image/jpeg;base64,…&quot;, name, site:{kind,place,no}, lang, key? }</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">//        key = 화면 ⑦에서 사용자가 브라우저에 저장한 Anthropic API 키(선택). 없으면 서버 환경변수 사용.</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">//  출력  { ok, model, domain:&#39;elec&#39;|&#39;gen&#39;, hits:[{id,x,y,conf,evidence:[ko,foreign]}],</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">//          scene:[ko,foreign], extra:[[ko,foreign],…] }</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">//</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">//  지식베이스 39종(data/indicators.json — 전기 U01~U19 · 일반 G01~G20)을 시스템 프롬프트에 넣고 Claude 비전</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co">//  모델에 사진을 보내, 사진에서 실제로 확인되는 위험 표지만 근거와 함께 받는다.</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">//  키가 없거나(no_key) 거부되거나(bad_key) 호출이 실패하면 ok:false 를 돌려주고,</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">//  프런트엔드는 키워드 판독으로 대체한다.</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">// ─────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> KB <span class="op">=</span> <span class="pp">require</span>(<span class="st">&#39;../data/indicators.json&#39;</span>)<span class="op">;</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> LANG_NAME <span class="op">=</span> { <span class="dt">ko</span><span class="op">:</span> <span class="st">&#39;한국어&#39;</span><span class="op">,</span> <span class="dt">en</span><span class="op">:</span> <span class="st">&#39;English&#39;</span><span class="op">,</span> <span class="dt">zh</span><span class="op">:</span> <span class="st">&#39;中文(简体)&#39;</span><span class="op">,</span> <span class="dt">vi</span><span class="op">:</span> <span class="st">&#39;Tiếng Việt&#39;</span><span class="op">,</span> <span class="dt">uz</span><span class="op">:</span> <span class="st">&quot;O&#39;zbek&quot;</span> }<span class="op">;</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> MAX_BYTES <span class="op">=</span> <span class="dv">5</span> <span class="op">*</span> <span class="dv">1024</span> <span class="op">*</span> <span class="dv">1024</span><span class="op">;</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> MODEL <span class="op">=</span> <span class="bu">process</span><span class="op">.</span><span class="at">env</span><span class="op">.</span><span class="at">ANTHROPIC_MODEL</span> <span class="op">||</span> <span class="st">&#39;claude-sonnet-5-5&#39;</span><span class="op">;</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co">// 워크스페이스에 묶이지 않은 키(sk-ant-usr-…)는 anthropic-workspace-id 헤더가 필요하다</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> WORKSPACE <span class="op">=</span> <span class="bu">process</span><span class="op">.</span><span class="at">env</span><span class="op">.</span><span class="at">ANTHROPIC_WORKSPACE_ID</span> <span class="op">||</span> <span class="st">&#39;&#39;</span><span class="op">;</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">kbText</span>(dom) {</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> KB<span class="op">.</span><span class="fu">filter</span>(<span class="kw">function</span> (x) { <span class="cf">return</span> x<span class="op">.</span><span class="at">dom</span> <span class="op">===</span> dom<span class="op">;</span> })<span class="op">.</span><span class="fu">map</span>(<span class="kw">function</span> (x) {</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> cue <span class="op">=</span> x<span class="op">.</span><span class="at">cue</span> <span class="op">||</span> (x<span class="op">.</span><span class="at">ptw</span> <span class="op">&amp;&amp;</span> x<span class="op">.</span><span class="at">ptw</span><span class="op">.</span><span class="at">imp</span>) <span class="op">||</span> <span class="st">&#39;&#39;</span><span class="op">;</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x<span class="op">.</span><span class="at">id</span> <span class="op">+</span> <span class="st">&#39; | &#39;</span> <span class="op">+</span> x<span class="op">.</span><span class="at">name</span> <span class="op">+</span> <span class="st">&#39; | 군: &#39;</span> <span class="op">+</span> x<span class="op">.</span><span class="at">grp</span> <span class="op">+</span> <span class="st">&#39; | 판독 단서: &#39;</span> <span class="op">+</span> cue<span class="op">.</span><span class="fu">slice</span>(<span class="dv">0</span><span class="op">,</span> <span class="dv">220</span>)<span class="op">;</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  })<span class="op">.</span><span class="fu">join</span>(<span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>)<span class="op">;</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">systemPrompt</span>(lang) {</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> foreign <span class="op">=</span> lang <span class="op">&amp;&amp;</span> lang <span class="op">!==</span> <span class="st">&#39;ko&#39;</span> <span class="op">?</span> LANG_NAME[lang] <span class="op">||</span> lang <span class="op">:</span> <span class="kw">null</span><span class="op">;</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> [</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;당신은 건설현장 안전 전문가이다. 산업안전보건기준에 관한 규칙, KOSHA GUIDE C-C-49-2026(전기설비부문&#39;</span><span class="op">,</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;안전작업허가)과 KOSHA GUIDE P-94-2021(안전작업허가지침)을 근거로 현장사진을 판독한다.&#39;</span><span class="op">,</span></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;&#39;</span><span class="op">,</span></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;먼저 사진의 작업 영역(domain)을 정한다.&#39;</span><span class="op">,</span></span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39; - &quot;elec&quot;: 전기설비 작업(분전반·배전반·전선·케이블·활선·변압기·전동공구 전원부 등이 작업 대상)&#39;</span><span class="op">,</span></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39; - &quot;gen&quot; : 전기설비 부문 외 일반 건설작업(비계·고소·굴착·양중·건설기계·거푸집·해체·용접·밀폐공간·운반 등)&#39;</span><span class="op">,</span></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;&#39;</span><span class="op">,</span></span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;아래는 판독에 사용하는 위험 표지 지식베이스 39종이다. 사진에서 시각적으로 확인되거나&#39;</span><span class="op">,</span></span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;장면상 명백히 성립하는 표지만 고른다. 추측으로 고르지 않는다. 두 영역의 표지를 함께 골라도 된다.&#39;</span><span class="op">,</span></span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;&#39;</span><span class="op">,</span></span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;[전기설비부문 표지 U01~U19]&#39;</span><span class="op">,</span></span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kbText</span>(<span class="st">&#39;elec&#39;</span>)<span class="op">,</span></span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;&#39;</span><span class="op">,</span></span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;[일반작업 표지 G01~G20]&#39;</span><span class="op">,</span></span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kbText</span>(<span class="st">&#39;gen&#39;</span>)<span class="op">,</span></span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;&#39;</span><span class="op">,</span></span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;출력 규칙&#39;</span><span class="op">,</span></span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;1. JSON 하나만 출력한다. 코드펜스·설명문을 붙이지 않는다.&#39;</span><span class="op">,</span></span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;2. 형식: {&quot;domain&quot;:&quot;elec&quot;|&quot;gen&quot;,&quot;scene&quot;:[ko&#39;</span> <span class="op">+</span> (foreign <span class="op">?</span> <span class="st">&#39;,&#39;</span> <span class="op">+</span> <span class="st">&#39;foreign&#39;</span> <span class="op">:</span> <span class="st">&#39;&#39;</span>) <span class="op">+</span> <span class="st">&#39;],&#39;</span><span class="op">,</span></span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;   &quot;hits&quot;:[{&quot;id&quot;:&quot;G01&quot;,&quot;x&quot;:46,&quot;y&quot;:26,&quot;conf&quot;:0.9,&quot;evidence&quot;:[ko&#39;</span> <span class="op">+</span> (foreign <span class="op">?</span> <span class="st">&#39;,foreign&#39;</span> <span class="op">:</span> <span class="st">&#39;&#39;</span>) <span class="op">+</span> <span class="st">&#39;]}],&#39;</span><span class="op">,</span></span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;   &quot;extra&quot;:[[ko&#39;</span> <span class="op">+</span> (foreign <span class="op">?</span> <span class="st">&#39;,foreign&#39;</span> <span class="op">:</span> <span class="st">&#39;&#39;</span>) <span class="op">+</span> <span class="st">&#39;]]}&#39;</span><span class="op">,</span></span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;3. x,y 는 해당 위험이 보이는 위치의 사진 좌표(%): 왼쪽 위 0,0 — 오른쪽 아래 100,100.&#39;</span><span class="op">,</span></span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;4. conf 는 0~1. 0.5 미만이면 hits 에 넣지 않는다.&#39;</span><span class="op">,</span></span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;5. evidence 는 사진에서 본 것을 한 문장으로(한국어 40자 이내).&#39;</span><span class="op">,</span></span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;6. scene 은 작업 장면 요약 한 문장(한국어 60자 이내).&#39;</span><span class="op">,</span></span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;7. extra 는 지식베이스에 없는 추가 위험을 한 문장씩 최대 3개. 없으면 [].&#39;</span><span class="op">,</span></span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;8. domain 은 사진의 주된 작업으로 정한다. 전기설비가 작업 대상이 아니면 &quot;gen&quot;.&#39;</span><span class="op">,</span></span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>    foreign</span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>      <span class="op">?</span> <span class="st">&#39;9. ko 다음 요소는 같은 내용의 &#39;</span> <span class="op">+</span> foreign <span class="op">+</span> <span class="st">&#39; 번역이다. 두 요소를 반드시 함께 넣는다.&#39;</span></span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>      <span class="op">:</span> <span class="st">&#39;9. 배열의 원소는 한국어 하나만 넣는다.&#39;</span><span class="op">,</span></span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>  ]<span class="op">.</span><span class="fu">join</span>(<span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>)<span class="op">;</span></span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">parseDataUrl</span>(s) {</span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> m <span class="op">=</span> <span class="ss">/</span><span class="sc">^</span><span class="ss">data:</span><span class="sc">(</span><span class="ss">image</span><span class="sc">\/(?</span><span class="ss">:jpeg</span><span class="sc">|</span><span class="ss">png</span><span class="sc">|</span><span class="ss">webp</span><span class="sc">|</span><span class="ss">gif</span><span class="sc">))</span><span class="ss">;base64,</span><span class="sc">([A-Za-z0-9+/=]+)$</span><span class="ss">/</span><span class="op">.</span><span class="fu">exec</span>(<span class="bu">String</span>(s <span class="op">||</span> <span class="st">&#39;&#39;</span>))<span class="op">;</span></span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="op">!</span>m) <span class="cf">return</span> <span class="kw">null</span><span class="op">;</span></span>
+<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> { <span class="dt">mime</span><span class="op">:</span> m[<span class="dv">1</span>]<span class="op">,</span> <span class="dt">b64</span><span class="op">:</span> m[<span class="dv">2</span>] }<span class="op">;</span></span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">apiHeaders</span>(key) {</span>
+<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> h <span class="op">=</span> { <span class="st">&#39;content-type&#39;</span><span class="op">:</span> <span class="st">&#39;application/json&#39;</span><span class="op">,</span> <span class="st">&#39;x-api-key&#39;</span><span class="op">:</span> key<span class="op">,</span> <span class="st">&#39;anthropic-version&#39;</span><span class="op">:</span> <span class="st">&#39;2023-06-01&#39;</span> }<span class="op">;</span></span>
+<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (WORKSPACE) h[<span class="st">&#39;anthropic-workspace-id&#39;</span>] <span class="op">=</span> WORKSPACE<span class="op">;</span></span>
+<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> h<span class="op">;</span></span>
+<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">clamp</span>(v<span class="op">,</span> lo<span class="op">,</span> hi) { v <span class="op">=</span> <span class="bu">Number</span>(v)<span class="op">;</span> <span class="cf">return</span> <span class="pp">isFinite</span>(v) <span class="op">?</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">min</span>(hi<span class="op">,</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">max</span>(lo<span class="op">,</span> v)) <span class="op">:</span> (lo <span class="op">+</span> hi) <span class="op">/</span> <span class="dv">2</span><span class="op">;</span> }</span>
+<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">extractJson</span>(text) {</span>
+<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> t <span class="op">=</span> <span class="bu">String</span>(text <span class="op">||</span> <span class="st">&#39;&#39;</span>)<span class="op">.</span><span class="fu">trim</span>()<span class="op">;</span></span>
+<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a>  t <span class="op">=</span> t<span class="op">.</span><span class="fu">replace</span>(<span class="ss">/</span><span class="sc">^</span><span class="ss">```</span><span class="sc">(?</span><span class="ss">:json</span><span class="sc">)?\s*</span><span class="ss">/i</span><span class="op">,</span> <span class="st">&#39;&#39;</span>)<span class="op">.</span><span class="fu">replace</span>(<span class="ss">/</span><span class="sc">\s*</span><span class="ss">```</span><span class="sc">$</span><span class="ss">/</span><span class="op">,</span> <span class="st">&#39;&#39;</span>)<span class="op">;</span></span>
+<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> a <span class="op">=</span> t<span class="op">.</span><span class="fu">indexOf</span>(<span class="st">&#39;{&#39;</span>)<span class="op">,</span> b <span class="op">=</span> t<span class="op">.</span><span class="fu">lastIndexOf</span>(<span class="st">&#39;}&#39;</span>)<span class="op">;</span></span>
+<span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (a <span class="op">&lt;</span> <span class="dv">0</span> <span class="op">||</span> b <span class="op">&lt;</span> <span class="dv">0</span>) <span class="cf">throw</span> <span class="kw">new</span> <span class="bu">Error</span>(<span class="st">&#39;no_json&#39;</span>)<span class="op">;</span></span>
+<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">parse</span>(t<span class="op">.</span><span class="fu">slice</span>(a<span class="op">,</span> b <span class="op">+</span> <span class="dv">1</span>))<span class="op">;</span></span>
+<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-86"><a href="#cb4-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-87"><a href="#cb4-87" aria-hidden="true" tabindex="-1"></a>module<span class="op">.</span><span class="at">exports</span> <span class="op">=</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fu">handler</span>(req<span class="op">,</span> res) {</span>
+<span id="cb4-88"><a href="#cb4-88" aria-hidden="true" tabindex="-1"></a>  res<span class="op">.</span><span class="fu">setHeader</span>(<span class="st">&#39;Cache-Control&#39;</span><span class="op">,</span> <span class="st">&#39;no-store&#39;</span>)<span class="op">;</span></span>
+<span id="cb4-89"><a href="#cb4-89" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (req<span class="op">.</span><span class="at">method</span> <span class="op">===</span> <span class="st">&#39;GET&#39;</span>) {</span>
+<span id="cb4-90"><a href="#cb4-90" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> info <span class="op">=</span> { <span class="dt">ok</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span> <span class="dt">service</span><span class="op">:</span> <span class="st">&#39;e-safety read&#39;</span><span class="op">,</span> <span class="dt">model</span><span class="op">:</span> MODEL<span class="op">,</span></span>
+<span id="cb4-91"><a href="#cb4-91" aria-hidden="true" tabindex="-1"></a>      <span class="dt">key</span><span class="op">:</span> <span class="op">!!</span><span class="bu">process</span><span class="op">.</span><span class="at">env</span><span class="op">.</span><span class="at">ANTHROPIC_API_KEY</span><span class="op">,</span> <span class="dt">workspace</span><span class="op">:</span> <span class="op">!!</span>WORKSPACE<span class="op">,</span> <span class="dt">indicators</span><span class="op">:</span> KB<span class="op">.</span><span class="at">length</span><span class="op">,</span></span>
+<span id="cb4-92"><a href="#cb4-92" aria-hidden="true" tabindex="-1"></a>      <span class="dt">commit</span><span class="op">:</span> (<span class="bu">process</span><span class="op">.</span><span class="at">env</span><span class="op">.</span><span class="at">VERCEL_GIT_COMMIT_SHA</span> <span class="op">||</span> <span class="st">&#39;&#39;</span>)<span class="op">.</span><span class="fu">slice</span>(<span class="dv">0</span><span class="op">,</span> <span class="dv">7</span>) }<span class="op">;</span></span>
+<span id="cb4-93"><a href="#cb4-93" aria-hidden="true" tabindex="-1"></a>    <span class="co">// GET /api/read?test=1 → 서버 키로 짧은 텍스트 요청을 보내 Anthropic 응답을 그대로 보여준다(진단용)</span></span>
+<span id="cb4-94"><a href="#cb4-94" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (req<span class="op">.</span><span class="at">query</span> <span class="op">&amp;&amp;</span> req<span class="op">.</span><span class="at">query</span><span class="op">.</span><span class="at">test</span> <span class="op">&amp;&amp;</span> <span class="bu">process</span><span class="op">.</span><span class="at">env</span><span class="op">.</span><span class="at">ANTHROPIC_API_KEY</span>) {</span>
+<span id="cb4-95"><a href="#cb4-95" aria-hidden="true" tabindex="-1"></a>      <span class="cf">try</span> {</span>
+<span id="cb4-96"><a href="#cb4-96" aria-hidden="true" tabindex="-1"></a>        <span class="kw">var</span> tr <span class="op">=</span> <span class="cf">await</span> <span class="fu">fetch</span>(<span class="st">&#39;https://api.anthropic.com/v1/messages&#39;</span><span class="op">,</span> {</span>
+<span id="cb4-97"><a href="#cb4-97" aria-hidden="true" tabindex="-1"></a>          <span class="dt">method</span><span class="op">:</span> <span class="st">&#39;POST&#39;</span><span class="op">,</span> <span class="dt">headers</span><span class="op">:</span> <span class="fu">apiHeaders</span>(<span class="bu">process</span><span class="op">.</span><span class="at">env</span><span class="op">.</span><span class="at">ANTHROPIC_API_KEY</span>)<span class="op">,</span></span>
+<span id="cb4-98"><a href="#cb4-98" aria-hidden="true" tabindex="-1"></a>          <span class="dt">body</span><span class="op">:</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">stringify</span>({ <span class="dt">model</span><span class="op">:</span> MODEL<span class="op">,</span> <span class="dt">max_tokens</span><span class="op">:</span> <span class="dv">256</span><span class="op">,</span> <span class="dt">output_config</span><span class="op">:</span> { <span class="dt">effort</span><span class="op">:</span> <span class="st">&#39;low&#39;</span> }<span class="op">,</span></span>
+<span id="cb4-99"><a href="#cb4-99" aria-hidden="true" tabindex="-1"></a>            <span class="dt">messages</span><span class="op">:</span> [{ <span class="dt">role</span><span class="op">:</span> <span class="st">&#39;user&#39;</span><span class="op">,</span> <span class="dt">content</span><span class="op">:</span> <span class="st">&#39;Reply with OK.&#39;</span> }] })<span class="op">,</span></span>
+<span id="cb4-100"><a href="#cb4-100" aria-hidden="true" tabindex="-1"></a>        })<span class="op">;</span></span>
+<span id="cb4-101"><a href="#cb4-101" aria-hidden="true" tabindex="-1"></a>        <span class="kw">var</span> td <span class="op">=</span> <span class="cf">await</span> tr<span class="op">.</span><span class="fu">json</span>()<span class="op">;</span></span>
+<span id="cb4-102"><a href="#cb4-102" aria-hidden="true" tabindex="-1"></a>        info<span class="op">.</span><span class="at">test</span> <span class="op">=</span> tr<span class="op">.</span><span class="at">ok</span> <span class="op">?</span> { <span class="dt">status</span><span class="op">:</span> tr<span class="op">.</span><span class="at">status</span><span class="op">,</span> <span class="dt">stop_reason</span><span class="op">:</span> td<span class="op">.</span><span class="at">stop_reason</span> }</span>
+<span id="cb4-103"><a href="#cb4-103" aria-hidden="true" tabindex="-1"></a>                          <span class="op">:</span> { <span class="dt">status</span><span class="op">:</span> tr<span class="op">.</span><span class="at">status</span><span class="op">,</span> <span class="dt">error</span><span class="op">:</span> td <span class="op">&amp;&amp;</span> td<span class="op">.</span><span class="at">error</span> <span class="op">&amp;&amp;</span> td<span class="op">.</span><span class="at">error</span><span class="op">.</span><span class="at">message</span> }<span class="op">;</span></span>
+<span id="cb4-104"><a href="#cb4-104" aria-hidden="true" tabindex="-1"></a>      } <span class="cf">catch</span> (e) { info<span class="op">.</span><span class="at">test</span> <span class="op">=</span> { <span class="dt">error</span><span class="op">:</span> <span class="bu">String</span>(e <span class="op">&amp;&amp;</span> e<span class="op">.</span><span class="at">message</span> <span class="op">||</span> e) }<span class="op">;</span> }</span>
+<span id="cb4-105"><a href="#cb4-105" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-106"><a href="#cb4-106" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> res<span class="op">.</span><span class="fu">status</span>(<span class="dv">200</span>)<span class="op">.</span><span class="fu">json</span>(info)<span class="op">;</span></span>
+<span id="cb4-107"><a href="#cb4-107" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-108"><a href="#cb4-108" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (req<span class="op">.</span><span class="at">method</span> <span class="op">!==</span> <span class="st">&#39;POST&#39;</span>) <span class="cf">return</span> res<span class="op">.</span><span class="fu">status</span>(<span class="dv">405</span>)<span class="op">.</span><span class="fu">json</span>({ <span class="dt">ok</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span> <span class="dt">reason</span><span class="op">:</span> <span class="st">&#39;method&#39;</span> })<span class="op">;</span></span>
+<span id="cb4-109"><a href="#cb4-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-110"><a href="#cb4-110" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> body <span class="op">=</span> req<span class="op">.</span><span class="at">body</span> <span class="op">||</span> {}<span class="op">;</span></span>
+<span id="cb4-111"><a href="#cb4-111" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="kw">typeof</span> body <span class="op">===</span> <span class="st">&#39;string&#39;</span>) { <span class="cf">try</span> { body <span class="op">=</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">parse</span>(body)<span class="op">;</span> } <span class="cf">catch</span> (e) { body <span class="op">=</span> {}<span class="op">;</span> } }</span>
+<span id="cb4-112"><a href="#cb4-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-113"><a href="#cb4-113" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 키 우선순위: 화면 ⑦에서 사용자가 저장한 키(요청 본문) → 서버 환경변수</span></span>
+<span id="cb4-114"><a href="#cb4-114" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> clientKey <span class="op">=</span> <span class="kw">typeof</span> body<span class="op">.</span><span class="at">key</span> <span class="op">===</span> <span class="st">&#39;string&#39;</span> <span class="op">?</span> body<span class="op">.</span><span class="at">key</span><span class="op">.</span><span class="fu">trim</span>() <span class="op">:</span> <span class="st">&#39;&#39;</span><span class="op">;</span></span>
+<span id="cb4-115"><a href="#cb4-115" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (clientKey <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="ss">/</span><span class="sc">^</span><span class="ss">sk-ant-</span><span class="sc">[A-Za-z0-9_\-]{20,}$</span><span class="ss">/</span><span class="op">.</span><span class="fu">test</span>(clientKey)) {</span>
+<span id="cb4-116"><a href="#cb4-116" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> res<span class="op">.</span><span class="fu">status</span>(<span class="dv">200</span>)<span class="op">.</span><span class="fu">json</span>({ <span class="dt">ok</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span> <span class="dt">reason</span><span class="op">:</span> <span class="st">&#39;bad_key&#39;</span> })<span class="op">;</span></span>
+<span id="cb4-117"><a href="#cb4-117" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-118"><a href="#cb4-118" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> key <span class="op">=</span> clientKey <span class="op">||</span> <span class="bu">process</span><span class="op">.</span><span class="at">env</span><span class="op">.</span><span class="at">ANTHROPIC_API_KEY</span><span class="op">;</span></span>
+<span id="cb4-119"><a href="#cb4-119" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> keyFrom <span class="op">=</span> clientKey <span class="op">?</span> <span class="st">&#39;client&#39;</span> <span class="op">:</span> <span class="st">&#39;server&#39;</span><span class="op">;</span></span>
+<span id="cb4-120"><a href="#cb4-120" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="op">!</span>key) <span class="cf">return</span> res<span class="op">.</span><span class="fu">status</span>(<span class="dv">200</span>)<span class="op">.</span><span class="fu">json</span>({ <span class="dt">ok</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span> <span class="dt">reason</span><span class="op">:</span> <span class="st">&#39;no_key&#39;</span> })<span class="op">;</span></span>
+<span id="cb4-121"><a href="#cb4-121" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> img <span class="op">=</span> <span class="fu">parseDataUrl</span>(body<span class="op">.</span><span class="at">image</span>)<span class="op">;</span></span>
+<span id="cb4-122"><a href="#cb4-122" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="op">!</span>img) <span class="cf">return</span> res<span class="op">.</span><span class="fu">status</span>(<span class="dv">400</span>)<span class="op">.</span><span class="fu">json</span>({ <span class="dt">ok</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span> <span class="dt">reason</span><span class="op">:</span> <span class="st">&#39;bad_image&#39;</span> })<span class="op">;</span></span>
+<span id="cb4-123"><a href="#cb4-123" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (img<span class="op">.</span><span class="at">b64</span><span class="op">.</span><span class="at">length</span> <span class="op">*</span> <span class="fl">0.75</span> <span class="op">&gt;</span> MAX_BYTES) <span class="cf">return</span> res<span class="op">.</span><span class="fu">status</span>(<span class="dv">413</span>)<span class="op">.</span><span class="fu">json</span>({ <span class="dt">ok</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span> <span class="dt">reason</span><span class="op">:</span> <span class="st">&#39;too_large&#39;</span> })<span class="op">;</span></span>
+<span id="cb4-124"><a href="#cb4-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-125"><a href="#cb4-125" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> lang <span class="op">=</span> [<span class="st">&#39;en&#39;</span><span class="op">,</span> <span class="st">&#39;zh&#39;</span><span class="op">,</span> <span class="st">&#39;vi&#39;</span><span class="op">,</span> <span class="st">&#39;uz&#39;</span>]<span class="op">.</span><span class="fu">indexOf</span>(body<span class="op">.</span><span class="at">lang</span>) <span class="op">&gt;=</span> <span class="dv">0</span> <span class="op">?</span> body<span class="op">.</span><span class="at">lang</span> <span class="op">:</span> <span class="st">&#39;ko&#39;</span><span class="op">;</span></span>
+<span id="cb4-126"><a href="#cb4-126" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> site <span class="op">=</span> body<span class="op">.</span><span class="at">site</span> <span class="op">||</span> {}<span class="op">;</span></span>
+<span id="cb4-127"><a href="#cb4-127" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> userText <span class="op">=</span> [</span>
+<span id="cb4-128"><a href="#cb4-128" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;현장 정보 — 공종: &#39;</span> <span class="op">+</span> (site<span class="op">.</span><span class="at">kind</span> <span class="op">||</span> <span class="st">&#39;미입력&#39;</span>) <span class="op">+</span> <span class="st">&#39; / 작업장소: &#39;</span> <span class="op">+</span> (site<span class="op">.</span><span class="at">place</span> <span class="op">||</span> <span class="st">&#39;미입력&#39;</span>) <span class="op">+</span></span>
+<span id="cb4-129"><a href="#cb4-129" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39; / 파일명: &#39;</span> <span class="op">+</span> (body<span class="op">.</span><span class="at">name</span> <span class="op">||</span> <span class="st">&#39;&#39;</span>)<span class="op">,</span></span>
+<span id="cb4-130"><a href="#cb4-130" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;이 사진을 판독하여 규칙대로 JSON만 출력하라.&#39;</span><span class="op">,</span></span>
+<span id="cb4-131"><a href="#cb4-131" aria-hidden="true" tabindex="-1"></a>  ]<span class="op">.</span><span class="fu">join</span>(<span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>)<span class="op">;</span></span>
+<span id="cb4-132"><a href="#cb4-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-133"><a href="#cb4-133" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> payload <span class="op">=</span> {</span>
+<span id="cb4-134"><a href="#cb4-134" aria-hidden="true" tabindex="-1"></a>    <span class="dt">model</span><span class="op">:</span> MODEL<span class="op">,</span></span>
+<span id="cb4-135"><a href="#cb4-135" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Sonnet 5.5 는 temperature 등 샘플링 값을 기본값 외로 주면 400 을 돌려준다 → 보내지 않는다.</span></span>
+<span id="cb4-136"><a href="#cb4-136" aria-hidden="true" tabindex="-1"></a>    <span class="co">// thinking 은 끌 수 없으므로 effort 를 낮춰 지연을 줄이고, 생각 토큰까지 감안해 max_tokens 를 넉넉히 둔다.</span></span>
+<span id="cb4-137"><a href="#cb4-137" aria-hidden="true" tabindex="-1"></a>    <span class="dt">max_tokens</span><span class="op">:</span> <span class="dv">8000</span><span class="op">,</span></span>
+<span id="cb4-138"><a href="#cb4-138" aria-hidden="true" tabindex="-1"></a>    <span class="dt">output_config</span><span class="op">:</span> { <span class="dt">effort</span><span class="op">:</span> <span class="st">&#39;low&#39;</span> }<span class="op">,</span></span>
+<span id="cb4-139"><a href="#cb4-139" aria-hidden="true" tabindex="-1"></a>    <span class="dt">system</span><span class="op">:</span> <span class="fu">systemPrompt</span>(lang)<span class="op">,</span></span>
+<span id="cb4-140"><a href="#cb4-140" aria-hidden="true" tabindex="-1"></a>    <span class="dt">messages</span><span class="op">:</span> [{ <span class="dt">role</span><span class="op">:</span> <span class="st">&#39;user&#39;</span><span class="op">,</span> <span class="dt">content</span><span class="op">:</span> [</span>
+<span id="cb4-141"><a href="#cb4-141" aria-hidden="true" tabindex="-1"></a>      { <span class="dt">type</span><span class="op">:</span> <span class="st">&#39;image&#39;</span><span class="op">,</span> <span class="dt">source</span><span class="op">:</span> { <span class="dt">type</span><span class="op">:</span> <span class="st">&#39;base64&#39;</span><span class="op">,</span> <span class="dt">media_type</span><span class="op">:</span> img<span class="op">.</span><span class="at">mime</span><span class="op">,</span> <span class="dt">data</span><span class="op">:</span> img<span class="op">.</span><span class="at">b64</span> } }<span class="op">,</span></span>
+<span id="cb4-142"><a href="#cb4-142" aria-hidden="true" tabindex="-1"></a>      { <span class="dt">type</span><span class="op">:</span> <span class="st">&#39;text&#39;</span><span class="op">,</span> <span class="dt">text</span><span class="op">:</span> userText }<span class="op">,</span></span>
+<span id="cb4-143"><a href="#cb4-143" aria-hidden="true" tabindex="-1"></a>    ] }]<span class="op">,</span></span>
+<span id="cb4-144"><a href="#cb4-144" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
+<span id="cb4-145"><a href="#cb4-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-146"><a href="#cb4-146" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> ctrl <span class="op">=</span> <span class="kw">new</span> <span class="fu">AbortController</span>()<span class="op">;</span></span>
+<span id="cb4-147"><a href="#cb4-147" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> timer <span class="op">=</span> <span class="pp">setTimeout</span>(<span class="kw">function</span> () { ctrl<span class="op">.</span><span class="fu">abort</span>()<span class="op">;</span> }<span class="op">,</span> <span class="dv">55000</span>)<span class="op">;</span></span>
+<span id="cb4-148"><a href="#cb4-148" aria-hidden="true" tabindex="-1"></a>  <span class="cf">try</span> {</span>
+<span id="cb4-149"><a href="#cb4-149" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> r <span class="op">=</span> <span class="cf">await</span> <span class="fu">fetch</span>(<span class="st">&#39;https://api.anthropic.com/v1/messages&#39;</span><span class="op">,</span> {</span>
+<span id="cb4-150"><a href="#cb4-150" aria-hidden="true" tabindex="-1"></a>      <span class="dt">method</span><span class="op">:</span> <span class="st">&#39;POST&#39;</span><span class="op">,</span> <span class="dt">signal</span><span class="op">:</span> ctrl<span class="op">.</span><span class="at">signal</span><span class="op">,</span></span>
+<span id="cb4-151"><a href="#cb4-151" aria-hidden="true" tabindex="-1"></a>      <span class="dt">headers</span><span class="op">:</span> <span class="fu">apiHeaders</span>(key)<span class="op">,</span></span>
+<span id="cb4-152"><a href="#cb4-152" aria-hidden="true" tabindex="-1"></a>      <span class="dt">body</span><span class="op">:</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">stringify</span>(payload)<span class="op">,</span></span>
+<span id="cb4-153"><a href="#cb4-153" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb4-154"><a href="#cb4-154" aria-hidden="true" tabindex="-1"></a>    <span class="pp">clearTimeout</span>(timer)<span class="op">;</span></span>
+<span id="cb4-155"><a href="#cb4-155" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> data <span class="op">=</span> <span class="cf">await</span> r<span class="op">.</span><span class="fu">json</span>()<span class="op">;</span></span>
+<span id="cb4-156"><a href="#cb4-156" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="op">!</span>r<span class="op">.</span><span class="at">ok</span>) {</span>
+<span id="cb4-157"><a href="#cb4-157" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> res<span class="op">.</span><span class="fu">status</span>(<span class="dv">200</span>)<span class="op">.</span><span class="fu">json</span>({ <span class="dt">ok</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span> <span class="dt">reason</span><span class="op">:</span> r<span class="op">.</span><span class="at">status</span> <span class="op">===</span> <span class="dv">401</span> <span class="op">?</span> <span class="st">&#39;bad_key&#39;</span> <span class="op">:</span> <span class="st">&#39;api_&#39;</span> <span class="op">+</span> r<span class="op">.</span><span class="at">status</span><span class="op">,</span></span>
+<span id="cb4-158"><a href="#cb4-158" aria-hidden="true" tabindex="-1"></a>        <span class="dt">keyFrom</span><span class="op">:</span> keyFrom<span class="op">,</span> <span class="dt">detail</span><span class="op">:</span> data <span class="op">&amp;&amp;</span> data<span class="op">.</span><span class="at">error</span> <span class="op">&amp;&amp;</span> data<span class="op">.</span><span class="at">error</span><span class="op">.</span><span class="at">message</span> })<span class="op">;</span></span>
+<span id="cb4-159"><a href="#cb4-159" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-160"><a href="#cb4-160" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (data<span class="op">.</span><span class="at">stop_reason</span> <span class="op">===</span> <span class="st">&#39;refusal&#39;</span> <span class="op">||</span> data<span class="op">.</span><span class="at">stop_reason</span> <span class="op">===</span> <span class="st">&#39;max_tokens&#39;</span>) {</span>
+<span id="cb4-161"><a href="#cb4-161" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> res<span class="op">.</span><span class="fu">status</span>(<span class="dv">200</span>)<span class="op">.</span><span class="fu">json</span>({ <span class="dt">ok</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span> <span class="dt">reason</span><span class="op">:</span> data<span class="op">.</span><span class="at">stop_reason</span><span class="op">,</span> <span class="dt">keyFrom</span><span class="op">:</span> keyFrom })<span class="op">;</span></span>
+<span id="cb4-162"><a href="#cb4-162" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-163"><a href="#cb4-163" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> text <span class="op">=</span> (data<span class="op">.</span><span class="at">content</span> <span class="op">||</span> [])<span class="op">.</span><span class="fu">filter</span>(<span class="kw">function</span> (c) { <span class="cf">return</span> c<span class="op">.</span><span class="at">type</span> <span class="op">===</span> <span class="st">&#39;text&#39;</span><span class="op">;</span> })</span>
+<span id="cb4-164"><a href="#cb4-164" aria-hidden="true" tabindex="-1"></a>      <span class="op">.</span><span class="fu">map</span>(<span class="kw">function</span> (c) { <span class="cf">return</span> c<span class="op">.</span><span class="at">text</span><span class="op">;</span> })<span class="op">.</span><span class="fu">join</span>(<span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>)<span class="op">;</span></span>
+<span id="cb4-165"><a href="#cb4-165" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> out <span class="op">=</span> <span class="fu">extractJson</span>(text)<span class="op">;</span></span>
+<span id="cb4-166"><a href="#cb4-166" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> ids <span class="op">=</span> {}<span class="op">;</span> KB<span class="op">.</span><span class="fu">forEach</span>(<span class="kw">function</span> (x) { ids[x<span class="op">.</span><span class="at">id</span>] <span class="op">=</span> <span class="kw">true</span><span class="op">;</span> })<span class="op">;</span></span>
+<span id="cb4-167"><a href="#cb4-167" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> seen <span class="op">=</span> {}<span class="op">;</span></span>
+<span id="cb4-168"><a href="#cb4-168" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> hits <span class="op">=</span> (out<span class="op">.</span><span class="at">hits</span> <span class="op">||</span> [])<span class="op">.</span><span class="fu">filter</span>(<span class="kw">function</span> (h) {</span>
+<span id="cb4-169"><a href="#cb4-169" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> h <span class="op">&amp;&amp;</span> ids[h<span class="op">.</span><span class="at">id</span>] <span class="op">&amp;&amp;</span> <span class="op">!</span>seen[h<span class="op">.</span><span class="at">id</span>] <span class="op">&amp;&amp;</span> <span class="bu">Number</span>(h<span class="op">.</span><span class="at">conf</span>) <span class="op">&gt;=</span> <span class="fl">0.5</span> <span class="op">&amp;&amp;</span> (seen[h<span class="op">.</span><span class="at">id</span>] <span class="op">=</span> <span class="kw">true</span>)<span class="op">;</span></span>
+<span id="cb4-170"><a href="#cb4-170" aria-hidden="true" tabindex="-1"></a>    })<span class="op">.</span><span class="fu">map</span>(<span class="kw">function</span> (h) {</span>
+<span id="cb4-171"><a href="#cb4-171" aria-hidden="true" tabindex="-1"></a>      <span class="kw">var</span> ev <span class="op">=</span> <span class="bu">Array</span><span class="op">.</span><span class="fu">isArray</span>(h<span class="op">.</span><span class="at">evidence</span>) <span class="op">?</span> h<span class="op">.</span><span class="at">evidence</span> <span class="op">:</span> [<span class="bu">String</span>(h<span class="op">.</span><span class="at">evidence</span> <span class="op">||</span> <span class="st">&#39;&#39;</span>)]<span class="op">;</span></span>
+<span id="cb4-172"><a href="#cb4-172" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> { <span class="dt">id</span><span class="op">:</span> h<span class="op">.</span><span class="at">id</span><span class="op">,</span> <span class="dt">x</span><span class="op">:</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">round</span>(<span class="fu">clamp</span>(h<span class="op">.</span><span class="at">x</span><span class="op">,</span> <span class="dv">3</span><span class="op">,</span> <span class="dv">97</span>))<span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">round</span>(<span class="fu">clamp</span>(h<span class="op">.</span><span class="at">y</span><span class="op">,</span> <span class="dv">3</span><span class="op">,</span> <span class="dv">97</span>))<span class="op">,</span></span>
+<span id="cb4-173"><a href="#cb4-173" aria-hidden="true" tabindex="-1"></a>               <span class="dt">conf</span><span class="op">:</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">round</span>(<span class="fu">clamp</span>(h<span class="op">.</span><span class="at">conf</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">1</span>) <span class="op">*</span> <span class="dv">100</span>) <span class="op">/</span> <span class="dv">100</span><span class="op">,</span></span>
+<span id="cb4-174"><a href="#cb4-174" aria-hidden="true" tabindex="-1"></a>               <span class="dt">evidence</span><span class="op">:</span> ev<span class="op">.</span><span class="fu">slice</span>(<span class="dv">0</span><span class="op">,</span> <span class="dv">2</span>)<span class="op">.</span><span class="fu">map</span>(<span class="bu">String</span>) }<span class="op">;</span></span>
+<span id="cb4-175"><a href="#cb4-175" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb4-176"><a href="#cb4-176" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> scene <span class="op">=</span> <span class="bu">Array</span><span class="op">.</span><span class="fu">isArray</span>(out<span class="op">.</span><span class="at">scene</span>) <span class="op">?</span> out<span class="op">.</span><span class="at">scene</span><span class="op">.</span><span class="fu">slice</span>(<span class="dv">0</span><span class="op">,</span> <span class="dv">2</span>)<span class="op">.</span><span class="fu">map</span>(<span class="bu">String</span>) <span class="op">:</span> [<span class="bu">String</span>(out<span class="op">.</span><span class="at">scene</span> <span class="op">||</span> <span class="st">&#39;&#39;</span>)]<span class="op">;</span></span>
+<span id="cb4-177"><a href="#cb4-177" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> extra <span class="op">=</span> (<span class="bu">Array</span><span class="op">.</span><span class="fu">isArray</span>(out<span class="op">.</span><span class="at">extra</span>) <span class="op">?</span> out<span class="op">.</span><span class="at">extra</span> <span class="op">:</span> [])<span class="op">.</span><span class="fu">slice</span>(<span class="dv">0</span><span class="op">,</span> <span class="dv">3</span>)<span class="op">.</span><span class="fu">map</span>(<span class="kw">function</span> (e) {</span>
+<span id="cb4-178"><a href="#cb4-178" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> (<span class="bu">Array</span><span class="op">.</span><span class="fu">isArray</span>(e) <span class="op">?</span> e <span class="op">:</span> [<span class="bu">String</span>(e)])<span class="op">.</span><span class="fu">slice</span>(<span class="dv">0</span><span class="op">,</span> <span class="dv">2</span>)<span class="op">.</span><span class="fu">map</span>(<span class="bu">String</span>)<span class="op">;</span> })<span class="op">;</span></span>
+<span id="cb4-179"><a href="#cb4-179" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> domain <span class="op">=</span> out<span class="op">.</span><span class="at">domain</span> <span class="op">===</span> <span class="st">&#39;gen&#39;</span> <span class="op">||</span> out<span class="op">.</span><span class="at">domain</span> <span class="op">===</span> <span class="st">&#39;elec&#39;</span> <span class="op">?</span> out<span class="op">.</span><span class="at">domain</span> <span class="op">:</span> <span class="kw">null</span><span class="op">;</span></span>
+<span id="cb4-180"><a href="#cb4-180" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="op">!</span>domain <span class="op">&amp;&amp;</span> hits<span class="op">.</span><span class="at">length</span>) {</span>
+<span id="cb4-181"><a href="#cb4-181" aria-hidden="true" tabindex="-1"></a>      <span class="kw">var</span> ng <span class="op">=</span> hits<span class="op">.</span><span class="fu">filter</span>(<span class="kw">function</span> (h) { <span class="cf">return</span> h<span class="op">.</span><span class="at">id</span><span class="op">.</span><span class="fu">charAt</span>(<span class="dv">0</span>) <span class="op">===</span> <span class="st">&#39;G&#39;</span><span class="op">;</span> })<span class="op">.</span><span class="at">length</span><span class="op">;</span></span>
+<span id="cb4-182"><a href="#cb4-182" aria-hidden="true" tabindex="-1"></a>      domain <span class="op">=</span> ng <span class="op">&gt;</span> hits<span class="op">.</span><span class="at">length</span> <span class="op">-</span> ng <span class="op">?</span> <span class="st">&#39;gen&#39;</span> <span class="op">:</span> <span class="st">&#39;elec&#39;</span><span class="op">;</span></span>
+<span id="cb4-183"><a href="#cb4-183" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-184"><a href="#cb4-184" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> res<span class="op">.</span><span class="fu">status</span>(<span class="dv">200</span>)<span class="op">.</span><span class="fu">json</span>({ <span class="dt">ok</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span> <span class="dt">model</span><span class="op">:</span> MODEL<span class="op">,</span> <span class="dt">lang</span><span class="op">:</span> lang<span class="op">,</span> <span class="dt">domain</span><span class="op">:</span> domain<span class="op">,</span> <span class="dt">hits</span><span class="op">:</span> hits<span class="op">,</span> <span class="dt">scene</span><span class="op">:</span> scene<span class="op">,</span> <span class="dt">extra</span><span class="op">:</span> extra<span class="op">,</span></span>
+<span id="cb4-185"><a href="#cb4-185" aria-hidden="true" tabindex="-1"></a>      <span class="dt">keyFrom</span><span class="op">:</span> keyFrom<span class="op">,</span> <span class="dt">usage</span><span class="op">:</span> data<span class="op">.</span><span class="at">usage</span> })<span class="op">;</span></span>
+<span id="cb4-186"><a href="#cb4-186" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">catch</span> (e) {</span>
+<span id="cb4-187"><a href="#cb4-187" aria-hidden="true" tabindex="-1"></a>    <span class="pp">clearTimeout</span>(timer)<span class="op">;</span></span>
+<span id="cb4-188"><a href="#cb4-188" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> res<span class="op">.</span><span class="fu">status</span>(<span class="dv">200</span>)<span class="op">.</span><span class="fu">json</span>({ <span class="dt">ok</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span> <span class="dt">reason</span><span class="op">:</span> e<span class="op">.</span><span class="at">name</span> <span class="op">===</span> <span class="st">&#39;AbortError&#39;</span> <span class="op">?</span> <span class="st">&#39;timeout&#39;</span> <span class="op">:</span> <span class="st">&#39;error&#39;</span><span class="op">,</span></span>
+<span id="cb4-189"><a href="#cb4-189" aria-hidden="true" tabindex="-1"></a>      <span class="dt">detail</span><span class="op">:</span> <span class="bu">String</span>(e <span class="op">&amp;&amp;</span> e<span class="op">.</span><span class="at">message</span> <span class="op">||</span> e) })<span class="op">;</span></span>
+<span id="cb4-190"><a href="#cb4-190" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-191"><a href="#cb4-191" aria-hidden="true" tabindex="-1"></a>}<span class="op">;</span></span></code></pre></div>
+<h3 id="verceljson"><code>vercel.json</code></h3>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;$schema&quot;</span><span class="fu">:</span> <span class="st">&quot;https://openapi.vercel.sh/vercel.json&quot;</span><span class="fu">,</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;cleanUrls&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;trailingSlash&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;headers&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;source&quot;</span><span class="fu">:</span> <span class="st">&quot;/(.*)&quot;</span><span class="fu">,</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;headers&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>          <span class="dt">&quot;key&quot;</span><span class="fu">:</span> <span class="st">&quot;X-Content-Type-Options&quot;</span><span class="fu">,</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>          <span class="dt">&quot;value&quot;</span><span class="fu">:</span> <span class="st">&quot;nosniff&quot;</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>          <span class="dt">&quot;key&quot;</span><span class="fu">:</span> <span class="st">&quot;X-Frame-Options&quot;</span><span class="fu">,</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>          <span class="dt">&quot;value&quot;</span><span class="fu">:</span> <span class="st">&quot;SAMEORIGIN&quot;</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>          <span class="dt">&quot;key&quot;</span><span class="fu">:</span> <span class="st">&quot;Referrer-Policy&quot;</span><span class="fu">,</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>          <span class="dt">&quot;value&quot;</span><span class="fu">:</span> <span class="st">&quot;strict-origin-when-cross-origin&quot;</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;functions&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;api/read.js&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;maxDuration&quot;</span><span class="fu">:</span> <span class="dv">60</span><span class="fu">,</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;memory&quot;</span><span class="fu">:</span> <span class="dv">512</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3 id="readmemd"><code>README.md</code></h3>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># e-safety — 전기설비부문 다국어 위험성평가표·사전작업허가서 자동 웹생성 플랫폼</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>**https://e-safety.vercel.app**</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>충북대학교 안전공학과 이채은 · 지에스건설 이명진</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>「Database 기반 생성형 AI 활용 전기설비부문 다국어 위험성평가표, 사전작업허가서 자동 웹생성 연구」 9·10단계 산출물</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">## 동작</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**사진 업로드** → 생성형 AI(Claude 비전)가 사진을 보고 지식베이스 19종 가운데 실제로 확인되는</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>   위험 표지를 **위치·근거·확신도**와 함께 고른다(<span class="in">`/api/read`</span>).</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>좌측 **체크리스트**에서 표지를 더하거나 빼면(보정 조건 4종 포함) 세 문서가 즉시 다시 작성된다.</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>우측에 **① 현장사진 기반 위험 판독 → ② 위험성평가표(3×3) → ③ 사전작업허가서**가 A4 지면으로</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>   생성되고, 모든 한글 항목 아래에 선택한 언어(영어·중국어·베트남어·우즈베키스탄어)가 병기된다.</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>AI 판독을 쓸 수 없으면(키 미설정·오류) 파일명·현장 정보 **키워드 판독**으로 자동 대체되고,</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>**직접 선택** 모드에서는 체크리스트만으로 작성할 수 있다.</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="fu">## 구성</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>| 경로 | 내용 |</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>|---|---|</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>| <span class="in">`index.html`</span> | 정적 프런트엔드 — 분할 셸, 분석 엔진, 지면 3종, 다국어 5개 언어, 인쇄 |</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>| <span class="in">`api/read.js`</span> | Vercel 서버리스 함수 — 사진 + 지식베이스 → Claude 비전 → JSON |</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>| <span class="in">`data/`</span> | 자동판독·자동생성 지식베이스(표지 19종, 매핑규칙, 키워드, 보정규칙, PTW 양식) |</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>| <span class="in">`vercel.json`</span> | 정적 배포 + 함수 설정(<span class="in">`maxDuration`</span> 60 s) |</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a><span class="fu">## 배포</span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a><span class="ex">vercel</span> deploy <span class="at">--prod</span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a><span class="in">`/api/read`</span>는 Vercel 프로젝트 환경 변수가 있어야 동작한다.</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>| 변수 | 값 |</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>|---|---|</span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>| <span class="in">`ANTHROPIC_API_KEY`</span> | Anthropic API 키 (Settings → Environment Variables 에서 직접 입력) |</span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>| <span class="in">`ANTHROPIC_WORKSPACE_ID`</span> | 워크스페이스에 묶이지 않은 키(<span class="in">`sk-ant-usr-…`</span>)를 쓸 때 필수 — Console 워크스페이스 ID |</span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>| <span class="in">`ANTHROPIC_MODEL`</span> | (선택) 기본값 <span class="in">`claude-sonnet-5-5`</span> |</span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a><span class="in">`GET /api/read`</span> 로 상태를 확인할 수 있다 — <span class="in">`{&quot;ok&quot;:true,&quot;key&quot;:true,...}`</span> 이면 키가 잡힌 것이다.</span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a><span class="in">`GET /api/read?test=1`</span> 은 서버 키로 짧은 요청을 실제로 보내 결과(<span class="in">`test.status`</span>, 오류 메시지)를 보여준다. <span class="in">`commit`</span> 은 배포된 커밋이다.</span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>사진은 브라우저에서 최대 1,600 px로 줄여 전송되며 서버에 저장되지 않는다.</span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a><span class="fu">## 근거</span></span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>산업안전보건기준에 관한 규칙(제450호) 제301~327조 · KOSHA GUIDE C-C-49-2026 · P-94-2017 ·</span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>산업안전보건연구원 위험성평가표 작성방법(3×3) · CSI 사고사례 2021~2026 전기 부문 661건.</span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a><span class="fu">## Claude API 키 입력 (화면 ⑦)</span></span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>왼쪽 패널 맨 아래 **⑦ Claude API 키** 에 키를 넣고 저장하면 그 브라우저의 <span class="in">`localStorage`</span>(<span class="in">`esafety_key`</span>)에만</span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>보관되고, AI 판독 요청 때 <span class="in">`POST /api/read`</span> 본문의 <span class="in">`key`</span> 로 서버 함수를 거쳐 Anthropic 에만 전달됩니다.</span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>비워 두면 서버 환경변수 <span class="in">`ANTHROPIC_API_KEY`</span> 를 사용합니다. 키가 거부되면(<span class="in">`bad_key`</span>) 키워드 판독으로 대체하고</span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>⑦ 에서 확인하라는 안내를 표시합니다.</span></code></pre></div>
+<p><em><code>index.html</code>(약 670KB)은 전문 대신 PR #2 diff만
+실었습니다.</em></p>
+</main>
+</body></html>
