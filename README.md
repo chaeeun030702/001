@@ -13,6 +13,10 @@ The whole server is a single file, `server.py`, with its dependencies declared
 inline (PEP 723), so [`uv`](https://docs.astral.sh/uv/) runs it with **no
 manual install or build step**.
 
+> 📓 **NotebookLM도 연동하고 싶다면?** Google NotebookLM을 Claude에 MCP로 붙이는
+> 설정 가이드는 [`docs/notebooklm-mcp-setup.md`](./docs/notebooklm-mcp-setup.md)를
+> 참고하세요.
+
 ---
 
 ## 1. Prerequisites
