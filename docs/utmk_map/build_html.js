@@ -1,0 +1,10 @@
+const fs=require('fs');
+const t=fs.readFileSync('template2.html','utf8');
+const wkt=fs.readFileSync('/root/.claude/uploads/cfb0efa6-afac-5a01-9767-ff492ebaad56/19fe2d92-GRS80_UTMK.prj','utf8').trim();
+const dprj=fs.readFileSync('kmap/KOR_ROAD_LS_KO.prj','utf8').trim();
+const km=fs.readFileSync('kmap.json','utf8');
+const fill=(s,p)=>s.replace('/*PROJ4*/',()=>p).replace('/*WKT*/',()=>JSON.stringify(wkt)).replace('/*DATAPRJ*/',()=>JSON.stringify(dprj)).replace('/*KMAP*/',()=>km);
+fs.writeFileSync('utmk_map.html',fill(t,'<script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.0/proj4.js"></script>'));
+const lib=fs.readFileSync('dl/proj4-2.9.0/package/dist/proj4.js','utf8');
+const full='<!doctype html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n<style>body{margin:0}[hidden]{display:none!important}</style>\n'+fill(t,'<script>/* proj4js 2.9.0 (MIT) */\n'+lib+'</script>').replace('<div class="app">','</head>\n<body>\n<div class="app">')+'\n</body>\n</html>\n';
+fs.writeFileSync('/home/user/001/docs/UTM-K_좌표지도.html',full);
