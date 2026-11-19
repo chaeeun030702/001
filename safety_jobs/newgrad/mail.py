@@ -40,6 +40,8 @@ def build(today):
     d = json.load(open(os.path.join(HERE, 'postings.json')))
     uxp = os.path.join(HERE, 'user_excluded.json')
     uxu = {x['url'] for x in json.load(open(uxp))['items']} if os.path.exists(uxp) else set()
+    from build import exp_required
+    uxu = uxu | set(exp_required(d['postings']))
     live = [p for p in d['postings'] if p['url'] not in uxu and (dleft(p['deadline'], today) is None or dleft(p['deadline'], today) >= 0)]
     new = [p for p in live if p.get('first_seen') == today.isoformat() and not p.get('baseline')]
     urg = sorted([p for p in live if (lambda n: n is not None and 0 <= n <= 3)(dleft(p['deadline'], today))], key=lambda p: p['deadline'])

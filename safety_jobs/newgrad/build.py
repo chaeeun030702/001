@@ -3,7 +3,7 @@
 postings.json(공고) · excluded.json(조건 밖 공고)을 읽어 한 파일 HTML을 만든다.
   python3 safety_jobs/newgrad/build.py [YYYY-MM-DD]   # 기본: 오늘(KST)
 출력: docs/안전관리자_신입_채용_브리핑_YYYY-MM-DD.html
-마감일이 지난 공고와 사용자가 '제외 확정'한 공고(user_excluded.json, 아티팩트 db의 excluded 컬렉션 사본)는 빼고, first_seen이 오늘인 공고는 '신규'(파란 글씨)로 표시한다.
+마감일이 지난 공고, 사용자가 '제외 확정'한 공고(user_excluded.json, 아티팩트 db의 excluded 컬렉션 사본), 매칭에서 경력 필수로 판정된 공고(exp_required)는 빼고, first_seen이 오늘인 공고는 '신규'(파란 글씨)로 표시한다.
 """
 import datetime, html, json, os, re, sys
 from collections import Counter
@@ -16,6 +16,16 @@ KST = datetime.timezone(datetime.timedelta(hours=9))
 GROUPS = [('big', '대기업·그룹 계열사'), ('foreign', '외국계 (한국 근무)'), ('con', '종합건설'),
           ('pub', '공공기관·협회'), ('etc', '상장사·중견')]
 BNF_KEYS = ['기숙사', '사택', '자녀학자금', '주택대출', '주거지원']
+
+
+def exp_required(postings):
+    """매칭에서 '경력 필수'(gate exp, 신중 검토)로 판정된 공고 URL. 11/19 사용자 요청으로 브리핑·메일에서 뺀다.
+    본문에 신입 지원 가능이 함께 적힌 공고는 postings.json에 keep_exp: true로 남긴다."""
+    mp = os.path.join(HERE, 'private', 'match.json')
+    if not os.path.exists(mp):
+        return {}
+    M = json.load(open(mp))
+    return {p['url']: p for p in postings if (M.get(p['url']) or {}).get('gate') == 'exp' and not p.get('keep_exp')}
 
 
 def dleft(dl, today):
@@ -222,6 +232,11 @@ def build(today, M=None, CR=None, out=None):
     uxu = {x['url'] for x in ux}
     if ux:
         exc = exc + [{'reason': '직접 제외(제외 확정)', 'items': [f"{x.get('company', '')} · {x.get('title', '')}" for x in ux]}]
+    xr = exp_required(data['postings'])
+    xl = [p for p in xr.values() if dleft(p['deadline'], today) is None or dleft(p['deadline'], today) >= 0]
+    if xl:
+        exc = exc + [{'reason': '경력 필수(신중 검토) 자동 제외', 'items': [f"{p.get('company', '')} · {p.get('title', '')}" for p in xl]}]
+    uxu = uxu | set(xr)
     css = open(os.path.join(HERE, 'style.css')).read()
     js = open(os.path.join(HERE, 'app.js')).read()
     live = [p for p in data['postings'] if p['url'] not in uxu and (dleft(p['deadline'], today) is None or dleft(p['deadline'], today) >= 0)]
