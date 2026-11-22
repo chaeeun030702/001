@@ -104,71 +104,61 @@ h1{font-size:28px;font-weight:700;margin:0;text-wrap:balance}
 <script>
 /* 작업 데이터 — 에이전트를 맡길 때마다 이 블록만 고친다 (progress: 0~100) */
 var JOB={
- "updated": "2026-11-22 13:16 KST",
- "updatedISO": "2026-11-22T04:16:05Z",
+ "updated": "2026-11-22 13:22 KST",
+ "updatedISO": "2026-11-22T04:22:27Z",
  "main": {
   "name": "메인 에이전트",
   "task": "환경 민자, 턴키사업 동향 브리핑 수시 실행 (11/22) · 11.19 예약 실행본 보관 → 11.19~22 변화 조사 → 게시",
-  "note": "원문은 curl로 직접 열어 확인합니다."
+  "note": "완료 · 아티팩트 v8 · 새로 넣은 사실은 curl로 원문 확인."
  },
  "subs": [
   {
    "name": "서울시 조사",
    "order": "하청 1",
-   "status": "run",
-   "progress": 5,
-   "startedAt": "2026-11-22T04:16:05Z",
-   "etaMin": 10,
+   "status": "done",
+   "progress": 100,
    "task": "물재생센터, 자원회수시설, 시의회 예산 심사",
-   "result": "조사 중"
+   "result": "11.19 예산 토론회, 11.20 심사 착수 · 시설 신규 보도 없음"
   },
   {
    "name": "서울 외 지자체 조사",
    "order": "하청 2",
-   "status": "run",
-   "progress": 5,
-   "startedAt": "2026-11-22T04:16:05Z",
-   "etaMin": 10,
+   "status": "done",
+   "progress": 100,
    "task": "지자체 행 변화, 광주 2차 실사, 민투심, PIMAC",
-   "result": "조사 중"
+   "result": "남양주 한화 우협 · 광주 2차 실사 무산 · 경북 바이오가스 7개 시군"
   },
   {
    "name": "주요 기관 조사",
    "order": "하청 3",
-   "status": "run",
-   "progress": 5,
-   "startedAt": "2026-11-22T04:16:05Z",
-   "etaMin": 10,
+   "status": "done",
+   "progress": 100,
    "task": "환경공단, K-water 3공구 개찰 결과, LH, SL공사, 새만금",
-   "result": "조사 중"
+   "result": "K-water 3공구 1순위 쌍용건설(74.85%)"
   },
   {
    "name": "업체 동향 조사",
    "order": "하청 4",
-   "status": "run",
-   "progress": 5,
-   "startedAt": "2026-11-22T04:16:05Z",
-   "etaMin": 10,
+   "status": "done",
+   "progress": 100,
    "task": "금호, 태영, 코오롱글로벌, 계룡",
-   "result": "조사 중"
+   "result": "금호 장지 1,753억, 가덕도 적격자 · 코오롱 대표 교체"
   },
   {
    "name": "입찰담합 조사",
    "order": "하청 5",
-   "status": "run",
-   "progress": 5,
-   "startedAt": "2026-11-22T04:16:05Z",
-   "etaMin": 10,
-   "task": "공정위 LH 종심제 조사 후속, 종심제 개편, 환경시설 담합",
-   "result": "조사 중"
+   "status": "done",
+   "progress": 100,
+   "task": "공정위 LH 종심제 조사 후속, 종심제 개편",
+   "result": "11.19~22 추가 조사, 제재 보도 없음"
   },
   {
    "name": "브리핑 작성·게시",
    "order": "하청 6",
-   "status": "run",
-   "progress": 20,
-   "task": "11.19 판 보관 완료 → 11.22 판 작성 대기",
-   "result": "11.19 판 보관"
+   "status": "done",
+   "progress": 100,
+   "task": "11.22 판 작성 → 게시",
+   "result": "지자체 29 · 기관 21 · 담합 11 · 일정 12 · v8"
   }
  ]
 };
