@@ -1,0 +1,66 @@
+---
+name: squoosh
+description: GoogleChromeLabs/squoosh(브라우저 안에서 도는 이미지 압축 웹앱) 사용·개발 가이드. 이미지 용량 줄이기(JPEG/WebP/AVIF/PNG/JXL 변환·리사이즈·감색), squoosh 로컬 빌드·실행, 새 코덱(encoder/decoder) 추가, codecs/ WASM 빌드를 다룰 때 사용한다. "이미지 압축", "squoosh", "webp 변환", "avif", "mozjpeg", "oxipng" 요청에 쓴다.
+---
+
+# Squoosh
+
+[Squoosh](https://squoosh.app) — 이미지를 **서버로 보내지 않고** 브라우저(WASM)에서 압축하는 웹앱.
+원본: https://github.com/GoogleChromeLabs/squoosh (Apache-2.0, 기준 커밋 `e8d35e0`, 2024-08-19)
+
+> 주의: 예전 `libsquoosh`(Node API)·`@squoosh/cli`는 저장소에서 **제거됨**(더는 유지보수 안 함).
+> 배치 압축이 필요하면 웹앱 대신 각 코덱 원본 CLI(cwebp, avifenc, cjpeg(mozjpeg), oxipng)나 sharp를 쓴다.
+
+## 1. 웹앱으로 바로 쓰기
+1. https://squoosh.app 열기 → 이미지 드래그
+2. 오른쪽 패널에서 포맷·품질 선택, 슬라이더로 좌/우 원본 비교
+3. 다운로드. (Edit → Resize / Reduce palette로 크기·색 수 조정)
+
+### 포맷 선택 요령 (엔지니어용 기본값)
+| 목적 | 권장 인코더 | 출발점 |
+|---|---|---|
+| 사진, 호환성 최우선 | MozJPEG | quality 75 |
+| 웹 사진 일반 | WebP | quality 75 |
+| 최소 용량(최신 브라우저) | AVIF | quality 50 전후, effort 높일수록 느림 |
+| 도면·스크린샷·투명 PNG | OxiPNG (+ Reduce palette) | level 2~3, 무손실 |
+| 실험 | JPEG XL(beta), WebP v2(unstable), QOI | 운영 배포엔 비권장 |
+
+- 리사이즈가 용량 절감 1순위다. 표시 크기의 2배(레티나) 이상은 줄인다.
+- 텍스트·선 위주 이미지는 손실 포맷보다 PNG+감색이 더 깨끗하고 작은 경우가 많다.
+
+## 2. 로컬 개발
+```sh
+git clone https://github.com/GoogleChromeLabs/squoosh.git
+cd squoosh
+npm install
+npm run build
+npm run dev        # http://localhost:5000 (DEV_PORT로 변경)
+```
+- 번들러: rollup (`rollup.config.js`), 워커 통신: comlink
+- 코덱 재빌드는 `codecs/<코덱>/`에서 Docker로 `npm install && npm run build` → `<name>_enc.js/.wasm` 생성
+
+## 3. 구조
+```
+src/features/
+  decoders/      avif jxl qoi webp wp2
+  encoders/      avif browserGIF browserJPEG browserPNG jxl mozJPEG oxiPNG qoi webP wp2
+  processors/    quantize resize        (좌/우 각각 다르게 적용)
+  preprocessors/ rotate                  (양쪽 공통)
+codecs/          코덱별 C/C++/Rust → WASM 서브프로젝트
+```
+기능 폴더 규칙: `client/`(UI), `worker/`(워커에 번들, default export가 comlink 함수로 노출), `shared/`(공용).
+
+## 4. 새 인코더 추가 체크리스트
+1. `src/features/encoders/<name>/shared/meta.ts`: `label`, `mimeType`, `extension`, `EncodeOptions`, `defaultOptions`
+2. `client/index.ts`: `encode(signal: AbortSignal, workerBridge, imageData: ImageData, options)` → `Promise<ArrayBuffer>`
+   - 선택: `featureTest()`, `Options` 컴포넌트(`{ options, onChange }`)
+3. `worker/<name>Encode.ts`: WASM 모듈 로드 후 인코딩
+4. 필요하면 `codecs/<name>/`에 WASM 빌드 추가 (`Module.locateFile`로 .wasm 경로 지정)
+
+## 5. 참고 문서 (references/)
+저장소의 모든 `.md`를 원래 경로 그대로 넣었다.
+- `references/README.md`, `references/CONTRIBUTING.md` — 개요·기여 방법
+- `references/src/features/README.md` — 기능(encoder/decoder/processor) 규칙 원문
+- `references/codecs/README.md` + `references/codecs/<코덱>/README.md` — 코덱별 C API·옵션
+- `references/codecs/*/LICENSE.codec.md` — 코덱 라이선스
+- `references/LICENSE` — Apache-2.0
