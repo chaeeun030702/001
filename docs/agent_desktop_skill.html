@@ -1,0 +1,101 @@
+<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>agent-desktop 스킬</title>
+<style>:root{--bg:#fff;--fg:#1a1a1a;--line:#ddd;--code:#f4f4f4}@media (prefers-color-scheme:dark){:root{--bg:#161616;--fg:#eee;--line:#333;--code:#222}}
+body{background:var(--bg);color:var(--fg);font:15px/1.6 system-ui,sans-serif;max-width:820px;margin:0 auto;padding:24px 16px}
+table{border-collapse:collapse;width:100%;display:block;overflow-x:auto}td,th{border:1px solid var(--line);padding:6px 8px;text-align:left}pre,code{background:var(--code);border-radius:4px}pre{padding:12px;overflow-x:auto}</style>
+<body><h1>agent-desktop</h1>
+<p>AI 에이전트가 <strong>스크린샷·픽셀 매칭 없이</strong> 데스크톱 앱을 보고 조작하게 해 주는 CLI(+C 라이브러리).
+앱의 접근성 트리(macOS AX · Windows UI Automation · Linux AT-SPI)를 JSON으로 돌려주고, 조작 가능한 요소마다 <code>ref</code>를 붙인다.
+모델은 들어 있지 않다. <strong>관찰 → 조작 → 검증 루프는 호출하는 에이전트가 돈다.</strong></p>
+<p>원본: https://github.com/vercel-labs/agent-desktop (Apache-2.0, 기준 커밋 <code>ce2ddf0</code>, 2026-11-23)</p>
+<blockquote>
+<p>개인정보 주의: snapshot·클립보드·스크린샷·출력에는 화면의 사적인 내용이 들어갈 수 있다. 공개 로그·업로드에 남기지 않는다.</p>
+</blockquote>
+<h2>1. 설치·첫 실행</h2>
+<pre><code class="language-bash">npm install -g agent-desktop        # 또는 brew install agent-desktop (macOS/Linux)
+agent-desktop status                # 플랫폼·권한·지원 화면(supported_surfaces)
+agent-desktop permissions --guide   # macOS: 손쉬운 사용(Accessibility) 권한 안내
+agent-desktop skills get desktop    # 버전에 맞는 공식 가이드(루프·ref·재시도 규칙)
+agent-desktop skills get platform   # 현재 OS별 차이
+</code></pre>
+<h2>2. 기본 루프</h2>
+<pre><code class="language-bash">agent-desktop snapshot --skeleton --app &quot;Notes&quot; -i --compact   # 얕은 지도 (복잡한 앱)
+agent-desktop snapshot --root @s8f3k2p9:e3 -i --compact        # 한 영역만 파고들기
+agent-desktop click @s8f3k2p9:e12                              # ref로 조작
+agent-desktop snapshot --root @s8f3k2p9:e3 -i --compact        # 같은 영역 다시 읽어 검증
+</code></pre>
+<ul>
+<li>작은 앱은 skeleton 없이 <code>snapshot -i</code> 한 번이면 된다. 아는 요소는 <code>find</code>.</li>
+<li>메뉴·시트·알림창을 여는 동작은 결과의 <code>data.surfaces</code>에 그 화면을 알려 준다 → 다음 대상으로.</li>
+<li>비동기 단계 뒤에는 <code>wait</code>. 고정 sleep은 경쟁 조건이다.</li>
+</ul>
+<h2>3. ref 규칙 (가장 많이 틀리는 곳)</h2>
+<ul>
+<li>ref는 <code>@&lt;snapshot_id&gt;:e&lt;N&gt;</code> 형태로 <strong>그 snapshot에만</strong> 유효. 맨 <code>@e8</code>은 <code>INVALID_ARGS</code>.</li>
+<li>UI가 바뀌면 <code>STALE_REF</code> / <code>AMBIGUOUS_TARGET</code> → 새 snapshot의 ref를 쓴다.</li>
+<li>창이 여러 개면 <code>AMBIGUOUS_TARGET</code> → <code>error.details</code>의 창 id를 <code>--window-id</code>로.</li>
+<li>Windows·Linux에서 똑같이 생긴 쌍둥이 요소(행마다 같은 버튼)는 ref로 구분 불가 → 창 안에서 유일한 컨트롤을 노린다.</li>
+<li>PowerShell에서는 ref를 따옴표로 감싼다(<code>'@s8f3k2p9:e8'</code>, <code>@</code>는 splatting 연산자).</li>
+</ul>
+<h2>4. 재시도 규칙</h2>
+<ul>
+<li>결과의 <code>disposition.retry</code>가 <code>safe</code>(= <code>delivery: not_delivered</code>)일 때<strong>만</strong> 재시도.</li>
+<li>그 밖에는 이미 실행됐을 수 있다(두 번 클릭·두 번 제출, <code>toggle</code>은 원상복구). <code>get</code>/<code>is</code>/새 snapshot으로 실제 상태를 읽고 판단.</li>
+<li>분기는 <code>error.code</code>와 <code>error.disposition</code>으로. 메시지 문구는 바뀔 수 있다.</li>
+</ul>
+<h2>5. Headless / Headed</h2>
+<ul>
+<li>기본은 headless: 포인터를 움직이거나 포커스를 뺏지 않고 접근성 API로만 동작. 의미 경로가 없으면 <strong>실패로 닫힌다.</strong></li>
+<li><code>--headed</code>(실제 마우스·키 입력)는 사용자가 명시적으로 허락했을 때만. headless 실패를 headed로 우회하지 않는다.</li>
+<li>비밀 텍스트는 <code>type</code>/<code>set-value</code>/<code>clipboard-set --stdin</code>으로 넘겨 프로세스 인자에 남기지 않는다.</li>
+</ul>
+<h2>6. MCP 서버</h2>
+<pre><code class="language-json">{ &quot;mcpServers&quot;: { &quot;agent-desktop&quot;: { &quot;command&quot;: &quot;agent-desktop&quot;, &quot;args&quot;: [&quot;mcp&quot;] } } }
+</code></pre>
+<p>명령마다 <code>desktop_snapshot</code>, <code>desktop_click</code> 같은 MCP 도구로 노출되고, 같은 JSON envelope를 돌려준다.</p>
+<h2>7. 명령 그룹 (61개 이름, 57개 동작)</h2>
+<table>
+<thead>
+<tr>
+<th>그룹</th>
+<th>명령</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>관찰</td>
+<td>snapshot, find, get, is, screenshot, list-surfaces</td>
+</tr>
+<tr>
+<td>ref 조작</td>
+<td>click, double/triple/right-click, type, set-value, clear, focus, select, toggle, check, uncheck, expand, collapse, scroll, scroll-to</td>
+</tr>
+<tr>
+<td>키보드·마우스</td>
+<td>press, hover, drag, mouse-move, mouse-click, mouse-wheel (key/mouse-down·up은 데몬 전까지 거부)</td>
+</tr>
+<tr>
+<td>앱·창</td>
+<td>launch, close-app, list-apps/windows/displays, focus/resize/move-window, minimize, maximize, restore, open-system-surface</td>
+</tr>
+<tr>
+<td>알림</td>
+<td>list-notifications, dismiss-notification, dismiss-all-notifications, notification-action</td>
+</tr>
+<tr>
+<td>클립보드</td>
+<td>clipboard-get, clipboard-set, clipboard-clear</td>
+</tr>
+<tr>
+<td>기타</td>
+<td>wait, session, trace, cursor-overlay, sandbox(macOS VM)</td>
+</tr>
+</tbody>
+</table>
+<h2>8. 참고 문서 (references/)</h2>
+<p>저장소의 모든 <code>.md</code> 파일(77개)을 원래 경로 그대로 넣었다.
+- <code>references/README.md</code>, <code>CONCEPTS.md</code>, <code>CHANGELOG.md</code>, <code>SECURITY.md</code> — 개요·개념·변경 이력·보안
+- <code>references/skills/agent-desktop/</code> — 공식 스킬(SKILL.md + commands-observation/interaction/system, workflows)
+- <code>references/skills/agent-desktop-{macos,windows,linux,ffi}/</code> — OS별·FFI 스킬과 트러블슈팅
+- <code>references/docs/</code> — install, json-output, faq, releasing, solutions/(실전 오류·베스트 프랙티스)
+- <code>references/probes/</code>, <code>references/tests/</code> — 플랫폼 조사 결과·테스트 안내
+- <code>references/LICENSE</code> — Apache-2.0</p></body></html>
