@@ -1,0 +1,182 @@
+<title>보안 감사 스킬 분석</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;800&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+/* VOICE work: 엔지니어에게 보여 줄 기술 분석
+   IDEA 지하철 노선도: 감사 6단계를 한 노선의 역으로, 후보가 역을 지나며 걸러진다
+   PICTURE 굵은 노선 하나(6역) + 각 역 아래 산출물, 검증기 2개는 환승역
+   COLOUR 흰 바탕, 검정 잉크, 노선색 빨강·파랑·노랑·초록
+   TYPE Figtree 800 + Noto Sans KR
+   LAYOUT 노트북: 제목 줄 + 우측 핵심 수치, 아래 전폭 노선도 / 폰: 제목, 노선도 세로 */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#0e1116);--ink:light-dark(#111418,#e9edf2);--mute:light-dark(#5b6470,#9aa4b1);--rule:light-dark(#e3e6ea,#262c35);--panel:light-dark(#f6f7f9,#151a21);--red:#e6261f;--blue:light-dark(#0a5cff,#4d8bff);--amber:#ffb400;--green:light-dark(#00a05a,#21c27a)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "Noto Sans KR","Figtree",system-ui,sans-serif;overflow-x:clip;word-break:keep-all}
+.band{padding-block:clamp(24px,4vw,56px);padding-left:max(5vw,16px,env(safe-area-inset-left,0px));padding-right:max(5vw,16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1240px;margin:0 auto}
+h1{font:900 clamp(30px,4.4vw,48px)/1.08 "Noto Sans KR",sans-serif;letter-spacing:-.02em;margin:0 0 12px}
+h2{font:800 26px/1.2 "Noto Sans KR",sans-serif;letter-spacing:-.01em;margin:0 0 14px}
+h3{font-size:17px;margin:0 0 6px}
+p{margin:0 0 12px;max-width:70ch}
+.lead{font-size:17px;color:var(--mute)}
+.top{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:32px;align-items:end;border-top:6px solid var(--ink);padding-top:20px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(8em,1fr));gap:12px}
+.kpi{border-left:4px solid var(--c,var(--blue));padding:4px 0 4px 12px}
+.kpi b{display:block;font:800 34px/1 Figtree,sans-serif;white-space:nowrap}
+.kpi span{font-size:13px;color:var(--mute)}
+.fig{position:relative;height:300px;margin-top:28px}
+.fig>svg{position:absolute;inset:0;width:100%;height:100%}
+svg text{paint-order:stroke;stroke:var(--bg);stroke-width:4px}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px}
+.bars .row{display:grid;grid-template-columns:11.5em minmax(0,1fr) 3.2em;gap:10px;align-items:center;font-size:14px;padding:4px 0}
+.bars .track{height:14px;background:var(--panel);border-radius:2px}
+.bars .fill{height:100%;background:var(--blue);border-radius:2px}
+.bars .row.core .fill{background:var(--red)}
+.bars .n{text-align:right;font-variant-numeric:tabular-nums;color:var(--mute)}
+.verd{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.v{border-top:6px solid var(--c);background:var(--panel);padding:14px}
+.v b{font:800 18px Figtree,sans-serif}
+.sev .row{display:grid;grid-template-columns:7.5em minmax(0,1fr);gap:12px;padding:8px 0;border-bottom:1px solid var(--rule);font-size:15px}
+.sev .row b{font-family:Figtree,sans-serif}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{text-align:left;padding:10px 10px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-weight:700;border-bottom:2px solid var(--ink)}
+.tag{display:inline-block;padding:1px 8px;border-radius:99px;font-size:13px;font-weight:700;color:#fff;background:var(--c);white-space:nowrap}
+.cols3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}
+.col{border-top:4px solid var(--c);padding-top:12px}
+.col ul{margin:0;padding-left:18px}
+.col li{margin-bottom:8px;font-size:15px}
+code{font-family:ui-monospace,Menlo,monospace;font-size:.9em;background:var(--panel);padding:1px 5px;border-radius:3px;overflow-wrap:anywhere}
+.foot{font-size:13px;color:var(--mute);border-top:1px solid var(--rule)}
+@media(max-width:860px){.top,.grid2,.cols3{grid-template-columns:minmax(0,1fr)}.fig{height:560px}}
+@media(max-width:600px){table{font-size:13px}th,td{padding:6px 4px}.verd{grid-template-columns:minmax(0,1fr)}.bars .row{grid-template-columns:8.5em minmax(0,1fr) 2.8em}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--rule)}.stack td{display:flex;justify-content:space-between;gap:12px;border:0}.stack td::before{content:attr(data-l);font-weight:700;flex:none}}
+</style>
+
+<section class="band"><div class="wrap">
+  <div class="top">
+    <div>
+      <h1>Cloudflare security-audit: 찾는 에이전트와 반박하는 에이전트를 분리한 6단계 감사</h1>
+      <p class="lead">후보를 많이 모은 다음, 다른 에이전트가 반박을 시도해 살아남은 것만 확정하는 구조입니다. 기존 스킬 중 가장 가까운 것은 기본 제공 <code>/security-review</code>(변경분 리뷰)이고, 저장소 전체 감사·검증기·커버리지 원장까지 갖춘 스킬은 아직 없었습니다.</p>
+    </div>
+    <div class="kpis" id="kpis"></div>
+  </div>
+  <div class="fig" id="metro" role="img" aria-label="6단계 감사 노선도"></div>
+</div></section>
+
+<section class="band" style="background:var(--panel)"><div class="wrap">
+  <h2>1. 이미 가진 스킬과 비교: 겹치는 부분은 일부, 전체 감사는 새로 생긴다</h2>
+  <div class="scroll"><table class="stack">
+    <thead><tr><th>스킬</th><th>범위</th><th>검증 방식</th><th>산출물</th><th>판정</th></tr></thead>
+    <tbody id="cmp"></tbody>
+  </table></div>
+</div></section>
+
+<section class="band"><div class="wrap grid2">
+  <div>
+    <h2>2. 파일 구성: 핵심 절차 4개 + 도메인 동반 문서 11개</h2>
+    <p class="lead">빨강은 모든 감사에 쓰는 핵심 절차, 파랑은 대상 종류에 따라 골라 쓰는 공격 분류입니다(줄 수).</p>
+    <div class="bars" id="bars"></div>
+    <p style="margin-top:14px;font-size:14px;color:var(--mute)">검증기 JS 2개(1,645줄)와 테스트 2개(1,392줄)는 별도입니다. 이 세션에서 테스트 65개를 돌려 모두 통과했습니다.</p>
+  </div>
+  <div>
+    <h2>3. 판정은 셋, 심각도는 확정에만</h2>
+    <div class="verd" id="verd"></div>
+    <h3 style="margin-top:22px">심각도 기준</h3>
+    <div class="sev" id="sev"></div>
+  </div>
+</div></section>
+
+<section class="band" style="background:var(--panel)"><div class="wrap">
+  <h2>4. 상위 1% 관점: 초보자는 "찾기"에, 숙련자는 "반박"과 "커버리지"에 시간을 쓴다</h2>
+  <div class="cols3">
+    <div class="col" style="--c:var(--red)"><h3>초보자가 흔히 하는 실수</h3><ul>
+      <li>체크리스트 위반(헤더 누락, 버전 낡음)을 취약점으로 보고한다.</li>
+      <li>찾은 사람이 스스로 확인해 확증 편향이 그대로 남는다.</li>
+      <li>한 번 돌리고 "다 봤다"고 한다. Cloudflare 측정으로 1회 실행은 반복 실행 총합의 약 절반만 찾았다.</li>
+      <li>배포·프록시 설정을 추측해서 있다/없다를 단정한다.</li>
+    </ul></div>
+    <div class="col" style="--c:var(--blue)"><h3>숙련자가 다르게 하는 점</h3><ul>
+      <li>후보마다 신뢰 경계를 명시한다: 누가, 무엇을 넣어, 어떤 통제를 넘어, 누구에게 어떤 결과.</li>
+      <li>발견자와 검증자를 분리하고, 검증자에게는 반박을 시킨다.</li>
+      <li>커버리지 원장으로 "본 곳 / 못 본 곳 / 범위 밖"을 숫자로 남긴다.</li>
+      <li>모르는 사실은 <code>needs_validation</code>으로 두고 정확히 무엇이 막혔는지 적는다.</li>
+    </ul></div>
+    <div class="col" style="--c:var(--green)"><h3>고급 수준의 사고</h3><ul>
+      <li>심각도는 "통제를 완전히 무력화했나, 약화만 했나"로 가른다. 피해를 한 문장으로 못 쓰면 한 단계 낮다.</li>
+      <li>다층 방어에서 A층이 막으면 B층 부재는 강화 권고일 뿐이다.</li>
+      <li>수정은 마지막 신뢰 결정 지점에서 가장 좁게, 회귀 테스트와 함께 제안한다.</li>
+      <li>예산이 모자라면 품질을 줄이지 않고 범위를 줄인다(quick / scoped).</li>
+    </ul></div>
+  </div>
+</div></section>
+
+<section class="band"><div class="wrap">
+  <h2>5. 저장소에 추가한 내용과 쓰는 법</h2>
+  <div class="grid2">
+    <div><p><code>skills/security-audit/</code>에 원본 20개 파일을 그대로 넣고 <code>LICENSE</code>(MIT)와 출처·사용법을 적은 <code>SOURCE.md</code>를 더했습니다. 기존 스킬처럼 업로드용 <code>skills/security-audit.zip</code>도 만들었습니다.</p>
+    <p>질문이나 부분 리뷰는 가이드 모드로 필요한 부분만 쓰고, "이 코드베이스 보안 감사해줘"처럼 명시적으로 요청할 때만 6단계 전체를 돌며 결과를 저장소 밖 <code>~/security-audit-skill/&lt;repo&gt;/run-N</code>에 씁니다.</p></div>
+    <div><p>대상 코드를 실행하려면 네트워크 차단·환경 변수 허용목록·쓰기 제한·자원 한도를 갖춘 OS 샌드박스가 필요합니다. 없으면 실행하지 않고 <code>needs_validation</code>으로 남깁니다. 이 클라우드 세션은 그 조건을 다 갖추지 못하므로, 여기서는 소스 정적 분석 위주로 돌게 됩니다.</p>
+    <p>전체 감사는 서브에이전트를 많이 띄우는 작업이라 비용이 큽니다. 처음에는 <code>quick</code> 프로필이나 예산(에이전트 호출 수)을 지정해 쓰는 것을 권합니다.</p></div>
+  </div>
+</div></section>
+
+<section class="band foot"><div class="wrap">출처: github.com/cloudflare/security-audit-skill, 커밋 c1c8a8c (2026-09-14), MIT. 줄 수는 해당 커밋 기준. 작성 2026-11-25.</div></section>
+
+<script>
+{
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const kpis=[["6","단계 파이프라인","var(--red)"],["3","판정(확정·검증필요·기각)","var(--blue)"],["11","도메인 공격 분류","var(--amber)"],["65/65","검증기 테스트 통과","var(--green)"]];
+$('kpis').innerHTML=kpis.map(k=>`<div class="kpi" style="--c:${k[2]}"><b>${k[0]}</b><span>${k[1]}</span></div>`).join('');
+
+const st=[
+ {n:"정찰",e:"Reconnaissance",o:"architecture.md · coverage-ledger.json",c:"var(--red)",x:true},
+ {n:"커버리지 사냥",e:"Hunting waves",o:"격리된 hunter + coverage critic",c:"var(--red)"},
+ {n:"후보 검증",e:"Candidate validation",o:"새 verifier가 반박 시도",c:"var(--blue)"},
+ {n:"구조화 출력",e:"Structured output",o:"findings.json + 스키마",c:"var(--blue)",x:true},
+ {n:"독립 재검증",e:"Record verification",o:"최종 주장 다시 확인",c:"var(--green)"},
+ {n:"보고서",e:"Reporting",o:"REPORT · DETAIL · NEEDS-VALIDATION",c:"var(--green)"}];
+const box=$('metro');
+const draw=()=>{const W=box.clientWidth,H=box.clientHeight;const vert=W<700;let s='';
+ if(!vert){const m=Math.max(90,(W-40)/12),y=110,dx=(W-2*m)/5;
+  s+=`<path d="M${m-40} ${y}H${W-m+40}" stroke="var(--ink)" stroke-width="16" stroke-linecap="round" opacity=".08"/>`;
+  st.forEach((p,i)=>{if(i<5)s+=`<line x1="${m+i*dx}" y1="${y}" x2="${m+(i+1)*dx}" y2="${y}" stroke="${st[i+1].c}" stroke-width="12"/>`});
+  st.forEach((p,i)=>{const x=m+i*dx;
+   s+=`<circle cx="${x}" cy="${y}" r="${p.x?17:13}" fill="var(--bg)" stroke="var(--ink)" stroke-width="${p.x?6:5}"/>`;
+   s+=`<text x="${x}" y="${y-34}" text-anchor="middle" font-size="12" fill="var(--mute)" font-family="Figtree" font-weight="800">${i+1}</text>`;
+   s+=`<text x="${x}" y="${y+46}" text-anchor="middle" font-size="16" font-weight="900" fill="var(--ink)">${esc(p.n)}</text>`;
+   s+=`<text x="${x}" y="${y+66}" text-anchor="middle" font-size="12.5" fill="var(--mute)" font-family="Figtree">${esc(p.e)}</text>`;
+   s+=`<foreignObject x="${x-dx/2+6}" y="${y+78}" width="${dx-12}" height="60"><div xmlns="http://www.w3.org/1999/xhtml" style="font-size:13px;line-height:1.4;text-align:center;color:var(--ink)">${esc(p.o)}</div></foreignObject>`;
+   if(p.x)s+=`<text x="${x}" y="${y-56}" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--amber)">◆ 검증기 실행</text>`;});
+  s+=`<text x="${W-m}" y="${H-14}" text-anchor="end" font-size="13" fill="var(--mute)">◆ 환승역: validate-coverage-ledger.cjs · validate-findings.cjs</text>`;
+ }else{const x=34,t=30,dy=(H-60)/5;
+  st.forEach((p,i)=>{if(i<5)s+=`<line x1="${x}" y1="${t+i*dy}" x2="${x}" y2="${t+(i+1)*dy}" stroke="${st[i+1].c}" stroke-width="12"/>`});
+  st.forEach((p,i)=>{const y=t+i*dy;
+   s+=`<circle cx="${x}" cy="${y}" r="${p.x?15:12}" fill="var(--bg)" stroke="var(--ink)" stroke-width="5"/>`;
+   s+=`<text x="${x+30}" y="${y-4}" font-size="16" font-weight="900" fill="var(--ink)">${i+1}. ${esc(p.n)}${p.x?' ◆':''}</text>`;
+   s+=`<text x="${x+30}" y="${y+16}" font-size="12.5" fill="var(--mute)" font-family="Figtree">${esc(p.e)}</text>`;
+   s+=`<foreignObject x="${x+30}" y="${y+22}" width="${W-x-40}" height="44"><div xmlns="http://www.w3.org/1999/xhtml" style="font-size:13px;line-height:1.35;color:var(--ink)">${esc(p.o)}</div></foreignObject>`;});
+ }
+ box.innerHTML=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}">${s}</svg>`;};
+const metroRO=new ResizeObserver(draw);metroRO.observe(box);
+
+const cmp=[
+ ["security-audit (새로 추가)","저장소 전체 또는 지정 범위","발견자 ≠ 검증자, 2회 독립 검증","findings.json, 보고서 3종, 커버리지 원장","var(--green)","핵심"],
+ ["/security-review (기본 제공)","현재 브랜치 변경분","단일 에이전트 리뷰","대화 내 보고","var(--amber)","부분 겹침"],
+ ["ecc-toolkit › security-review","기능 작성 시 체크리스트","체크리스트 대조","권고 목록","var(--amber)","부분 겹침"],
+ ["engineering:code-review","PR·diff 품질 전반","단일 리뷰","리뷰 코멘트","var(--mute)","주변"],
+ ["construction-safety","건설 현장 안전","해당 없음","점검표","var(--mute)","무관(이름만 비슷)"]];
+$('cmp').innerHTML=cmp.map(r=>`<tr><td data-l="스킬"><b>${esc(r[0])}</b></td><td data-l="범위">${esc(r[1])}</td><td data-l="검증">${esc(r[2])}</td><td data-l="산출물">${esc(r[3])}</td><td data-l="판정"><span class="tag" style="--c:${r[4]}">${esc(r[5])}</span></td></tr>`).join('');
+
+const files=[["HUNTING",251,1],["SKILL",192,1],["VALIDATION-AND-REPORTING",186,1],["RECONNAISSANCE",156,1],["ATTACK-CLASSES",130,0],["WEB-PROTOCOL-AND-AUTH",105,0],["MEMORY-SAFETY-AND-BINARY",101,0],["DESKTOP-MOBILE-AND-LOCAL-IPC",89,0],["CLOUD-AND-DEPLOYMENT",86,0],["DATA-ISOLATION-AND-LIFECYCLE",84,0],["AI-AND-LLM",83,0],["CLIENT-SIDE",83,0],["PROTOCOLS-RPC-AND-MESSAGING",81,0],["RESOURCE-EXHAUSTION",78,0],["SUPPLY-CHAIN-AND-RELEASE",73,0]];
+const mx=Math.max(...files.map(f=>f[1]));
+$('bars').innerHTML=files.map(f=>`<div class="row ${f[2]?'core':''}"><span style="overflow-wrap:anywhere;font-size:13px">${esc(f[0])}</span><div class="track"><div class="fill" style="width:${(f[1]/mx*100).toFixed(1)}%"></div></div><span class="n">${f[1]}</span></div>`).join('');
+
+const verd=[["confirmed","소스 추적 완료 + 관찰된 결과. 심각도 부여.","var(--green)"],["needs_validation","근거는 있으나 막힌 사실 하나를 명시. 심각도 없음.","var(--amber)"],["rejected","반박된 후보. 다음 실행에서 같은 주장만 억제.","var(--red)"]];
+$('verd').innerHTML=verd.map(v=>`<div class="v" style="--c:${v[2]}"><b>${v[0]}</b><p style="font-size:14px;margin:6px 0 0">${v[1]}</p></div>`).join('');
+const sev=[["critical","비인증 공격자가 코드 실행, 데이터 저장소 전체 접근, 임의 계정 탈취"],["high","명시적 보안 통제를 완전히 무력화: 인증 우회, 테넌트 간 읽기·쓰기, 저장형 스크립트"],["medium","실제 경계 위반이지만 영향 범위가 좁거나 전제 조건이 드묾"],["low","비밀 아닌 내부 정보 노출, 큰 노력 대비 작은 이득"],["informational","확정됐지만 영향 최소, 다른 발견의 전제로 유용"]];
+$('sev').innerHTML=sev.map(s=>`<div class="row"><b>${s[0]}</b><span>${s[1]}</span></div>`).join('');
+}
+</script>
