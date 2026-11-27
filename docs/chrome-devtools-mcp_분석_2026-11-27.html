@@ -1,0 +1,183 @@
+<title>Chrome DevTools MCP 분석</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE work — engineering review for an engineer
+   IDEA an engineering datasheet for a component: spec strip, block diagram, pinout table
+   PICTURE block diagram of the request path Agent → MCP → Puppeteer/CDP → Chrome, with the 63-tool category bars beside it
+   COLOUR white, black, cobalt #1240e0 title strip, pale #eef2ff zones, off-by-default in grey
+   TYPE Space Grotesk 600 + Inter / Noto Sans KR
+   LAYOUT laptop: title strip, spec row, diagram (wide) + bars; phone: stacked title, diagram, bars */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#0a0d18);--ink:light-dark(#0b0d14,#e8ebf5);--mut:light-dark(#4a5068,#9aa3c0);--line:light-dark(#d6dbea,#262c44);--zone:light-dark(#eef2ff,#121a36);--co:light-dark(#1240e0,#5b7cff);--coInk:#ffffff;--off:light-dark(#b8bfd3,#3a4262);--warn:light-dark(#b42318,#ff8a7a)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 Inter,"Noto Sans KR",system-ui,sans-serif;overflow-x:clip}
+.band{padding-block:clamp(24px,3.5vw,48px);padding-left:max(5vw,16px,env(safe-area-inset-left,0px));padding-right:max(5vw,16px,env(safe-area-inset-right,0px))}
+.in{max-width:1240px;margin:0 auto}
+.strip{background:#1240e0;color:var(--coInk);margin-top:calc(-1*env(safe-area-inset-top,0px));padding-top:calc(env(safe-area-inset-top,0px) + 28px)}
+h1,h2,h3{font-family:"Space Grotesk","Noto Sans KR",sans-serif;letter-spacing:-.02em;line-height:1.1;margin:0}
+h1{font-size:clamp(30px,4.6vw,48px);font-weight:700}
+h2{font-size:clamp(22px,2.6vw,28px);font-weight:600;margin-bottom:14px}
+h3{font-size:18px;font-weight:600;margin-bottom:6px}
+.lede{max-width:62ch;margin:12px 0 0;font-size:17px;opacity:.92}
+.specs{display:grid;grid-template-columns:repeat(auto-fit,minmax(9.5em,1fr));gap:0;border-top:1px solid rgba(255,255,255,.35);margin-top:22px}
+.specs div{padding:12px 14px 4px 0}
+.specs b{display:block;font:600 clamp(22px,2.6vw,30px)/1.1 "Space Grotesk",sans-serif;white-space:nowrap}
+.specs span{font-size:13px;opacity:.85}
+.top{display:grid;gap:28px;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr)}
+@media(max-width:900px){.top{grid-template-columns:minmax(0,1fr)}}
+.panel{border:1px solid var(--line);background:var(--zone);border-radius:6px;padding:18px}
+.cap{font-size:13px;color:var(--mut);margin:0 0 12px}
+.flow{display:grid;gap:10px}
+.node{background:var(--bg);border:1px solid var(--line);border-radius:5px;padding:10px 12px}
+.node.k{border-color:var(--co);border-width:2px}
+.node b{font-family:"Space Grotesk",sans-serif;font-size:16px}
+.node small{display:block;color:var(--mut);font-size:13px;line-height:1.45}
+.arrow{font-size:13px;color:var(--co);padding-left:14px;font-weight:600}
+.inside{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}
+.inside div{border-top:2px solid var(--co);padding-top:6px;font-size:13px;line-height:1.45}
+.inside code{font-size:12.5px}
+.bars{display:grid;gap:7px}
+.row{display:grid;grid-template-columns:8.5em minmax(0,1fr) 2.2em;gap:10px;align-items:center;font-size:14px}
+.row .t{height:16px;background:var(--line);border-radius:2px;position:relative}
+.row .t i{position:absolute;inset:0 auto 0 0;background:var(--co);border-radius:2px}
+.row.off .t i{background:var(--off)}
+.row.off .n{color:var(--mut)}
+.row .n{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+.row .l{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.key{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--mut);margin-top:12px}
+.key i{display:inline-block;width:12px;height:12px;border-radius:2px;vertical-align:-1px;margin-right:6px}
+.cols{display:grid;gap:24px;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;font-size:13px;color:var(--mut)}
+td code,p code,li code{font-size:13px;background:var(--zone);padding:1px 5px;border-radius:3px;overflow-wrap:anywhere}
+.cmp td:first-child{font-weight:600;width:22%}
+.bad{color:var(--warn)}
+pre{overflow-x:auto;background:var(--zone);border:1px solid var(--line);border-radius:5px;padding:12px 14px;font-size:13px;line-height:1.5;margin:8px 0 0}
+ol,ul{padding-left:1.2em;margin:6px 0}
+li{margin:4px 0}
+.alt{background:var(--zone)}
+.verdict{border-left:4px solid var(--co);padding:4px 0 4px 16px;max-width:75ch;font-size:17px}
+.foot{font-size:13px;color:var(--mut)}
+@media(max-width:600px){table{font-size:13px}th,td{padding:6px 4px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flex;justify-content:space-between;gap:12px;border:0;padding:3px 0}.stack td::before{content:attr(data-l);color:var(--mut);font-size:12px;flex:none}.cmp td:first-child{width:auto}.row{grid-template-columns:7em minmax(0,1fr) 2em}}
+</style>
+
+<header class="band strip"><div class="in">
+  <h1>Chrome DevTools MCP 분석</h1>
+  <p class="lede">에이전트가 실제 Chrome을 조작·계측하게 해 주는 Google 공식 MCP 서버입니다. 핵심은 “브라우저 자동화”보다 <b>DevTools급 진단(성능 트레이스·네트워크·콘솔·힙)</b>을 토큰 아끼는 요약으로 돌려준다는 점입니다.</p>
+  <div class="specs">
+    <div><b>v1.14.0</b><span>2026-11-24 릴리스</span></div>
+    <div><b>63개</b><span>MCP 도구 · 13개 카테고리</span></div>
+    <div><b>3개</b><span>--slim 모드 도구</span></div>
+    <div><b>Node 20.19+</b><span>Chrome stable 이상</span></div>
+    <div><b>8개</b><span>공식 동봉 스킬</span></div>
+  </div>
+</div></header>
+
+<section class="band"><div class="in top">
+  <div class="panel">
+    <h2>요청이 흐르는 길</h2>
+    <p class="cap">도구 호출 한 번이 Chrome까지 가는 경로. 굵은 테두리가 이 서버 내부입니다.</p>
+    <div class="flow">
+      <div class="node"><b>에이전트 (Claude Code · Cursor · Gemini CLI …)</b><small>MCP 클라이언트. 도구 목록을 받고 호출을 보냄</small></div>
+      <div class="arrow">↓ MCP over stdio (npx chrome-devtools-mcp@latest)</div>
+      <div class="node k"><b>chrome-devtools-mcp 서버</b><small>도구 정의 → 실행 → 요약 응답. 무거운 결과는 파일 경로로 반환</small>
+        <div class="inside">
+          <div><code>ToolHandler</code><br>카테고리 플래그로 도구 노출 제어</div>
+          <div><code>McpContext</code> · <code>McpPage</code><br>pageId 단위 페이지 상태</div>
+          <div><code>collectors/</code><br>콘솔·네트워크·서비스워커 수집</div>
+          <div><code>processors/</code><br>트레이스·힙스냅샷 분석</div>
+        </div>
+      </div>
+      <div class="arrow">↓ Puppeteer + Chrome DevTools Protocol (자동 대기 포함)</div>
+      <div class="node"><b>Chrome</b><small>첫 도구 호출 때 자동 실행(전용 프로필) · 또는 --autoConnect / --browserUrl 로 기존 Chrome에 붙음</small></div>
+      <div class="arrow">↘ 선택: 성능 도구가 URL을 CrUX API로 보내 실사용자 데이터 병합 (--no-performance-crux 로 끔)</div>
+    </div>
+  </div>
+  <div class="panel">
+    <h2>63개 도구, 어디에 몰려 있나</h2>
+    <p class="cap">카테고리별 도구 수. 회색은 기본값이 꺼짐이라 플래그를 줘야 보입니다.</p>
+    <div class="bars" id="bars"></div>
+    <div class="key"><span><i style="background:var(--co)"></i>기본 켜짐</span><span><i style="background:var(--off)"></i>플래그 필요</span></div>
+    <p class="cap" style="margin-top:12px">기본 상태로 보이는 도구는 33개. Memory 14개는 <code>--memoryDebugging</code> 이 있어야 노출됩니다.</p>
+  </div>
+</div></section>
+
+<section class="band alt"><div class="in">
+  <h2>전문가 평가: 엔지니어가 알아야 할 설계 판단</h2>
+  <p class="verdict">이 서버의 차별점은 “스크린샷 보고 클릭하는 봇”이 아니라 <b>접근성 트리 스냅샷(uid) + DevTools 분석 엔진</b>입니다. Playwright MCP와 겹치는 부분은 입력·탐색 16개뿐이고, 나머지 47개는 진단 도구입니다. 자동화만 필요하면 <code>--slim</code>, 디버깅이면 풀 모드가 맞습니다.</p>
+  <div class="cols" style="margin-top:22px">
+    <div><h3>공식 설계 원칙 7개 (docs/design-principles.md)</h3>
+      <ul>
+        <li><b>토큰 최적화</b> — “LCP 3.2s”가 JSON 5만 줄보다 낫다</li>
+        <li><b>작고 결정적인 블록</b> — 만능 버튼 대신 click·screenshot 조합</li>
+        <li><b>값 대신 참조</b> — 트레이스·영상·스크린샷은 파일 경로로</li>
+        <li><b>자기 치유형 오류</b> — 오류에 원인과 해결책을 담아 반환</li>
+        <li>에이전트 비종속 · 사람/기계 동시 가독 · 점진적 복잡도</li>
+      </ul></div>
+    <div><h3>보안·프라이버시 체크포인트</h3>
+      <ul>
+        <li class="bad">브라우저 내용 전체가 MCP 클라이언트에 노출 — 로그인된 개인 프로필로 쓰지 말 것</li>
+        <li>사용 통계 수집 <b>기본 켜짐</b> → <code>--no-usage-statistics</code></li>
+        <li>CrUX 조회로 URL 외부 전송 → <code>--no-performance-crux</code></li>
+        <li>격리: <code>--isolated</code>(임시 프로필), <code>--allowedUrlPattern</code>, <code>--redactNetworkHeaders</code>, <code>--javascriptEvaluation=false</code></li>
+      </ul></div>
+  </div>
+</div></section>
+
+<section class="band"><div class="in">
+  <h2>초보자 실수 vs 숙련자 방식</h2>
+  <div class="scroll"><table class="cmp stack">
+    <thead><tr><th>상황</th><th>초보자가 흔히 하는 것</th><th>숙련자가 하는 것</th></tr></thead>
+    <tbody id="cmp"></tbody>
+  </table></div>
+</div></section>
+
+<section class="band alt"><div class="in cols">
+  <div><h2>Claude Code에 붙이기</h2>
+    <p><b>MCP만</b> (가장 단순, 본인 PC에서):</p>
+    <pre>claude mcp add chrome-devtools --scope user -- npx chrome-devtools-mcp@latest --isolated --no-usage-statistics</pre>
+    <p style="margin-top:14px"><b>MCP + 공식 스킬 8개</b> (플러그인):</p>
+    <pre>/plugin marketplace add ChromeDevTools/chrome-devtools-mcp
+/plugin install chrome-devtools-mcp@chrome-devtools-plugins</pre>
+    <p class="foot">설치 뒤 Claude Code를 새로 시작해야 도구가 보입니다. 첫 확인 프롬프트: “Check the performance of https://developers.chrome.com”.</p>
+  </div>
+  <div><h2>고급 사고법: 질문을 도구 체인으로</h2>
+    <ol>
+      <li><b>가설부터</b> — “느리다”가 아니라 “LCP 요소가 늦게 발견되는가, 늦게 그려지는가”</li>
+      <li><b>계측</b> — <code>performance_start_trace</code>(reload) → <code>performance_stop_trace</code> → 인사이트 이름으로 <code>performance_analyze_insight</code></li>
+      <li><b>원인 좁히기</b> — <code>list_network_requests</code>로 리소스 타이밍, <code>get_css_styles</code>로 렌더 차단 확인</li>
+      <li><b>재현 조건 고정</b> — <code>emulate</code>로 CPU 4x·Slow 4G, 같은 조건에서 전후 비교</li>
+      <li><b>코드 수정 없이 관찰</b> — <code>set_logpoints</code>로 소스맵 위치에 로그, <code>mock_network</code>로 API 응답 바꿔 가설 검증</li>
+    </ol>
+  </div>
+</div></section>
+
+<section class="band"><div class="in">
+  <h2>나의 스킬에 추가한 것</h2>
+  <p><code>skills/chrome-devtools-mcp/</code> — 설치 명령, 안전한 기본 플래그, 작업별 도구 체인(성능·네트워크·콘솔·메모리·폼 자동화), 흔한 실패와 해결을 한국어로 정리했습니다. <code>skills/chrome-devtools-mcp.zip</code> 으로 claude.ai 스킬 업로드도 가능합니다.</p>
+  <p class="foot">출처: github.com/ChromeDevTools/chrome-devtools-mcp (main, 2026-11-26 커밋 aacf611) · README, docs/tool-reference.md, docs/configuration.md, docs/design-principles.md, src/config/category-options.ts</p>
+</div></section>
+
+<script>
+{
+  const cats=[["Memory",14,1],["Input",10,0],["Debugging",10,0],["Navigation",6,0],["Extensions",5,1],["PWA",4,1],["Performance",3,0],["Emulation",2,0],["Network",2,0],["Network mocks",2,1],["Third-party",2,1],["WebMCP",2,1],["WebAuthn",1,1]];
+  const max=14;
+  document.getElementById('bars').innerHTML=cats.map(([n,v,off])=>`<div class="row${off?' off':''}"><span class="l">${n}</span><span class="t"><i style="width:${v/max*100}%"></i></span><span class="n">${v}</span></div>`).join('');
+  const rows=[
+    ["요소 찾기","take_screenshot 보고 좌표로 click_at","take_snapshot의 uid로 click/fill — 텍스트라 빠르고 결정적. 실패하면 스냅샷을 새로 뜸"],
+    ["응답 크기","트레이스·스냅샷을 대화창에 그대로 받음","filePath로 파일 저장, pageSize·types로 필터, 입력 도구는 includeSnapshot:false"],
+    ["순서","navigate와 click을 병렬로 던짐","navigate → wait_for → snapshot → interact 순서는 지키고, 독립 조회만 병렬"],
+    ["프로필","평소 쓰는 Chrome 프로필에 연결","--isolated 임시 프로필. 로그인이 필요하면 전용 --userDataDir"],
+    ["성능 판단","Lighthouse 점수 하나로 결론","트레이스 인사이트(LCP 분해·렌더 차단) + CrUX 필드 데이터를 함께, 같은 emulate 조건에서 비교"],
+    ["도구가 안 보임","에이전트가 없는 도구를 지어냄","카테고리 플래그 확인(--categoryNetworkMocks, --categoryExtensions, --memoryDebugging) 후 서버 재시작"],
+    ["버전","스킬과 서버 버전이 어긋난 채 사용","@latest를 쓰면 스킬도 같이 갱신 — 도구 이름·파라미터가 릴리스마다 바뀜"],
+    ["클라우드 세션","컨테이너에서 실행하고 사이트 접속 실패를 버그로 봄","네트워크 허용 목록 확인, 필요하면 --headless. 본인 PC에서 쓰는 게 기본"]
+  ];
+  const esc=s=>s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  document.getElementById('cmp').innerHTML=rows.map(r=>`<tr><td data-l="상황">${esc(r[0])}</td><td data-l="초보자" class="bad">${esc(r[1])}</td><td data-l="숙련자">${esc(r[2])}</td></tr>`).join('');
+}
+</script>
