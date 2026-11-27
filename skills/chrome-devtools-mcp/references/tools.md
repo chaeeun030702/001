@@ -1,0 +1,81 @@
+# 도구 목록 (v1.14.0, docs/tool-reference.md 기준)
+
+- **Input automation** (10 tools)
+  - `click`
+  - `drag`
+  - `fill`
+  - `fill_form`
+  - `handle_dialog`
+  - `hover`
+  - `press_key`
+  - `type_text`
+  - `upload_file`
+  - `click_at`
+- **Navigation automation** (6 tools)
+  - `close_page`
+  - `list_pages`
+  - `navigate_page`
+  - `new_page`
+  - `select_page`
+  - `wait_for`
+- **Emulation** (2 tools)
+  - `emulate`
+  - `resize_page`
+- **Performance** (3 tools)
+  - `performance_analyze_insight`
+  - `performance_start_trace`
+  - `performance_stop_trace`
+- **Network** (2 tools)
+  - `get_network_request`
+  - `list_network_requests`
+- **Debugging** (10 tools)
+  - `evaluate_script`
+  - `get_console_message`
+  - `get_css_styles`
+  - `lighthouse_audit`
+  - `list_console_messages`
+  - `screencast_start`
+  - `screencast_stop`
+  - `set_logpoints`
+  - `take_screenshot`
+  - `take_snapshot`
+- **Memory** (14 tools)
+  - `take_heapsnapshot`
+  - `analyze_heapsnapshot_contexts`
+  - `close_heapsnapshot`
+  - `compare_heapsnapshots`
+  - `get_heapsnapshot_class_nodes`
+  - `get_heapsnapshot_details`
+  - `get_heapsnapshot_dominators`
+  - `get_heapsnapshot_duplicate_strings`
+  - `get_heapsnapshot_edges`
+  - `get_heapsnapshot_object_details`
+  - `get_heapsnapshot_retainers`
+  - `get_heapsnapshot_retaining_paths`
+  - `get_heapsnapshot_summary`
+  - `query_heapsnapshot_objects`
+- **Network mocks** (2 tools)
+  - `mock_network`
+  - `remove_network_mock`
+- **Extensions** (5 tools)
+  - `install_extension`
+  - `list_extensions`
+  - `reload_extension`
+  - `trigger_extension_action`
+  - `uninstall_extension`
+- **Third-party** (2 tools)
+  - `execute_3p_developer_tool`
+  - `list_3p_developer_tools`
+- **WebMCP** (2 tools)
+  - `execute_webmcp_tool`
+  - `list_webmcp_tools`
+- **Progressive Web Apps** (4 tools)
+  - `get_os_app_state`
+  - `install_pwa`
+  - `launch_pwa`
+  - `uninstall_pwa`
+- **WebAuthn** (1 tools)
+  - `configure_webauthn`
+
+기본 꺼짐: Network mocks, Extensions, Third-party, WebMCP, PWA, WebAuthn. Memory는 --memoryDebugging 필요.
+--slim: navigate, evaluate, screenshot
